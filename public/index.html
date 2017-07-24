@@ -134,7 +134,7 @@
                             </tr>
                             <tr class="row account-row" ng-repeat="account in accounts | orderObjectBy:'platform':false | orderObjectBy:'category':false">
                                 <td>
-                                    <input class="account created_date" ng-model="account.created_date" />
+                                    <input class="account created_date" ng-model="account.created_date" style="display:none" />
                                     <input class="account category" ng-model="account.category" ng-change="save(account)" />
                                 </td>
                                 <td>
@@ -257,7 +257,7 @@
 	  app.controller('AccountsCtrl', function ($scope, $firebaseArray) {
 		$scope.user = null;
 
-        $scope.currentDate = new Date().toLocaleDateString('fr-FR');
+        $scope.currentDate = new Date().toLocaleDateString();
 		$scope.currentCategory = 'All';
 		
 		firebase.auth().onAuthStateChanged(function(firebaseUser) {
@@ -329,8 +329,6 @@
                     var accountCreatedDate = new Date($(this).val());
 					
 					var selectedDate = new Date(currentDate);
-
-					//console.log (accountCreatedDate);
 					
 					if (accountCreatedDate > selectedDate) {
 						found = true;
