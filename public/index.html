@@ -97,7 +97,7 @@
 
                     <div class="qb brz">
                         <div class="ayt brg">
-                            <input type="text" ng-model="currentDate" ng-change="filterDate" class="form-control" data-provide="datepicker">
+                            <input type="text" ng-model="currentDate" ng-change="filterDate()" class="form-control" data-provide="datepicker">
                             <span class="bv bck"></span>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
                             </tr>
                             <tr class="row account-row" ng-repeat="account in accounts | orderObjectBy:'platform':false | orderObjectBy:'category':false">
                                 <td>
-                                    <input class="account created_date" ng-model="account.created_date" type="hidden" />
+                                    <input class="account created_date" ng-model="account.created_date" />
                                     <input class="account category" ng-model="account.category" ng-change="save(account)" />
                                 </td>
                                 <td>
@@ -331,8 +331,12 @@
 				
 				$(this).find('.created_date').each(function () {
                     var accountCreatedDate = new Date($(this).val());
+					
+					var selectedDate = new Date(currentDate);
 
-					if (accountCreatedDate > currentDate) {
+					//console.log (accountCreatedDate);
+					
+					if (accountCreatedDate > selectedDate) {
 						found = true;
 					}
 				});
