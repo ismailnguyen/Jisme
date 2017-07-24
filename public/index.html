@@ -1,8 +1,8 @@
-
+<!DOCTYPE html>
 <html ng-app="jismeApp" ng-cloak>
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width">
     
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
     <link href="https://bootstrap-themes.github.io/dashboard/assets/css/toolkit-inverse.css" rel="stylesheet">
@@ -73,8 +73,8 @@
                                 </a>
                             </li>
                             
-                            <li class="qp" ng-repeat="account in accounts | distinct:'category' | orderObjectBy:'category':false">
-                                <a href="" ng-click="filterCategory(account.category)" class="qn" ng-bind="account.category"></a>
+                            <li class="qp" ng-repeat="account in accounts | distinctCategories | orderObjectBy:'category':false">
+                                <a href="#" ng-click="filterCategory(account.category)" class="qn" ng-bind="account.category"></a>
                             </li>
 
                             <li class="ayx"></li>
@@ -174,10 +174,24 @@
 	<!-- AngularFire -->
 	<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
 	
+	<!-- Stanford Javascript Crypto Library -->
+	<script src="./sha256.min.js"></script>
+	<script src="./sjcl.js"></script>
+	
 	<script src="./config.js"></script>
 
 	<script>
 	firebase.initializeApp(firebaseConfig);
+	
+	function decrypt(encrypted, token) {
+		let masterpass = sha256(token)
+		return sjcl.decrypt(masterpass, encrypted)
+	}
+	
+	function encrypt(decrypted, token) {
+		let masterpass = sha256(token)
+		return sjcl.encrypt(masterpass, decrypted)
+	}
 
 	var app = angular.module('jismeApp', ['firebase']);
 	var user;
@@ -213,7 +227,7 @@
 			var filtered = [];
 			
 			angular.forEach(items, function(item) {
-			  filtered.push(item);
+				filtered.push(item);
 			});
 			
 			filtered.sort(function (a, b) {
@@ -228,13 +242,15 @@
 		  };
 		});
 
-        app.filter('distinct', function() {
-		  return function(items, field) {
+        app.filter('distinctCategories', function() {
+		  return function(items) {
 			var filtered = [];
+			var categories = [];
 			
 			angular.forEach(items, function(item) {
-			  if (!filtered.includes(item)) {
+			  if (categories.indexOf(item.category) == -1) {
                   filtered.push(item);
+				  categories.push(item.category);
               }
 			});
 			
@@ -254,7 +270,7 @@
 			  
 				var accountsRef = firebase
 					.database()
-					.ref($scope.user.uid + '/');
+					.ref('users/' + $scope.user.uid + '/');
 					
 				//create a synchronized array
 				$scope.accounts = $firebaseArray(accountsRef);
@@ -337,7 +353,7 @@
 			
 			var accountsRef = firebase
 					.database()
-					.ref($scope.user.uid + '/');
+					.ref('users/' + $scope.user.uid + '/');
 			
 			$firebaseArray(accountsRef).$add({
 				category: category,
