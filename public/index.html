@@ -1,380 +1,155 @@
 <!DOCTYPE html>
 <html ng-app="jismeApp" ng-cloak>
-<head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width">
-    
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
-    <link href="https://bootstrap-themes.github.io/dashboard/assets/css/toolkit-inverse.css" rel="stylesheet">
-    <link href="https://bootstrap-themes.github.io/dashboard/assets/css/application.css" rel="stylesheet">
-
-    <style>
-		.account {
-			border: none;
-			background: #252830;
-			width: 100%;
-			margin-bottom: 5px;
-			outline:none;
-            color: #cfd2da;
-            line-height: 1.5;
-            font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-            font-size: 0.9rem;
-            font-weight: 300;
-		}
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width">
 		
-		.account:hover, .account:active, .account:focus {
-			color: #65737e;
-		}
-		
-		.password {
-			color: #65737e;
-			background: #65737e;
-			text-align: center;
-		}
-		
-		.password:hover, .password:active, .password:focus {
-            color: #cfd2da;
-		}
-	</style>
-</head>
-<body>
-    <div class="bw" ng-controller="AccountsCtrl">
-        <div class="di">   
-            <div class="em brh">
-                <nav class="bro">
-                    <div class="bri">
-                        <button class="bqe bqg brj" type="button" data-toggle="collapse" data-target="#nav-toggleable-md">
-                            <span class="aep">Toggle nav</span>
-                        </button>
-                        <a class="brk bsi" href="#">
-                            <span class="bv bik brl">Jisme</span>
-                        </a>
-                    </div>
+		<title>Jisme</title>
 
-                    <div class="collapse bql" id="nav-toggleable-md">
-                        <form class="brm" ng-show="user">
-                            <input class="form-control" type="text" ng-model="query" ng-change="search()" id="search" placeholder="Search..." />
-                            <button type="submit" class="po">
-                                <span class="bv bje"></span>
-                            </button>
-                        </form>
+		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
+		<link href="./assets/css/toolkit-inverse.css" rel="stylesheet">
+		<link href="./assets/css/application.css" rel="stylesheet">
+	</head>
+	<body>
+		<div class="bw" ng-controller="AccountsCtrl">
+			<div class="di">   
+				<div class="em brh">
+					<nav class="bro">
+						<div class="bri">
+							<button class="bqe bqg brj" type="button" data-toggle="collapse" data-target="#nav-toggleable-md">
+								<span class="aep">Toggle nav</span>
+							</button>
+							<a class="brk bsi" href="#">
+								<span class="bv bik brl">Jisme</span>
+							</a>
+						</div>
 
-                        <ul class="nav qq nav-stacked xx" ng-hide="user" ng-controller="AuthCtrl">
-                            <li class="qp">
-                                <button type="submit" class="ce tb" ng-click="signIn()">Sign in with Google</button>
-                            </li>
-                        </ul>
+						<div class="collapse bql" id="nav-toggleable-md">
+							<form class="brm" ng-show="user">
+								<input class="form-control" type="text" ng-model="query" ng-change="search()" id="search" placeholder="Search..." />
+								<button type="submit" class="po">
+									<span class="bv bje"></span>
+								</button>
+							</form>
 
-                        <ul class="nav qq nav-stacked xx" ng-show="user">
-                            <li class="ayx">Categories</li>
-                            <li class="qp">
-                                <a href="" ng-click="filterCategory('All')" class="qn active">
-                                    All
-                                </a>
-                            </li>
-                            
-                            <li class="qp" ng-repeat="account in accounts | distinctCategories | orderObjectBy:'category':false">
-                                <a href="#" ng-click="filterCategory(account.category)" class="qn" ng-bind="account.category"></a>
-                            </li>
+							<ul class="nav qq nav-stacked xx" ng-hide="user" ng-controller="AuthCtrl">
+								<li class="qp">
+									<button type="submit" class="ce tb" ng-click="signIn()">Sign in with Google</button>
+								</li>
+							</ul>
 
-                            <li class="ayx"></li>
-                            <li class="qp" ng-controller="AuthCtrl">
-                                <button type="submit" class="ce tb" ng-click="signOut()">Sign out</button>
-                            </li>
+							<ul class="nav qq nav-stacked xx" ng-show="user">
+								<li class="ayx">Categories</li>
+								<li class="qp">
+									<a href="" ng-click="filterCategory('All')" class="qn active">
+										All
+									</a>
+								</li>
+								
+								<li class="qp" ng-repeat="account in accounts | distinctCategories | orderObjectBy:'category':false">
+									<a href="#" ng-click="filterCategory(account.category)" class="qn" ng-bind="account.category"></a>
+								</li>
 
-                        </ul>
-                        <hr class="bsj afx">
-                    </div>
-                </nav>
-            </div>
-            
-            <div class="es bsk" ng-show="user">
-                <div class="brv">
-                    <div class="brw">
-                        <h6 class="bry">Accounts</h6>
-                        <h2 class="brx" ng-bind="currentCategory"></h2>
-                    </div>
+								<li class="ayx"></li>
+								<li class="qp" ng-controller="AuthCtrl">
+									<button type="submit" class="ce tb" ng-click="signOut()">Sign out</button>
+								</li>
 
-                    <div class="qb brz">
-                        <div class="ayt brg">
-                            <input type="text" ng-model="currentDate" ng-change="filterDate()" class="form-control" data-provide="datepicker">
-                            <span class="bv bck"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="nu">
-                    <table class="ck">
-                        <thead>
-                            <tr>
-                                <th>Category</th>
-                                <th>Platform</th>
-                                <th>Login</th>
-                                <th>Password</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-							<tr>
-                                <td>
-                                    <input class="account form-control" ng-model="new_category" placeholder="Category" />
-                                </td>
-                                <td>
-                                    <input class="account form-control" ng-model="new_platform" placeholder="Plateform" />
-                                </td>
-                                <td>
-                                    <input class="account form-control" ng-model="new_user" placeholder="Login" />
-                                </td>
-                                <td>
-                                    <input class="account form-control" ng-model="new_password" placeholder="Password" />
-                                </td>
-                                <td>
-                                    <a href="" ng-click="add()" class="ce pi ahr">+</a>
-                                </td>
-                            </tr>
-                            <tr class="row account-row" ng-repeat="account in accounts | orderObjectBy:'platform':false | orderObjectBy:'category':false">
-                                <td>
-                                    <input class="account created_date" ng-model="account.created_date" style="display:none" />
-                                    <input class="account category" ng-model="account.category" ng-change="save(account)" />
-                                </td>
-                                <td>
-                                    <input class="account" ng-model="account.platform" ng-change="save(account)" />
-                                </td>
-                                <td>
-                                    <input class="account" ng-model="account.user" ng-change="save(account)" />
-                                </td>
-                                <td>
-                                    <input class="account password" ng-model="account.password" ng-change="save(account)" />
-                                </td>
-                                <td>
-                                    <a href="" ng-click="delete(account)" class="ce pi ahr">x</a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script src="https://bootstrap-themes.github.io/dashboard/assets/js/jquery.min.js"></script>
-    <script src="https://bootstrap-themes.github.io/dashboard/assets/js/tether.min.js"></script>
-    <script src="https://bootstrap-themes.github.io/dashboard/assets/js/toolkit.js"></script>
-	
-	<!-- Firebase -->
-	<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase-app.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase-auth.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase-database.js"></script>
-	
-	<!-- AngularJS -->
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
-
-	<!-- AngularFire -->
-	<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
-	
-	<script src="./config.js"></script>
-
-	<script>
-	firebase.initializeApp(firebaseConfig);
-	
-	function decrypt(encrypted, token) {
-		let masterpass = sha256(token)
-		return sjcl.decrypt(masterpass, encrypted)
-	}
-	
-	function encrypt(decrypted, token) {
-		let masterpass = sha256(token)
-		return sjcl.encrypt(masterpass, decrypted)
-	}
-
-	var app = angular.module('jismeApp', ['firebase']);
-	var user;
-	
-	app.controller('AuthCtrl', function($scope, $firebaseAuth) {
-		var auth = $firebaseAuth();
-		
-		firebase.auth().onAuthStateChanged(function(firebaseUser) {
-			if (firebaseUser) {
-				$scope.user = firebaseUser;
-			}
-			else{
-			  $scope.user = null;
-			}
-		});
-
-		$scope.signIn = function() {
-		  auth.$signInWithPopup('google').then(function(firebaseUser) {
-			$scope.user = firebaseUser.user;
-		  }).catch(function(error) {
-			alert(error);
-		  });
-		};
-		
-		$scope.signOut = function () {
-			auth.$signOut();
-            location.reload();
-		}
-	  });
-	  
-	  app.filter('orderObjectBy', function() {
-		  return function(items, field, reverse) {
-			var filtered = [];
-			
-			angular.forEach(items, function(item) {
-				filtered.push(item);
-			});
-			
-			filtered.sort(function (a, b) {
-			  return a[field].localeCompare(b[field]);
-			});
-			
-			if(reverse) {
-				filtered.reverse();
-			}
+							</ul>
+							<hr class="bsj afx">
+						</div>
+					</nav>
+				</div>
 				
-			return filtered;
-		  };
-		});
+				<div class="es bsk" ng-show="user">
+					<div class="brv">
+						<div class="brw">
+							<h6 class="bry">Accounts</h6>
+							<h2 class="brx" ng-bind="currentCategory"></h2>
+						</div>
 
-        app.filter('distinctCategories', function() {
-		  return function(items) {
-			var filtered = [];
-			var categories = [];
-			
-			angular.forEach(items, function(item) {
-			  if (categories.indexOf(item.category) == -1) {
-                  filtered.push(item);
-				  categories.push(item.category);
-              }
-			});
-			
-			return filtered;
-		  };
-		});
-	  
-	  app.controller('AccountsCtrl', function ($scope, $firebaseArray) {
-		$scope.user = null;
+						<div class="qb brz">
+							<div class="ayt brg">
+								<input type="text" ng-model="currentDate" ng-change="filterDate()" class="form-control" data-provide="datepicker">
+								<span class="bv bck"></span>
+							</div>
+						</div>
+					</div>
 
-        $scope.currentDate = new Date().toLocaleDateString();
-		$scope.currentCategory = 'All';
+					<div class="nu">
+						<table class="ck">
+							<thead>
+								<tr>
+									<th>Category</th>
+									<th>Platform</th>
+									<th>Login</th>
+									<th>Password</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<input class="account form-control" ng-model="new_category" placeholder="Category" />
+									</td>
+									<td>
+										<input class="account form-control" ng-model="new_platform" placeholder="Plateform" />
+									</td>
+									<td>
+										<input class="account form-control" ng-model="new_user" placeholder="Login" />
+									</td>
+									<td>
+										<input class="account form-control" ng-model="new_password" placeholder="Password" />
+									</td>
+									<td>
+										<a href="" ng-click="add()" class="ce pi ahr">+</a>
+									</td>
+								</tr>
+								<tr class="row account-row" ng-repeat="account in accounts | orderObjectBy:'platform':false | orderObjectBy:'category':false">
+									<td>
+										<input class="account created_date" ng-model="account.created_date" style="display:none" />
+										<input class="account category" ng-model="account.category" ng-change="save(account)" />
+									</td>
+									<td>
+										<input class="account" ng-model="account.platform" ng-change="save(account)" />
+									</td>
+									<td>
+										<input class="account" ng-model="account.user" ng-change="save(account)" />
+									</td>
+									<td>
+										<input class="account password" ng-model="account.password" ng-change="save(account)" />
+									</td>
+									<td>
+										<a href="" ng-click="delete(account)" class="ce pi ahr">x</a>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<script src="./assets/js/jquery.min.js"></script>
+		<script src="./assets/js/tether.min.js"></script>
+		<script src="./assets/js/toolkit.js"></script>
 		
-		firebase.auth().onAuthStateChanged(function(firebaseUser) {
-			if (firebaseUser) {
-				$scope.user = firebaseUser;
-			  
-				var accountsRef = firebase
-					.database()
-					.ref('users/' + $scope.user.uid + '/');
-					
-				//create a synchronized array
-				$scope.accounts = $firebaseArray(accountsRef);
-			}
-			else{
-				$scope.user = null;
-				$scope.accounts = null;
-			}
-		});
+		<!-- Firebase -->
+		<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase-app.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase-auth.js"></script>
+		<script src="https://www.gstatic.com/firebasejs/3.6.6/firebase-database.js"></script>
 		
-		$scope.search = function () {
-			var query = $scope.query;
-			
-			//Show only accounts correspondings to query or show all if query is empty
-			$('.account-row').each(function () {
-				var found = false;
-				
-				$(this).find('.account').each(function () {
-					if ($(this).val().toUpperCase().indexOf(query.toUpperCase()) >= 0 || !query.length) {
-						found = true;
-					}
-				});
-			
-				if (found) {
-					$(this).show();
-				} else {
-					$(this).hide();
-				}
-			});
-		}
+		<!-- AngularJS -->
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.min.js"></script>
 
-        $scope.filterCategory = function (category) {
-			//Show only accounts correspondings to selected category
-			$('.account-row').each(function () {
-				var found = false;
-				
-				$(this).find('.category').each(function () {
-					if ($(this).val().toUpperCase().indexOf(category.toUpperCase()) >= 0 || category == 'All') {
-						found = true;
-					}
-				});
-			
-				if (found) {
-					$(this).show();
-				} else {
-					$(this).hide();
-				}
-
-				$scope.currentCategory = category;
-			});
-		}
-
-        $scope.filterDate = function() {
-            var currentDate = $scope.currentDate;
-            
-            $('.account-row').each(function () {
-				var found = false;
-				
-				$(this).find('.created_date').each(function () {
-                    var accountCreatedDate = new Date($(this).val());
-					
-					var selectedDate = new Date(currentDate);
-					
-					if (accountCreatedDate > selectedDate) {
-						found = true;
-					}
-				});
-			
-				if (found) {
-					$(this).show();
-				} else {
-					$(this).hide();
-				}
-			});
-        }
+		<!-- AngularFire -->
+		<script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
 		
-		$scope.add = function () {
-			var category = $scope.new_category;
-			var platform = $scope.new_platform;
-			var user = $scope.new_user;
-			var password = $scope.new_password;
-			
-			var accountsRef = firebase
-					.database()
-					.ref('users/' + $scope.user.uid + '/');
-			
-			$firebaseArray(accountsRef).$add({
-				category: category,
-				platform: platform,
-				user: user,
-				password: password,
-				created_date: Date()
-			});
-			
-			//Empty fields
-			$scope.new_category = null;
-			$scope.new_platform = null;
-			$scope.new_user = null;
-			$scope.new_password = null;
-		}
+		<script src="./assets/js/config.js"></script>
 
-		$scope.save = function (account) {
-			$scope.accounts.$save(account);
-		}
+		<script src="./assets/js/application.js"></script>
 
-		$scope.delete = function (account) {
-			$scope.accounts.$remove(account);
-		}
-	  });
-	</script>
-</body></html>
+	</body>
+</html>
