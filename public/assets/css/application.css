@@ -27,17 +27,31 @@ hr {
   border-bottom: 0;
 }
 
+#search, .new-account, .brg > .form-control, .ce, .qn {
+    border-radius: 25px !important;
+}
+
+.tag {
+  display: none;
+}
+
 .account {
     border: none;
-    background: #252830;
+    background: #FFF;
     width: 100%;
     margin-bottom: 5px;
     outline:none;
-    color: #cfd2da;
+    /*color: #cfd2da;*/
     line-height: 1.5;
     font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.9rem;
     font-weight: 300;
+}
+
+.new-account {
+  padding: 5px;
+  padding-left: 10px;
+  margin-bottom: 10px;
 }
 
 .account:hover, .account:active, .account:focus {
@@ -52,4 +66,18 @@ hr {
 
 .password:hover, .password:active, .password:focus {
     color: #cfd2da;
+}
+
+.add-account, .account-details {
+  background: #cfd2da;
+}
+
+.floating-btn {
+  position: fixed;
+  display: block;
+  bottom: 0;
+  right: 0;
+  text-align: center;
+  padding: 20px;
+  margin: 50px;
 }
