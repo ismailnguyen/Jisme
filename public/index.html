@@ -43,13 +43,13 @@
 							<ul class="nav qq nav-stacked xx" ng-show="user">
 								<li class="ayx">Tags</li>
 								<li class="qp">
-									<a href="" ng-click="filterTag('All')" class="qn active">
+									<a href="" ng-click="filterTag()" class="qn active">
 										All
 									</a>
 								</li>
 								
-								<li class="qp" ng-repeat="account in accounts | distinctTags | orderObjectBy:'tags':false">
-									<a href="#" ng-click="filterTag(account.tags)" class="qn" ng-bind="account.tags"></a>
+								<li class="qp" ng-repeat="tag in accounts | distinctTags | orderObject:false">
+									<a href="#" ng-click="filterTag(tag)" class="qn" ng-bind="tag"></a>
 								</li>
 
 								<li class="ayx"></li>

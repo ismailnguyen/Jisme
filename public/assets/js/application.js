@@ -1,11 +1,13 @@
 firebase.initializeApp(firebaseConfig);
 	
-function decrypt(encrypted, token) {
+function decrypt(encrypted, token)
+{
 	let masterpass = sha256(token)
 	return sjcl.decrypt(masterpass, encrypted)
 }
 
-function encrypt(decrypted, token) {
+function encrypt(decrypted, token)
+{
 	let masterpass = sha256(token)
 	return sjcl.encrypt(masterpass, decrypted)
 }
@@ -13,77 +15,129 @@ function encrypt(decrypted, token) {
 var app = angular.module('jismeApp', ['firebase']);
 var user;
 
-app.controller('AuthCtrl', function($scope, $firebaseAuth) {
+app.controller('AuthCtrl', function($scope, $firebaseAuth)
+{
 	var auth = $firebaseAuth();
 	
-	firebase.auth().onAuthStateChanged(function(firebaseUser) {
-		if (firebaseUser) {
+	firebase.auth().onAuthStateChanged(function(firebaseUser)
+	{
+		if (firebaseUser)
+		{
 			$scope.user = firebaseUser;
 		}
-		else{
+		else
+		{
 			$scope.user = null;
 		}
 	});
 
-	$scope.signIn = function() {
-		auth.$signInWithPopup('google').then(function(firebaseUser) {
-		$scope.user = firebaseUser.user;
-	})
-	.catch(function(error) {
-		alert(error);
+	$scope.signIn = function()
+	{
+		auth.$signInWithPopup('google').then(function(firebaseUser)
+		{
+			$scope.user = firebaseUser.user;
+		})
+		.catch(function(error)
+		{
+			alert(error);
 		});
 	};
 	
-	$scope.signOut = function () {
+	$scope.signOut = function ()
+	{
 		auth.$signOut();
 		location.reload();
 	}
 });
-	
-	app.filter('orderObjectBy', function() {
-		return function(items, field, reverse) {
+
+app.filter('orderObject', function()
+{
+	return function(items, reverse)
+	{
 		var filtered = [];
 		
-		angular.forEach(items, function(item) {
+		angular.forEach(items, function(item)
+		{
 			filtered.push(item);
 		});
 		
-		filtered.sort(function (a, b) {
-			return a[field].localeCompare(b[field]);
+		filtered.sort(function (a, b)
+		{
+			return a.localeCompare(b);
 		});
 		
-		if(reverse) {
+		if(reverse)
+		{
 			filtered.reverse();
 		}
 			
 		return filtered;
-		};
-	});
-
-	app.filter('distinctTags', function() {
-		return function(items) {
-			var filtered = [];
-			var tags = [];
+	};
+});
+	
+app.filter('orderObjectBy', function()
+{
+	return function(items, field, reverse)
+	{
+		var filtered = [];
+		
+		angular.forEach(items, function(item)
+		{
+			filtered.push(item);
+		});
+		
+		filtered.sort(function (a, b)
+		{
+			return a[field].localeCompare(b[field]);
+		});
+		
+		if(reverse)
+		{
+			filtered.reverse();
+		}
 			
-			angular.forEach(items, function(item) {
-				if (tags.indexOf(item.tags) == -1) {
-					filtered.push(item);
-					tags.push(item.tags);
+		return filtered;
+	};
+});
+
+app.filter('distinctTags', function()
+{
+	return function(items)
+	{
+		var tags = [];
+		
+		angular.forEach(items, function(item)
+		{
+			let listTags = item.tags.split(',');
+
+			angular.forEach(listTags, function(tag)
+			{
+				tag = tag.trim();
+				
+				if (tags.indexOf(tag) == -1)
+				{
+					tags.push(tag);
 				}
 			});
-			
-			return filtered;
-		};
-	});
+		});
+		
+		return tags;
+	};
+});
 	
-	app.controller('AccountsCtrl', function ($scope, $firebaseArray) {
-		$scope.user = null;
+app.controller('AccountsCtrl', function ($scope, $firebaseArray)
+{
+	$scope.user = null;
 
-		$scope.currentDate = new Date().toLocaleDateString();
-		$scope.currentTag = 'All';
+	$scope.tags = [];
+
+	$scope.currentDate = new Date().toLocaleDateString();
+	$scope.currentTag = 'All';
 	
-	firebase.auth().onAuthStateChanged(function(firebaseUser) {
-		if (firebaseUser) {
+	firebase.auth().onAuthStateChanged(function(firebaseUser)
+	{
+		if (firebaseUser)
+		{
 			$scope.user = firebaseUser;
 			
 			var accountsRef = firebase
@@ -93,79 +147,116 @@ app.controller('AuthCtrl', function($scope, $firebaseAuth) {
 			//create a synchronized array
 			$scope.accounts = $firebaseArray(accountsRef);
 		}
-		else{
+		else
+		{
 			$scope.user = null;
 			$scope.accounts = null;
 		}
 	});
 	
-	$scope.search = function () {
+	$scope.search = function ()
+	{
 		var query = $scope.query;
+
+		//TODO: Split query by comma
 		
 		//Show only accounts correspondings to query or show all if query is empty
-		$('.account-row').each(function () {
+		$('.account-row').each(function ()
+		{
 			var found = false;
 			
-			$(this).find('.account').each(function () {
-				if ($(this).val().toUpperCase().indexOf(query.toUpperCase()) >= 0 || !query.length) {
+			$(this).find('.account').each(function ()
+			{
+				if ($(this).val().toUpperCase().indexOf(query.toUpperCase()) >= 0 || !query.length)
+				{
 					found = true;
 				}
 			});
 		
-			if (found) {
+			if (found)
+			{
 				$(this).show();
-			} else {
+			}
+			else
+			{
 				$(this).hide();
 			}
 		});
 	}
 
-	$scope.filterTag = function (tag) {
-		//Show only accounts correspondings to selected tag
-		$('.account-row').each(function () {
-			var found = false;
+	$scope.filterTag = function (query)
+	{
+		var isQueryEmpty = typeof query == 'undefined';
+
+		//Show only accounts correspondings to selected query tag
+		$('.account-row').each(function ()
+		{
+			var found = isQueryEmpty;
 			
-			$(this).find('.tag:hidden').each(function () {
-				if ($(this).val().toUpperCase().indexOf(tag.toUpperCase()) >= 0 || tag == 'All') {
-					found = true;
-				}
-			});
-		
-			if (found) {
-				$(this).show();
-			} else {
-				$(this).hide();
-			}
+			if (!isQueryEmpty)
+			{
+				$(this).find('.tag:hidden').each(function ()
+				{
+					let tags = $(this).val().split(',');
 
-			$scope.currentTag = tag;
-		});
-	}
+					angular.forEach(tags, function(tag)
+					{
+						tag = tag.trim();
 
-	$scope.filterDate = function() {
-			var currentDate = $scope.currentDate;
-					
-			$('.account-row').each(function () {
-				var found = false;
-				
-				$(this).find('.created_date').each(function () {
-					var accountCreatedDate = new Date($(this).val());
-					
-					var selectedDate = new Date(currentDate);
-					
-					if (accountCreatedDate > selectedDate) {
-						found = true;
-					}
+						if (tag.toUpperCase() == query.toUpperCase())
+						{
+							found = true;
+						}
+					});
 				});
+			}
+		
+			if (found)
+			{
+				$(this).show();
+			}
+			else
+			{
+				$(this).hide();
+			}
+
+			$scope.currentTag = isQueryEmpty ? 'All' : query;
+		});
+	}
+
+	$scope.filterDate = function()
+	{
+		var currentDate = $scope.currentDate;
+				
+		$('.account-row').each(function ()
+		{
+			var found = false;
 			
-				if (found) {
-					$(this).show();
-				} else {
-					$(this).hide();
+			$(this).find('.created_date').each(function ()
+			{
+				var accountCreatedDate = new Date($(this).val());
+				
+				var selectedDate = new Date(currentDate);
+				
+				if (accountCreatedDate > selectedDate)
+				{
+					found = true;
 				}
+			});
+		
+			if (found)
+			{
+				$(this).show();
+			} 
+			else
+			{
+				$(this).hide();
+			}
 		});
 	}
 	
-	$scope.add = function () {
+	$scope.add = function ()
+	{
 		var tags = $scope.new_tags;
 		var platform = $scope.new_platform;
 		var login = $scope.new_login;
@@ -192,11 +283,13 @@ app.controller('AuthCtrl', function($scope, $firebaseAuth) {
 		$('.add-account').hide();
 	}
 
-	$scope.save = function (account) {
+	$scope.save = function(account)
+	{
 		$scope.accounts.$save(account);
 	}
 
-	$scope.delete = function (account) {
+	$scope.delete = function(account)
+	{
 		$scope.accounts.$remove(account);
 	}
 });
