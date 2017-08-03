@@ -158,7 +158,7 @@ app.controller('AccountsCtrl', function ($scope, $firebaseArray)
 	{
 		var query = $scope.query;
 
-		//TODO: Split query by comma
+		var keywords = query.split(',');
 		
 		//Show only accounts correspondings to query or show all if query is empty
 		$('.account-row').each(function ()
@@ -167,10 +167,17 @@ app.controller('AccountsCtrl', function ($scope, $firebaseArray)
 			
 			$(this).find('.account').each(function ()
 			{
-				if ($(this).val().toUpperCase().indexOf(query.toUpperCase()) >= 0 || !query.length)
+				var value = $(this).val();
+
+				angular.forEach(keywords, function(keyword)
 				{
-					found = true;
-				}
+					keyword = keyword.trim();
+
+					if ((keyword.length > 0 && value.toUpperCase().indexOf(keyword.toUpperCase()) >= 0) || !query.length)
+					{
+						found = true;
+					}
+				});
 			});
 		
 			if (found)
