@@ -26,13 +26,13 @@
 
 						<div class="collapse bql" id="nav-toggleable-md">
 							<form class="brm" ng-show="user">
-								<input class="form-control" type="text" ng-model="query" ng-change="search()" id="search" placeholder="Search..." />
+								<input class="form-control" type="text" ng-model="query" id="search" placeholder="Search..." />
 								<button type="submit" class="po">
 									<span class="bv bje"></span>
 								</button>
 							</form>
 
-							<button type="submit" class="ce pi ahr floating-btn" ng-click="addAccount = ! addAccount">New</button>
+							<button type="submit" class="ce pb ahr floating-btn" ng-click="addAccount = ! addAccount">New</button>
 
 							<ul class="nav qq nav-stacked xx" ng-hide="user" ng-controller="AuthCtrl">
 								<li class="qp">
@@ -43,13 +43,13 @@
 							<ul class="nav qq nav-stacked xx" ng-show="user">
 								<li class="ayx">Tags</li>
 								<li class="qp">
-									<a href="" ng-click="filterTag()" class="qn active">
+									<a href="#All" ng-click="updateCurrentTag()" class="qn ng-class:{'active' : currentTag=='All'}">
 										All
 									</a>
 								</li>
 								
 								<li class="qp" ng-repeat="tag in accounts | distinctTags | orderObject:false">
-									<a href="#" ng-click="filterTag(tag)" class="qn" ng-bind="tag"></a>
+									<a ng-href="#{{tag}}" ng-click="updateCurrentTag(tag)" class="qn ng-class:{'active' : currentTag==tag}">{{tag}}</a>
 								</li>
 
 								<li class="ayx"></li>
@@ -69,13 +69,13 @@
 				<div class="es bsk" ng-show="user">
 					<div class="brv">
 						<div class="brw">
-							<h6 class="bry">Accounts</h6>
-							<h2 class="brx" ng-bind="currentTag"></h2>
+							<h6 class="bry">{{user.displayName}}</h6>
+							<h2 class="brx">{{currentTag}}</h2>
 						</div>
 
 						<div class="qb brz">
 							<div class="ayt brg">
-								<input type="text" ng-model="currentDate" ng-change="filterDate()" class="form-control" data-provide="datepicker">
+								<input type="text" id="date" ng-model="currentDate" class="form-control" data-provide="datepicker">
 								<span class="bv bck"></span>
 							</div>
 						</div>
@@ -101,25 +101,29 @@
 								<th>Action</th>
 							</tr>
 
-							<tbody class="row account-row" ng-repeat="account in accounts | orderObjectBy:'platform':false | orderObjectBy:'tags':false">
+							<tbody class="row account-row" ng-repeat="account in accounts | orderObjectBy:'platform':false | orderObjectBy:'tags':false | filterByQuery:query | filterByTag:currentTag | filterByDate:currentDate">
 								<tr>
 									<td>
 										<input class="account created_date" ng-model="account.created_date" style="display:none" />
 										<input class="account tag" ng-model="account.tags" ng-change="save(account)" />
-										<input class="account" ng-model="account.platform" ng-change="save(account)" />
+										<input class="account platform" ng-model="account.displayPlatform" disabled />
 									</td>
 									<td>
 										<input class="account" ng-model="account.login" ng-change="save(account)" />
 									</td>
 									<td>
-										<a href="" ng-click="showDetails = ! showDetails" class="ce pi ahr">MORE</a>
+										<a href="" ng-click="showDetails = ! showDetails" class="ce pi ahr">{{showDetails?'Close':'Details'}}</a>
 									</td>
 								</tr>
 								<tr>
 									<td class="account-details" ng-show="showDetails" colspan="4">
-										Password<input class="account new-account" ng-model="account.password" ng-change="save(account)" />
+										Platform <input class="account account-detail" ng-model="account.platform" ng-change="save(account)" />
 
-										Tags<input class="account new-account" ng-model="account.tags" ng-change="save(account)" />
+										Password <input class="account account-detail" ng-model="account.password" ng-change="save(account)" />
+
+										Tags <input class="account account-detail" ng-model="account.tags" ng-change="save(account)" />
+
+										Date <input class="account account-detail" ng-model="account.created_date" disabled />
 										
 										<button type="submit" class="ce tb" ng-click="delete(account)">Delete</button>
 									</td>

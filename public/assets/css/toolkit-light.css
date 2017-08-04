@@ -3592,7 +3592,7 @@ a.cj:focus, a.cj:hover {
     background-color: #ccbf1b; }
 
 .tb {
-  background-color: #E64759; }
+  background-color: #E64759; color: #FFF; }
   .tb[href]:focus, .tb[href]:hover {
     background-color: #dc1e33; }
 

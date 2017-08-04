@@ -27,31 +27,44 @@ hr {
   border-bottom: 0;
 }
 
-#search, .new-account, .brg > .form-control, .ce, .qn {
+#search, .new-account, .account-detail, .brg > .form-control, .ce, .qn {
     border-radius: 25px !important;
+}
+
+.brx {
+  color: #1997c6;
 }
 
 .tag {
   display: none;
 }
 
+.account-row:hover, .qp:hover {
+  background: #EFEFEF;
+}
+
 .account {
     border: none;
-    background: #FFF;
+    background: none;
     width: 100%;
     margin-bottom: 5px;
     outline:none;
-    /*color: #cfd2da;*/
     line-height: 1.5;
     font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.9rem;
     font-weight: 300;
 }
 
-.new-account {
+.platform {
+  font-size: 1rem;
+  font-weight: 400 !important;
+}
+
+.new-account, .account-detail {
   padding: 5px;
   padding-left: 10px;
   margin-bottom: 10px;
+  background: #FFF;
 }
 
 .account:hover, .account:active, .account:focus {
@@ -65,11 +78,11 @@ hr {
 }
 
 .password:hover, .password:active, .password:focus {
-    color: #cfd2da;
+    color: #EFEFEF;
 }
 
 .add-account, .account-details {
-  background: #cfd2da;
+  background: #EFEFEF;
 }
 
 .floating-btn {
@@ -80,4 +93,5 @@ hr {
   text-align: center;
   padding: 20px;
   margin: 50px;
+  z-index: 999;
 }
