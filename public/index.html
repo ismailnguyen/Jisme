@@ -32,7 +32,7 @@
 								</button>
 							</form>
 
-							<button type="submit" class="ce pb ahr floating-btn" ng-click="addAccount = ! addAccount">New</button>
+							<a href="#" class="ce pb ahr floating-btn" ng-click="addAccount = !addAccount">New</a>
 
 							<ul class="nav qq nav-stacked xx" ng-hide="user" ng-controller="AuthCtrl">
 								<li class="qp">
@@ -103,7 +103,7 @@
 
 							<tbody class="row account-row" ng-repeat="account in accounts | formatPlatform | orderObjectBy:'platform':false | orderObjectBy:'tags':false | filterByQuery:query | filterByTag:currentTag | filterByDate:currentDate">
 								<tr>
-									<td>
+									<td ng-click="showDetails = !showDetails">
 										<input class="account created_date" ng-model="account.created_date" style="display:none" />
 										<input class="account tag" ng-model="account.tags" ng-change="save(account)" />
 										<input class="account platform" ng-model="account.displayPlatform" disabled />
@@ -112,15 +112,17 @@
 										<input class="account" ng-model="account.login" ng-change="save(account)" />
 									</td>
 									<td>
-										<a href="" ng-click="showDetails = ! showDetails" class="ce pi ahr">{{showDetails?'Close':'Details'}}</a>
+										<a href="" ng-click="showDetails = !showDetails" class="ce pi ahr">{{showDetails?'Close':'Details'}}</a>
 									</td>
 								</tr>
 								<tr>
 									<td class="account-details" ng-show="showDetails" colspan="4">
 										Platform <input class="account account-detail" ng-model="account.platform" ng-change="save(account)" />
 
-										Password <input class="account account-detail" ng-model="account.password" ng-change="save(account)" />
-
+										Password
+										<input class="account account-detail" ng-show="showPassword" ng-model="account.password" ng-click="showPassword = !showPassword" ng-change="save(account)" />
+										<input class="account account-detail" ng-show="!showPassword" ng-model="account.password" ng-click="showPassword = !showPassword" type="password" />
+										
 										Tags <input class="account account-detail" ng-model="account.tags" ng-change="save(account)" />
 
 										Date <input class="account account-detail" ng-model="account.created_date" disabled />
