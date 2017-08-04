@@ -146,7 +146,7 @@ app.filter('filterByDate', function()
 
 			currentDate = new Date(currentDate);
 
-			if (createdDate > currentDate)
+			if (createdDate >= currentDate)
 			{
 				filtered.push(item);
 			}
@@ -188,7 +188,8 @@ app.filter('filterByQuery', function()
 
 					if (platform.indexOf(query) >= 0
 						|| login.indexOf(query) >= 0
-						|| password.indexOf(query) >= 0)
+						|| password.indexOf(query) >= 0
+						|| tags.indexOf(query) >= 0)
 					{
 						filtered.push(item);
 					}
@@ -197,6 +198,25 @@ app.filter('filterByQuery', function()
 			
 			return filtered;
 		}
+	};
+});
+
+app.filter('formatPlatform', function()
+{
+	return function(items)
+	{
+		var filtered = [];
+		
+		angular.forEach(items, function(item)
+		{
+			item['displayPlatform'] = cleanUrl(item.platform);
+
+			item['created_date'] = new Date(item.created_date).toLocaleDateString();
+
+			filtered.push(item);
+		});
+		
+		return filtered;
 	};
 });
 
@@ -305,10 +325,6 @@ app.controller('AccountsCtrl', function ($scope, $firebaseArray)
 					{
 						$scope.currentDate = new Date(item.created_date).toLocaleDateString()
 					}
-
-					item['displayPlatform'] = cleanUrl(item.platform);
-
-					item['created_date'] = new Date(item.created_date).toLocaleDateString();
 				});
 			});
 		}
@@ -351,7 +367,7 @@ app.controller('AccountsCtrl', function ($scope, $firebaseArray)
 		$scope.new_login = null;
 		$scope.new_password = null;
 
-		$('.add-account').hide();
+		$scope.addAccount = false;
 	}
 
 	$scope.save = function(account)
