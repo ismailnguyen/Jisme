@@ -109,7 +109,7 @@
 										<input class="account platform" ng-model="account.displayPlatform" disabled />
 									</td>
 									<td>
-										<input class="account" ng-copyable ng-model="account.login" ng-change="save(account)" />
+										<input class="account" ng-model="account.login" ng-change="save(account)" />
 									</td>
 									<td>
 										<a href="" ng-click="showDetails = !showDetails" class="ce pi ahr">{{showDetails?'Close':'Details'}}</a>
@@ -117,10 +117,10 @@
 								</tr>
 								<tr>
 									<td class="account-details" ng-show="showDetails" colspan="4">
-										Platform <input class="account account-detail" ng-copyable ng-model="account.platform" ng-change="save(account)" />
+										Platform <input class="account account-detail" ng-model="account.platform" ng-change="save(account)" />
 
 										Password
-										<input class="account account-detail" ng-copyable ng-show="showPassword" ng-model="account.password" ng-click="showPassword = !showPassword" ng-change="save(account)" />
+										<input class="account account-detail" ng-show="showPassword" ng-model="account.password" ng-click="showPassword = !showPassword" ng-change="save(account)" />
 										<input class="account account-detail" ng-show="!showPassword" ng-model="account.password" ng-click="showPassword = !showPassword" type="password" />
 										
 										Tags <input class="account account-detail" ng-model="account.tags" ng-change="save(account)" />
