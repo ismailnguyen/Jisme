@@ -8,3 +8,5 @@ var firebaseConfig = {
     storageBucket: "See on Firebase Console",
     messagingSenderId: "See on Firebase Console"
 };
+
+firebase.initializeApp(firebaseConfig);

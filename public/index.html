@@ -11,7 +11,7 @@
 		<link href="./assets/css/application.css" rel="stylesheet">
 	</head>
 	<body>
-		<div class="bw" ng-controller="AccountsCtrl">
+		<div class="bw" ng-controller="MainController">
 			<div class="di">   
 				<div class="em brh">
 					<nav class="bro">
@@ -34,7 +34,7 @@
 
 							<a href="#" class="ce pb ahr floating-btn" ng-click="addAccount = !addAccount">New</a>
 
-							<ul class="nav qq nav-stacked xx" ng-hide="user" ng-controller="AuthCtrl">
+							<ul class="nav qq nav-stacked xx" ng-hide="user">
 								<li class="qp">
 									<button type="submit" class="ce tb" ng-click="signIn()">Sign in with Google</button>
 								</li>
@@ -53,7 +53,7 @@
 								</li>
 
 								<li class="ayx"></li>
-								<li class="qp" ng-controller="AuthCtrl">
+								<li class="qp">
 									<button type="submit" class="ce tb" ng-click="signOut()">Sign out</button>
 								</li>
 
@@ -109,7 +109,7 @@
 										<input class="account platform" ng-model="account.displayPlatform" disabled />
 									</td>
 									<td>
-										<input class="account" ng-model="account.login" ng-change="save(account)" />
+										<input class="account" ng-copyable ng-model="account.login" ng-change="save(account)" />
 									</td>
 									<td>
 										<a href="" ng-click="showDetails = !showDetails" class="ce pi ahr">{{showDetails?'Close':'Details'}}</a>
@@ -117,10 +117,10 @@
 								</tr>
 								<tr>
 									<td class="account-details" ng-show="showDetails" colspan="4">
-										Platform <input class="account account-detail" ng-model="account.platform" ng-change="save(account)" />
+										Platform <input class="account account-detail" ng-copyable ng-model="account.platform" ng-change="save(account)" />
 
 										Password
-										<input class="account account-detail" ng-show="showPassword" ng-model="account.password" ng-click="showPassword = !showPassword" ng-change="save(account)" />
+										<input class="account account-detail" ng-copyable ng-show="showPassword" ng-model="account.password" ng-click="showPassword = !showPassword" ng-change="save(account)" />
 										<input class="account account-detail" ng-show="!showPassword" ng-model="account.password" ng-click="showPassword = !showPassword" type="password" />
 										
 										Tags <input class="account account-detail" ng-model="account.tags" ng-change="save(account)" />
@@ -151,13 +151,17 @@
 		
 		<!-- AngularJS -->
 		<script src="./assets/js/angular/angular.min.js"></script>
+		<script src="./assets/js/angular/ngClipboard.js"></script>
 
 		<!-- AngularFire -->
 		<script src="./assets/js/angular/angularfire.min.js"></script>
 		
 		<!-- Application -->
+		<script src="./assets/js/utils.js"></script>
 		<script src="./assets/js/config.js"></script>
 		<script src="./assets/js/application.js"></script>
+		<script src="./assets/js/mainController.js"></script>
+		<script src="./assets/js/filters.js"></script>
 
 	</body>
 </html>
