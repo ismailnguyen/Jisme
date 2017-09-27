@@ -1,4 +1,4 @@
-app.controller('MainController', function ($scope, $firebaseAuth, $firebaseArray, ngClipboard)
+app.controller('MainController', function ($scope, $firebaseAuth, $firebaseArray)
 {
 	$scope.currentDate = null;
 	$scope.currentTag = 'All';
@@ -8,8 +8,6 @@ app.controller('MainController', function ($scope, $firebaseAuth, $firebaseArray
 	$scope.user = null;
 	var auth = $firebaseAuth();
 
-	this.toClipboard = ngClipboard.toClipboard;
-	
 	firebase.auth().onAuthStateChanged(function(firebaseUser)
 	{
 		if (firebaseUser)

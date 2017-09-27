@@ -1,1 +1,1 @@
-var app = angular.module('jismeApp', ['firebase', 'ngClipboard']);
+var app = angular.module('jismeApp', ['firebase']);
