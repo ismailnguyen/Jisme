@@ -1,11 +1,3 @@
-app.filter('cleanUrl', function()
-{
-	return function(item)
-	{
-		return item;
-	};
-});
-
 app.filter('filterByTag', function()
 {
 	return function(items, currentTag)
@@ -49,7 +41,7 @@ app.filter('filterByDate', function()
 
 			currentDate = new Date(currentDate);
 
-			if (createdDate >= currentDate)
+			if (createdDate.getTime() >= currentDate.getTime())
 			{
 				filtered.push(item);
 			}
@@ -114,7 +106,7 @@ app.filter('formatPlatform', function()
 		{
 			item['displayPlatform'] = cleanUrl(item.platform);
 
-			item['created_date'] = new Date(item.created_date).toLocaleDateString();
+			item['created_date'] = new Date(item.created_date).toUTCString();
 
 			filtered.push(item);
 		});

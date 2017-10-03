@@ -57,7 +57,7 @@ app.controller('MainController', function ($scope, $firebaseAuth, $firebaseArray
 				{
 					if ($scope.currentDate == null)
 					{
-						$scope.currentDate = new Date(item.created_date).toLocaleDateString()
+						$scope.currentDate = new Date(item.created_date).toUTCString()
 					}
 				});
 			});
@@ -106,6 +106,9 @@ app.controller('MainController', function ($scope, $firebaseAuth, $firebaseArray
 
 	$scope.save = function(account)
 	{
+		account.created_date =  new Date(account.created_date).toUTCString();
+		account.displayPlatform = null;
+
 		$scope.accounts.$save(account);
 	}
 
