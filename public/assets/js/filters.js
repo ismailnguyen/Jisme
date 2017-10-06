@@ -77,11 +77,13 @@ app.filter('filterByQuery', function()
 					query = query.toUpperCase();
 
 					let platform = item.platform.toUpperCase();
+					let displayPlatform = item.displayPlatform.toUpperCase();
 					let login = item.login.toUpperCase();
 					let password = item.password.toUpperCase();
 					let tags = item.tags.toUpperCase();
 
 					if (platform.indexOf(query) >= 0
+						|| displayPlatform.indexOf(query) >= 0
 						|| login.indexOf(query) >= 0
 						|| password.indexOf(query) >= 0
 						|| tags.indexOf(query) >= 0)
