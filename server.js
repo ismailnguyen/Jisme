@@ -5,22 +5,21 @@ var mongodb = require("mongodb");
 var sha256 = require("sha256");
 var ObjectID = mongodb.ObjectID;
 
-var USERS_COLLECTION = "users";
-var ACCOUNTS_COLLECTION = "accounts";
-
 var app = express();
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
 
-//Allow Cross-origin resource sharing
-var cors = require('cors');
-app.use(cors);
+// DATABASE CONFIGURATION BELOW
 
 // Create a database variable outside of the database connection callback to reuse the connection pool in app.
 var db;
 
 // Database URL
 var db_uri = process.env.MONGODB_URI;
+
+// Database collections
+var USERS_COLLECTION = "users";
+var ACCOUNTS_COLLECTION = "accounts";
 
 // Connect to the database before starting the application server.
 mongodb.MongoClient.connect(db_uri, function (err, database)
