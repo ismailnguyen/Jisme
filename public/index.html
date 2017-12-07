@@ -1,165 +1,47 @@
 <!DOCTYPE html>
-<html ng-app="jismeApp" ng-cloak>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width">
-		
-		<title>Jisme</title>
+<html lang="en" ng-app="Jisme">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>Jisme</title>
+    
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
+    <link href="./css/toolkit-light.css" rel="stylesheet">
+    <link href="./css/application.css" rel="stylesheet">
+    
+  </head>
 
-		<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
-		<link href="./assets/css/toolkit-light.css" rel="stylesheet">
-		<link href="./assets/css/application.css" rel="stylesheet">
-	</head>
-	<body>
-		<div class="bw" ng-controller="MainController">
-			<div class="di">   
-				<div class="em brh">
-					<nav class="bro">
-						<div class="bri">
-							<button class="bqe bqg brj" type="button" data-toggle="collapse" data-target="#nav-toggleable-md">
-								<span class="aep">Toggle nav</span>
-							</button>
-							<a class="brk bsi" href="/">
-								<span class="bv bik brl">Jisme</span>
-							</a>
-						</div>
+  <body>
 
-						<div class="collapse bql" id="nav-toggleable-md">
-							<form class="brm" ng-show="user">
-								<input class="form-control" type="text" ng-model="query" id="search" placeholder="Search..." />
-								<button type="submit" class="po">
-									<span class="bv bje"></span>
-								</button>
-							</form>
+    <!-- Dynamically render templates -->
+    <div class="bw" ng-view>
+    </div>
 
-							<a href="#" class="ce pb ahr floating-btn" ng-click="addAccount = !addAccount">New</a>
+    <script src="./js/jquery.min.js"></script>
+    <script src="./js/tether.min.js"></script>
+    <script src="./js/toolkit.js"></script>
 
-							<ul class="nav qq nav-stacked xx" ng-hide="user">
-								<li class="qp">
-									<button type="submit" class="ce tb" ng-click="signIn()">Sign in with Google</button>
-								</li>
-							</ul>
+    <script src="./js/angular.min.js"></script>
+    <script src="./js/angular-route.min.js"></script>
+    <script src="./js/ngClipboard.js"></script>
 
-							<ul class="nav qq nav-stacked xx" ng-show="user">
-								<li class="ayx">Tags</li>
-								<li class="qp">
-									<a href="#All" ng-click="updateCurrentTag()" class="qn ng-class:{'active' : currentTag=='All'}">
-										All
-									</a>
-								</li>
-								
-								<li class="qp" ng-repeat="tag in accounts | distinctTags | orderObject:false">
-									<a ng-href="#{{tag}}" ng-click="updateCurrentTag(tag)" class="qn ng-class:{'active' : currentTag==tag}">{{tag}}</a>
-								</li>
+    <script src="./js/sha256.min.js"></script>
+    <script src="./js/sjcl.js"></script>
+    <script src="./js/utils.js"></script>
+    
+    <script src="./js/app.js"></script>
+    
+    <script src="./js/routes.js"></script>
 
-								<li class="ayx"></li>
-								<li class="qp">
-									<button type="submit" class="ce tb" ng-click="signOut()">Sign out</button>
-								</li>
+    <script src="./js/services/userservice.js"></script>
+    <script src="./js/controllers/logincontroller.js"></script>
 
-							</ul>
+    <script src="./js/services/accountservice.js"></script>
+    <script src="./js/controllers/accountscontroller.js"></script>
 
-							<hr class="bsj afx">
-
-							&copy; 2017 Jisme
-						</div>
-					</nav>
-				</div>
-				
-				<div class="es bsk" ng-show="user">
-					<div class="brv">
-						<div class="brw">
-							<h6 class="bry">{{user.displayName}}</h6>
-							<h2 class="brx">{{currentTag}}</h2>
-						</div>
-
-						<div class="qb brz">
-							<div class="ayt brg">
-								<input type="text" id="date" ng-model="currentDate" class="form-control" data-provide="datepicker">
-								<span class="bv bck"></span>
-							</div>
-						</div>
-					</div>
-
-					<div class="nu">
-						<table class="ck">
-
-							<tr>
-								<td class="add-account" ng-show="addAccount" colspan="4">
-									<input class="new-account account" ng-model="new_platform" type="text" placeholder="Platform" />
-									<input class="new-account account" ng-model="new_login" type="text" placeholder="Login" />
-									<input class="new-account account" ng-model="new_password" type="text" placeholder="Password" />
-									<input class="new-account account" ng-model="new_tags" type="text" placeholder="Tags (separated with comma)" />
-									
-									<button ng-click="add()" class="ce pi ahr">Add</button>
-								</td>
-							</tr>
-						
-							<tr>
-								<th>Platform</th>
-								<th>Login</th>
-								<th>Action</th>
-							</tr>
-
-							<tbody class="row account-row" ng-repeat="account in accounts | formatPlatform | orderObjectBy:'platform':false | orderObjectBy:'tags':false | filterByQuery:query | filterByTag:currentTag | filterByDate:currentDate">
-								<tr>
-									<td ng-click="showDetails = !showDetails">
-										<input class="account created_date" ng-model="account.created_date" style="display:none" />
-										<input class="account tag" ng-model="account.tags" ng-change="save(account)" />
-										<input class="account platform" ng-model="account.displayPlatform" disabled />
-									</td>
-									<td>
-										<input class="account" ng-model="account.login" ng-change="save(account)" />
-									</td>
-									<td>
-										<a href="" ng-click="showDetails = !showDetails" class="ce pi ahr">{{showDetails?'Close':'Details'}}</a>
-									</td>
-								</tr>
-								<tr>
-									<td class="account-details" ng-show="showDetails" colspan="4">
-										Platform <input class="account account-detail" ng-model="account.platform" ng-change="save(account)" />
-
-										Password
-										<input class="account account-detail" ng-model="account.password" ng-change="save(account)" />
-										
-										Tags <input class="account account-detail" ng-model="account.tags" ng-change="save(account)" />
-
-										Date <input class="account account-detail" ng-model="account.created_date" disabled />
-										
-										<button type="submit" class="ce tb" ng-click="delete(account)">Delete</button>
-									</td>
-								</tr>
-							</tbody>
-
-						</table>
-					</div>
-				</div>
-
-			</div>
-		</div>
-
-		<script src="./assets/js/jquery/jquery.min.js"></script>
-		<script src="./assets/js/jquery/tether.min.js"></script>
-		<script src="./assets/js/jquery/toolkit.js"></script>
-		
-		<!-- Firebase -->
-		<script src="./assets/js/firebase/firebase.js"></script>
-		<script src="./assets/js/firebase/firebase-app.js"></script>
-		<script src="./assets/js/firebase/firebase-auth.js"></script>
-		<script src="./assets/js/firebase/firebase-database.js"></script>
-		
-		<!-- AngularJS -->
-		<script src="./assets/js/angular/angular.min.js"></script>
-
-		<!-- AngularFire -->
-		<script src="./assets/js/angular/angularfire.min.js"></script>
-		
-		<!-- Application -->
-		<script src="./assets/js/utils.js"></script>
-		<script src="./assets/js/config.js"></script>
-		<script src="./assets/js/application.js"></script>
-		<script src="./assets/js/mainController.js"></script>
-		<script src="./assets/js/filters.js"></script>
-
-	</body>
+    <script src="./js/filters.js"></script>
+    
+  </body>
 </html>
