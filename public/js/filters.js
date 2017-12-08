@@ -55,39 +55,36 @@ app.filter('filterByQuery', function()
 			return items;
 		}
 
-		if (!isQueryEmpty)
+		query = query.toUpperCase();
+
+		var filtered = [];
+
+		var keywords = query.split(',');
+
+		Array.prototype.filter.call(keywords, function (keyword)
 		{
-			var filtered = [];
-
-			var keywords = query.split(',');
-
-			angular.forEach(keywords, function(keyword)
-			{
-				keyword = keyword.trim();
-
-				angular.forEach(items, function(item)
-				{
-					query = query.toUpperCase();
-
-					let platform = item.platform.toUpperCase();
-					let displayPlatform = item.displayPlatform.toUpperCase();
-					let login = item.login.toUpperCase();
-					let password = item.password.toUpperCase();
-					let tags = item.tags.toUpperCase();
-
-					if (platform.indexOf(query) >= 0
-						|| displayPlatform.indexOf(query) >= 0
-						|| login.indexOf(query) >= 0
-						|| password.indexOf(query) >= 0
-						|| tags.indexOf(query) >= 0)
-					{
-						filtered.push(item);
-					}
-				});
-			});
+			keyword = keyword.trim();
 			
-			return filtered;
-		}
+			Array.prototype.filter.call(items, function(item)
+			{
+				let platform = item.platform.toUpperCase();
+				let displayPlatform = item.displayPlatform.toUpperCase();
+				let login = item.login.toUpperCase();
+				let password = item.password.toUpperCase();
+				let tags = item.tags.toUpperCase();
+
+				if (platform.indexOf(query) >= 0
+					|| displayPlatform.indexOf(query) >= 0
+					|| login.indexOf(query) >= 0
+					|| password.indexOf(query) >= 0
+					|| tags.indexOf(query) >= 0)
+				{
+					filtered.push(item);
+				}
+			});
+		});
+
+		return filtered;
 	};
 });
 
@@ -95,18 +92,14 @@ app.filter('formatPlatform', function()
 {
 	return function(items)
 	{
-		var filtered = [];
-		
-		angular.forEach(items, function(item)
+		return Array.prototype.filter.call(items, function(item)
 		{
 			item['displayPlatform'] = cleanUrl(item.platform);
 
 			item['created_date'] = new Date(item.created_date).toUTCString();
 
-			filtered.push(item);
+			return item;
 		});
-		
-		return filtered;
 	};
 });
 
