@@ -16,7 +16,7 @@ app.controller("AccountsController", function(accounts, $scope, AccountService, 
 
   angular.forEach($scope.accounts, function(item)
   {
-    if ($scope.currentDate == null)
+    if ($scope.currentDate == null || $scope.currentDate > item.created_date)
     {
       $scope.currentDate = new Date(item.created_date).toUTCString();
     }
@@ -54,7 +54,7 @@ app.controller("AccountsController", function(accounts, $scope, AccountService, 
 
     $scope.accounts.push(account);
 
-    closeAddAccount();
+    $scope.closeAddAccount();
 	};
 
   $scope.closeAddAccount = function ()

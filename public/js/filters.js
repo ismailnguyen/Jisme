@@ -33,21 +33,14 @@ app.filter('filterByDate', function()
 {
 	return function(items, currentDate)
 	{
-		var filtered = [];
+		currentDate = new Date(currentDate);
 
-		angular.forEach(items, function(item)
+		return Array.prototype.filter.call(items, function (item)
 		{
 			let createdDate = new Date(item.created_date);
-
-			currentDate = new Date(currentDate);
-
-			if (createdDate.getTime() >= currentDate.getTime())
-			{
-				filtered.push(item);
-			}
+			
+			return createdDate.getDate() >= currentDate.getDate();
 		});
-
-		return filtered;
 	};
 });
 
