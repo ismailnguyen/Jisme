@@ -5,7 +5,7 @@ app.controller("AccountsController", function(accounts, $scope, AccountService, 
   $scope.accounts = accounts;
   $scope.tags = [];
   $scope.currentTag = 'All';
-  $scope.currentDate = null;
+  $scope.currentDate = new Date();
 
   $scope.new_tags = '';
   $scope.new_platform = '';
@@ -16,9 +16,11 @@ app.controller("AccountsController", function(accounts, $scope, AccountService, 
 
   angular.forEach($scope.accounts, function(item)
   {
-    if ($scope.currentDate == null || $scope.currentDate > item.created_date)
+    let createdDate = new Date(item.created_date);
+  
+    if ($scope.currentDate > createdDate)
     {
-      $scope.currentDate = new Date(item.created_date).toUTCString();
+      $scope.currentDate = createdDate;
     }
   });
     

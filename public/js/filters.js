@@ -39,7 +39,7 @@ app.filter('filterByDate', function()
 		{
 			let createdDate = new Date(item.created_date);
 			
-			return createdDate.getDate() >= currentDate.getDate();
+			return createdDate >= currentDate;
 		});
 	};
 });
