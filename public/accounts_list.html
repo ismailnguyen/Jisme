@@ -108,7 +108,7 @@
 
                             Password
                             <input class="account account-detail" type="password" ng-model="account.password" ng-show="!showPassword" ng-click="showPassword = !showPassword" />
-                            <input class="account account-detail" ng-model="account.password" ng-change="save(account)" ng-show="showPassword" ng-click="showPassword = !showPassword" />
+                            <input class="account account-detail" ng-model="account.password" ng-change="save(account)" ng-show="showPassword" ng-dblclick="showPassword = !showPassword" />
                             
                             Tags 
                             <input class="account account-detail" ng-model="account.tags" ng-change="save(account)" />
