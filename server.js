@@ -3,13 +3,11 @@ var path = require("path");
 var bodyParser = require("body-parser");
 var mongodb = require("mongodb");
 var sha256 = require("sha256");
-var cors = require('cors');
 var ObjectID = mongodb.ObjectID;
 
 var app = express();
 app.use(express.static(__dirname + "/public"));
 app.use(bodyParser.json());
-app.use(cors())
 
 // DATABASE CONFIGURATION BELOW
 
@@ -17,7 +15,7 @@ app.use(cors())
 var db;
 
 // Database URL
-var db_uri = 'mongodb://heroku_02dd01sw:h4nnlnal1mmeto3bavnptsru3a@ds123534.mlab.com:23534/heroku_02dd01sw'; //process.env.MONGODB_URI;
+var db_uri = process.env.MONGODB_URI;
 
 // Database collections
 var USERS_COLLECTION = "users";
@@ -37,7 +35,7 @@ mongodb.MongoClient.connect(db_uri, function (err, database)
   console.log("Database connection ready");
 
   // Initialize the app.
-  var server = app.listen(process.env.PORT || 8090, function ()
+  var server = app.listen(process.env.PORT || 8080, function ()
   {
     var port = server.address().port;
     console.log("App now running on port", port);
@@ -167,7 +165,7 @@ app.get(ACCOUNTS_API_URL, function(req, res)
   {
     if (err || !data)
     {
-      handleError(res, err, "No data found");
+      handleError(res, err.message, "No data found");
       return;
     }
 
