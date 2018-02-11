@@ -1,23 +1,49 @@
+import { getUser, createSession, destroySession } from '../utils/auth'
+
 function UserService()
 {
-  this.login = function(email, password)
-  {
-    let credentials =
-    {
-        email: email,
-        password: password
-    };
+    const USERS_API_URL = '/api/users/';
 
-    return fetch('http://localhost:8090/api/users/login/', 
+    this.login = function (email, password)
     {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(credentials)
-    })
-    .then(response => response.json());
-  }
+        let credentials =
+        {
+            email: email,
+            password: password
+        };
+
+        return fetch(USERS_API_URL + 'login/', 
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(credentials)
+        })
+        .then(handleLoginErrors)
+        .then(response => response.json())
+        .then(user => createSession(user));
+    }
+
+    this.logout = function ()
+    {
+        destroySession();
+    }
+
+    function handleLoginErrors (response)
+    {
+        if (!response.ok)
+        {
+            if (response.status === 404)
+            {
+                throw Error('Invalid username/password !');
+            }
+            
+            throw Error(response.statusText);
+        }
+
+        return response;
+    }
 };
 
 export default UserService;
