@@ -1,126 +1,82 @@
-function AccountsService()
+import { getEncryptedAccount, getDecryptedAccount } from '../utils/account'
+import { getHeaders } from '../utils/requestHeader'
+
+function AccountsService (user, state)
 {
-    function getAuthorizationHeaderfunction(email, token)
-    {
-        var authorizationBasic = btoa(email + ":" + token).toString("base64");
+    this.user = user;
+    this.state = state;
+    this.headers = getHeaders(user.email, user.token);
 
-        return 'Basic ' + authorizationBasic;
-    }
+    const ACCOUNTS_API_URL = '/api/accounts/';
 
-    function getEncryptedAccount(account, token)
+    this.get = function()
     {
-      var encryptedAccount = JSON.parse(JSON.stringify(account)); // Clone object without reference
-  
-      encryptedAccount['platform'] = encrypt(account.platform, token);
-      encryptedAccount['login'] = encrypt(account.login, token);
-      encryptedAccount['password'] = encrypt(account.password, token);
-      encryptedAccount['tags'] = encrypt(account.tags, token);
-  
-      return encryptedAccount;
-    }
-
-    function getDecryptedAccount(account, token)
-    {
-      var encryptedAccount = JSON.parse(JSON.stringify(account)); // Clone object without reference
-  
-      encryptedAccount['platform'] = decrypt(account.platform, token);
-      encryptedAccount['login'] = decrypt(account.login, token);
-      encryptedAccount['password'] = decrypt(account.password, token);
-      encryptedAccount['tags'] = decrypt(account.tags, token);
-  
-      return encryptedAccount;
-    }
-
-    this.login = function(email, password)
-    {
-      let credentials =
-      {
-          email: email,
-          password: password
-      };
-  
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-  
-      return fetch('http://localhost:8090/api/users/login/', 
-          {
-              method: 'POST',
-              headers: myHeaders,
-              body: JSON.stringify(credentials)
-          })
-          .then(response => response.json());
-    }
-
-    this.get = function(user)
-    {
-        return fetch('http://localhost:8090/api/accounts/',
+        return fetch(ACCOUNTS_API_URL,
         {
             method: 'GET',
-            headers:
-            {
-                'Authorization': getAuthorizationHeaderfunction(user.email, user.token)
-            }
+            headers: this.headers
         })
-        .then(response => response.json());
+        .then(response => response.json())
+        .then(accounts => {
+            let encryptedAccounts = [];
+
+            accounts.forEach(account =>
+            {
+                encryptedAccounts.push(getDecryptedAccount(account, this.user.token));
+            });
+
+            return encryptedAccounts;
+        })
+        .then(accounts => this.state.accounts = accounts);
     }
 
-  /*this.add = function(account, user)
-  {
-    return $http.post('/api/accounts', getEncryptedAccount(account, user.token),
+    this.add = function(accountToAdd)
     {
-        headers:
-        {
-            'Authorization': getAuthorizationHeaderfunction(user.email, user.token)
-        }
-    }).
-    then(function(response)
-    {
-        return getDecryptedAccount(response.data, user.token);
-    }, 
-    function(response)
-    {
-        console.log(response);
-    });
-  }
-  
-  this.save = function(account, user)
-  {
-    return $http.put('/api/accounts/' + account._id, getEncryptedAccount(account, user.token),
-    {
-        headers:
-        {
-            'Authorization': getAuthorizationHeaderfunction(user.email, user.token)
-        }
-    }).
-    then(function(response)
-    {
-        return response.data;
-    }, 
-    function(response)
-    {
-        console.log(response);
-    });
-  }
+        let encryptedAccount = getEncryptedAccount(accountToAdd, this.user.token);
 
-  this.remove = function(account, user)
-  {
-    return $http.delete('/api/accounts/' + account._id,
-    {
-        headers:
+        return fetch(ACCOUNTS_API_URL,
         {
-            'Authorization': getAuthorizationHeaderfunction(user.email, user.token)
-        }
-    }).
-    then(function(response)
+            method: 'POST',
+            headers: this.headers,
+            body: JSON.stringify(encryptedAccount)
+        })
+        .then(response => response.json())
+        .then(addedAccount => getDecryptedAccount(addedAccount, this.user.token))
+        .then(addedAccount => this.state.accounts.push(addedAccount));
+    }
+
+    this.save = function(accountToSave)
     {
-        console.log(response.data);
-        return response.data;
-    }, 
-    function(response)
+        let encryptedAccount = getEncryptedAccount(accountToSave, this.user.token);
+
+        return fetch(ACCOUNTS_API_URL + accountToSave._id,
+        {
+            method: 'PUT',
+            headers: this.headers,
+            body: JSON.stringify(encryptedAccount)
+        })
+        .then(response =>
+        {
+            let index = this.state.accounts.indexOf(accountToSave);
+
+            this.state.accounts[index] = accountToSave;
+        });
+    }
+
+    this.remove = function(accountToRemove)
     {
-        console.log(response);
-    });
-  }*/
+        return fetch(ACCOUNTS_API_URL + accountToRemove._id,
+        {
+            method: 'DELETE',
+            headers: this.headers
+        })
+        .then(response =>
+        {
+            let index = this.state.accounts.indexOf(accountToRemove);
+
+            this.state.accounts.splice(index, 1);
+        });
+    }
 };
 
 export default AccountsService;
