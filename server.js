@@ -37,7 +37,7 @@ mongodb.MongoClient.connect(db_uri, function (err, database)
   console.log("Database connection ready");
 
   // Initialize the app.
-  var server = app.listen(process.env.PORT || 8080, function ()
+  var server = app.listen(process.env.PORT || 8090, function ()
   {
     var port = server.address().port;
     console.log("App now running on port", port);
@@ -92,7 +92,8 @@ app.post(USERS_API_URL + "/login", function(req, res)
   {
     if (err)
     {
-      handleError(res, err.message, "Failed to find user");
+      let message = err ? err.message : 'Error';
+      handleError(res, message, "Failed to find user");
       return;
     }
 
@@ -125,7 +126,8 @@ app.post(USERS_API_URL + "/register", function(req, res)
   {
     if (err)
     {
-      handleError(res, err.message, "User already exists");
+      let message = err ? err.message : 'Error';
+      handleError(res, message, "User already exists");
       return;
     }
 
@@ -142,7 +144,8 @@ app.post(USERS_API_URL + "/register", function(req, res)
     {
       if (err)
       {
-        handleError(res, err.message, "Failed to create new user.");
+        let message = err ? err.message : 'Error';
+        handleError(res, message, "Failed to create new user.");
         return;
       } 
 
@@ -167,7 +170,8 @@ app.get(ACCOUNTS_API_URL, function(req, res)
   {
     if (err || !data)
     {
-      handleError(res, err.message, "No data found");
+      let message = err ? err.message : 'Error while fetching user to get accounts';
+      handleError(res, message, "No user found");
       return;
     }
 
@@ -175,7 +179,8 @@ app.get(ACCOUNTS_API_URL, function(req, res)
     {
       if (err)
       {
-        handleError(res, err.message, "Failed to get accounts.");
+        let message = err ? err.message : 'Error';
+        handleError(res, message, "Failed to get accounts.");
         return;
       }
   
@@ -193,7 +198,8 @@ app.post(ACCOUNTS_API_URL, function(req, res)
   {
     if (err || !data)
     {
-      handleError(res, err.message, "Wrong user");
+      let message = err ? err.message : 'Error while fetching user to add account';
+      handleError(res, message, "No user found");
       return;
     }
 
@@ -205,7 +211,8 @@ app.post(ACCOUNTS_API_URL, function(req, res)
     {
       if (err)
       {
-        handleError(res, err.message, "Failed to add new account.");
+        let message = err ? err.message : 'Error while adding account';
+        handleError(res, message, "Failed to add new account.");
         return;
       }
   
@@ -223,7 +230,8 @@ app.put(ACCOUNTS_API_URL + "/:account_id", function(req, res)
   {
     if (err || !data)
     {
-      handleError(res, err.message, "No data found");
+      let message = err ? err.message : 'Error while fetching user to update account';
+      handleError(res, message, "No user found");
       return;
     }
 
@@ -243,7 +251,8 @@ app.put(ACCOUNTS_API_URL + "/:account_id", function(req, res)
     {
       if (err)
       {
-        handleError(res, err.message, "Failed to update account");
+        let message = err ? err.message : 'Error while updating account';
+        handleError(res, message, "Failed to update account");
         return;
       }
     
@@ -261,7 +270,8 @@ app.delete(ACCOUNTS_API_URL + "/:account_id", function(req, res)
   {
     if (err || !data)
     {
-      handleError(res, err.message, "No data found");
+      let message = err ? err.message : 'Error while fetching user to delete account';
+      handleError(res, message, "No user found");
       return;
     }
 
@@ -271,7 +281,8 @@ app.delete(ACCOUNTS_API_URL + "/:account_id", function(req, res)
     {
       if (err)
       {
-        handleError(res, err.message, "Failed to delete account");
+        let message = err ? err.message : 'Error while deleting account';
+        handleError(res, message, "Failed to delete account");
         return;
       }
       
