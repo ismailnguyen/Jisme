@@ -1,30 +1,12 @@
 import Vue from 'vue'
-import VueRouter from 'vue-router'
-
-Vue.use(VueRouter);
-
 import App from './components/App.vue'
-import Dashboard from './components/Dashboard.vue'
-import Login from './components/Login.vue'
-import Register from './components/Register.vue'
 
-import { requireAuth } from './utils/auth'
-
-const router = new VueRouter({
-    mode: 'history',
-    routes: [
-        { 
-            path: '/',
-            beforeEnter: requireAuth,
-            component: Dashboard },
-        //{ path: '/tag/:tag', component: Tag },
-        { path: '/login', component: Login },
-        { path: '/register', component: Register }
-    ]
-});
+import router from './router'
+import store from './store'
 
 new Vue({
     el: '#app',
     router,
+    store,
     render: h => h(App)
 });
