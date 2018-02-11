@@ -1,50 +1,64 @@
 <template>
-    <div>
-        <button class="btn btn-info btn-sm" @click="showForm = !showForm">Add</button>
-
-        <div class="form" v-if="showForm">
-            <div class="form-group">
-                <label>Title</label>
-                <input type="text" class="form-control" v-model="event.title">
-            </div>
-
-            <div class="form-group">
-                <label>Description</label>
-                <input type="text" class="form-control" v-model="event.description">
-            </div>
-
-            <div class="form-group">
-                <label>Date</label>
-                <input type="date" class="form-control" v-model="event.date">
-            </div>
-
-            <div class="form-group">
-                <label>Location</label>
-                <input type="text" class="form-control" v-model="event.location">
-            </div>
-
-            <button class="btn-sm btn-primary" @click="addEvent">Submit</button>
-
-        </div>
-    </div>
+    <tr>
+        <td class="add-account" colspan="4">
+            <span>{{ account.platform | formatPlatform }}</span>
+            <input class="new-account account" v-model="account.platform" type="text" placeholder="Platform" />
+            <input class="new-account account" v-model="account.login" type="text" placeholder="Login" />
+            <input class="new-account account" v-model="account.password" type="text" placeholder="Password (double-click to generate password)" v-on:dblclick="generatePassword()" />
+            <input class="new-account account" v-model="account.tags" type="text" placeholder="Tags (separated with comma)" />
+            
+            <button @click="add" class="ce pi ahr">Add</button>
+        </td>
+    </tr>
 </template>
 
 <script>
+    import AccountsService from '../services/AccountsService'
+    import { cleanUrl, randomPassword } from '../utils/textFormat'
+
     export default {
-        data() {
+        props: ['user', 'showForm'],
+        data()
+        {
             return {
-                event: {
-                    title: '',
-                    description: '',
-                    date: '',
-                    location: '',
-                    email: ''
-                },
-                showForm: false
+                account: {
+                    platform: '',
+                    login: '',
+                    password: '',
+                    tags: ''
+                }
+            }
+        },
+        filters:
+        {
+            formatPlatform: function (platform)
+            {
+                return cleanUrl(platform);
             }
         },
         methods: {
-            addEvent() {
+            add: function ()
+            {
+                let accountsService = new AccountsService(this.user, this.$store.state);
+
+                accountsService.add(this.account);
+
+                this.cleanForm();
+
+                this.$emit('isFinished', true);
+            },
+            generatePassword: function ()
+            {
+                this.account.password = randomPassword(8);
+            },
+            cleanForm: function ()
+            {
+                this.account = {
+                    platform: '',
+                    login: '',
+                    password: '',
+                    tags: ''
+                };
             }
         }
     } 
