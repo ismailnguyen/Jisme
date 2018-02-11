@@ -3,14 +3,45 @@
     "lang": "en",
     "name": "Jisme",
     "scope": "/",
-    "display": "fullscreen",
-    "start_url": "https://jisme.herokuapp.com/",
+    "display": "standalone",
+    "start_url": "/",
     "short_name": "Jisme",
     "theme_color": "transparent",
     "description": "",
     "orientation": "any",
-    "background_color": "transparent",
+    "background_color": "white",
     "related_applications": [],
     "prefer_related_applications": false,
-    "icons": []
+    "icons": [{
+        "src": "images/touch/favicon.ico",
+        "sizes": "16x16 32x32 64x64 128x128 256x256 512x512"
+      }, {
+        "src": "images/touch/favicon16.png",
+        "sizes": "16x16",
+        "type": "image/png"
+      }, {
+        "src": "images/touch/favicon32.png",
+        "sizes": "32x32",
+        "type": "image/png"
+      }, {
+        "src": "images/touch/favicon64.png",
+        "sizes": "64x64",
+        "type": "image/png"
+      }, {
+        "src": "images/touch/favicon128.png",
+        "sizes": "128x128",
+        "type": "image/png"
+      }, {
+        "src": "images/touch/favicon256.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      }, {
+        "src": "images/touch/favicon256.png",
+        "sizes": "256x256",
+        "type": "image/png"
+      }, {
+        "src": "images/touch/favicon512.png",
+        "sizes": "521x512",
+        "type": "image/png"
+      }]
 }
