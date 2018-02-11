@@ -6,18 +6,17 @@
             <input type="text" placeholder="email" class="form-control" v-model="email">
             <input type="password" placeholder="password" class="form-control" v-model="password">
             <br/>
-            <button class="btn btn-primary" @click="handleLogin">Sign In</button>
+            <button class="ce pi" @click="handleLogin">Sign In</button>
         </div>
         <br/>
         <p>{{error.message}}</p>
         <br/>
-        <router-link to="/signup">Don't have account ? Sign up</router-link>
+        <router-link to="/register">Don't have account ? Sign up</router-link>
     </div>
 </template>
 
-
 <script>
-    import { login } from '../utils/auth'
+    import UserService from '../services/UserService'
     
     export default {
         data() {
@@ -30,8 +29,12 @@
             }
         },
         methods: {
-            handleLogin() {
-                login(this.email, this.password);
+            handleLogin: function ()
+            {
+                let userService = new UserService();
+
+                userService.login(this.email, this.password)
+                .catch(error => this.error = error);
             }
         }
     }
