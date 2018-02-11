@@ -1,31 +1,49 @@
 <template>
-    <div class="col-md-4" v-if="display">
-        <div class="event-card">
-            <div v-if="!displayMore">
-                <h4 class="card-title" @click="displayMore = !displayMore">{{account.platform | formatPlatform}}</h4>
-            </div>
+    <tbody class="row account-row" v-show="display">
+        <tr>
+            <td @click="showDetails = !showDetails">
+                <span class="account platform">{{ account.platform | formatPlatform }}</span>
+            </td>
+            <td>
+                <input class="account" v-model="account.login" />
+            </td>
+            <td>
+                <button @click="showDetails = !showDetails" class="ce pi">{{ showDetails ? 'Close' : 'Details' }}</button>
+            </td>
+        </tr>
+        <tr>
+            <td class="account-details" v-show="showDetails" colspan="3">
+                Platform
+                <input class="account account-detail" v-model="account.platform" /> <!-- ng-copyable  -->
 
-            <div v-if="displayMore">
-                <h4 class="card-title" @click="displayMore = !displayMore">{{account.platform}}</h4>
-                <p class="card-text">{{account.platform}}</p>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">Login: {{account.login}}</li>
-                    <li class="list-group-item">Password: {{account.password}}</li>
-                    <li class="list-group-item">Date: {{account.created_date | formatDate}}</li>
-                    <li class="list-group-item">Tags: {{account.tags}}</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+                Password
+                <input class="account account-detail" type="password" v-model="account.password" v-show="!revealPassword" @click="revealPassword = !revealPassword" />
+                <input class="account account-detail" v-model="account.password" v-show="revealPassword" v-on:dblclick="revealPassword = !revealPassword" />
+                
+                Tags 
+                <input class="account account-detail" v-model="account.tags" />
+
+                Date
+                <input class="account account-detail" v-model="account.created_date" disabled />
+                
+                <button type="submit" class="ce tb" @click="removeAccount">Delete</button>
+            </td>
+        </tr>
+    </tbody>
 </template>
 
 <script>
+    import AccountsService from '../services/AccountsService'
+    import { cleanUrl } from '../utils/textFormat'
+
     export default {
-        props: ['account', 'query'],
-        data() {
+        props: ['user', 'account', 'tag', 'date', 'query'],
+        data()
+        {
             return {
-                display: true,
-                displayMore: false
+                showDetails: false,
+                revealPassword: false,
+                accountsService: new AccountsService(this.user, this.$store.state)
             }
         },
         filters:
@@ -33,56 +51,127 @@
             formatPlatform: function (platform)
             {
                 return cleanUrl(platform);
-            },
-
-            formatDate: function(date)
-            {
-                return new Date(date).toUTCString();
             }
         },
-        methods: {
-            filterByQuery: function(query)
+        computed:
+        {
+            display: function ()
             {
-                let isQueryEmpty = typeof query == 'undefined' || query.length == 0; 
-
-                if (isQueryEmpty)
+                if (!this.filterByTag(this.tag))
                 {
-                    this.display = true;
+                    return false;
+                } 
+
+                if (!this.filterByQuery(this.query))
+                {
+                    return false;
                 }
 
-                query = query.toUpperCase();
+                if (!this.filterByDate(this.date))
+                {
+                    return false;
+                }
 
-                var keywords = query.split(',');
-
-                console.log(query)
-
-                // Array.prototype.filter.call(keywords, function (keyword)
-                // {
-                //     keyword = keyword.trim();
-                    
-                //     let platform = this.account.platform.toUpperCase();
-                //     let displayPlatform = this.account.displayPlatform.toUpperCase();
-                //     let login = this.account.login.toUpperCase();
-                //     let password = this.account.password.toUpperCase();
-                //     let tags = this.account.tags.toUpperCase();
-
-                //     if (platform.indexOf(query) >= 0
-                //         || displayPlatform.indexOf(query) >= 0
-                //         || login.indexOf(query) >= 0
-                //         || password.indexOf(query) >= 0
-                //         || tags.indexOf(query) >= 0)
-                //     {
-                //         this.display = true;
-
-                //         return;
-                //     }
-                // });
-
-                this.display = false;
+                return true;
             }
         },
-        created() {
-            this.filterByQuery(this.query);
+        methods:
+        {
+            save: function()
+            {
+                this.accountsService.save(this.account);
+            },
+            
+            removeAccount: function ()
+            {
+                this.accountsService.remove(this.account);
+
+                this.showDetails = false;
+            },
+            
+            filterByTag: function (tag)
+            {
+                if (!tag || tag === 'All')
+                {
+                    return true;
+                }
+
+                if (this.account.tags.includes(tag))
+                {
+                    return true;
+                }
+
+                return false;
+            },
+
+            filterByQuery: function (query)
+            {
+                if (!query) {
+                    return true
+                }
+
+                query = query.toLowerCase();
+
+                let platform = this.account.platform.toLowerCase();
+                let displayPlatform = this.account.displayPlatform.toLowerCase();
+                let login = this.account.login.toLowerCase();
+                let password = this.account.password.toLowerCase();
+                let tags = this.account.tags.toLowerCase();
+
+                if (platform.includes(query))
+                {
+                    return true;
+                }
+
+                if (displayPlatform.includes(query))
+                {
+                    return true;
+                }
+
+                if (login.includes(query))
+                {
+                    return true;
+                }
+
+                if (password.includes(query))
+                {
+                    return true;
+                }
+
+                if (tags.includes(query))
+                {
+                    return true;
+                }
+
+                return false;
+            },
+
+            filterByDate: function (date)
+            {
+                let currentDate = new Date(date);
+                let createdDate = new Date(this.account.created_date);
+
+                return createdDate >= currentDate;
+            }
+        },
+        watch:
+        {
+            tag: function (newValue)
+            {
+                this.tag = newValue;
+            },
+            query: function (newValue)
+            {
+                this.query = newValue;
+            },
+            date: function (newValue)
+            {
+                this.date = newValue;
+            },
+            account: function (newValue)
+            {
+                this.save();
+            }
         }
     }
 </script>
