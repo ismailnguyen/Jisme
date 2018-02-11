@@ -9,24 +9,7 @@ var router = new VueRouter({
 
 import UserService from '../services/UserService'
 
-export function isLoggedIn()
-{
-    if (localStorage.getItem('user') === null)
-    {
-        return false;
-    }
-
-    return true;
-}
-
-export function logout()
-{
-    localStorage.removeItem('user');
-
-    router.go('/');
-}
-
-export function requireAuth(to, from, next)
+export function requireAuth (to, from, next)
 {
     if (!isLoggedIn())
     {
@@ -41,25 +24,37 @@ export function requireAuth(to, from, next)
     }
 }
 
-export function getUser()
+export function isLoggedIn ()
+{
+    if (localStorage.getItem('user') === null)
+    {
+        return false;
+    }
+
+    return true;
+}
+
+export function getUser ()
 {
     return JSON.parse(localStorage.getItem('user'));
 }
 
-export function login(email, password)
+export function createSession (user)
 {
-    let userService = new UserService();
-    userService.login(email, password)
-    .then(user =>
+    if (user === null)
     {
-        if (user === null)
-        {
-            return;
-        }
+        return;
+    }
 
-        localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
 
-        router.push('/')
-        location.reload();
-    });
+    router.push('/')
+    location.reload();
+}
+
+export function destroySession ()
+{
+    localStorage.removeItem('user');
+
+    router.go('/');
 }
