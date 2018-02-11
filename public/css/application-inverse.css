@@ -26,7 +26,7 @@ hr {
   border-bottom: 0;
 }
 
-#search, #date, .new-account, .account-detail, .brg > .form-control, .ce, .qn {
+#search, .new-account, .account-detail, .brg > .form-control, .ce, .qn {
     border-radius: 25px !important;
 }
 
@@ -51,7 +51,7 @@ hr {
 }
 
 .account-row:hover, .qp:hover {
-  background: #EFEFEF;
+  background: #434857;
 }
 
 .account {
@@ -64,6 +64,7 @@ hr {
     font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 0.9rem;
     font-weight: 300;
+    color:#EEE;
 }
 
 .platform {
@@ -75,25 +76,12 @@ hr {
   padding: 5px;
   padding-left: 10px;
   margin-bottom: 10px;
-  background: #FFF;
-}
-
-.account:hover, .account:active, .account:focus {
-    color: #65737e;
-}
-
-.password {
-    color: #65737e;
-    background: #65737e;
-    text-align: center;
-}
-
-.password:hover, .password:active, .password:focus {
-    color: #EFEFEF;
+  background: #252830;
+  color:#EEE;
 }
 
 .add-account, .account-details {
-  background: #EFEFEF;
+  background: #434857;
 }
 
 .floating-btn {
