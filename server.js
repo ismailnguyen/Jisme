@@ -73,11 +73,12 @@ function getCredentialsFromAuth(auth)
 /*  "/users"
  *    GET: retrieves user using his email and password
  *    POST: creates a new user
+ *    PUT: update an existing user
  */
 
 app.post(USERS_API_URL + "/login", function(req, res)
 {
-  var user = req.body;
+  let user = req.body;
 
   if (user.email == '' || user.password == '')
   {
@@ -85,7 +86,7 @@ app.post(USERS_API_URL + "/login", function(req, res)
     return;
   }
 
-  var encryptedPassword = sha256(user.password);
+  let encryptedPassword = sha256(user.password);
 
   db.collection(USERS_COLLECTION)
   .findOne({email: user.email, password: encryptedPassword}, function(err, data)
@@ -103,14 +104,23 @@ app.post(USERS_API_URL + "/login", function(req, res)
       return;
     }
 
-    res.status(200).json(data);
+    let loggedUser =
+    {
+      _id: data._id,
+      email: data.email,
+      created_date: data.created_date,
+      token: data.token,
+      last_update_date: data.last_update_date
+    };
+
+    res.status(200).json(loggedUser);
   });
 });
 
 app.post(USERS_API_URL + "/register", function(req, res)
 {
   var user = req.body;
-  user.create_date = new Date();
+  user.created_date = new Date();
 
   if (user.email == '' || user.password == '')
   {
@@ -149,7 +159,55 @@ app.post(USERS_API_URL + "/register", function(req, res)
         return;
       } 
 
-      res.status(201).json(data.ops[0]);
+      let registeredUser =
+      {
+        _id: data.ops[0]._id,
+        email: data.ops[0].email,
+        created_date: data.ops[0].created_date,
+        last_update_date: data.ops[0].last_update_date,
+        token: data.ops[0].token
+      };
+
+      res.status(201).json(registeredUser);
+    });
+  });
+});
+
+app.put(USERS_API_URL + "/:user_id", function(req, res)
+{
+  var credentials = getCredentialsFromAuth(req);
+
+  db.collection(USERS_COLLECTION)
+  .findOne({email: credentials.email, token: credentials.user_token}, function(err, data)
+  {
+    if (err || !data)
+    {
+      let message = err ? err.message : 'Error while fetching user to update';
+      handleError(res, message, "No user found");
+      return;
+    }
+
+    var user_id = req.params.user_id;
+
+    var user =
+    {
+      email: credentials.email,
+      password: req.body.password || data.password,
+      created_date: data.created_date,
+      token: credentials.user_token,
+      last_update_date: req.body.last_update_date
+    };
+
+    db.collection(USERS_COLLECTION).updateOne({_id: new ObjectID(user_id), email: credentials.email, token: credentials.user_token}, user, function(err, data)
+    {
+      if (err)
+      {
+        let message = err ? err.message : 'Error while updating user';
+        handleError(res, message, "Failed to update user");
+        return;
+      }
+
+      res.status(200).end();
     });
   });
 });
