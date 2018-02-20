@@ -13,7 +13,7 @@
                 </div>
 
                 <form class="brm">
-                    <input class="form-control" type="text" v-model="search" id="search" placeholder="Search..." />
+                    <input class="form-control" type="text" v-model="search" id="search" placeholder="Search..." autofocus />
                     <button class="po">
                         <span class="bv bje"></span>
                     </button>
@@ -98,6 +98,7 @@
 <script>
     import { getUser } from '../utils/auth'
     import { sortByName } from '../utils/sort'
+    import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
     import AddAccount from './AddAccount.vue'
     import Account from './Account.vue'
@@ -130,7 +131,7 @@
             },
             fetchAccounts: function ()
             {
-                let accountsService = new AccountsService(this.user, this.$store.state);
+                let accountsService = new AccountsService(this.user, this.$store);
 
                 accountsService.get()
                 .then(this.setOldestDate);
@@ -156,7 +157,12 @@
         mounted() {
             //mdc.autoInit()
 
-            this.fetchAccounts();
+            if (navigator.onLine)
+            {
+                this.fetchAccounts();
+            }
+
+            this.setOldestDate(this.$store.state.accounts);
         },
         computed: {
             sortedAccounts: function () {
