@@ -5,12 +5,20 @@ function getAuthorizationString(email, token)
     return 'Basic ' + authorizationBasic;
 }
 
-export function getHeaders(email, token)
+export function getHeaders()
 {
     let headers = new Headers();
 
+    headers.append('Content-Type', 'application/json');
+
+    return headers;
+}
+
+export function getHeadersWithAuth(email, token)
+{
+    let headers = getHeaders();
+
     headers.append('Authorization', getAuthorizationString(email, token));
-    headers.append('Content-Type', 'application/json')
 
     return headers;
 }
