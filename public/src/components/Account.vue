@@ -33,6 +33,7 @@
 </template>
 
 <script>
+    import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
     import { cleanUrl } from '../utils/textFormat'
 
@@ -43,7 +44,8 @@
             return {
                 showDetails: false,
                 revealPassword: false,
-                accountsService: new AccountsService(this.user, this.$store.state)
+                accountsService: new AccountsService(this.user, this.$store),
+                userService: new UserService()
             }
         },
         filters:
@@ -60,7 +62,7 @@
                 if (!this.filterByTag(this.tag))
                 {
                     return false;
-                } 
+                }
 
                 if (!this.filterByQuery(this.query))
                 {
@@ -80,6 +82,7 @@
             save: function()
             {
                 this.accountsService.save(this.account);
+                this.userService.update(this.user);
             },
             
             removeAccount: function ()
@@ -87,6 +90,8 @@
                 this.accountsService.remove(this.account);
 
                 this.showDetails = false;
+
+                this.userService.update(this.user);
             },
             
             filterByTag: function (tag)
