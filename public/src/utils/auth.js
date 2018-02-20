@@ -1,14 +1,3 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-
-Vue.use(VueRouter);
-
-var router = new VueRouter({
-    mode: 'history'
-});
-
-import UserService from '../services/UserService'
-
 export function requireAuth (to, from, next)
 {
     if (!isLoggedIn())
@@ -47,14 +36,9 @@ export function createSession (user)
     }
 
     localStorage.setItem('user', JSON.stringify(user));
-
-    router.push('/')
-    location.reload();
 }
 
 export function destroySession ()
 {
     localStorage.removeItem('user');
-
-    router.go('/');
 }
