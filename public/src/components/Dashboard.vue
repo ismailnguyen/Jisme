@@ -161,8 +161,10 @@
             {
                 this.fetchAccounts();
             }
-
-            this.setOldestDate(this.$store.state.accounts);
+            
+            this.$store.watch((state) => state.accounts, () => {
+                this.setOldestDate(this.$store.state.accounts);
+            })
         },
         computed: {
             sortedAccounts: function () {
