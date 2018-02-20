@@ -3,8 +3,8 @@
         <h3>Sign In</h3>
 
         <div class="form-group">
-            <input type="text" placeholder="email" class="form-control" v-model="email">
-            <input type="password" placeholder="password" class="form-control" v-model="password">
+            <input type="text" placeholder="email" class="form-control" v-model="email" @keyup.enter="handleLogin" autofocus>
+            <input type="password" placeholder="password" class="form-control" v-model="password" @keyup.enter="handleLogin">
             <br/>
             <button class="ce pi" @click="handleLogin">Sign In</button>
         </div>
