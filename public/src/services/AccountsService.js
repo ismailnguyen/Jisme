@@ -1,13 +1,14 @@
 import { getEncryptedAccount, getDecryptedAccount } from '../utils/account'
-import { getHeaders } from '../utils/requestHeader'
+import { BASE_API_URL } from '../utils/api'
+import { getHeadersWithAuth } from '../utils/requestHeader'
 
-function AccountsService (user, state)
+function AccountsService (user, store)
 {
     this.user = user;
-    this.state = state;
-    this.headers = getHeaders(user.email, user.token);
+    this.store = store;
+    this.headers = getHeadersWithAuth(user.email, user.token);
 
-    const ACCOUNTS_API_URL = '/api/accounts/';
+    const ACCOUNTS_API_URL = BASE_API_URL + 'accounts/';
 
     this.get = function()
     {
@@ -27,7 +28,12 @@ function AccountsService (user, state)
 
             return encryptedAccounts;
         })
-        .then(accounts => this.state.accounts = accounts);
+        .then(accounts => 
+        {
+            this.store.commit('updateAccounts', accounts);
+            
+            return accounts;
+        });
     }
 
     this.add = function(accountToAdd)
@@ -42,7 +48,7 @@ function AccountsService (user, state)
         })
         .then(response => response.json())
         .then(addedAccount => getDecryptedAccount(addedAccount, this.user.token))
-        .then(addedAccount => this.state.accounts.push(addedAccount));
+        .then(addedAccount => this.store.commit('addAccount', addedAccount));
     }
 
     this.save = function(accountToSave)
@@ -55,12 +61,7 @@ function AccountsService (user, state)
             headers: this.headers,
             body: JSON.stringify(encryptedAccount)
         })
-        .then(response =>
-        {
-            let index = this.state.accounts.indexOf(accountToSave);
-
-            this.state.accounts[index] = accountToSave;
-        });
+        .then(response => this.store.commit('updateAccount', accountToSave));
     }
 
     this.remove = function(accountToRemove)
@@ -70,12 +71,7 @@ function AccountsService (user, state)
             method: 'DELETE',
             headers: this.headers
         })
-        .then(response =>
-        {
-            let index = this.state.accounts.indexOf(accountToRemove);
-
-            this.state.accounts.splice(index, 1);
-        });
+        .then(response => this.store.commit('removeAccount', accountToRemove));
     }
 };
 
