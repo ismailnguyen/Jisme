@@ -2,7 +2,7 @@
     <tr>
         <td class="add-account" colspan="4">
             <span>{{ account.platform | formatPlatform }}</span>
-            <input class="new-account account" v-model="account.platform" type="text" placeholder="Platform" />
+            <input class="new-account account" v-model="account.platform" type="text" placeholder="Platform" autofocus />
             <input class="new-account account" v-model="account.login" type="text" placeholder="Login" />
             <input class="new-account account" v-model="account.password" type="text" placeholder="Password (double-click to generate password)" v-on:dblclick="generatePassword()" />
             <input class="new-account account" v-model="account.tags" type="text" placeholder="Tags (separated with comma)" />
@@ -13,6 +13,7 @@
 </template>
 
 <script>
+    import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
     import { cleanUrl, randomPassword } from '../utils/textFormat'
 
@@ -39,9 +40,11 @@
         methods: {
             add: function ()
             {
-                let accountsService = new AccountsService(this.user, this.$store.state);
-
+                let accountsService = new AccountsService(this.user, this.$store);
                 accountsService.add(this.account);
+
+                let userService = new UserService();
+                userService.update(this.user);
 
                 this.cleanForm();
 
