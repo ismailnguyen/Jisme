@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
+    "preinstall": "cd public && npm run build",
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -12,7 +13,7 @@
     "url": "https://github.com/ismailnguyen/Jisme-Api.git"
   },
   "author": "Ismail",
-  "license": "UNLICENSED",
+  "license": "WTFPL",
   "dependencies": {
     "body-parser": "^1.17.2",
     "cors": "^2.8.4",
