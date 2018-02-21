@@ -157,10 +157,7 @@
         mounted() {
             //mdc.autoInit()
 
-            if (navigator.onLine)
-            {
-                this.fetchAccounts();
-            }
+            this.fetchAccounts();
             
             this.$store.watch((state) => state.accounts, () => {
                 this.setOldestDate(this.$store.state.accounts);
