@@ -1,3 +1,5 @@
+import localforage from 'localforage'
+
 export function requireAuth (to, from, next)
 {
     if (!isLoggedIn())
@@ -41,4 +43,5 @@ export function createSession (user)
 export function destroySession ()
 {
     localStorage.removeItem('user');
+    localforage.clear();
 }

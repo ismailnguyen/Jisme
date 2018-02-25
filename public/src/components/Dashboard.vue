@@ -141,7 +141,6 @@
                 accounts.forEach(account =>
                 {
                     let createdDate = new Date(account.created_date);
-                    console
                     if (createdDate < this.currentDate)
                     {
                         this.currentDate = createdDate;
@@ -157,8 +156,11 @@
         mounted() {
             //mdc.autoInit()
 
-            this.fetchAccounts();
-            
+            if (navigator.onLine)
+            {
+                this.fetchAccounts();
+            }            
+    
             this.$store.watch((state) => state.accounts, () => {
                 this.setOldestDate(this.$store.state.accounts);
             })

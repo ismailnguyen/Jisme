@@ -1,11 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import localforage from 'localforage'
 
 Vue.use(Vuex);
 
 const state =
 {
-    user: {},
     accounts: []
 };
 
@@ -14,13 +14,13 @@ let mutations =
     initialiseStore (state)
     {
         // Check if the store exists
-        // if(localStorage.getItem('store'))
-        // {
-        //     // Replace the state object with the stored item
-        //     this.replaceState(
-        //         Object.assign(state, JSON.parse(localStorage.getItem('store')))
-        //     );
-        // }
+        localforage.getItem('store').then(cachedStore =>
+        {
+            // Replace the state object with the stored item
+            this.replaceState(
+                Object.assign(state, cachedStore)
+            );
+        });
     },
 
     updateAccounts (state, newValue)
@@ -53,8 +53,8 @@ const cachePlugin = store =>
     // Subscribe to store updates
     store.subscribe((mutation, state) =>
     {
-        // Store the state object as a JSON string
-        //localStorage.setItem('store', JSON.stringify(state));
+        // Store the state object
+        localforage.setItem('store', state);
     })
 };
 
