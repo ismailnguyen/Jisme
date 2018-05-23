@@ -28,7 +28,7 @@ function UserService()
         .then(response => createSession(user));
     }
 
-    this.login = function (email, password)
+    this.login = function (email, password, remember)
     {
         let credentials =
         {
@@ -46,6 +46,11 @@ function UserService()
         .then(response => response.json())
         .then(user => 
         {
+            if (remember === true)
+            {
+                //createCookie(user);
+            }
+
             createSession(user);
 
             router.push('/');
