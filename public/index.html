@@ -1,39 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2196F3">
+  <link rel="manifest" href="/manifest.json"></link>
+  <title>Jisme</title>
 
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#2196F3">
-    <link rel="manifest" href="/manifest.json"></link>
+  <!-- Add to home screen for Safari on iOS -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Weather PWA">
+  <link rel="apple-touch-icon" href="images/icons/icon-152x152.png">
+  <meta name="msapplication-TileImage" content="images/icons/icon-144x144.png">
+  <meta name="msapplication-TileColor" content="#2F3BA2">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
 
-    <title>Jisme</title>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script src="./js/jquery.min.js"></script>
+  <script src="./js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+  <script src="/js/sha256.min.js"></script>
+  <script src="/js/sjcl.js"></script>
+
+  <script src="/dist/build.js"></script>
+  <script>
     
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic" rel="stylesheet">
-    <link href="/css/toolkit-light.css" rel="stylesheet">
-    <link href="/css/application.css" rel="stylesheet">
-
-    <!-- <link rel="stylesheet" href="node_modules/material-components-web/dist/material-components-web.css"> -->
-
-  </head>
-
-  <body>
-
-    <div id="app"></div>
-    
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/tether.min.js"></script>
-    <script src="/js/toolkit.js"></script>
-    
-    <script src="/js/sha256.min.js"></script>
-    <script src="/js/sjcl.js"></script>
-    
-    <!-- <script src="node_modules/material-components-web/dist/material-components-web.js"></script> -->
-    <!-- <script>mdc.autoInit()</script> -->
-    
-    <script src="/dist/build.js"></script>
-    
-  </body>
-
+    </script>
+</body>
 </html>
