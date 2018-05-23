@@ -1,80 +1,82 @@
 <template>
-    <tbody class="row account-row" v-show="display">
-        <tr>
-            <td @click="showDetails = !showDetails">
-                <span class="account platform">{{ account.platform | formatPlatform }}</span>
-            </td>
-            <td>
-                <input class="account" v-model="account.login" />
-            </td>
-            <td>
-                <button @click="showDetails = !showDetails" class="ce pi">{{ showDetails ? 'Close' : 'Details' }}</button>
-            </td>
-        </tr>
-        <tr>
-            <td class="account-details" v-show="showDetails" colspan="3">
-                Platform
-                <input class="account account-detail" v-model="account.platform" /> <!-- ng-copyable  -->
+    <div class="col-sm-12 col-md-6 col-lg-4" :id="account._id">
+        <div class="card" v-bind:class="{ cardFocus : showDetails }">
+            <div class="card-header" v-if="!editMode">
+                <div class="badge badge-pill" v-bind:class="{ 'badge-primary' : !showDetails, 'badge-light' : showDetails }" v-for="(tag, index) in account.tags.split(',')" v-bind:key="index">
+                    {{tag}}
+                </div>
+            </div>
+            <div class="card-header" v-if="showDetails && editMode">
+                <h6 class="card-title">
+                    <div class="form-group">
+                        <label for="tags_input">Tags</label>
+                        <input id="tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="tagsHelp" v-model="account.tags" />
+                        <small id="tagsHelp" class="form-text text-muted">Separated with comma.</small>
+                    </div>
+                </h6>
+            </div>
 
-                Password
-                <input class="account account-detail" type="password" v-model="account.password" v-show="!revealPassword" @click="revealPassword = !revealPassword" />
-                <input class="account account-detail" v-model="account.password" v-show="revealPassword" v-on:dblclick="revealPassword = !revealPassword" />
+            <div class="card-body">
+                <h2 class="card-title" v-if="!showDetails">{{ account.displayPlatform }}</h2>
+                <h2 class="card-title" v-if="showDetails && !editMode">{{ account.platform }}</h2>
+                <h6 class="card-title" v-if="showDetails && editMode">
+                    <div class="form-group">
+                        <label for="platform_input">Platform</label>
+                        <input id="platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" autofocus />
+                    </div>
+                </h6>
                 
-                Tags 
-                <input class="account account-detail" v-model="account.tags" />
+                <h6 class="card-subtitle mb-2 text-muted" v-if="showDetails && !editMode">{{account.login}}</h6>
+                <h6 class="card-title" v-show="showDetails && editMode">
+                    <div class="form-group">
+                        <label for="login_input">Login</label>
+                        <input id="login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" />
+                    </div>
+                </h6>
 
-                Date
-                <input class="account account-detail" v-model="account.created_date" disabled />
-                
-                <button type="submit" class="ce tb" @click="removeAccount">Delete</button>
-            </td>
-        </tr>
-    </tbody>
+                <div class="card-text" v-if="showDetails">
+                    <p class="lead" v-if="!editMode">{{ account.password }}</p>
+                    <h6 class="card-title" v-if="editMode">
+                        <div class="form-group">
+                            <label for="password_input">Password</label>
+                            <input id="password_input" class="form-control" type="text" aria-describedby="passwordHelp" v-model="account.password" placeholder="Password" v-on:dblclick="generatePassword()" />
+                            <small id="passwordHelp" class="form-text text-muted">Double-click to generate password.</small>
+                        </div>
+                    </h6>
+                </div>
+                <div class="row" v-if="!showDetails">
+                    <div class="col-sm-12"><a @click="showDetails = true" :href="'#' + account._id" class="card-link">See more</a></div>
+                </div>
+                <div class="row" v-if="showDetails && !editMode">
+                    <div class="col-xs-6 col-sm-6 col-md-2"><a @click="showDetails = false; editMode = false" :href="'#' + account._id" class="card-link">See less</a></div>
+                    <div class="col-xs-6 col-sm-6 col-md-2"><a @click="editMode = true" :href="'#' + account._id" class="card-link">Edit</a></div>
+                    <div class="col-sm-12 col-md-5 font-weight-light">{{ account.created_date }}</div>
+                </div>
+                <div class="row" v-if="showDetails && editMode">
+                    <div class="col-sm-4 col-md-2"><a @click="save(); editMode = false" :href="'#' + account._id" class="card-link">Save</a></div>
+                    <div class="col-sm-4 col-md-2"><a @click="editMode = false" :href="'#' + account._id" class="card-link">Cancel</a></div>
+                    <div class="col-sm-4 col-md-2"><a @click="removeAccount()" :href="'#' + account._id" class="card-link">Delete</a></div>
+                    <div class="col-sm-12 col-md-5 font-weight-light">{{ account.created_date }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
     import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
-    import { cleanUrl } from '../utils/textFormat'
+    import { cleanUrl, randomPassword } from '../utils/textFormat'
 
     export default {
-        props: ['user', 'account', 'tag', 'date', 'query'],
+        props: ['user', 'account'],
         data()
         {
             return {
                 showDetails: false,
-                revealPassword: false,
+                editMode: false,
                 accountsService: new AccountsService(this.user, this.$store),
                 userService: new UserService()
-            }
-        },
-        filters:
-        {
-            formatPlatform: function (platform)
-            {
-                return cleanUrl(platform);
-            }
-        },
-        computed:
-        {
-            display: function ()
-            {
-                if (!this.filterByTag(this.tag))
-                {
-                    return false;
-                }
-
-                if (!this.filterByQuery(this.query))
-                {
-                    return false;
-                }
-
-                if (!this.filterByDate(this.date))
-                {
-                    return false;
-                }
-
-                return true;
             }
         },
         methods:
@@ -83,8 +85,10 @@
             {
                 this.accountsService.save(this.account);
                 this.userService.update(this.user);
+
+                this.showAlert(this.account.displayPlatform, 'updated.');
             },
-            
+
             removeAccount: function ()
             {
                 this.accountsService.remove(this.account);
@@ -92,91 +96,60 @@
                 this.showDetails = false;
 
                 this.userService.update(this.user);
-            },
-            
-            filterByTag: function (tag)
-            {
-                if (!tag || tag === 'All')
-                {
-                    return true;
-                }
 
-                if (this.account.tags.includes(tag))
-                {
-                    return true;
-                }
-
-                return false;
+                this.showAlert(this.account.displayPlatform, 'removed.');
             },
 
-            filterByQuery: function (query)
+            generatePassword: function ()
             {
-                if (!query) {
-                    return true
-                }
-
-                query = query.toLowerCase();
-
-                let platform = this.account.platform.toLowerCase();
-                let displayPlatform = this.account.displayPlatform.toLowerCase();
-                let login = this.account.login.toLowerCase();
-                let password = this.account.password.toLowerCase();
-                let tags = this.account.tags.toLowerCase();
-
-                if (platform.includes(query))
-                {
-                    return true;
-                }
-
-                if (displayPlatform.includes(query))
-                {
-                    return true;
-                }
-
-                if (login.includes(query))
-                {
-                    return true;
-                }
-
-                if (password.includes(query))
-                {
-                    return true;
-                }
-
-                if (tags.includes(query))
-                {
-                    return true;
-                }
-
-                return false;
+                this.account.password = randomPassword(8);
             },
 
-            filterByDate: function (date)
+            showAlert: function (title, message)
             {
-                let currentDate = new Date(date);
-                let createdDate = new Date(this.account.created_date);
+                $('#alert-content').html('<strong>' + title + '</strong> ' + message);
+                
+                if (!$('#alert').hasClass('show'))
+                {
+                    $('#alert').toggleClass('show');
 
-                return createdDate >= currentDate;
-            }
-        },
-        watch:
-        {
-            tag: function (newValue)
-            {
-                this.tag = newValue;
-            },
-            query: function (newValue)
-            {
-                this.query = newValue;
-            },
-            date: function (newValue)
-            {
-                this.date = newValue;
-            },
-            account: function (newValue)
-            {
-                this.save();
+                    setTimeout(function () { $('#alert').toggleClass('show') }, 5000);
+                }
             }
         }
     }
 </script>
+
+<style>
+    .card {
+      color: black;
+      background: #ffffff6b;
+      border: none;
+      border-radius: 1.55rem;
+      margin: 10px;
+      box-shadow: 0 0 2rem rgba(0,0,255,.1);
+    }
+
+    .card-header {
+        background: none;
+        border: none;
+    }
+
+    .cardFocus {
+      color: white;
+      background: #007aff;
+    }
+    
+    .cardFocus .text-muted, a {
+      color: #99c9ff !important;
+    }
+    
+    .card a {
+      text-decoration: none;
+      color: #5a4296; 
+    }
+
+    .badge-pill {
+        margin-right: 5px;
+    }
+</style>
