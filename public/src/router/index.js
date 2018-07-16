@@ -3,7 +3,8 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter);
 
-import Dashboard from '../components/Dashboard.vue'
+import AccountList from '../components/AccountList.vue'
+import TagList from '../components/TagList.vue'
 import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 
@@ -13,15 +14,20 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         {
-            name: 'Dashboard',
+            name: 'AccountList',
             path: '/',
             beforeEnter: requireAuth,
-            component: Dashboard 
+            component: AccountList 
         },
         {
             name: 'Tag',
-            path: '/t/:tag', 
-            component: Dashboard 
+            path: '/tag/:tag', 
+            component: AccountList 
+        },
+        {
+            name: 'TagList',
+            path: '/tags', 
+            component: TagList 
         },
         {
             name: 'Login',
