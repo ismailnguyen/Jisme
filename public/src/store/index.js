@@ -6,6 +6,7 @@ Vue.use(Vuex);
 
 const state =
 {
+    currentTag: 'All',
     accounts: []
 };
 
