@@ -3,11 +3,9 @@
 var CACHE = 'jisme-precache';
 var precacheFiles = [
       '/',
-      '/css/toolkit-light.css',
-      '/css/application.css',
+      '/css/bootstrap.min.css',
       '/dist/build.js',
       '/js/jquery.min.js',
-      '/js/tether.min.js',
       '/js/toolkit.js',      
       '/js/sha256.min.js',
       '/js/sjcl.js'
