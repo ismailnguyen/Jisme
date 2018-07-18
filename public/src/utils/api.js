@@ -1,1 +1,1 @@
-export const BASE_API_URL = 'https://jisme.herokuapp.com/api/';
+export const BASE_API_URL = 'https://jisme-api.herokuapp.com/';
