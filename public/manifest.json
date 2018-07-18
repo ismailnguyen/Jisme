@@ -6,7 +6,7 @@
     "display": "standalone",
     "start_url": "/",
     "short_name": "Jisme",
-    "theme_color": "transparent",
+    "theme_color": "white",
     "description": "",
     "orientation": "any",
     "background_color": "white",
