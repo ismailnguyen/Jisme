@@ -15,12 +15,8 @@
 </template>
 
 <script>
-    import { getUser } from '../utils/auth'
     import { sortByName } from '../utils/sort'
-    import UserService from '../services/UserService'
-    import AccountsService from '../services/AccountsService'
-    import AddAccount from './AddAccount.vue'
-    import TagItem from './TagItem.vue'
+    import TagItem from '../components/TagItem.vue'
     import Datepicker from 'vuejs-datepicker'
     
     export default {

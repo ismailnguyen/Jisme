@@ -1,14 +1,8 @@
 <template>
 <div>
-    <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-          <AddAccount />
-      </div>
-    </div>
-
     <router-view></router-view>
 
-    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-bottom">
+    <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-bottom" v-if="isLoggedIn">
         <a class="navbar-brand" href="/Tags">{{ currentTag }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -38,12 +32,14 @@
 </template>
 
 <script>
-    import UserService from '../services/UserService'
-    import AddAccount from './AddAccount.vue'
+    import { isLoggedIn } from './utils/auth'
+    import UserService from './services/UserService'
     
     export default {
-        components: {
-            AddAccount
+        data () {
+            return {
+                isLoggedIn: isLoggedIn()
+            }
         },
         methods: {
             signOut: function () {
@@ -70,7 +66,6 @@
 </script>
 
 <style>
-
     @import url("//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css");
 
     * {

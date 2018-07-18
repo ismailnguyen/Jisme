@@ -3,10 +3,10 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter);
 
-import AccountList from '../components/AccountList.vue'
-import TagList from '../components/TagList.vue'
-import Login from '../components/Login.vue'
-import Register from '../components/Register.vue'
+import AccountList from '../views/AccountList.vue'
+import TagList from '../views/TagList.vue'
+import Login from '../views/Login.vue'
+import Register from '../views/Register.vue'
 
 import { requireAuth } from '../utils/auth'
 

@@ -1,5 +1,11 @@
 <template>
     <div id="page-content-wrapper">
+        <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <AddAccount />
+            </div>
+        </div>
+
         <header class="header-search row justify-content-center">
             <div class="col-xs-12 col-lg-6">
                 <input class="form-control searchBar" v-model="search" type="search" placeholder="Search" autofocus>
@@ -31,7 +37,8 @@
     import { sortByName } from '../utils/sort'
     import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
-    import AccountItem from './AccountItem.vue'
+    import AddAccount from '../components/AddAccount.vue'
+    import AccountItem from '../components/AccountItem.vue'
     import Datepicker from 'vuejs-datepicker'
     
     export default {
@@ -48,6 +55,7 @@
             }
         },
         components: {
+            AddAccount,
             AccountItem,
             Datepicker
         },
