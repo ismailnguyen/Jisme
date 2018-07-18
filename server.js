@@ -1,17 +1,14 @@
 const express = require('express');
 const serveStatic = require('serve-static');
 const path = require('path');
+const history = require('connect-history-api-fallback');
 
 // create the express app
 const app = express();
 
 // create middleware to handle the serving the app
-app.use("/", serveStatic(path.join(__dirname, '/public')));
-
-// Catch all routes and redirect to the index file
-app.get('*', function (req, res) {
-  res.sendFile(__dirname + '/public/index.html');
-})
+app.use(history());  
+app.use(serveStatic(path.join(__dirname, 'public')));
 
 // Create default port to serve the app on
 const port = process.env.PORT || 5000;
