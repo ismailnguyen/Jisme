@@ -2,7 +2,7 @@
 <div>
     <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
-          <AddAccount :user="user" />
+          <AddAccount />
       </div>
     </div>
 
@@ -19,7 +19,7 @@
                 <a class="nav-link" href="#">Sort by date <input type="date" max="3000-12-31" :value="formattedDate" :min="formattedDate" class="form-control datepicker"></a>
             </li> -->
             <li class="nav-item ">
-                <a class="nav-link btn btn-outline-danger" href="#" @click="signOut()">Sign out</a>
+                <a class="nav-link" href="#" @click="signOut()">Sign out</a>
             </li>
             </ul>
         </div>
@@ -38,12 +38,8 @@
 </template>
 
 <script>
-    import { getUser } from '../utils/auth'
-    import { sortByName } from '../utils/sort'
     import UserService from '../services/UserService'
-    import AccountsService from '../services/AccountsService'
     import AddAccount from './AddAccount.vue'
-    import Datepicker from 'vuejs-datepicker'
     
     export default {
         components: {

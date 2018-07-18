@@ -38,15 +38,16 @@
 </template>
 
 <script>
+    import { getUser } from '../utils/auth'
     import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
     import { cleanUrl, randomPassword } from '../utils/textFormat'
 
     export default {
-        props: ['user'],
         data()
         {
             return {
+                user: getUser(),
                 account: {
                     platform: '',
                     login: '',
