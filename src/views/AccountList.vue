@@ -232,6 +232,10 @@
         margin-bottom: 40px
     }
 
+    .header-search {
+        margin: auto;
+    }
+
     .loadMore {
         bottom: 0;
         width: 100%;

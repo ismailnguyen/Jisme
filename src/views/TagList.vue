@@ -7,7 +7,7 @@
         </header>
 
         <div class="main-container container-fluid">
-            <div class="row accountsList">
+            <div class="row">
                 <TagItem v-for="(tag, index) in sortedTags" v-bind:key="index" :tag="tag" />
             </div>
         </div>
@@ -70,3 +70,9 @@
         }
     }
 </script>
+
+<style>
+    .header-search {
+        margin: auto;
+    }
+</style>
