@@ -120,7 +120,7 @@
     }
 </script>
 
-<style>
+<style scoped>
     .card {
       color: black;
       background: #ffffff6b;

@@ -3,7 +3,7 @@
     <router-view></router-view>
 
     <nav class="navbar navbar-light bg-light navbar-expand-lg fixed-bottom" v-if="isLoggedIn">
-        <a class="navbar-brand" href="/Tags">{{ currentTag }}</a>
+        <a class="navbar-brand btn btn-outline-primary" href="/Tags">{{ currentTag }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -76,6 +76,10 @@
     body {
       color: black;
       background: #f5f5f5;
+    }
+
+    a {
+      color: #99c9ff;
     }
 
     .main-container {
