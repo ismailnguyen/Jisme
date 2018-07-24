@@ -1,10 +1,14 @@
 const express = require('express');
-const serveStatic = require('serve-static');
-const path = require('path');
+const sslRedirect = require('heroku-ssl-redirect');
 const history = require('connect-history-api-fallback');
+const path = require('path');
+const serveStatic = require('serve-static');
 
 // create the express app
 const app = express();
+
+// enable ssl redirect
+app.use(sslRedirect());
 
 // create middleware to handle the serving the app
 app.use(history());  
