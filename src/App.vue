@@ -93,56 +93,11 @@
         padding: 20px;
         z-index: 999;
     }
+    
     .alert {
         position: fixed;
         bottom: 20px;
         right: 20px;
-    }
-
-    body.modal-open .main-container {
-      -webkit-filter: blur(2.5px);
-      -moz-filter: blur(2.5px);
-      -o-filter: blur(2.5px);
-      -ms-filter: blur(2.5px);
-      filter: blur(2.5px);
-    }
-
-    .modal {
-        z-index: 10500;
-    }
-
-    .modal-dialog {
-        width: 100%;
-        height: 100%;
-        padding: 0;
-    }
-
-    @media(min-width:768px) {
-        .modal-content {
-            border-radius: 1.55rem;
-        }
-    }
- 
-    @media (max-width: 767.98px) { 
-      .modal-dialog {
-        margin: 0;
-      }
-    }
-
-    .modal-content {
-        border-radius: 0;
-    }
-
-    .modal-content {
-        color: #007bff;
-        background: #fff;
-        height: auto;
-        min-height: 100%;
-        box-shadow: 0 0 2rem rgba(0,0,255,.1);
-    }
-
-    .modal-content, .modal-footer {
-      border: none;
     }
 
     .form-control {
@@ -157,6 +112,9 @@
         opacity: 1;
     }
 
+    .btn {
+        border-radius: .75rem;
+    }
     .datepicker {
         background: none;
         color: #6c757d;
@@ -173,7 +131,5 @@
         color: #818182;
     }
 
-    .btn {
-        border-radius: .75rem;
-    }
+    
 </style>

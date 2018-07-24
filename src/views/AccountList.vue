@@ -6,19 +6,19 @@
             </div>
         </div>
 
-        <header class="header-search row justify-content-center">
+        <header class="row header-search justify-content-center">
             <div class="col-xs-12 col-lg-6">
                 <input class="form-control searchBar" v-model="search" type="search" placeholder="Search" autofocus>
             </div>
         </header>
 
         <div class="main-container container-fluid">
-            <div class="row accountsList">
+            <div class="row">
                 <AccountItem v-for="(account, index) in truncedAccounts" v-bind:key="index" :account="account" :user="user" />
             </div>
 
-            <div class="row loadMore" v-if="sortedAccounts.length > truncedAccounts.length">
-                <div class="col-12">
+            <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncedAccounts.length">
+                <div class="col-xs-12 col-lg-6">
                     <button @click="loadMore" type="button" class="btn btn-lg btn-light btn-block btnLoadMore">More </button>
                 </div>
             </div>
@@ -228,8 +228,50 @@
 </script>
 
 <style>
-    .accountsList {
-        margin-bottom: 40px
+    body.modal-open .main-container {
+      -webkit-filter: blur(2.5px);
+      -moz-filter: blur(2.5px);
+      -o-filter: blur(2.5px);
+      -ms-filter: blur(2.5px);
+      filter: blur(2.5px);
+    }
+
+    .modal {
+        z-index: 10500;
+    }
+
+    .modal-dialog {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+    }
+
+    @media(min-width:768px) {
+        .modal-content {
+            border-radius: 1.55rem;
+        }
+    }
+ 
+    @media (max-width: 767.98px) { 
+      .modal-dialog {
+        margin: 0;
+      }
+    }
+
+    .modal-content {
+        border-radius: 0;
+    }
+
+    .modal-content {
+        color: #007bff;
+        background: #fff;
+        height: auto;
+        min-height: 90%;
+        box-shadow: 0 0 2rem rgba(0,0,255,.1);
+    }
+
+    .modal-content, .modal-footer {
+      border: none;
     }
 
     .header-search {
@@ -239,6 +281,7 @@
     .loadMore {
         bottom: 0;
         width: 100%;
+        padding-top: 40px;
         padding-bottom: 70px;
         margin: auto;
     }
