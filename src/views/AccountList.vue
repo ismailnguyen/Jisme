@@ -249,6 +249,7 @@
     @media(min-width:768px) {
         .modal-content {
             border-radius: 1.55rem;
+            min-height: 90%;
         }
     }
  
@@ -256,6 +257,11 @@
       .modal-dialog {
         margin: 0;
       }
+
+      .modal-content {
+            border-radius: 1.55rem;
+            min-height: 100%;
+        }
     }
 
     .modal-content {
@@ -266,7 +272,6 @@
         color: #007bff;
         background: #fff;
         height: auto;
-        min-height: 90%;
         box-shadow: 0 0 2rem rgba(0,0,255,.1);
     }
 
