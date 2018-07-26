@@ -130,6 +130,4 @@
     .searchBar::placeholder {
         color: #818182;
     }
-
-    
 </style>

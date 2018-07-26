@@ -6,29 +6,27 @@
             </div>
         </div>
 
-        <header class="row header-search justify-content-center">
+        <header class="row header-search justify-content-center" v-if="!loading">
             <div class="col-xs-12 col-lg-6">
                 <input class="form-control searchBar" v-model="search" type="search" placeholder="Search" autofocus>
             </div>
         </header>
 
         <div class="main-container container-fluid">
-            <div class="row">
+            <div class="row" v-if="!loading">
                 <AccountItem v-for="(account, index) in truncedAccounts" v-bind:key="index" :account="account" :user="user" />
             </div>
 
-            <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncedAccounts.length">
+            <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncedAccounts.length && !loading">
                 <div class="col-xs-12 col-lg-6">
                     <button @click="loadMore" type="button" class="btn btn-lg btn-light btn-block btnLoadMore">More </button>
                 </div>
             </div>
 
-            <div class="progress" v-if="loading">
-                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
-            </div>
+            <div class="loader" v-if="loading"></div>
         </div>
 
-        <a href="#" class="floating-button" data-toggle="modal" data-target="#AddModal"><i class="fa fa-plus float-plus"></i></a>
+        <a href="#" class="floating-button" data-toggle="modal" data-target="#AddModal" v-if="!loading"><i class="fa fa-plus float-plus"></i></a>
     </div>
 </template>
 
@@ -312,5 +310,84 @@
     .float-plus{
         color: #FFF;
         margin-top:22px;
+    }
+
+    .loader {
+        width: 100px;
+        height: 100px;
+        margin: auto;
+        background: url('/images/touch/favicon512.png') center center no-repeat;
+        -webkit-animation: loader-rotation 2s linear infinite;
+        -moz-animation: loader-rotation 2s linear infinite;
+        -o-animation: loader-rotation 2s linear infinite;
+        -ms-animation: loader-rotation 2s linear infinite;
+        animation: loader-rotation 2s linear infinite;
+        -webkit-background-size: 100%;
+        -moz-background-size: 100%;
+        background-size: 100%;
+    }
+    @-moz-keyframes loader-rotation {
+        from {
+            -webkit-transform: rotate(360deg);
+            -moz-transform: rotate(360deg);
+            -o-transform: rotate(360deg);
+            -ms-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+        to {
+            -webkit-transform: rotate(0deg);
+            -moz-transform: rotate(0deg);
+            -o-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+    }
+    @-webkit-keyframes loader-rotation {
+        from {
+            -webkit-transform: rotate(360deg);
+            -moz-transform: rotate(360deg);
+            -o-transform: rotate(360deg);
+            -ms-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+        to {
+            -webkit-transform: rotate(0deg);
+            -moz-transform: rotate(0deg);
+            -o-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+    }
+    @-o-keyframes loader-rotation {
+        from {
+            -webkit-transform: rotate(360deg);
+            -moz-transform: rotate(360deg);
+            -o-transform: rotate(360deg);
+            -ms-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+        to {
+            -webkit-transform: rotate(0deg);
+            -moz-transform: rotate(0deg);
+            -o-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+    }
+    @keyframes loader-rotation {
+        from {
+            -webkit-transform: rotate(360deg);
+            -moz-transform: rotate(360deg);
+            -o-transform: rotate(360deg);
+            -ms-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+        to {
+            -webkit-transform: rotate(0deg);
+            -moz-transform: rotate(0deg);
+            -o-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
     }
 </style>
