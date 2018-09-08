@@ -1,10 +1,9 @@
 <template>
-    <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="editAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
-                    <h2 class="card-title">Add</h2>
-                    <h4>{{ account.platform | formatPlatform }}</h4>
+                    <h2 class="card-title">{{ account.platform | formatPlatform }}</h2>
 
                     <form class="card-text lead">
                         <div class="form-group">
@@ -20,7 +19,7 @@
                             <div class="input-group">
                                 <input id="password_input" class="form-control" type="text" aria-describedby="passwordHelp" v-model="account.password" placeholder="Password" v-on:dblclick="generatePassword()" />
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" @click="generatePassword()">Generate</button>
+                                    <button class="btn btn-outline-light" type="button" @click="generatePassword()">Generate</button>
                                 </div>
                             </div>
                             <small id="passwordHelp" class="form-text text-muted">Click button to generate password.</small>
@@ -30,20 +29,28 @@
                             <input id="tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="tagsHelp" v-model="account.tags" />
                             <small id="tagsHelp" class="form-text text-muted">Separated with comma.</small>
                         </div>
+                        <div class="form-group">
+                            <label for="tags_input">Created date</label>
+                            <input class="form-control" v-model="account.created_date" disabled />
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
                     <div class="row">
-                        <div class="col-xs-6 action-button">
-                            <button type="button" class="btn btn-link modal-close" data-dismiss="modal" @click="cleanForm()">Close</button>
+                        <div class="col-xs-4 action-button">
+                            <button type="button" class="btn btn-primary modal-close" data-dismiss="modal" @click="remove()">Delete</button>
                         </div>
-                        <div class="col-xs-6 action-button">
-                            <button type="button" class="btn btn-primary modal-close" data-dismiss="modal" @click="add()">Add</button>
+                        <div class="col-xs-4 action-button">
+                            <button type="button" class="btn btn-outline-light modal-close" data-dismiss="modal" @click="save()">Save</button>
+                        </div>
+                        <div class="col-xs-4 action-button">
+                            <button type="button" class="btn btn-light modal-close" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <button class="modal-close is-large" aria-label="close"></button>
     </div>
 </template>
 
@@ -54,16 +61,13 @@
     import { cleanUrl, randomPassword } from '../utils/textFormat'
 
     export default {
+        props: {
+            account: Object   
+        },
         data()
         {
             return {
-                user: getUser(),
-                account: {
-                    platform: '',
-                    login: '',
-                    password: '',
-                    tags: ''
-                }
+                user: getUser()
             }
         },
         filters:
@@ -74,32 +78,26 @@
             }
         },
         methods: {
-            add: function ()
+            save: function()
             {
-                let accountsService = new AccountsService(this.user, this.$store);
-                accountsService.add(this.account);
+                this.accountsService.save(this.account);
+                this.userService.update(this.user);
 
-                let userService = new UserService();
-                userService.update(this.user);
-
-                this.showAlert(cleanUrl(this.account.platform), 'created.');
-
-                this.cleanForm();
+                this.showAlert(this.account.displayPlatform, 'updated.');
             },
-            
+
+            remove: function ()
+            {
+                this.accountsService.remove(this.account);
+
+                this.userService.update(this.user);
+
+                this.showAlert(this.account.displayPlatform, 'removed.');
+            },
+
             generatePassword: function ()
             {
                 this.account.password = randomPassword(8);
-            },
-
-            cleanForm: function ()
-            {
-                this.account = {
-                    platform: '',
-                    login: '',
-                    password: '',
-                    tags: ''
-                };
             },
 
             showAlert: function (title, message)
@@ -119,6 +117,8 @@
 
 <style scoped>
     .modal-content {
+      color: white;
+      background: #007aff;
       border: none;
     }
 
@@ -132,6 +132,10 @@
 
     .text-muted, a {
       color: #99c9ff !important;
+    }
+
+    .form-control:disabled {
+        background: none;
     }
 
     .action-button {

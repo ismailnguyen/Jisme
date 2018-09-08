@@ -1,10 +1,7 @@
 <template>
     <div id="page-content-wrapper">
-        <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <AddAccount />
-            </div>
-        </div>
+        <AddAccountModal />
+        <EditAccountModal v-bind:account="editAccount" />
 
         <header class="row header-search justify-content-center" v-if="!loading">
             <div class="col-xs-12 col-lg-6">
@@ -14,7 +11,12 @@
 
         <div class="main-container container-fluid">
             <div class="row" v-if="!loading">
-                <AccountItem v-for="(account, index) in truncedAccounts" v-bind:key="index" :account="account" :user="user" />
+                <AccountItem 
+                    v-for="(account, index) in truncedAccounts" 
+                    v-bind:key="index"
+                    v-on:toggleEditAccountModal="onEditAccountModalToggled"
+                    :account="account" 
+                    :user="user" />
             </div>
 
             <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncedAccounts.length && !loading">
@@ -35,7 +37,8 @@
     import { sortByName } from '../utils/sort'
     import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
-    import AddAccount from '../components/AddAccount.vue'
+    import AddAccountModal from '../components/AddAccount.vue'
+    import EditAccountModal from '../components/EditAccount.vue'
     import AccountItem from '../components/AccountItem.vue'
     import Datepicker from 'vuejs-datepicker'
     
@@ -49,11 +52,18 @@
                 currentDate: new Date(),
                 loading: true,
                 pagination_offset: 0,
-                accounts: []
+                accounts: [],
+                editAccount: {
+                    platform: '',
+                    login: '',
+                    password: '',
+                    tags: ''
+                }
             }
         },
         components: {
-            AddAccount,
+            AddAccountModal,
+            EditAccountModal,
             AccountItem,
             Datepicker
         },
@@ -161,6 +171,13 @@
             initPagination: function ()
             {
                 this.pagination_offset = 10;
+            },
+
+            onEditAccountModalToggled: function (account)
+            {
+                this.editAccount = account;
+
+                $('#editAccountModal').modal();
             }
         },
         mounted() {
