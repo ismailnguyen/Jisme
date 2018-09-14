@@ -96,8 +96,6 @@
 
                     this.showAlert(this.account.displayPlatform, 'removed.');
                 }
-
-                console.log('pressed cancel !')
             },
 
             generatePassword: function ()
