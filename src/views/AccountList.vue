@@ -40,7 +40,6 @@
     import AddAccountModal from '../components/AddAccount.vue'
     import EditAccountModal from '../components/EditAccount.vue'
     import AccountItem from '../components/AccountItem.vue'
-    import Datepicker from 'vuejs-datepicker'
     
     export default {
         data()
@@ -49,7 +48,6 @@
                 user: getUser(),
                 search: '',
                 currentTag: this.$store.state.currentTag,
-                currentDate: new Date(),
                 loading: true,
                 pagination_offset: 0,
                 accounts: [],
@@ -64,32 +62,21 @@
         components: {
             AddAccountModal,
             EditAccountModal,
-            AccountItem,
-            Datepicker
+            AccountItem
         },
         methods: {
             fetchAccounts: function ()
             {
                 let accountsService = new AccountsService(this.user, this.$store);
 
-                accountsService.get()
-                .then(this.setOldestDate);
+                accountsService.get();
             },
 
-            setOldestDate: function (accounts)
+            printOnScreen: function (accounts)
             {
-                accounts.forEach(account =>
-                {
-                    let createdDate = new Date(account.created_date);
-                    if (createdDate < this.currentDate)
-                    {
-                        this.currentDate = createdDate;
-                    }
-                });
-
                 this.accounts = this.$store.state.accounts.slice(0, this.pagination_offset);
 
-                this.loading = false
+                this.loading = false;
             },
 
             filterByTag: function (account, tag)
@@ -153,16 +140,6 @@
                 return false;
             },
 
-            filterByDate: function (account, date)
-            {
-                this.initPagination();
-
-                let currentDate = new Date(date);
-                let createdDate = new Date(account.created_date);
-
-                return createdDate >= currentDate;
-            },
-
             loadMore: function ()
             {
                 this.pagination_offset += 10;
@@ -180,17 +157,18 @@
                 $('#editAccountModal').modal();
             }
         },
+        created() {
+            this.$store.watch((state) => state.accounts, () => {
+                this.printOnScreen(this.$store.state.accounts);
+            });
+        },
         mounted() {
+            this.initPagination();
+
             if (navigator.onLine)
             {
                 this.fetchAccounts();
             }            
-    
-            this.$store.watch((state) => state.accounts, () => {
-                this.setOldestDate(this.$store.state.accounts);
-            })
-
-            this.initPagination();
         },
         computed: {
             truncedAccounts: function ()
@@ -209,34 +187,8 @@
 
                 accounts = accounts.filter(account => this.filterByTag(account, this.currentTag));
                 accounts = accounts.filter(account => this.filterByQuery(account, this.search));
-                accounts = accounts.filter(account => this.filterByDate(account, this.currentDate));
 
                 return accounts;
-            },
-            formattedDate: function ()
-            {
-                var year = this.currentDate.getFullYear();
-
-                var month = this.currentDate.getMonth() + 1;
-                if (month < 10)
-                {
-                    month = '0' + month;
-                }
-
-                var day = this.currentDate.getDate();
-                if (day < 10)
-                {
-                    day = '0' + day;
-                }
-
-                return year + '-' + month + '-' + day;
-            }
-        },
-        watch:
-        {
-            currentDate: function (newValue)
-            {
-                this.currentDate = newValue;
             }
         }
     }
