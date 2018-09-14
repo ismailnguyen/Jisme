@@ -63,8 +63,6 @@
 </script>
 
 <style>
-    @import url("//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css");
-
     * {
         margin: 0;
         position: relative;
@@ -116,6 +114,7 @@
 
     .searchBar {
         border-radius: 2rem;
+        color: #818182;
         background-color: #fff;
         line-height: 2.5;
         box-shadow: 0 0 2rem rgba(0, 0, 255, .1);
