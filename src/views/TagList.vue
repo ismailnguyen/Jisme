@@ -17,7 +17,6 @@
 <script>
     import { sortByName } from '../utils/sort'
     import TagItem from '../components/TagItem.vue'
-    import Datepicker from 'vuejs-datepicker'
     
     export default {
         data()

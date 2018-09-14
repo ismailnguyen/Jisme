@@ -9,9 +9,6 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-            <!-- <li class="nav-item">
-                <a class="nav-link" href="#">Sort by date <input type="date" max="3000-12-31" :value="formattedDate" :min="formattedDate" class="form-control datepicker"></a>
-            </li> -->
             <li class="nav-item ">
                 <a class="nav-link" href="#" @click="signOut()">Sign out</a>
             </li>
@@ -115,10 +112,6 @@
 
     .btn {
         border-radius: .75rem;
-    }
-    .datepicker {
-        background: none;
-        color: #6c757d;
     }
 
     .searchBar {
