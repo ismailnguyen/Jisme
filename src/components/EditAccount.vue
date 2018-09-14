@@ -88,11 +88,16 @@
 
             remove: function ()
             {
-                this.accountsService.remove(this.account);
+                if (confirm('Are you sure to delete : ', this.account.platform, ' ?') == true)
+                {
+                    this.accountsService.remove(this.account);
 
-                this.userService.update(this.user);
+                    this.userService.update(this.user);
 
-                this.showAlert(this.account.displayPlatform, 'removed.');
+                    this.showAlert(this.account.displayPlatform, 'removed.');
+                }
+
+                console.log('pressed cancel !')
             },
 
             generatePassword: function ()
