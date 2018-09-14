@@ -2,6 +2,10 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import localforage from 'localforage'
 
+localforage.config({
+    name: 'jisme-storage'
+});
+
 Vue.use(Vuex);
 
 const state =
@@ -27,6 +31,9 @@ let mutations =
     updateAccounts (state, newValue)
     {
         state.accounts = newValue;
+
+        // Store the state object
+        localforage.setItem('store', state);
     },
 
     addAccount (state, account)
@@ -49,19 +56,8 @@ let mutations =
     }
 };
 
-const cachePlugin = store =>
-{
-    // Subscribe to store updates
-    store.subscribe((mutation, state) =>
-    {
-        // Store the state object
-        localforage.setItem('store', state);
-    })
-};
-
 export default new Vuex.Store(
 {
     state,
-    mutations,
-    plugins: [cachePlugin]
+    mutations
 });
