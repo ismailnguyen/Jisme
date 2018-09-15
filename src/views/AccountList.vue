@@ -1,7 +1,7 @@
 <template>
     <div id="page-content-wrapper">
         <AddAccountModal />
-        <EditAccountModal v-bind:account="editAccount" />
+        <EditAccountModal :user="user" :account="editAccount" />
 
         <header class="row header-search justify-content-center" v-if="!loading">
             <div class="col-xs-12 col-lg-6">
@@ -15,8 +15,7 @@
                     v-for="(account, index) in truncedAccounts" 
                     v-bind:key="index"
                     v-on:toggleEditAccountModal="onEditAccountModalToggled"
-                    :account="account" 
-                    :user="user" />
+                    :account="account" />
             </div>
 
             <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncedAccounts.length && !loading">

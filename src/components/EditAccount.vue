@@ -55,19 +55,20 @@
 </template>
 
 <script>
-    import { getUser } from '../utils/auth'
     import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
     import { cleanUrl, randomPassword } from '../utils/textFormat'
 
     export default {
         props: {
-            account: Object   
+            user: Object,
+            account: Object
         },
         data()
         {
             return {
-                user: getUser()
+                accountsService: new AccountsService(this.user, this.$store),
+                userService: new UserService()
             }
         },
         filters:

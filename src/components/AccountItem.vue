@@ -21,17 +21,9 @@
 </template>
 
 <script>
-    import UserService from '../services/UserService'
-    import AccountsService from '../services/AccountsService'
-
     export default {
-        props: ['user', 'account'],
-        data()
-        {
-            return {
-                accountsService: new AccountsService(this.user, this.$store),
-                userService: new UserService()
-            }
+        props: {
+            account: Object
         },
         methods:
         {
