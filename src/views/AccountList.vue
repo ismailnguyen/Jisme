@@ -5,7 +5,7 @@
 
         <header class="row header-search justify-content-center" v-if="!loading">
             <div class="col-xs-12 col-lg-6">
-                <input class="form-control searchBar" v-model="search" type="search" placeholder="Search" autofocus>
+                <input class="form-control searchBar" :value="searchQuery" @input="updateSearchQuery" type="search" placeholder="Search" autofocus>
             </div>
         </header>
 
@@ -46,7 +46,7 @@
         {
             return {
                 user: getUser(),
-                search: '',
+                searchQuery: '',
                 currentTag: this.$store.state.currentTag,
                 loading: true,
                 pagination_offset: 0,
@@ -140,6 +140,11 @@
                 return false;
             },
 
+            updateSearchQuery: function (event)
+            {
+                this.searchQuery = event.target.value;
+            },
+
             loadMore: function ()
             {
                 this.pagination_offset += 10;
@@ -186,7 +191,7 @@
                 );
 
                 accounts = accounts.filter(account => this.filterByTag(account, this.currentTag));
-                accounts = accounts.filter(account => this.filterByQuery(account, this.search));
+                accounts = accounts.filter(account => this.filterByQuery(account, this.searchQuery));
 
                 return accounts;
             }
