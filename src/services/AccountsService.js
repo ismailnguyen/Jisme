@@ -1,6 +1,7 @@
-import { getEncryptedAccount, getDecryptedAccount } from '../utils/account'
+import { getEncryptedAccount, getDecryptedAccount, parseAccount } from '../utils/account'
 import { BASE_API_URL } from '../utils/api'
 import { getHeadersWithAuth } from '../utils/requestHeader'
+import Account from '../models/Account';
 
 function AccountsService (user, store)
 {
@@ -23,7 +24,11 @@ function AccountsService (user, store)
 
             accounts.forEach(account =>
             {
-                encryptedAccounts.push(getDecryptedAccount(account, this.user.token));
+                encryptedAccounts.push(
+                    parseAccount(
+                        getDecryptedAccount(account, this.user.token)
+                    )
+                );
             });
 
             return encryptedAccounts;
@@ -47,7 +52,7 @@ function AccountsService (user, store)
             body: JSON.stringify(encryptedAccount)
         })
         .then(response => response.json())
-        .then(addedAccount => getDecryptedAccount(addedAccount, this.user.token))
+        .then(addedAccount => parseAccount(getDecryptedAccount(addedAccount, this.user.token)))
         .then(addedAccount => this.store.commit('addAccount', addedAccount));
     }
 

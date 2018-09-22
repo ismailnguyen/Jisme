@@ -1,6 +1,6 @@
 <template>
-    <div id="page-content-wrapper">
-        <AddAccountModal />
+    <div class="container-fluid">
+        <AddAccountModal v-on:showAlert="onShowAlert" />
         <EditAccountModal :user="user" :account="editAccount" />
 
         <header class="row header-search justify-content-center" v-if="!loading">
@@ -12,33 +12,36 @@
         <div class="main-container container-fluid">
             <div class="row" v-if="!loading">
                 <AccountItem 
-                    v-for="(account, index) in truncedAccounts" 
+                    v-for="(account, index) in truncatedAccounts"
                     v-bind:key="index"
                     v-on:toggleEditAccountModal="onEditAccountModalToggled"
                     :account="account" />
             </div>
 
-            <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncedAccounts.length && !loading">
+            <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncatedAccounts.length && !loading">
                 <div class="col-xs-12 col-lg-6">
                     <button @click="loadMore" type="button" class="btn btn-lg btn-light btn-block btnLoadMore">More </button>
                 </div>
             </div>
 
-            <div class="loader" v-if="loading"></div>
+            <Loader :isVisible="loading" />
         </div>
 
-        <a href="#" class="floating-button" data-toggle="modal" data-target="#AddModal" v-if="!loading"><i class="fa fa-plus float-plus"></i></a>
+        <a href="#" class="floating-button" data-toggle="modal" data-target="#addAccountModal" v-if="!loading"><i class="fa fa-plus float-plus"></i></a>
     </div>
 </template>
 
 <script>
     import { getUser } from '../utils/auth'
-    import { sortByName } from '../utils/sort'
+    import Account from '../models/Account'
     import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
+    import FilterService from '../services/FilterService'
     import AddAccountModal from '../components/AddAccount.vue'
     import EditAccountModal from '../components/EditAccount.vue'
     import AccountItem from '../components/AccountItem.vue'
+    import Loader from '../components/Loader.vue'
+    import Alert from '../models/Alert'
     
     export default {
         data()
@@ -49,19 +52,28 @@
                 currentTag: this.$store.state.currentTag,
                 loading: true,
                 pagination_offset: 0,
-                accounts: [],
-                editAccount: {
-                    platform: '',
-                    login: '',
-                    password: '',
-                    tags: ''
-                }
+                editAccount: new Account(),
+                filterService: {}
             }
         },
         components: {
             AddAccountModal,
             EditAccountModal,
-            AccountItem
+            AccountItem,
+            Loader
+        },
+        created() {
+            this.$store.watch((state) => state.accounts, () => {
+                this.loading = false;
+            });
+        },
+        mounted() {
+            this.initPagination();
+
+            if (navigator.onLine)
+            {
+                this.fetchAccounts();
+            }            
         },
         methods: {
             fetchAccounts: function ()
@@ -69,74 +81,6 @@
                 let accountsService = new AccountsService(this.user, this.$store);
 
                 accountsService.get();
-            },
-
-            printOnScreen: function (accounts)
-            {
-                this.accounts = this.$store.state.accounts.slice(0, this.pagination_offset);
-
-                this.loading = false;
-            },
-
-            filterByTag: function (account, tag)
-            {
-                this.initPagination();
-
-                if (!tag || tag === 'All')
-                {
-                    return true;
-                }
-
-                if (account.tags.includes(tag))
-                {
-                    return true;
-                }
-
-                return false;
-            },
-
-            filterByQuery: function (account, query)
-            {
-                this.initPagination();
-
-                if (!query) {
-                    return true;
-                }
-
-                query = query.toLowerCase();
-
-                let platform = account.platform.toLowerCase();
-                let displayPlatform = account.displayPlatform.toLowerCase();
-                let login = account.login.toLowerCase();
-                let password = account.password.toLowerCase();
-                let tags = account.tags.toLowerCase();
-
-                if (platform.includes(query))
-                {
-                    return true;
-                }
-
-                if (displayPlatform.includes(query))
-                {
-                    return true;
-                }
-
-                if (login.includes(query))
-                {
-                    return true;
-                }
-
-                if (password.includes(query))
-                {
-                    return true;
-                }
-
-                if (tags.includes(query))
-                {
-                    return true;
-                }
-
-                return false;
             },
 
             updateSearchQuery: function (event)
@@ -159,23 +103,15 @@
                 this.editAccount = account;
 
                 $('#editAccountModal').modal();
+            },
+
+            onShowAlert: function (alertDetails)
+            {
+                this.$emit('showAlert', alertDetails);
             }
         },
-        created() {
-            this.$store.watch((state) => state.accounts, () => {
-                this.printOnScreen(this.$store.state.accounts);
-            });
-        },
-        mounted() {
-            this.initPagination();
-
-            if (navigator.onLine)
-            {
-                this.fetchAccounts();
-            }            
-        },
         computed: {
-            truncedAccounts: function ()
+            truncatedAccounts: function ()
             {
                 let accounts = this.sortedAccounts;
 
@@ -183,16 +119,13 @@
             },
             sortedAccounts: function ()
             {
-                let accounts = this.$store.state.accounts;
+                this.filterService = new FilterService(this.$store.state.accounts);
 
-                accounts = accounts.sort((account1, account2) => 
-                    sortByName(account1.displayPlatform, account2.displayPlatform)
-                );
+                this.filterService.filterByTag(this.currentTag);
+                this.filterService.filterByQuery(this.searchQuery);
+                this.filterService.sortByName();
 
-                accounts = accounts.filter(account => this.filterByTag(account, this.currentTag));
-                accounts = accounts.filter(account => this.filterByQuery(account, this.searchQuery));
-
-                return accounts;
+                return this.filterService.getAccounts();
             }
         }
     }
@@ -267,7 +200,7 @@
         border: none;
     }
 
-    .floating-button{
+    .floating-button {
         position:fixed;
         width:60px;
         height:60px;
@@ -280,7 +213,7 @@
         box-shadow: 2px 2px 3px #999;
     }
 
-    .float-plus{
+    .float-plus {
         color: #FFF;
         margin-top:22px;
     }

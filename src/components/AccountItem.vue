@@ -12,7 +12,7 @@
 
                 <div class="row">
                     <div class="col-sm-12">
-                        <a href="#" @click.prevent="edit(account)" class="card-link">See more</a>
+                        <a href="#" @click.prevent="edit()" class="card-link">See more</a>
                     </div>
                 </div>
             </div>
@@ -21,26 +21,16 @@
 </template>
 
 <script>
+    import Account from '../models/Account'
+
     export default {
         props: {
             account: Object
         },
         methods:
         {
-            edit(account) {
-                this.$emit('toggleEditAccountModal', account);
-            },
-
-            showAlert: function (title, message)
-            {
-                $('#alert-content').html('<strong>' + title + '</strong> ' + message);
-                
-                if (!$('#alert').hasClass('show'))
-                {
-                    $('#alert').toggleClass('show');
-
-                    setTimeout(function () { $('#alert').toggleClass('show') }, 5000);
-                }
+            edit() {
+                this.$emit('toggleEditAccountModal', this.account);
             }
         }
     }

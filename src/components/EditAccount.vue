@@ -3,7 +3,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
-                    <h2 class="card-title">{{ account.platform | formatPlatform }}</h2>
+                    <h2 class="card-title">{{ account.displayPlatform }}</h2>
 
                     <form class="card-text lead">
                         <div class="form-group">
@@ -19,7 +19,7 @@
                             <div class="input-group">
                                 <input id="password_input" class="form-control" type="text" aria-describedby="passwordHelp" v-model="account.password" placeholder="Password" v-on:dblclick="generatePassword()" />
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-light" type="button" @click="generatePassword()">Generate</button>
+                                    <button class="btn btn-outline-light" type="button" @click="account.generatePassword()">Generate</button>
                                 </div>
                             </div>
                             <small id="passwordHelp" class="form-text text-muted">Click button to generate password.</small>
@@ -38,10 +38,10 @@
                 <div class="modal-footer">
                     <div class="row">
                         <div class="col-xs-4 action-button">
-                            <button type="button" class="btn btn-primary modal-close" data-dismiss="modal" @click="remove()">Delete</button>
+                            <button type="button" class="btn btn-primary" @click="remove()">Delete</button>
                         </div>
                         <div class="col-xs-4 action-button">
-                            <button type="button" class="btn btn-outline-light modal-close" data-dismiss="modal" @click="save()">Save</button>
+                            <button type="button" class="btn btn-outline-light" @click="save()">Save</button>
                         </div>
                         <div class="col-xs-4 action-button">
                             <button type="button" class="btn btn-light modal-close" data-dismiss="modal">Close</button>
@@ -55,6 +55,7 @@
 </template>
 
 <script>
+    import Account from '../models/Account'
     import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
     import { cleanUrl, randomPassword } from '../utils/textFormat'
@@ -62,7 +63,7 @@
     export default {
         props: {
             user: Object,
-            account: Object
+            account: Account
         },
         data()
         {
@@ -71,49 +72,34 @@
                 userService: new UserService()
             }
         },
-        filters:
-        {
-            formatPlatform: function (platform)
-            {
-                return cleanUrl(platform);
-            }
-        },
         methods: {
             save: function()
             {
+                if (!this.account.isValid()) {
+                    this.showAlert('Error', 'Please fill all fields !', 'danger');
+                    return;
+                }
+
                 this.accountsService.save(this.account);
                 this.userService.update(this.user);
 
-                this.showAlert(this.account.displayPlatform, 'updated.');
+                this.$emit('showAlert', new Alert(this.account.displayPlatform, 'updated !', 'success'));
             },
 
             remove: function ()
             {
-                if (confirm('Are you sure to delete : ', this.account.platform, ' ?') == true)
+                if (confirm('Are you sure to delete : ', this.account.displayPlatform, ' ?') === true)
                 {
                     this.accountsService.remove(this.account);
-
                     this.userService.update(this.user);
 
                     this.showAlert(this.account.displayPlatform, 'removed.');
                 }
             },
 
-            generatePassword: function ()
+            showAlert: function (title, message, type)
             {
-                this.account.password = randomPassword(8);
-            },
-
-            showAlert: function (title, message)
-            {
-                $('#alert-content').html('<strong>' + title + '</strong> ' + message);
-                
-                if (!$('#alert').hasClass('show'))
-                {
-                    $('#alert').toggleClass('show');
-
-                    setTimeout(function () { $('#alert').toggleClass('show') }, 5000);
-                }
+                this.$emit('showAlert', new Alert(title, message, type));
             }
         }
     } 

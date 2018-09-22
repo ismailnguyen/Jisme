@@ -1,5 +1,17 @@
 import { encrypt, decrypt } from './cypher'
-import { cleanUrl } from './textFormat'
+import Account from '../models/Account'
+
+export function parseAccount(account)
+{
+    return new Account(
+        account._id,
+        account.platform,
+        account.login,
+        account.password,
+        account.tags,
+        account.created_date,
+    );
+}
 
 export function getEncryptedAccount (account, token)
 {
@@ -34,10 +46,7 @@ export function getDecryptedAccount (account, token)
 
     if (account.platform)
     {
-        let platform = decrypt(account.platform, token);
-
-        decryptedAccount['platform'] = platform;
-        decryptedAccount['displayPlatform'] = cleanUrl(platform);
+        decryptedAccount['platform'] = decrypt(account.platform, token);
     }
 
     if (account.login)

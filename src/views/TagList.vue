@@ -15,7 +15,7 @@
 </template>
 
 <script>
-    import { sortByName } from '../utils/sort'
+    import { sortBy } from '../utils/sort'
     import TagItem from '../components/TagItem.vue'
     
     export default {
@@ -62,7 +62,7 @@
                     });
                 });
                 
-                tags = tags.sort(sortByName);
+                tags = tags.sort(sortBy);
 
                 return tags.filter(tag => this.filterByQuery(tag, this.search));
             }

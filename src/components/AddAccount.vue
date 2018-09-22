@@ -1,33 +1,33 @@
 <template>
-    <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="addAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
                     <h2 class="card-title">Add</h2>
-                    <h4>{{ account.platform | formatPlatform }}</h4>
+                    <h4>{{ account.displayPlatform }}</h4>
 
                     <form class="card-text lead">
                         <div class="form-group">
                             <label for="platform_input">Platform</label>
-                            <input id="platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" autofocus />
+                            <input id="platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" @keyup.enter="add()" required autofocus />
                         </div>
                         <div class="form-group">
                             <label for="login_input">Login</label>
-                            <input id="login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" />
+                            <input id="login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="add()" required />
                         </div>
                         <div class="form-group">
                             <label for="password_input">Password</label>
                             <div class="input-group">
-                                <input id="password_input" class="form-control" type="text" aria-describedby="passwordHelp" v-model="account.password" placeholder="Password" v-on:dblclick="generatePassword()" />
+                                <input id="password_input" class="form-control" type="text" aria-describedby="passwordHelp" v-model="account.password" placeholder="Password" @keyup.enter="add()" required />
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" @click="generatePassword()">Generate</button>
+                                    <button class="btn btn-outline-secondary" type="button" @click="account.generatePassword()">Generate</button>
                                 </div>
                             </div>
                             <small id="passwordHelp" class="form-text text-muted">Click button to generate password.</small>
                         </div>
                         <div class="form-group">
                             <label for="tags_input">Tags</label>
-                            <input id="tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="tagsHelp" v-model="account.tags" />
+                            <input id="tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="tagsHelp" v-model="account.tags" @keyup.enter="add()" required />
                             <small id="tagsHelp" class="form-text text-muted">Separated with comma.</small>
                         </div>
                     </form>
@@ -37,8 +37,8 @@
                         <div class="col-xs-6 action-button">
                             <button type="button" class="btn btn-link modal-close" data-dismiss="modal" @click="cleanForm()">Close</button>
                         </div>
-                        <div class="col-xs-6 action-button">
-                            <button type="button" class="btn btn-primary modal-close" data-dismiss="modal" @click="add()">Add</button>
+                        <div class="col-xs-6 action-button" >
+                            <button type="button" class="btn btn-primary" @click="add()">Add</button>
                         </div>
                     </div>
                 </div>
@@ -49,69 +49,48 @@
 
 <script>
     import { getUser } from '../utils/auth'
+    import Account from '../models/Account'
     import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
-    import { cleanUrl, randomPassword } from '../utils/textFormat'
+    import Alert from '../models/Alert'
 
     export default {
         data()
         {
             return {
                 user: getUser(),
-                account: {
-                    platform: '',
-                    login: '',
-                    password: '',
-                    tags: ''
-                }
-            }
-        },
-        filters:
-        {
-            formatPlatform: function (platform)
-            {
-                return cleanUrl(platform);
+                account: new Account()
             }
         },
         methods: {
             add: function ()
             {
+                if (!this.account.isValid()) {
+                    this.showAlert('Error', 'Please fill all fields !', 'danger');
+                    return;
+                }
+
                 let accountsService = new AccountsService(this.user, this.$store);
                 accountsService.add(this.account);
 
                 let userService = new UserService();
                 userService.update(this.user);
 
-                this.showAlert(cleanUrl(this.account.platform), 'created.');
+                $('#addAccountModal').modal('toggle');
+                
+                this.showAlert('this.account.displayPlatform', 'created !', 'success');
 
                 this.cleanForm();
             },
             
-            generatePassword: function ()
-            {
-                this.account.password = randomPassword(8);
-            },
-
             cleanForm: function ()
             {
-                this.account = {
-                    platform: '',
-                    login: '',
-                    password: '',
-                    tags: ''
-                };
+                this.account = new Account();
             },
 
-            showAlert: function (title, message)
+            showAlert: function (title, message, type)
             {
-                $('#alert-content').html('<strong>' + title + '</strong> ' + message);
-                
-                if (!$('#alert').hasClass('show'))
-                {
-                    $('#alert').toggleClass('show');
-
-                    setTimeout(function () { $('#alert').toggleClass('show') }, 5000);
-                }
+                this.$emit('showAlert', new Alert(title, message, type));
             }
         }
     } 
