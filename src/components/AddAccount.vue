@@ -48,17 +48,18 @@
 </template>
 
 <script>
-    import { getUser } from '../utils/auth'
     import Account from '../models/Account'
     import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
     import Alert from '../models/Alert'
 
     export default {
+        props: {
+            user: Object,
+        },
         data()
         {
             return {
-                user: getUser(),
                 account: new Account()
             }
         },

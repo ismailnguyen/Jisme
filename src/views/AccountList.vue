@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
-        <AddAccountModal v-on:showAlert="onShowAlert" />
-        <EditAccountModal :user="user" :account="editAccount" />
+        <AddAccountModal :user="user" v-on:showAlert="onShowAlert" />
+        <EditAccountModal :user="user" :account="editAccount" v-on:showAlert="onShowAlert" />
 
         <header class="row header-search justify-content-center" v-if="!loading">
             <div class="col-xs-12 col-lg-6">
