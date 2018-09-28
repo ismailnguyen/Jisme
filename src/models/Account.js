@@ -3,7 +3,7 @@ import { randomPassword } from '../utils/textFormat'
 
 class Account
 {
-    constructor (_id= 0, platform = '', login = '', password = '', tags = '', created_date = new Date())
+    constructor (_id = 0, platform = '', login = '', password = '', tags = '', created_date = new Date())
     {
         this._id = _id;
         this.platform = platform;

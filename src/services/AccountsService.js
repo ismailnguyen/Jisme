@@ -1,7 +1,6 @@
 import { getEncryptedAccount, getDecryptedAccount, parseAccount } from '../utils/account'
 import { BASE_API_URL } from '../utils/api'
 import { getHeadersWithAuth } from '../utils/requestHeader'
-import Account from '../models/Account';
 
 function AccountsService (user, store)
 {
@@ -18,6 +17,7 @@ function AccountsService (user, store)
             method: 'GET',
             headers: this.headers
         })
+        .then(handleErrors)
         .then(response => response.json())
         .then(accounts => {
             let encryptedAccounts = [];
@@ -51,9 +51,10 @@ function AccountsService (user, store)
             headers: this.headers,
             body: JSON.stringify(encryptedAccount)
         })
+        .then(handleErrors)
         .then(response => response.json())
         .then(addedAccount => parseAccount(getDecryptedAccount(addedAccount, this.user.token)))
-        .then(addedAccount => this.store.commit('addAccount', addedAccount));
+        .then(addedAccount => this.store.commit('addAccount', addedAccount))
     }
 
     this.save = function(accountToSave)
@@ -66,6 +67,7 @@ function AccountsService (user, store)
             headers: this.headers,
             body: JSON.stringify(encryptedAccount)
         })
+        .then(handleErrors)
         .then(response => this.store.commit('updateAccount', accountToSave));
     }
 
@@ -76,7 +78,18 @@ function AccountsService (user, store)
             method: 'DELETE',
             headers: this.headers
         })
+        .then(handleErrors)
         .then(response => this.store.commit('removeAccount', accountToRemove));
+    }
+
+    function handleErrors (response)
+    {
+        if (!response.ok)
+        {
+            throw Error(response.statusText);
+        }
+
+        return response;
     }
 };
 
