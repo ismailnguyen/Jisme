@@ -32,13 +32,19 @@
 
                 if (!$('#alert').hasClass('show'))
                 {
+                    this.showAlert = true;
+
                     setTimeout(() => $('#alert').toggleClass('show'), 1);
-                    setTimeout(() => $('#alert').toggleClass('show'), 5000);
+
+                    setTimeout(() => 
+                    {
+                        $('#alert').toggleClass('show');
+                        this.showAlert = false;
+                    }
+                    , 5000);
                 }
             }
-        },
-        computed: {
-        },
+        }
     }
 </script>
 

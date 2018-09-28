@@ -1,5 +1,5 @@
 <template>
-    <div id="alert" class="alert alert-dismissible fade" :class="type">
+    <div id="alert" class="alert alert-dismissible fade" :class="type" v-if="isVisible">
         
         <strong>
             {{ title }}
@@ -26,14 +26,6 @@
         props: {
             alertDetails: Object,
             isVisible: Boolean
-        },
-        data()
-        {
-            return {
-                //isVisible: false,
-                // message: '',
-                // type: ''
-            }
         },
         methods: {
             close: function () {
