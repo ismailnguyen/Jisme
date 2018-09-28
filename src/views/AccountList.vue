@@ -73,7 +73,12 @@
             if (navigator.onLine)
             {
                 this.fetchAccounts();
-            }            
+            }
+
+            $('#addAccountModal').on('shown.bs.modal', function () 
+            {
+                $('#platform_input').trigger('focus')
+            });
         },
         methods: {
             fetchAccounts: function ()
