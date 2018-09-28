@@ -85,6 +85,8 @@
                 this.accountsService.save(this.account);
                 this.userService.update(this.user);
 
+                $('#editAccountModal').modal('toggle');
+
                 this.$emit('showAlert', new Alert(this.account.displayPlatform, 'updated !', 'success'));
             },
 
@@ -95,7 +97,9 @@
                     this.accountsService.remove(this.account);
                     this.userService.update(this.user);
 
-                    this.showAlert(this.account.displayPlatform, 'removed.');
+                    $('#editAccountModal').modal('toggle');
+
+                    this.showAlert(this.account.displayPlatform, 'removed !', 'success');
                 }
             },
 
