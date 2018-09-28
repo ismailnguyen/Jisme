@@ -1,6 +1,6 @@
 <template>
     <div class="col-sm-12 col-md-6 col-lg-4">
-        <div class="card">
+        <div class="card" :id="account._id">
             <div class="card-header">
                 <div class="badge badge-pill badge-primary" v-for="(tag, index) in account.tags.split(',')" v-bind:key="index">
                     {{tag}}
