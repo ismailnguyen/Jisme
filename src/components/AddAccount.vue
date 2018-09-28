@@ -9,7 +9,7 @@
                     <form class="card-text lead">
                         <div class="form-group">
                             <label for="platform_input">Platform</label>
-                            <input id="platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" @keyup.enter="add()" required autofocus />
+                            <input id="platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" @keyup.enter="add()" required />
                         </div>
                         <div class="form-group">
                             <label for="login_input">Login</label>
@@ -72,16 +72,14 @@
                 }
 
                 let accountsService = new AccountsService(this.user, this.$store);
-                accountsService.add(this.account);
 
-                let userService = new UserService();
-                userService.update(this.user);
-
-                $('#addAccountModal').modal('toggle');
-                
-                this.showAlert('this.account.displayPlatform', 'created !', 'success');
-
-                this.cleanForm();
+                accountsService
+                .add(this.account)
+                .then(response => this.closeModal())
+                .catch(error =>
+                {
+                    this.showAlert('Error', error.toString(), 'danger');
+                });
             },
             
             cleanForm: function ()
@@ -92,6 +90,20 @@
             showAlert: function (title, message, type)
             {
                 this.$emit('showAlert', new Alert(title, message, type));
+            },
+
+            closeModal: function ()
+            {
+                let userService = new UserService();
+                userService.update(this.user);
+
+                $('#addAccountModal').modal('toggle');
+
+                console.log(this.account)
+
+                this.showAlert(this.account.displayPlatform, 'created !', 'success');
+                
+                this.cleanForm();
             }
         }
     } 
