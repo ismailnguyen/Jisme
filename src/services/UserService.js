@@ -44,10 +44,8 @@ function UserService()
         })
         .then(handleLoginErrors)
         .then(response => response.clone().json())
-        .then(response => 
+        .then(user => 
         {
-            let user = response.clone();
-            
             if (remember === true)
             {
                 //createCookie(user);
