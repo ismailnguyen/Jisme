@@ -19,7 +19,7 @@ function UserService()
     {
         user.last_update_date = new Date();
 
-        return fetch(USERS_API_URL + user._id,
+        return fetch((USERS_API_URL + user._id).clone(),
         {
             method: 'PUT',
             headers: getHeadersWithAuth(user.email, user.token),
@@ -36,7 +36,7 @@ function UserService()
             password: password
         };
 
-        return fetch(USERS_API_URL + 'login/',
+        return fetch((USERS_API_URL + 'login/').clone(),
         {
             method: 'POST',
             headers: getHeaders(),
