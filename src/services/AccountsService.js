@@ -12,7 +12,7 @@ function AccountsService (user, store)
 
     this.get = function()
     {
-        return fetch(ACCOUNTS_API_URL,
+        return fetch(ACCOUNTS_API_URL.clone(),
         {
             method: 'GET',
             headers: this.headers
@@ -45,7 +45,7 @@ function AccountsService (user, store)
     {
         let encryptedAccount = getEncryptedAccount(accountToAdd, this.user.token);
 
-        return fetch(ACCOUNTS_API_URL,
+        return fetch(ACCOUNTS_API_URL.clone(),
         {
             method: 'POST',
             headers: this.headers,
@@ -61,7 +61,7 @@ function AccountsService (user, store)
     {
         let encryptedAccount = getEncryptedAccount(accountToSave, this.user.token);
 
-        return fetch(ACCOUNTS_API_URL + accountToSave._id,
+        return fetch((ACCOUNTS_API_URL + accountToSave._id).clone(),
         {
             method: 'PUT',
             headers: this.headers,
@@ -73,7 +73,7 @@ function AccountsService (user, store)
 
     this.remove = function(accountToRemove)
     {
-        return fetch(ACCOUNTS_API_URL + accountToRemove._id,
+        return fetch((ACCOUNTS_API_URL + accountToRemove._id).clone(),
         {
             method: 'DELETE',
             headers: this.headers
