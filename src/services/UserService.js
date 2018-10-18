@@ -19,7 +19,7 @@ function UserService()
     {
         user.last_update_date = new Date();
 
-        return fetch((USERS_API_URL + user._id).clone(),
+        return fetch(USERS_API_URL + user._id,
         {
             method: 'PUT',
             headers: getHeadersWithAuth(user.email, user.token),
@@ -36,16 +36,18 @@ function UserService()
             password: password
         };
 
-        return fetch((USERS_API_URL + 'login/').clone(),
+        return fetch(USERS_API_URL + 'login/',
         {
             method: 'POST',
             headers: getHeaders(),
             body: JSON.stringify(credentials)
         })
         .then(handleLoginErrors)
-        .then(response => response.json())
-        .then(user => 
+        .then(response => response.clone().json())
+        .then(response => 
         {
+            let user = response.clone();
+            
             if (remember === true)
             {
                 //createCookie(user);
@@ -67,17 +69,18 @@ function UserService()
 
     function handleLoginErrors (response)
     {
-        if (!response.ok)
+        let clonedResponse = response.clone();
+        if (!clonedResponse.ok)
         {
-            if (response.status === 404)
+            if (clonedResponse.status === 404)
             {
                 throw Error('Invalid username/password !');
             }
             
-            throw Error(response.statusText);
+            throw Error(clonedResponse.statusText);
         }
 
-        return response;
+        return clonedResponse;
     }
 };
 
