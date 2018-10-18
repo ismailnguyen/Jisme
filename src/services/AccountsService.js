@@ -12,14 +12,15 @@ function AccountsService (user, store)
 
     this.get = function()
     {
-        return fetch(ACCOUNTS_API_URL.clone(),
+        return fetch(ACCOUNTS_API_URL,
         {
             method: 'GET',
             headers: this.headers
         })
         .then(handleErrors)
-        .then(response => response.json())
-        .then(accounts => {
+        .then(response => response.clone().json())
+        .then(response => {
+            let accounts = response.clone();
             let encryptedAccounts = [];
 
             accounts.forEach(account =>
@@ -33,8 +34,9 @@ function AccountsService (user, store)
 
             return encryptedAccounts;
         })
-        .then(accounts => 
+        .then(response => 
         {
+            let accounts = response.clone();
             this.store.commit('updateAccounts', accounts);
             
             return accounts;
@@ -45,23 +47,23 @@ function AccountsService (user, store)
     {
         let encryptedAccount = getEncryptedAccount(accountToAdd, this.user.token);
 
-        return fetch(ACCOUNTS_API_URL.clone(),
+        return fetch(ACCOUNTS_API_URL,
         {
             method: 'POST',
             headers: this.headers,
             body: JSON.stringify(encryptedAccount)
         })
         .then(handleErrors)
-        .then(response => response.json())
-        .then(addedAccount => parseAccount(getDecryptedAccount(addedAccount, this.user.token)))
-        .then(addedAccount => this.store.commit('addAccount', addedAccount))
+        .then(response => response.clone().json())
+        .then(addedAccount => parseAccount(getDecryptedAccount(addedAccount.clone(), this.user.token)))
+        .then(addedAccount => this.store.commit('addAccount', addedAccount.clone()))
     }
 
     this.save = function(accountToSave)
     {
         let encryptedAccount = getEncryptedAccount(accountToSave, this.user.token);
 
-        return fetch((ACCOUNTS_API_URL + accountToSave._id).clone(),
+        return fetch(ACCOUNTS_API_URL + accountToSave._id,
         {
             method: 'PUT',
             headers: this.headers,
@@ -73,7 +75,7 @@ function AccountsService (user, store)
 
     this.remove = function(accountToRemove)
     {
-        return fetch((ACCOUNTS_API_URL + accountToRemove._id).clone(),
+        return fetch(ACCOUNTS_API_URL + accountToRemove._id,
         {
             method: 'DELETE',
             headers: this.headers
@@ -84,12 +86,13 @@ function AccountsService (user, store)
 
     function handleErrors (response)
     {
-        if (!response.ok)
+        let clonedResponse = response.clone();
+        if (!clonedResponse.ok)
         {
-            throw Error(response.statusText);
+            throw Error(clonedResponse.statusText);
         }
 
-        return response;
+        return clonedResponse;
     }
 };
 
