@@ -19,8 +19,7 @@ function AccountsService (user, store)
         })
         .then(handleErrors)
         .then(response => response.clone().json())
-        .then(response => {
-            let accounts = response.clone();
+        .then(accounts => {
             let encryptedAccounts = [];
 
             accounts.forEach(account =>
@@ -34,9 +33,8 @@ function AccountsService (user, store)
 
             return encryptedAccounts;
         })
-        .then(response => 
+        .then(accounts => 
         {
-            let accounts = response.clone();
             this.store.commit('updateAccounts', accounts);
             
             return accounts;
