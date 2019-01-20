@@ -53,8 +53,8 @@ function AccountsService (user, store)
         })
         .then(handleErrors)
         .then(response => response.clone().json())
-        .then(addedAccount => parseAccount(getDecryptedAccount(addedAccount.clone(), this.user.token)))
-        .then(addedAccount => this.store.commit('addAccount', addedAccount.clone()))
+        .then(addedAccount => parseAccount(getDecryptedAccount(addedAccount, this.user.token)))
+        .then(addedAccount => this.store.commit('addAccount', addedAccount))
     }
 
     this.save = function(accountToSave)

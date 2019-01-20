@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="addAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal" id="addAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
@@ -33,14 +33,10 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <div class="row">
-                        <div class="col-xs-6 action-button">
-                            <button type="button" class="btn btn-link modal-close" data-dismiss="modal" @click="cleanForm()">Close</button>
-                        </div>
-                        <div class="col-xs-6 action-button" >
-                            <button type="button" class="btn btn-primary" @click="add()">Add</button>
-                        </div>
-                    </div>
+                    <button type="button" class="btn btn-link modal-close" data-dismiss="modal" @click="cleanForm()">Close</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" @click="add()">Add</button>
                 </div>
             </div>
         </div>
@@ -112,6 +108,7 @@
 <style scoped>
     .modal-content {
       border: none;
+      background: #f5f5f5;
     }
 
     @media only screen and (min-width: 500px) {
@@ -124,9 +121,5 @@
 
     .text-muted, a {
       color: #99c9ff !important;
-    }
-
-    .action-button {
-        margin: 0 1em 0 1em;
     }
 </style>

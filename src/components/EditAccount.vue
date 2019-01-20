@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="editAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal" id="editAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-body">
@@ -37,18 +37,15 @@
                         </div>
                     </form>
                 </div>
+
                 <div class="modal-footer">
-                    <div class="row">
-                        <div class="col-xs-4 action-button">
-                            <button type="button" class="btn btn-primary" @click="remove()">Delete</button>
-                        </div>
-                        <div class="col-xs-4 action-button">
-                            <button type="button" class="btn btn-outline-light" @click="save()">Save</button>
-                        </div>
-                        <div class="col-xs-4 action-button">
-                            <button type="button" class="btn btn-light modal-close" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
+                    <button type="button" class="btn btn-primary" @click="remove()">Delete</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-light" @click="save()">Save</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light modal-close" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -128,9 +125,9 @@
 
 <style scoped>
     .modal-content {
-      color: white;
-      background: #007aff;
-      border: none;
+        color: white;
+        background: #007aff;
+        border: none;
     }
 
     @media only screen and (min-width: 500px) {
@@ -149,7 +146,7 @@
         background: none;
     }
 
-    .action-button {
-        margin: 0 1em 0 1em;
+    .modal-footer .btn {
+        width:100%;
     }
 </style>
