@@ -122,4 +122,8 @@
     .text-muted, a {
       color: #99c9ff !important;
     }
+
+    .modal-footer .btn {
+        width:100%;
+    }
 </style>
