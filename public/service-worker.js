@@ -94,7 +94,7 @@ function update(request) {
       //this is where we call the server to get the newest version of the 
       //file to use the next time we show view
       return caches.open(CACHE)
-                        .then(cache => fetch(request)
+                        .then(cache => fetch(request.clone())
                               .then(response => {
                                     // IMPORTANT: Clone the response. A response is a stream
                                     // and because we want the browser to consume the response
@@ -108,5 +108,5 @@ function update(request) {
 
 function fromServer(request){
       //this is the fallback if it is not in the cahche to go to the server and get it
-      return fetch(request).then(response => response.clone())
+      return fetch(request.clone()).then(response => response.clone())
 }
