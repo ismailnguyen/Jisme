@@ -55,7 +55,9 @@ self.addEventListener('fetch', event => {
       // to clone the response.
       var fetchRequest = event.request.clone();
       
-      if (fetchRequest.cache === 'only-if-cached' && fetchRequest.mode !== 'same-origin')
+      if (fetchRequest.method !== 'GET'
+            && fetchRequest.cache === 'only-if-cached'
+            && fetchRequest.mode !== 'same-origin')
       {
             return;
       }

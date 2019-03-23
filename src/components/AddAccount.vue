@@ -95,8 +95,6 @@
 
                 $('#addAccountModal').modal('toggle');
 
-                console.log(this.account)
-
                 this.showAlert(this.account.displayPlatform, 'created !', 'success');
                 
                 this.cleanForm();
