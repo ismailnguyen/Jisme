@@ -41,7 +41,7 @@
         "type": "image/png"
       }, {
         "src": "images/touch/favicon512.png",
-        "sizes": "521x512",
+        "sizes": "512x512",
         "type": "image/png"
       }]
 }
