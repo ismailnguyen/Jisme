@@ -2,8 +2,13 @@
     <div class="modal" id="addAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Add</h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
-                    <h2 class="card-title">Add</h2>
                     <h4>{{ account.displayPlatform }}</h4>
 
                     <form class="card-text lead">
@@ -104,6 +109,15 @@
 </script>
 
 <style scoped>
+    .modal-header {
+        padding-bottom: 0;
+        border: none;
+    }
+    
+    .modal-header .close {
+        font-size: 2.5rem;
+    }
+
     .modal-content {
       border: none;
       background: #f5f5f5;

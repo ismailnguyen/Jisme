@@ -2,9 +2,13 @@
     <div class="modal" id="editAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">{{ account.displayPlatform }}</h2>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
                 <div class="modal-body">
-                    <h2 class="card-title">{{ account.displayPlatform }}</h2>
-
                     <form class="card-text lead">
                         <div class="form-group">
                             <label for="platform_input">Platform</label>
@@ -42,14 +46,10 @@
                     <button type="button" class="btn btn-primary" @click="remove()">Delete</button>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-light" @click="save()">Save</button>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light modal-close" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-light" @click="save()">Save</button>
                 </div>
             </div>
         </div>
-        <button class="modal-close is-large" aria-label="close"></button>
     </div>
 </template>
 
@@ -124,6 +124,16 @@
 </script>
 
 <style scoped>
+    .modal-header {
+        padding-bottom: 0;
+        border: none;
+    }
+    
+    .modal-header .close {
+        font-size: 2.5rem;
+        color: white;
+    }
+
     .modal-content {
         color: white;
         background: #007aff;
