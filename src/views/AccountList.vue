@@ -18,12 +18,6 @@
                     :account="account" />
             </div>
 
-            <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncatedAccounts.length && !loading">
-                <div class="col-xs-12 col-lg-6">
-                    <button @click="loadMore" type="button" class="btn btn-lg btn-light btn-block btnLoadMore">More </button>
-                </div>
-            </div>
-
             <Loader :isVisible="loading" />
         </div>
 
@@ -79,6 +73,8 @@
             {
                 $('#platform_input').trigger('focus')
             });
+
+            this.loadMoreOnScrollToBottom();
         },
         methods: {
             fetchAccounts: function ()
@@ -127,6 +123,16 @@
                 }
 
                 console.log(duplicateAccounts);
+            },
+
+            loadMoreOnScrollToBottom: function () {
+                window.onscroll = () => {
+                    let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+
+                    if (bottomOfWindow) {
+                        this.loadMore();
+                    }
+                };
             }
         },
         computed: {
