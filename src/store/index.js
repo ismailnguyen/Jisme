@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import localforage from 'localforage'
+import { parseAccount } from '../utils/account'
 
 localforage.config({
     name: 'jisme-storage'
@@ -21,16 +22,20 @@ let mutations =
         // Check if the store exists
         localforage.getItem('store').then(cachedStore =>
         {
+            if (cachedStore == null) return;
+
+            var accounts = cachedStore.accounts.map(account => parseAccount(account));
+
             // Replace the state object with the stored item
             this.replaceState(
-                Object.assign(state, cachedStore)
+                Object.assign(state, accounts)
             );
         });
     },
 
-    updateAccounts (state, newValue)
+    updateAccounts (state, accounts)
     {
-        state.accounts = newValue;
+        state.accounts = accounts.map(account => parseAccount(account));
 
         // Store the state object
         localforage.setItem('store', state);

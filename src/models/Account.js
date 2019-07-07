@@ -18,7 +18,7 @@ class Account
         return cleanUrl(this.platform);
     }
 
-    generatePassword()
+    generatePassword ()
     {
         this.password = randomPassword(8);
     }

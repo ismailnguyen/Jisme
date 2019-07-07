@@ -15,6 +15,7 @@
                     v-for="(account, index) in truncatedAccounts"
                     v-bind:key="index"
                     v-on:toggleEditAccountModal="onEditAccountModalToggled"
+                     :user="user" 
                     :account="account" />
             </div>
 
@@ -111,20 +112,6 @@
                 this.$emit('showAlert', alertDetails);
             },
 
-            showDuplicates: function ()
-            {
-                var sorted_arr = this.sortedAccounts;
-                var duplicateAccounts = [];
-
-                for (var i = 0; i < sorted_arr.length - 1; i++) {
-                    if (sorted_arr[i + 1].platform == sorted_arr[i].platform && sorted_arr[i + 1].login == sorted_arr[i].login) {
-                        duplicateAccounts.push(sorted_arr[i]);
-                    }
-                }
-
-                console.log(duplicateAccounts);
-            },
-
             loadMoreOnScrollToBottom: function () {
                 window.onscroll = () => {
                     let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
@@ -133,14 +120,27 @@
                         this.loadMore();
                     }
                 };
+            },
+
+            getDuplicatesOnly: function (initalArray) {
+                var sorted_arr = initalArray;
+                var duplicateAccounts = [];
+
+                for (var i = 0; i < sorted_arr.length - 1; i++) {
+                    if (sorted_arr[i + 1].platform == sorted_arr[i].platform && sorted_arr[i + 1].login == sorted_arr[i].login) {
+                        duplicateAccounts.push(sorted_arr[i]);
+                    }
+                }
+
+                console.log('duplicateAccounts', duplicateAccounts.map(account => account.platform));
+
+                return duplicateAccounts;
             }
         },
         computed: {
             truncatedAccounts: function ()
             {
-                let accounts = this.sortedAccounts;
-
-                return accounts.slice(0, this.pagination_offset);
+                return this.sortedAccounts.slice(0, this.pagination_offset);
             },
             sortedAccounts: function ()
             {

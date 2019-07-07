@@ -25,7 +25,7 @@
 
     export default {
         props: {
-            account: Object
+            account: Account
         },
         methods:
         {
