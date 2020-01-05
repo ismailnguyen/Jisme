@@ -212,25 +212,12 @@
         margin: auto;
     }
 
-    .loadMore {
-        bottom: 0;
-        width: 100%;
-        padding-top: 40px;
-        padding-bottom: 70px;
-        margin: auto;
-    }
-
-    .btnLoadMore {
-        background: #ced4da70;
-        border: none;
-    }
-
     .floating-button {
         position:fixed;
         width:60px;
         height:60px;
-        bottom:65px;
-        right:30px;
+        bottom:15px;
+        right:15px;
         background-color:#007bff;
         color:#FFF;
         border-radius:50px;
@@ -241,84 +228,5 @@
     .float-plus {
         color: #FFF;
         margin-top:22px;
-    }
-
-    .loader {
-        width: 100px;
-        height: 100px;
-        margin: auto;
-        background: url('/images/touch/favicon512.png') center center no-repeat;
-        -webkit-animation: loader-rotation 2s linear infinite;
-        -moz-animation: loader-rotation 2s linear infinite;
-        -o-animation: loader-rotation 2s linear infinite;
-        -ms-animation: loader-rotation 2s linear infinite;
-        animation: loader-rotation 2s linear infinite;
-        -webkit-background-size: 100%;
-        -moz-background-size: 100%;
-        background-size: 100%;
-    }
-    @-moz-keyframes loader-rotation {
-        from {
-            -webkit-transform: rotate(360deg);
-            -moz-transform: rotate(360deg);
-            -o-transform: rotate(360deg);
-            -ms-transform: rotate(360deg);
-            transform: rotate(360deg);
-        }
-        to {
-            -webkit-transform: rotate(0deg);
-            -moz-transform: rotate(0deg);
-            -o-transform: rotate(0deg);
-            -ms-transform: rotate(0deg);
-            transform: rotate(0deg);
-        }
-    }
-    @-webkit-keyframes loader-rotation {
-        from {
-            -webkit-transform: rotate(360deg);
-            -moz-transform: rotate(360deg);
-            -o-transform: rotate(360deg);
-            -ms-transform: rotate(360deg);
-            transform: rotate(360deg);
-        }
-        to {
-            -webkit-transform: rotate(0deg);
-            -moz-transform: rotate(0deg);
-            -o-transform: rotate(0deg);
-            -ms-transform: rotate(0deg);
-            transform: rotate(0deg);
-        }
-    }
-    @-o-keyframes loader-rotation {
-        from {
-            -webkit-transform: rotate(360deg);
-            -moz-transform: rotate(360deg);
-            -o-transform: rotate(360deg);
-            -ms-transform: rotate(360deg);
-            transform: rotate(360deg);
-        }
-        to {
-            -webkit-transform: rotate(0deg);
-            -moz-transform: rotate(0deg);
-            -o-transform: rotate(0deg);
-            -ms-transform: rotate(0deg);
-            transform: rotate(0deg);
-        }
-    }
-    @keyframes loader-rotation {
-        from {
-            -webkit-transform: rotate(360deg);
-            -moz-transform: rotate(360deg);
-            -o-transform: rotate(360deg);
-            -ms-transform: rotate(360deg);
-            transform: rotate(360deg);
-        }
-        to {
-            -webkit-transform: rotate(0deg);
-            -moz-transform: rotate(0deg);
-            -o-transform: rotate(0deg);
-            -ms-transform: rotate(0deg);
-            transform: rotate(0deg);
-        }
     }
 </style>
