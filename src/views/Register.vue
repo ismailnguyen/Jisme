@@ -1,14 +1,15 @@
 <template>
     <div class="text-center">
         <form class="form-signin">
-            <img class="mb-4" src="images/touch/favicon64.png" alt="" width="72" height="72">
+            <img class="mb-4" src="images/touch/favicon64.png" alt="" width="72" height="72" v-show="!isLoading">
+            <Loader :isVisible="isLoading" />
 
             <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
 
-            <p>{{error.message}}</p>
+            <p class="text-danger">{{error.message}}</p>
 
             <label for="inputEmail" class="sr-only">Email address</label>
-            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" aria-describedby="emailHelp" v-model="email" @keyup.enter="signUp" required autofocus>
+            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" aria-describedby="emailHelp" v-model="email" @keyup.enter="signUp" required>
 
             <label for="inputPassword" class="sr-only">Password</label>
             <input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="password" @keyup.enter="signUp" required>
@@ -21,6 +22,8 @@
 </template>
 
 <script>
+    import Loader from '../components/Loader.vue'
+
     export default {
         data() {
             return {
@@ -28,11 +31,13 @@
                 password: '',
                 error: {
                     message: ''
-                }
+                },
+                isLoading: false
             }
         },
         methods: {
             signUp() {
+                this.isLoading = true;
                 this.error.message = 'Error : Functionnality non available';
             }
         }
