@@ -10,43 +10,47 @@
                 </div>
                 <div class="modal-body">
                     <form class="card-text lead">
-                        <div class="form-group">
-                            <label for="platform_input">Platform</label>
-                            <input id="platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" v-on:dblclick="copyToClipboard('platform_input_hidden')" autofocus />
-                            <input id="platform_input_hidden" type="hidden" :value="account.platform" />
-                        </div>
-                        <div class="form-group">
-                            <label for="login_input">Login</label>
-                            <input id="login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" v-on:dblclick="copyToClipboard('login_input_hidden')" />
-                            <input id="login_input_hidden" type="hidden" :value="account.login" />
-                        </div>
-                        <div class="form-group">
-                            <label for="password_input">Password</label>
-                            <div class="input-group">
-                                <input id="password_input" class="form-control" type="text" aria-describedby="passwordHelp" v-model="account.password" placeholder="Password" />
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-light" type="button" @click="account.generatePassword()">Generate</button>
-                                </div>
+                        <div class="row">
+                            <div class="form-group col-xs-12 col-md-6">
+                                <label for="platform_input">Platform</label>
+                                <input id="platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" v-on:dblclick="copyToClipboard('platform_input_hidden')" autofocus />
+                                <input id="platform_input_hidden" type="hidden" :value="account.platform" />
                             </div>
-                            <small id="passwordHelp" class="form-text text-muted">Click button to generate password.</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="tags_input">Tags</label>
-                            <input id="tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="tagsHelp" v-model="account.tags" />
-                            <small id="tagsHelp" class="form-text text-muted">Separated with comma.</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="tags_input">Created date</label>
-                            <input class="form-control" v-model="account.created_date" disabled />
+                            <div class="form-group col-xs-12 col-md-6">
+                                <label for="tags_input">Tags</label>
+                                <input id="tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="tagsHelp" v-model="account.tags" />
+                                <small id="tagsHelp" class="form-text text-muted">Separated with comma.</small>
+                            </div>
+                            <div class="form-group col-xs-12 col-md-6">
+                                <label for="login_input">Login</label>
+                                <input id="login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" v-on:dblclick="copyToClipboard('login_input_hidden')" />
+                                <input id="login_input_hidden" type="hidden" :value="account.login" />
+                            </div>
+                            <div class="form-group col-xs-12 col-md-6">
+                                <label for="password_input">Password</label>
+                                <div class="input-group">
+                                    <input id="password_input" class="form-control" type="text" aria-describedby="passwordHelp" v-model="account.password" placeholder="Password" />
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-light" type="button" @click="account.generatePassword()">Generate</button>
+                                    </div>
+                                </div>
+                                <small id="passwordHelp" class="form-text text-muted">Click button to generate password.</small>
+                            </div>
+
+                            <div class="form-group col-md-12">
+                                <label for="tags_input">Created date</label>
+                                <input class="form-control" v-model="createdDate" disabled />
+                            </div>
                         </div>
                     </form>
                 </div>
-
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @click="remove()">Delete</button>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-light" @click="save()">Save</button>
+                    <div class="col-xs-12 col-md-6">
+                        <button type="button" class="btn btn-outline-danger" @click="remove()">Delete</button>
+                    </div>
+                    <div class=" col-xs-12 col-md-6">
+                        <button type="button" class="btn btn-light" @click="save()">Save</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -118,6 +122,11 @@
                 window.getSelection().removeAllRanges();
 
                 this.showAlert(inputToCopy.value, 'Copied to clipboard !', 'info');
+            }
+        },
+        computed: {
+            createdDate: function () {
+                return (new Date(this.account.created_date)).toDateString();
             }
         }
     } 
