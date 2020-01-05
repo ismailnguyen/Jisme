@@ -4,7 +4,6 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter);
 
 import AccountList from '../views/AccountList.vue'
-import TagList from '../views/TagList.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 
@@ -18,16 +17,6 @@ const router = new VueRouter({
             path: '/',
             beforeEnter: requireAuth,
             component: AccountList 
-        },
-        {
-            name: 'Tag',
-            path: '/tag/:tag', 
-            component: AccountList 
-        },
-        {
-            name: 'TagList',
-            path: '/tags', 
-            component: TagList 
         },
         {
             name: 'Login',
