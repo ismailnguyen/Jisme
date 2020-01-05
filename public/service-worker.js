@@ -93,6 +93,10 @@ function fromCache(request) {
 }
 
 function update(request) {
+      // Method 'POST' is unsupported with caching in service worker
+      if(event.request.method === 'POST')
+            return request;
+
       //this is where we call the server to get the newest version of the 
       //file to use the next time we show view
       return caches.open(CACHE)
