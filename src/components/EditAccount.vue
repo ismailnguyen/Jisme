@@ -12,33 +12,33 @@
                     <form class="card-text lead">
                         <div class="row">
                             <div class="form-group col-xs-12 col-md-6">
-                                <label for="platform_input">Platform</label>
-                                <input id="platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" v-on:dblclick="copyToClipboard('platform_input_hidden')" autofocus />
-                                <input id="platform_input_hidden" type="hidden" :value="account.platform" />
+                                <label for="editAccount_platform_input">Platform</label>
+                                <input id="editAccount_platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" v-on:dblclick="copyToClipboard('editAccount_platform_input_hidden')" autofocus />
+                                <input id="editAccount_platform_input_hidden" type="hidden" :value="account.platform" />
                             </div>
                             <div class="form-group col-xs-12 col-md-6">
-                                <label for="tags_input">Tags</label>
-                                <input id="tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="tagsHelp" v-model="account.tags" />
-                                <small id="tagsHelp" class="form-text text-muted">Separated with comma.</small>
+                                <label for="editAccount_tags_input">Tags</label>
+                                <input id="editAccount_tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="editAccount_tagsHelp" v-model="account.tags" />
+                                <small id="editAccount_tagsHelp" class="form-text text-muted">Separated with comma.</small>
                             </div>
                             <div class="form-group col-xs-12 col-md-6">
-                                <label for="login_input">Login</label>
-                                <input id="login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" v-on:dblclick="copyToClipboard('login_input_hidden')" />
-                                <input id="login_input_hidden" type="hidden" :value="account.login" />
+                                <label for="editAccount_login_input">Login</label>
+                                <input id="editAccount_login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" v-on:dblclick="copyToClipboard('editAccount_login_input_hidden')" />
+                                <input id="editAccount_login_input_hidden" type="hidden" :value="account.login" />
                             </div>
                             <div class="form-group col-xs-12 col-md-6">
-                                <label for="password_input">Password</label>
+                                <label for="editAccount_password_input">Password</label>
                                 <div class="input-group">
-                                    <input id="password_input" class="form-control" type="text" aria-describedby="passwordHelp" v-model="account.password" placeholder="Password" />
+                                    <input id="editAccount_password_input" class="form-control" type="text" aria-describedby="editAccount_passwordHelp" v-model="account.password" placeholder="Password" />
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-light" type="button" @click="account.generatePassword()">Generate</button>
                                     </div>
                                 </div>
-                                <small id="passwordHelp" class="form-text text-muted">Click button to generate password.</small>
+                                <small id="editAccount_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
                             </div>
 
                             <div class="form-group col-md-12">
-                                <label for="tags_input">Created date</label>
+                                <label>Created date</label>
                                 <input class="form-control" v-model="createdDate" disabled />
                             </div>
                         </div>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="modal-footer">
                     <div class="col-xs-12 col-md-6">
-                        <button type="button" class="btn btn-outline-danger" @click="remove()">Delete</button>
+                        <button type="button" class="btn btn-outline-light" @click="remove()">Delete</button>
                     </div>
                     <div class=" col-xs-12 col-md-6">
                         <button type="button" class="btn btn-light" @click="save()">Save</button>

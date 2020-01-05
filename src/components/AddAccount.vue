@@ -14,27 +14,27 @@
                     <form class="card-text lead">
                         <div class="row">
                             <div class="form-group col-xs-12 col-md-6">
-                                <label for="platform_input">Platform</label>
-                                <input id="platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" @keyup.enter="add()" required />
+                                <label for="addAccount_platform_input">Platform</label>
+                                <input id="addAccount_platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" @keyup.enter="add()" required />
                             </div>
                             <div class="form-group col-xs-12 col-md-6">
-                                <label for="tags_input">Tags</label>
-                                <input id="tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="tagsHelp" v-model="account.tags" @keyup.enter="add()" required />
-                                <small id="tagsHelp" class="form-text text-muted">Separated with comma.</small>
+                                <label for="addAccount_tags_input">Tags</label>
+                                <input id="addAccount_tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="addAccount_tagsHelp" v-model="account.tags" @keyup.enter="add()" required />
+                                <small id="addAccount_tagsHelp" class="form-text text-muted">Separated with comma.</small>
                             </div>
                             <div class="form-group col-xs-12 col-md-6">
-                                <label for="login_input">Login</label>
-                                <input id="login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="add()" required />
+                                <label for="addAccount_login_input">Login</label>
+                                <input id="addAccount_login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="add()" required />
                             </div>
                             <div class="form-group col-xs-12 col-md-6">
-                                <label for="password_input">Password</label>
+                                <label for="addAccount_password_input">Password</label>
                                 <div class="input-group">
-                                    <input id="password_input" class="form-control" type="text" aria-describedby="passwordHelp" v-model="account.password" placeholder="Password" @keyup.enter="add()" required />
+                                    <input id="addAccount_password_input" class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="account.password" placeholder="Password" @keyup.enter="add()" required />
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary" type="button" @click="account.generatePassword()">Generate</button>
                                     </div>
                                 </div>
-                                <small id="passwordHelp" class="form-text text-muted">Click button to generate password.</small>
+                                <small id="addAccount_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
                             </div>
                         </div>
                     </form>
