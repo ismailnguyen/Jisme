@@ -20,6 +20,9 @@ var precacheFiles = [
 
 //Install stage sets up the cache-array to configure pre-cache content
 self.addEventListener('install', event => {
+      if (!event.request)
+            return;
+      
       console.log('The service worker is being installed.');
       
       // IMPORTANT: Clone the request. A request is a stream and
@@ -47,6 +50,9 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('fetch', event => {
+      if (!event.request)
+            return;
+      
       console.log('The service worker is serving the asset.'+ event.request.url);
       
       // IMPORTANT: Clone the request. A request is a stream and
