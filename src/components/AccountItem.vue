@@ -39,11 +39,11 @@
 <style scoped>
     .card {
         color: black;
-        background: #ffffff6b;
+        background: #EFEEEE;
         border: none;
         border-radius: 1.55rem;
         margin: 10px;
-        box-shadow: 0 0 2rem rgba(0,0,255,.1);
+        box-shadow: 20px 20px 60px #cbcaca, -20px -20px 60px #ffffff;
     }
 
     .card-header {

@@ -4,7 +4,7 @@
 
 Live : [https://jisme.herokuapp.com](https://jisme.herokuapp.com)
 
-`Progressive Web App` `Vue JS` `Bootstrap`
+`Progressive Web App` `Vue JS` `Bootstrap`, `Neumorphism design`
 
 ## Screenshots
 
@@ -15,10 +15,6 @@ Live : [https://jisme.herokuapp.com](https://jisme.herokuapp.com)
 ### Home page
 
 ![](https://github.com/ismailnguyen/Jisme/raw/master/screenshots/home.png)
-
-### Tags list
-
-![](https://github.com/ismailnguyen/Jisme/raw/master/screenshots/tags_list.png)
 
 ### New account creation popin
 

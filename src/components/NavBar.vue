@@ -1,6 +1,6 @@
 <template>
     <nav class="navbar navbar-light fixed-top" v-if="isLoggedIn">
-        <button class="navbar-toggler" type="button" @click="signOut()">
+        <button class="navbar-toggler button-power-off" type="button" @click="signOut()">
             <i class="text-danger fa fa-power-off"></i>
         </button>
     </nav>
@@ -39,3 +39,17 @@
         },
     }
 </script>
+
+<style scoped>
+    .navbar {
+        padding-left: 5px;
+    }
+
+    .navbar button {
+        border-radius:100px;
+        text-align:center;
+        background-color:#E0E5EC;
+        border: none;
+        box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
+    }
+</style>

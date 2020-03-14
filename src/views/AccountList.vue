@@ -211,6 +211,25 @@
     .header-search {
         margin: auto;
     }
+    
+    .searchBar {
+        border-radius: 2rem;
+        color: #818182;
+        line-height: 2.5;
+        box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
+    }
+
+    .searchBar::placeholder {
+        color: #818182;
+    }
+
+    .searchBar:active,
+    .searchBar:focus {
+        border: none !important;
+        background-color: #ced4da70;
+        box-shadow:  20px 20px 60px #a3a3a3, 
+             -20px -20px 60px #dddddd;
+    }
 
     .floating-button {
         position:fixed;
@@ -218,15 +237,17 @@
         height:60px;
         bottom:15px;
         right:15px;
-        background-color:#007bff;
-        color:#FFF;
-        border-radius:50px;
+        border-radius:100px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top:100px;
         text-align:center;
-        box-shadow: 2px 2px 3px #999;
+        background-color:#E0E5EC;
+        box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
     }
 
     .float-plus {
-        color: #FFF;
+        color: #007bff;
         margin-top:22px;
     }
 </style>

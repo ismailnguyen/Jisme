@@ -120,7 +120,16 @@
 
     .modal-content {
       border: none;
-      background: #f5f5f5;
+      background: #ffffffdb;
+    }
+
+    .form-control {
+        color: #343a40;
+    }
+
+    .form-control::placeholder {
+        color: #343a40;
+        opacity: 1;
     }
 
     @media only screen and (min-width: 500px) {
