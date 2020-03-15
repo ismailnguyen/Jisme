@@ -1,12 +1,10 @@
 <template>
     <div id="app">
-        <router-view v-on:showAlert="onShowAlert" />
-
         <NavBar />
 
-        <AlertBox :alertDetails="alertDetails" :isVisible="showAlert" />
+        <router-view v-on:showAlert="onShowAlert" />
 
-        <div class="overlay"></div>
+        <AlertBox :alertDetails="alertDetails" v-if="showAlert" v-on:closeAlert="onToggleAlert()" />
     </div> 
 </template>
 
@@ -30,19 +28,20 @@
             {
                 this.alertDetails = alertDetails;
 
-                if (!$('#alert').hasClass('show'))
+                if (!this.showAlert)
                 {
-                    this.showAlert = true;
-
-                    setTimeout(() => $('#alert').toggleClass('show'), 1);
+                    this.onToggleAlert();
 
                     setTimeout(() => 
                     {
-                        $('#alert').toggleClass('show');
-                        this.showAlert = false;
+                        this.onToggleAlert();
                     }
                     , 5000);
                 }
+            },
+
+            onToggleAlert: function () {
+                this.showAlert = !this.showAlert;
             }
         }
     }
@@ -90,31 +89,4 @@
     .btn {
         border-radius: .75rem;
     } 
-
-    .modal {
-        backdrop-filter: blur(10px);
-        transition: all 1s;
-    }
-
-    .modal {
-        box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);   
-        border-radius: 5px;
-        z-index: 1;
-        background: inherit;
-        overflow: hidden;
-    }
-
-    .modal:before {
-        content: "";
-        position: absolute;
-        background: inherit;
-        z-index: -1;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
-        filter: blur(10px);
-        margin: -20px;
-    }
 </style>

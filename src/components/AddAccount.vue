@@ -1,50 +1,52 @@
 <template>
-    <div class="modal" id="addAccountModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Add</h2>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" @click="cleanForm()">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h4>{{ account.displayPlatform }}</h4>
+    <div class="modal" @keyup.esc="closeModal()" tabindex="0" @click.self="closeModal()">
+        <transition name="pop" appear v-on:before-enter="toggleModalContent()">
+            <div class="modal-dialog">
+                <div class="modal-content" v-if="showModalContent">
+                    <div class="modal-header">
+                        <h2 class="modal-title">Add</h2>
+                        <button type="button" class="close" @click="closeModal()">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <h4>{{ account.displayPlatform }}</h4>
 
-                    <form class="card-text lead">
-                        <div class="row">
-                            <div class="form-group col-xs-12 col-md-6">
-                                <label for="addAccount_platform_input">Platform</label>
-                                <input id="addAccount_platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" @keyup.enter="add()" required />
-                            </div>
-                            <div class="form-group col-xs-12 col-md-6">
-                                <label for="addAccount_tags_input">Tags</label>
-                                <input id="addAccount_tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="addAccount_tagsHelp" v-model="account.tags" @keyup.enter="add()" required />
-                                <small id="addAccount_tagsHelp" class="form-text text-muted">Separated with comma.</small>
-                            </div>
-                            <div class="form-group col-xs-12 col-md-6">
-                                <label for="addAccount_login_input">Login</label>
-                                <input id="addAccount_login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="add()" required />
-                            </div>
-                            <div class="form-group col-xs-12 col-md-6">
-                                <label for="addAccount_password_input">Password</label>
-                                <div class="input-group">
-                                    <input id="addAccount_password_input" class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="account.password" placeholder="Password" @keyup.enter="add()" required />
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button" @click="account.generatePassword()">Generate</button>
-                                    </div>
+                        <form class="card-text lead">
+                            <div class="row">
+                                <div class="form-group col-xs-12 col-md-6">
+                                    <label for="addAccount_platform_input">Platform</label>
+                                    <input id="addAccount_platform_input" class="form-control" placeholder="Platform" type="text" ref="platform" v-model="account.platform" @keyup.enter="add()" required />
                                 </div>
-                                <small id="addAccount_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
+                                <div class="form-group col-xs-12 col-md-6">
+                                    <label for="addAccount_tags_input">Tags</label>
+                                    <input id="addAccount_tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="addAccount_tagsHelp" v-model="account.tags" @keyup.enter="add()" required />
+                                    <small id="addAccount_tagsHelp" class="form-text text-muted">Separated with comma.</small>
+                                </div>
+                                <div class="form-group col-xs-12 col-md-6">
+                                    <label for="addAccount_login_input">Login</label>
+                                    <input id="addAccount_login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="add()" required />
+                                </div>
+                                <div class="form-group col-xs-12 col-md-6">
+                                    <label for="addAccount_password_input">Password</label>
+                                    <div class="input-group">
+                                        <input id="addAccount_password_input" class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="account.password" placeholder="Password" @keyup.enter="add()" required />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button" @click="account.generatePassword()">Generate</button>
+                                        </div>
+                                    </div>
+                                    <small id="addAccount_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
+                                </div>
                             </div>
-                        </div>
-                    </form>
-                </div>
-                
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" @click="add()">Add</button>
+                        </form>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" @click="add()">Add</button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </transition>
     </div>
 </template>
 
@@ -61,7 +63,8 @@
         data()
         {
             return {
-                account: new Account()
+                account: new Account(),
+                showModalContent: false
             }
         },
         methods: {
@@ -76,7 +79,7 @@
 
                 accountsService
                 .add(this.account)
-                .then(response => this.closeModal())
+                .then(response => this.updateUI())
                 .catch(error =>
                 {
                     this.showAlert('Error', error.toString(), 'danger');
@@ -93,27 +96,33 @@
                 this.$emit('showAlert', new Alert(title, message, type));
             },
 
-            closeModal: function ()
+            updateUI: function ()
             {
                 let userService = new UserService();
                 userService.update(this.user);
 
-                $('#addAccountModal').modal('toggle');
+                this.closeModal();
 
-                this.showAlert(this.account.displayPlatform, 'created !', 'success');
+                this.showAlert(this.account.displayPlatform, 'Created !', 'success');
                 
                 this.cleanForm();
+            },
+            
+            toggleModalContent: function() 
+            {
+                this.showModalContent = !this.showModalContent;
+                this.$nextTick(() => this.$refs.platform.focus())
+            },
+
+            closeModal: function ()
+            {
+                this.$emit('toggleAddAccountModal');
             }
         }
     } 
 </script>
 
 <style scoped>
-    .modal-header {
-        padding-bottom: 0;
-        border: none;
-    }
-    
     .modal-header .close {
         font-size: 2.5rem;
     }

@@ -1,5 +1,5 @@
 <template>
-    <div id="alert" class="alert alert-dismissible fade" :class="type" v-if="isVisible">
+    <div id="alert" class="alert alert-dismissible fade show" :class="type">
         
         <strong>
             {{ title }}
@@ -24,12 +24,11 @@
 
     export default {
         props: {
-            alertDetails: Object,
-            isVisible: Boolean
+            alertDetails: Object
         },
         methods: {
             close: function () {
-                $('#alert').toggleClass('show');
+                this.$emit('closeAlert');
             }
         },
         computed: {

@@ -1,7 +1,17 @@
 <template>
     <div class="container-fluid">
-        <AddAccountModal :user="user" v-on:showAlert="onShowAlert" />
-        <EditAccountModal :user="user" :account="editAccount" v-on:showAlert="onShowAlert" />
+        <AddAccountModal 
+            :user="user" 
+            v-on:showAlert="onShowAlert"
+            v-on:toggleAddAccountModal="onAddAccountModalToggled"
+            v-if="showAddAccountModal" />
+
+        <EditAccountModal 
+            :user="user" 
+            :account="editAccount" 
+            v-on:showAlert="onShowAlert"
+            v-on:toggleEditAccountModal="onEditAccountModalToggled"
+            v-if="showEditAccountModal" />
 
         <header class="row header-search justify-content-center" v-if="!loading">
             <div class="col-xs-12 col-lg-6">
@@ -22,7 +32,7 @@
             <Loader :isVisible="loading" />
         </div>
 
-        <a href="#" class="floating-button" data-toggle="modal" data-target="#addAccountModal" v-if="!loading"><i class="fa fa-plus float-plus"></i></a>
+        <a class="floating-button" @click="showAddAccountModal = !showAddAccountModal" v-if="!loading"><i class="fa fa-plus float-plus"></i></a>
     </div>
 </template>
 
@@ -48,7 +58,9 @@
                 loading: true,
                 pagination_offset: 0,
                 editAccount: new Account(),
-                filterService: {}
+                filterService: {},
+                showAddAccountModal: false,
+                showEditAccountModal: false
             }
         },
         components: {
@@ -69,11 +81,6 @@
             {
                 this.fetchAccounts();
             }
-
-            $('#addAccountModal').on('shown.bs.modal', function () 
-            {
-                $('#platform_input').trigger('focus')
-            });
 
             this.loadMoreOnScrollToBottom();
         },
@@ -100,11 +107,15 @@
                 this.pagination_offset = 10;
             },
 
+            onAddAccountModalToggled: function () {
+                this.showAddAccountModal = !this.showAddAccountModal;
+            },
+
             onEditAccountModalToggled: function (account)
             {
-                this.editAccount = account;
+                this.editAccount = this.showEditAccountModal ? new Account() : account;
 
-                $('#editAccountModal').modal();
+                this.showEditAccountModal = !this.showEditAccountModal;
             },
 
             onShowAlert: function (alertDetails)
@@ -122,6 +133,7 @@
                 };
             },
 
+            // Function for testing purpose
             getDuplicatesOnly: function (initalArray) {
                 var sorted_arr = initalArray;
                 var duplicateAccounts = [];
@@ -157,22 +169,52 @@
 </script>
 
 <style>
-    body.modal-open .main-container {
-      -webkit-filter: blur(2.5px);
-      -moz-filter: blur(2.5px);
-      -o-filter: blur(2.5px);
-      -ms-filter: blur(2.5px);
-      filter: blur(2.5px);
+    .modal {
+        transition: all .5s;
+        z-index: 1;
+        background: inherit;
+        overflow: hidden;
+        display: block;
+        z-index: 10500;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);   
     }
 
-    .modal {
-        z-index: 10500;
+    .modal:before {
+        content: "";
+        position: absolute;
+        background: inherit;
+        z-index: -1;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
+        filter: blur(10px);
+        margin: -20px;
+    }
+
+    .modal-header {
+        padding-bottom: 0;
+        border: none;
     }
 
     .modal-dialog {
         width: 100%;
         height: 100%;
         padding: 0;
+    }
+
+    .modal-content {
+        border-radius: 0;
+        color: #007bff;
+        background: #fff;
+        height: auto;
+        box-shadow: 0 0 2rem rgba(0,0,255,.1);
+    }
+
+    .modal-content, .modal-footer {
+      border: none;
     }
 
     @media(min-width:768px) {
@@ -188,24 +230,20 @@
       }
 
       .modal-content {
-            border-radius: 1.55rem;
+            border-radius: 0;
             min-height: 100%;
         }
+    } 
+        
+    .pop-enter-active,
+    .pop-leave-active {
+        transition: transform 0.4s cubic-bezier(0.5, 0, 0.5, 1), opacity 0.4s linear;
     }
 
-    .modal-content {
-        border-radius: 0;
-    }
-
-    .modal-content {
-        color: #007bff;
-        background: #fff;
-        height: auto;
-        box-shadow: 0 0 2rem rgba(0,0,255,.1);
-    }
-
-    .modal-content, .modal-footer {
-      border: none;
+    .pop-enter,
+    .pop-leave-to {
+        opacity: 0;
+        transform: scale(0.3) translateY(-50%);
     }
 
     .header-search {
@@ -233,6 +271,7 @@
 
     .floating-button {
         position:fixed;
+        cursor: pointer;
         width:60px;
         height:60px;
         bottom:15px;
