@@ -12,8 +12,6 @@ var precacheFiles = [
       '/fonts/fontawesome-webfont.woff',
       '/fonts/fontawesome-webfont.woff2',
       '/dist/build.js',
-      '/js/bootstrap.min.js',
-      '/js/jquery.min.js',
       '/js/sha256.min.js',
       '/js/sjcl.js'
     ];
@@ -61,9 +59,10 @@ self.addEventListener('fetch', event => {
       // to clone the response.
       var fetchRequest = event.request.clone();
       
+	  // Method 'POST' is unsupported with caching in service worker
       if (fetchRequest.method !== 'GET'
-            && fetchRequest.cache === 'only-if-cached'
-            && fetchRequest.mode !== 'same-origin')
+            || fetchRequest.cache === 'only-if-cached'
+            || fetchRequest.mode !== 'same-origin')
       {
             return;
       }
@@ -99,10 +98,6 @@ function fromCache(request) {
 }
 
 function update(request) {
-      // Method 'POST' is unsupported with caching in service worker
-      if(request.method === 'POST')
-            return request;
-
       //this is where we call the server to get the newest version of the 
       //file to use the next time we show view
       return caches.open(CACHE)
