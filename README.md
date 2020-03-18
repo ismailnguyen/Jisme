@@ -2,9 +2,9 @@
 
 > A password manager
 
-Live : [https://jisme.herokuapp.com](https://jisme.herokuapp.com)
+Live : [https://jisme.app](https://jisme.app)
 
-`Progressive Web App` `Vue JS` `Bootstrap`, `Neumorphism design`
+`Progressive Web App` `Vue JS` `Bootstrap`, `Neumorphism design`, `Stanford Javascript Crypto Library`
 
 ## Screenshots
 
