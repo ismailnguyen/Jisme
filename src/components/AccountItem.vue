@@ -45,6 +45,10 @@
         margin: 10px;
         box-shadow: 20px 20px 60px #cbcaca, -20px -20px 60px #ffffff;
     }
+	
+	.card:hover {
+		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
+	}
 
     .card-header {
         background: none;
