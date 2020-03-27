@@ -29,6 +29,14 @@
                     :account="account" />
             </div>
 
+            <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncatedAccounts.length && !loading">
+                <div class="col-xs-12 col-lg-6">
+                    <button @click="loadMore()" type="button" class="btn btn-lg btn-light btn-block load-more-button">
+                        More
+                    </button>
+                </div>
+            </div>
+
             <Loader :isVisible="loading" />
         </div>
 
@@ -77,10 +85,7 @@
         mounted() {
             this.initPagination();
 
-            if (navigator.onLine)
-            {
-                this.fetchAccounts();
-            }
+            this.fetchAccounts();
 
             this.loadMoreOnScrollToBottom();
         },
@@ -261,29 +266,49 @@
         color: #818182;
     }
 
+    .searchBar:hover,
     .searchBar:active,
     .searchBar:focus {
         border: none !important;
         background-color: #ced4da70;
-        box-shadow:  20px 20px 60px #a3a3a3, 
-             -20px -20px 60px #dddddd;
+		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
+	}
+
+    .load-more-button {
+        border-radius: 100px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 100px;
+        margin-bottom: 20px;
+        text-align: center;
+        background-color: #E0E5EC;
+        color: #007bff;
+        box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
     }
+
+    .load-more-button:hover {
+		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
+	}
 
     .floating-button {
         position:fixed;
         cursor: pointer;
-        width:60px;
-        height:60px;
-        bottom:15px;
-        right:15px;
-        border-radius:100px;
+        width: 60px;
+        height: 60px;
+        bottom: 15px;
+        right: 15px;
+        border-radius: 100px;
         margin-left: auto;
         margin-right: auto;
-        margin-top:100px;
-        text-align:center;
-        background-color:#E0E5EC;
+        margin-top: 100px;
+        text-align: center;
+        background-color: #E0E5EC;
         box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
     }
+
+    .floating-button:hover {
+		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
+	}
 
     .float-plus {
         color: #007bff;

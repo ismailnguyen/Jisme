@@ -11,7 +11,6 @@ Vue.use(Vuex);
 
 const state =
 {
-    currentTag: 'All',
     accounts: []
 };
 
@@ -20,16 +19,12 @@ let mutations =
     initialiseStore (state)
     {
         // Check if the store exists
-        localforage.getItem('store').then(cachedStore =>
+        localforage.getItem('store').then(cachedAccounts =>
         {
-            if (cachedStore == null) return;
+            if (cachedAccounts == null)
+                return;
 
-            var accounts = cachedStore.accounts.map(account => parseAccount(account));
-
-            // Replace the state object with the stored item
-            this.replaceState(
-                Object.assign(state, accounts)
-            );
+            state.accounts = cachedAccounts.accounts.map(account => parseAccount(account));
         });
     },
 
@@ -37,13 +32,14 @@ let mutations =
     {
         state.accounts = accounts.map(account => parseAccount(account));
 
-        // Store the state object
         localforage.setItem('store', state);
     },
 
     addAccount (state, account)
     {
         state.accounts.push(account);
+
+        localforage.setItem('store', state);
     },
     
     updateAccount (state, account)
@@ -51,6 +47,8 @@ let mutations =
         let index = state.accounts.indexOf(account);
 
         state.accounts[index] = account;
+
+        localforage.setItem('store', state);
     },
 
     removeAccount (state, account)
@@ -58,6 +56,8 @@ let mutations =
         let index = state.accounts.indexOf(account);
 
         state.accounts.splice(index, 1);
+
+        localforage.setItem('store', state);
     }
 };
 

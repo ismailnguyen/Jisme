@@ -88,5 +88,5 @@
 
     .btn {
         border-radius: .75rem;
-    } 
+    }
 </style>

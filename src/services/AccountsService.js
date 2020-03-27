@@ -36,7 +36,7 @@ function AccountsService (user, store)
         .then(accounts => 
         {
             this.store.commit('updateAccounts', accounts);
-            
+
             return accounts;
         });
     }
