@@ -30,7 +30,8 @@
                                 <div class="form-group col-xs-12 col-md-6">
                                     <label for="editAccount_password_input">Password</label>
                                     <div class="input-group">
-                                        <input id="editAccount_password_input" class="form-control" type="text" aria-describedby="editAccount_passwordHelp" v-model="account.password" placeholder="Password" />
+                                        <input id="editAccount_password_input" class="form-control" type="text" aria-describedby="editAccount_passwordHelp" v-model="account.password" placeholder="Password" v-on:dblclick="copyToClipboard('editAccount_password_input_hidden')" />
+                                        <input id="editAccount_password_input_hidden" type="hidden" :value="account.password" />
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-light" type="button" @click="account.generatePassword()">Generate</button>
                                         </div>
