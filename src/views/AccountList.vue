@@ -260,6 +260,7 @@
         color: #818182;
         line-height: 2.5;
         box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
+        backdrop-filter: blur(4px);
     }
 
     .searchBar::placeholder {
