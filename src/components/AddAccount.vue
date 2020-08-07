@@ -156,4 +156,10 @@
     .modal-footer .btn {
         width:100%;
     }
+
+    .modal-footer .btn-primary {
+        color: #f8f9fa;
+        background-color: #162056;
+        border-color: #162056;
+    }
 </style>
