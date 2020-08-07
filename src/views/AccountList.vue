@@ -175,7 +175,6 @@
 
 <style>
     .modal {
-        transition: all .5s;
         z-index: 1;
         background: inherit;
         overflow: hidden;
@@ -212,8 +211,8 @@
 
     .modal-content {
         border-radius: 0;
-        color: #007bff;
-        background: #fff;
+        color: #162056;
+        background: #f8f9fa;
         height: auto;
         box-shadow: 0 0 2rem rgba(0,0,255,.1);
     }
@@ -242,7 +241,7 @@
         
     .pop-enter-active,
     .pop-leave-active {
-        transition: transform 0.4s cubic-bezier(0.5, 0, 0.5, 1), opacity 0.4s linear;
+        transition: transform 0.3s cubic-bezier(0.5, 0, 0.5, 1), opacity 0.3s linear;
     }
 
     .pop-enter,
@@ -282,8 +281,8 @@
         margin-top: 100px;
         margin-bottom: 20px;
         text-align: center;
-        background-color: #E0E5EC;
-        color: #007bff;
+        background-color: #f8f9fa;
+        color: #162056;
         box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
     }
 
@@ -303,7 +302,7 @@
         margin-right: auto;
         margin-top: 100px;
         text-align: center;
-        background-color: #E0E5EC;
+        background-color: #f8f9fa;
         box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
     }
 
@@ -312,7 +311,7 @@
 	}
 
     .float-plus {
-        color: #007bff;
+        color: #162056;
         margin-top:22px;
     }
 </style>

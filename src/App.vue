@@ -54,12 +54,12 @@
     }
 
     body {
-      color: black;
-      background: #EFEEEE;
+      color: #162056;
+      background: #f8f9fa;
     }
 
     a {
-      color: #99c9ff;
+      color: #162056;
     }
 
     .main-container {
@@ -69,20 +69,20 @@
     header {
         width: 100%;
         position: fixed;
-        color: #007bff;
+        color: #162056;
         padding: 20px;
         z-index: 999;
     }
 
     .form-control {
-        color: #fff;
+        color: #f8f9fa;
         border: none;
         border-radius: 0.75rem;
         background-color: #ced4da70;
     }
 
     .form-control::placeholder {
-        color: #fff;
+        color: #f8f9fa;
         opacity: 1;
     }
 

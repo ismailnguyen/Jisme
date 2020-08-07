@@ -38,16 +38,16 @@
 
 <style scoped>
     .card {
-        color: black;
-        background: #EFEEEE;
+        color: #162056;
+        background: #fff;
         border: none;
-        border-radius: 1.55rem;
         margin: 10px;
-        box-shadow: 20px 20px 60px #cbcaca, -20px -20px 60px #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
     }
 	
 	.card:hover {
-		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
+		box-shadow: none;
 	}
 
     .card-header {
@@ -65,6 +65,11 @@
 
     .badge-pill {
         margin-right: 5px;
+    }
+
+    .badge-primary {
+        color: #fff;
+        background-color: #162056;
     }
 
     .description {

@@ -50,8 +50,8 @@
     }
 
     body {
-        background-color: #f5f5f5;
-        color: #000;
+        background-color: #f8f9fa;
+        color: #162056;
         -ms-flex-align: center;
         align-items: center;
         padding-top: 40px;
@@ -59,14 +59,14 @@
     }
 
     .form-control {
-        color: black;
+        color: #162056;
         border: none;
         border-radius: 0.75rem;
         background-color: #ced4da70;
     }
 
     .form-control::placeholder {
-      color: #fff;
+      color: #162056;
       opacity: 1;
     }
 
@@ -75,10 +75,18 @@
         max-width: 330px;
         padding: 15px;
         margin: auto;
+        color: #162056;
+        background: #f8f9fa;
+        border: none;
+        border-radius: 1.55rem;
+        box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
+        border-radius: 8px;
     }
+
     .form-signin .checkbox {
         font-weight: 400;
     }
+
     .form-signin .form-control {
         opacity: 0.9;
         position: relative;
@@ -87,17 +95,26 @@
         padding: 10px;
         font-size: 16px;
     }
+
     .form-signin .form-control:focus {
         z-index: 2;
     }
+
     .form-signin input[type="email"] {
         margin-bottom: -1px;
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
     }
+
     .form-signin input[type="password"] {
         margin-bottom: 10px;
         border-top-left-radius: 0;
         border-top-right-radius: 0;
+    }
+
+    .form-signin .btn-primary {
+        color: #f8f9fa;
+        background-color: #162056;
+        border-color: #162056;
     }
 </style>

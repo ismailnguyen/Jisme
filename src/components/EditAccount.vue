@@ -148,18 +148,18 @@
 <style scoped>
     .modal-header .close {
         font-size: 2.5rem;
-        color: white;
+        color: #f8f9fa;
     }
 
     .modal-content {
-        color: white;
-        background: #007aff;
+        color: #f8f9fa;
+        background: #162056;
         border: none;
     }
 
     @media only screen and (min-width: 500px) {
         .modal-content {
-            border-radius: 1.55rem;
+            border-radius: 8px;
             margin: 10px;
             box-shadow: 0 0 2rem rgba(0,0,255,.1);
         }

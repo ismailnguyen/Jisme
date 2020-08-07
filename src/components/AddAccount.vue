@@ -143,7 +143,7 @@
 
     @media only screen and (min-width: 500px) {
         .modal-content {
-            border-radius: 1.55rem;
+            border-radius: 8px;
             margin: 10px;
             box-shadow: 0 0 2rem rgba(0,0,255,.1);
         }
