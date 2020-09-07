@@ -14,6 +14,10 @@ const router = new VueRouter({
     mode: 'history',
     routes: [
         {
+            path: '*',
+            redirect: '/'
+        },
+		{
             name: 'AccountList',
             path: '/',
             beforeEnter: requireAuth,
