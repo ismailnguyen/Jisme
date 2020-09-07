@@ -39,9 +39,7 @@ module.exports = {
     }
   },
   devServer: {
-    historyApiFallback: {
-      index: 'public/index.html',
-    },
+    historyApiFallback: true,
     noInfo: true,
     publicPath: '/dist/',
     contentBase: './public',

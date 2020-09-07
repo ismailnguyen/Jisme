@@ -6,6 +6,7 @@ Vue.use(VueRouter);
 import AccountList from '../views/AccountList.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
+import JsonPrint from '../views/JsonPrint.vue'
 
 import { requireAuth } from '../utils/auth'
 
@@ -27,6 +28,11 @@ const router = new VueRouter({
             name: 'Register',
             path: '/register', 
             component: Register 
+        },
+        {
+            name: 'JsonPrint',
+            path: '/json',
+            component: JsonPrint 
         }
     ]
 });
