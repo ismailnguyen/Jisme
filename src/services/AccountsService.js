@@ -19,20 +19,7 @@ function AccountsService (user, store)
         })
         .then(handleErrors)
         .then(response => response.clone().json())
-        .then(accounts => {
-            let encryptedAccounts = [];
-
-            accounts.forEach(account =>
-            {
-                encryptedAccounts.push(
-                    parseAccount(
-                        getDecryptedAccount(account, this.user.token)
-                    )
-                );
-            });
-
-            return encryptedAccounts;
-        })
+        .then(accounts => accounts.map(account => parseAccount(getDecryptedAccount(account, this.user.token))))
         .then(accounts => 
         {
             this.store.commit('updateAccounts', accounts);
