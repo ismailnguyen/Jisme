@@ -30,12 +30,27 @@
                                 <div class="form-group col-xs-12 col-md-6">
                                     <label for="addAccount_password_input">Password</label>
                                     <div class="input-group">
-                                        <input id="addAccount_password_input" class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="account.password" placeholder="Password" @keyup.enter="add()" required />
+                                        <input id="addAccount_password_input" class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="account.password" placeholder="Password" @keyup.enter="add()" />
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-secondary" type="button" @click="account.generatePassword()">Generate</button>
                                         </div>
                                     </div>
                                     <small id="addAccount_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
+                                </div>
+								
+								<div class="form-group col-xs-12 col-md-6">
+                                    <label for="addAccount_social_login_input">Social login</label>
+                                    <input id="addAccount_social_login_input" class="form-control" placeholder="Google, Facebook, LinkedIn, ..." type="text" v-model="account.social_login" @keyup.enter="add()" />
+                                </div>
+								
+								<div class="form-group col-xs-12 col-md-6">
+                                    <label for="addAccount_password_clue_input">Password clue</label>
+                                    <input id="password_clue_input" class="form-control" placeholder="" type="text" v-model="account.password_clue" @keyup.enter="add()" />
+                                </div>
+								
+								<div class="form-group col-md-12">
+                                    <label for="addAccount_notes_input">Notes</label>
+                                    <textarea id="addAccount_notes_input" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                                 </div>
                             </div>
                         </form>

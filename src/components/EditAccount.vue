@@ -30,7 +30,7 @@
                                 <div class="form-group col-xs-12 col-md-6">
                                     <label for="editAccount_password_input">Password</label>
                                     <div class="input-group">
-                                        <input id="editAccount_password_input" class="form-control" type="text" aria-describedby="editAccount_passwordHelp" v-model="account.password" placeholder="Password" v-on:dblclick="copyToClipboard('editAccount_password_input_hidden')" />
+                                        <input id="editAccount_password_input" class="form-control" type="text" aria-describedby="editAccount_passwordHelp" v-model="account.password" placeholder="Password" />
                                         <input id="editAccount_password_input_hidden" type="hidden" :value="account.password" />
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-light" type="button" @click="account.generatePassword()">Generate</button>
@@ -38,8 +38,27 @@
                                     </div>
                                     <small id="editAccount_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
                                 </div>
+								
+								<div class="form-group col-xs-12 col-md-6">
+                                    <label for="editAccount_social_login_input">Social login</label>
+                                    <input id="editAccount_social_login_input" class="form-control" type="text" v-model="account.social_login" />
+                                </div>
+								
+								<div class="form-group col-xs-12 col-md-6">
+                                    <label for="editAccount_password_clue_input">Password clue</label>
+                                    <input id="editAccount_password_clue_input" class="form-control" type="text" v-model="account.password_clue" />
+                                </div>
 
-                                <div class="form-group col-md-12">
+                                <div class="form-group col-md-6">
+									<!-- Empty div for blank space -->
+                                </div>
+								
+								<div class="form-group col-md-12">
+                                    <label for="editAccount_notes_input">Notes</label>
+                                    <textarea id="editAccount_notes_input" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
+                                </div>
+								
+								 <div class="form-group col-md-12">
                                     <label>Created date</label>
                                     <input class="form-control" v-model="createdDate" disabled />
                                 </div>

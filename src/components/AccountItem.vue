@@ -8,10 +8,17 @@
             </div>
 
             <div class="card-body">
-                <h2 class="card-title">{{ account.displayPlatform }}</h2>
+                <h2 class="card-title">
+				{{ account.displayPlatform }}
+				</h2>
 
                 <div class="row">
-                    <div class="col-sm-12">
+					<div class="col-sm-3" v-show="account.social_login">
+						<div class="badge badge-pill badge-danger">
+							{{ account.social_login }}
+						</div>
+					</div>
+                    <div :class="account.social_login ? 'col-sm-9' : 'col-sm-12'">
                         <span class="small description">{{account.login}}</span>
                     </div>
                 </div>

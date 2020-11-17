@@ -8,8 +8,11 @@ export function parseAccount(account)
         account.platform,
         account.login,
         account.password,
+        account.password_clue,
         account.tags,
         account.created_date,
+		account.social_login,
+		account.notes
     );
 }
 
@@ -31,10 +34,30 @@ export function getEncryptedAccount (account, token)
     {
         encryptedAccount['password'] = encrypt(account.password, token);
     }
+	
+	if (account.password_clue)
+    {
+        encryptedAccount['password_clue'] = encrypt(account.password_clue, token);            
+    }
 
     if (account.tags)
     {
         encryptedAccount['tags'] = encrypt(account.tags, token);            
+    }
+	
+	if (account.tags)
+    {
+        encryptedAccount['tags'] = encrypt(account.tags, token);            
+    }
+	
+	if (account.social_login)
+    {
+        encryptedAccount['social_login'] = encrypt(account.social_login, token);            
+    }
+	
+	if (account.notes)
+    {
+        encryptedAccount['notes'] = encrypt(account.notes, token);            
     }
 
     return encryptedAccount;
@@ -58,6 +81,11 @@ export function getDecryptedAccount (account, token)
     {
         decryptedAccount['password'] = decrypt(account.password, token);
     }
+	
+	if (account.password_clue)
+    {
+        decryptedAccount['password_clue'] = decrypt(account.password_clue, token);
+    }
 
     if (account.tags)
     {
@@ -68,6 +96,16 @@ export function getDecryptedAccount (account, token)
     {
         let created_date = decryptedAccount['created_date'];
         decryptedAccount['created_date'] = new Date(created_date).toUTCString();            
+    }
+	
+	if (account.social_login)
+    {
+        decryptedAccount['social_login'] = decrypt(account.social_login, token);            
+    }
+	
+	if (account.notes)
+    {
+        decryptedAccount['notes'] = decrypt(account.notes, token);            
     }
 
     return decryptedAccount;
