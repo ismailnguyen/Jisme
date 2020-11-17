@@ -89,6 +89,14 @@
 
             this.loadMoreOnScrollToBottom();
         },
+		watch: {
+			showAddAccountModal: function () {
+				this.triggerModalOpened(this.showAddAccountModal);
+			},
+			showEditAccountModal: function () {
+				this.triggerModalOpened(this.showEditAccountModal);
+			}
+		},
         methods: {
             fetchAccounts: function ()
             {
@@ -152,7 +160,16 @@
                 console.log('duplicateAccounts', duplicateAccounts.map(account => account.platform));
 
                 return duplicateAccounts;
-            }
+            },
+			
+			triggerModalOpened: function (isModalOpened) {
+				if (isModalOpened) {
+					document.body.classList.add('modal-open');
+				}
+				else {
+					document.body.classList.remove('modal-open');
+				}
+			}
         },
         computed: {
             truncatedAccounts: function ()
