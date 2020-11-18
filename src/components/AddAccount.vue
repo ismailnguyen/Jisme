@@ -14,20 +14,20 @@
 
                         <form class="card-text lead">
                             <div class="row">
-                                <div class="form-group col-xs-12 col-md-6">
+                                <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="addAccount_platform_input">Platform</label>
                                     <input id="addAccount_platform_input" class="form-control" placeholder="Platform" type="text" ref="platform" v-model="account.platform" @keyup.enter="add()" required />
                                 </div>
-                                <div class="form-group col-xs-12 col-md-6">
+                                <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="addAccount_tags_input">Tags</label>
                                     <input id="addAccount_tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="addAccount_tagsHelp" v-model="account.tags" @keyup.enter="add()" required />
                                     <small id="addAccount_tagsHelp" class="form-text text-muted">Separated with comma.</small>
                                 </div>
-                                <div class="form-group col-xs-12 col-md-6">
+                                <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="addAccount_login_input">Login</label>
                                     <input id="addAccount_login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="add()" required />
                                 </div>
-                                <div class="form-group col-xs-12 col-md-6">
+                                <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="addAccount_password_input">Password</label>
                                     <div class="input-group">
                                         <input id="addAccount_password_input" class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="account.password" placeholder="Password" @keyup.enter="add()" />
@@ -38,17 +38,17 @@
                                     <small id="addAccount_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
                                 </div>
 								
-								<div class="form-group col-xs-12 col-md-6">
+								<div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="addAccount_social_login_input">Social login</label>
                                     <input id="addAccount_social_login_input" class="form-control" placeholder="Google, Facebook, LinkedIn, ..." type="text" v-model="account.social_login" @keyup.enter="add()" />
                                 </div>
 								
-								<div class="form-group col-xs-12 col-md-6">
+								<div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="addAccount_password_clue_input">Password clue</label>
                                     <input id="password_clue_input" class="form-control" placeholder="" type="text" v-model="account.password_clue" @keyup.enter="add()" />
                                 </div>
 								
-								<div class="form-group col-md-12">
+								<div class="form-group col-md-12 col-lg-6">
                                     <label for="addAccount_notes_input">Notes</label>
                                     <textarea id="addAccount_notes_input" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                                 </div>

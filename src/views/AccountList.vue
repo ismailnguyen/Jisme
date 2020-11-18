@@ -237,6 +237,12 @@
     .modal-content, .modal-footer {
       border: none;
     }
+	
+	@media (min-width: 576px)
+		.modal-dialog {
+			max-width: 80%;
+		}
+	}
 
     @media(min-width:768px) {
         .modal-content {

@@ -12,22 +12,22 @@
                     <div class="modal-body">
                         <form class="card-text lead">
                             <div class="row">
-                                <div class="form-group col-xs-12 col-md-6">
+                                <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_platform_input">Platform</label>
                                     <input id="editAccount_platform_input" class="form-control" placeholder="Platform" type="text" v-model="account.platform" v-on:dblclick="copyToClipboard('editAccount_platform_input_hidden')" autofocus />
                                     <input id="editAccount_platform_input_hidden" type="hidden" :value="account.platform" />
                                 </div>
-                                <div class="form-group col-xs-12 col-md-6">
+                                <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_tags_input">Tags</label>
                                     <input id="editAccount_tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="editAccount_tagsHelp" v-model="account.tags" />
                                     <small id="editAccount_tagsHelp" class="form-text text-muted">Separated with comma.</small>
                                 </div>
-                                <div class="form-group col-xs-12 col-md-6">
+                                <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_login_input">Login</label>
                                     <input id="editAccount_login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" v-on:dblclick="copyToClipboard('editAccount_login_input_hidden')" />
                                     <input id="editAccount_login_input_hidden" type="hidden" :value="account.login" />
                                 </div>
-                                <div class="form-group col-xs-12 col-md-6">
+                                <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_password_input">Password</label>
                                     <div class="input-group">
                                         <input id="editAccount_password_input" class="form-control" type="text" aria-describedby="editAccount_passwordHelp" v-model="account.password" placeholder="Password" />
@@ -39,21 +39,17 @@
                                     <small id="editAccount_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
                                 </div>
 								
-								<div class="form-group col-xs-12 col-md-6">
+								<div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_social_login_input">Social login</label>
                                     <input id="editAccount_social_login_input" class="form-control" type="text" v-model="account.social_login" />
                                 </div>
 								
-								<div class="form-group col-xs-12 col-md-6">
+								<div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_password_clue_input">Password clue</label>
                                     <input id="editAccount_password_clue_input" class="form-control" type="text" v-model="account.password_clue" />
                                 </div>
-
-                                <div class="form-group col-md-6">
-									<!-- Empty div for blank space -->
-                                </div>
 								
-								<div class="form-group col-md-12">
+								<div class="form-group col-md-12 col-lg-6">
                                     <label for="editAccount_notes_input">Notes</label>
                                     <textarea id="editAccount_notes_input" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                                 </div>
