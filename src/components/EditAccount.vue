@@ -63,7 +63,7 @@
                     </div>
                     <div class="modal-footer">
                         <div class="col-xs-12 col-md-6">
-                            <button type="button" class="btn btn-outline-light" @click="remove()">Delete</button>
+                            <button type="button" class="btn btn-outline-danger" @click="remove()">Delete</button>
                         </div>
                         <div class=" col-xs-12 col-md-6">
                             <button type="button" class="btn btn-light" @click="save()">Save</button>
@@ -168,7 +168,7 @@
 
     .modal-content {
         color: #f8f9fa;
-        background: #162056;
+        background: #162056db;
         border: none;
     }
 

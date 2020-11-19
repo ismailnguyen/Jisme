@@ -52,11 +52,26 @@
         margin: 0;
         position: relative;
     }
+	
+	html, body {
+	  height: 100%;
+	}
+
+	#app {
+	  height: 100%;
+	}
 
     body {
       color: #162056;
       background: #f0f2f5;
     }
+	
+	@media(prefers-color-scheme: dark) {
+		body {
+			color: #eee;
+			background: #18191a;
+		}
+	}
 
     a {
       color: #162056;

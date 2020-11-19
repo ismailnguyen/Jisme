@@ -53,6 +53,14 @@
         box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
     }
 	
+	@media (prefers-color-scheme: dark) {
+		.card {
+			color: #e4e6eb;
+			background: #242526;
+			box-shadow: none;
+		}
+	}
+	
 	.card:hover {
 		box-shadow: none;
 	}
@@ -78,6 +86,13 @@
         color: #fff;
         background-color: #162056;
     }
+	
+	@media (prefers-color-scheme: dark) {
+		.badge-primary {
+			color: #fff;
+			background-color: #007bff;
+		}
+	}
 
     .description {
         color: #818182;

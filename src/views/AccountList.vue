@@ -284,10 +284,22 @@
         box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
         backdrop-filter: blur(4px);
     }
+	
+	@media (prefers-color-scheme: dark) {
+		.searchBar {
+			box-shadow: none;
+		}
+	}
 
     .searchBar::placeholder {
         color: #818182;
     }
+	
+	@media (prefers-color-scheme: dark) {	
+		.searchBar::placeholder {
+			color: #e4e6eb;
+		}
+	}
 
     .searchBar:hover,
     .searchBar:active,
@@ -296,9 +308,20 @@
         background-color: #ced4da70;
 		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
 	}
+	
+	@media (prefers-color-scheme: dark) {
+		.searchBar:hover,
+		.searchBar:active,
+		.searchBar:focus {
+			color: #fff;
+			box-shadow: none;
+		}
+	}
 
     .load-more-button {
+		width: 35%;
         border-radius: 100px;
+		border: none;
         margin-left: auto;
         margin-right: auto;
         margin-top: 100px;
@@ -311,6 +334,15 @@
 
     .load-more-button:hover {
 		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
+	}
+	
+	@media (prefers-color-scheme: dark) {
+		.load-more-button,
+		.load-more-button:hover {
+			color: #e4e6eb;
+			background: #4b4c4f;
+			box-shadow: none;
+		}
 	}
 
     .floating-button {
@@ -337,4 +369,18 @@
         color: #162056;
         margin-top:17px;
     }
+	
+	@media (prefers-color-scheme: dark) {
+		.floating-button,
+		.floating-button:hover {
+			color: #e4e6eb;
+			background: #4b4c4f;
+			box-shadow: none;
+		}
+		
+		.float-plus {
+			color: #eee;
+			margin-top:17px;
+		}
+	}
 </style>

@@ -141,11 +141,24 @@
     .modal-header .close {
         font-size: 2.5rem;
     }
+	
+	@media (prefers-color-scheme: dark) {
+		.modal-header .close {
+			color: #e4e6eb;
+		}
+	}
 
     .modal-content {
       border: none;
       background: #ffffffdb;
     }
+	
+	@media (prefers-color-scheme: dark) {
+		.modal-content {
+			color: #e4e6eb;
+			background: #242526db;
+		}
+	}
 
     .form-control {
         color: #343a40;
@@ -177,4 +190,11 @@
         background-color: #162056;
         border-color: #162056;
     }
+	
+	@media (prefers-color-scheme: dark) {
+		.modal-footer .btn-primary {
+			color: #fff;
+			background-color: #007bff;
+		}
+	}
 </style>
