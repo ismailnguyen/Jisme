@@ -49,3 +49,11 @@
 		}
     }
 </script>
+
+<style>
+	@media (prefers-color-scheme: dark) {
+		pre {
+			color: #eee;
+		}
+	}
+</style>
