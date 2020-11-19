@@ -238,7 +238,7 @@
       border: none;
     }
 	
-	@media (min-width: 576px)
+	@media (min-width: 576px) {
 		.modal-dialog {
 			max-width: 80%;
 		}
