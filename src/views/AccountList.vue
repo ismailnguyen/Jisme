@@ -316,8 +316,8 @@
     .floating-button {
         position:fixed;
         cursor: pointer;
-        width: 60px;
-        height: 60px;
+        width: 48px;
+        height: 48px;
         bottom: 15px;
         right: 15px;
         border-radius: 100px;
@@ -325,7 +325,7 @@
         margin-right: auto;
         margin-top: 100px;
         text-align: center;
-        background-color: #f8f9fa;
+        background-color: #fff;
         box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
     }
 
@@ -335,6 +335,6 @@
 
     .float-plus {
         color: #162056;
-        margin-top:22px;
+        margin-top:17px;
     }
 </style>

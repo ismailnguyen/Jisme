@@ -55,7 +55,7 @@
 
     body {
       color: #162056;
-      background: #f8f9fa;
+      background: #f0f2f5;
     }
 
     a {
