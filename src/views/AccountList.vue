@@ -31,7 +31,7 @@
 
             <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncatedAccounts.length && !loading">
                 <div class="col-xs-12 col-lg-6">
-                    <button @click="loadMore()" type="button" class="btn btn-lg btn-light btn-block load-more-button">
+                    <button id="loadMore" @click="loadMore()" type="button" class="btn btn-lg btn-light btn-block load-more-button">
                         More
                     </button>
                 </div>
@@ -68,7 +68,8 @@
                 editAccount: new Account(),
                 filterService: {},
                 showAddAccountModal: false,
-                showEditAccountModal: false
+                showEditAccountModal: false,
+				hasScrolledToBottom: false
             }
         },
         components: {
@@ -112,12 +113,12 @@
 
             loadMore: function ()
             {
-                this.pagination_offset += 10;
+                this.pagination_offset += 1;
             },
 
             initPagination: function ()
             {
-                this.pagination_offset = 10;
+                this.pagination_offset = 20;
             },
 
             onAddAccountModalToggled: function () {
@@ -135,10 +136,18 @@
             {
                 this.$emit('showAlert', alertDetails);
             },
+			handleScroll: function(el) {
+			console.log('scrolling')
+				if((el.srcElement.offsetHeight + el.srcElement.scrollTop) >= el.srcElement.scrollHeight) {
+				  this.hasScrolledToBottom = true;
+				  console.log('hasScrolledToBottom !')
+				}
+			  },
 
             loadMoreOnScrollToBottom: function () {
                 window.onscroll = () => {
-                    let bottomOfWindow = document.documentElement.scrollTop + window.innerHeight === document.documentElement.offsetHeight;
+                    let bottomOfWindow = (window.innerHeight + window.scrollY) >= document.body.offsetHeight;
+
 
                     if (bottomOfWindow) {
                         this.loadMore();

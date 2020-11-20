@@ -21,7 +21,7 @@ function AccountsService (user, store)
         .then(response => response.clone().json())
         .then(accounts => accounts.map(account => parseAccount(getDecryptedAccount(account, this.user.token))))
         .then(accounts => 
-        {
+        {	
             this.store.commit('updateAccounts', accounts);
 
             return accounts;
