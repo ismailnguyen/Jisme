@@ -1,5 +1,5 @@
 <template>
-    <div class="col-sm-12 col-md-6 col-lg-4">
+    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
         <div class="card clickable" :id="account._id" @click.prevent="edit()">
             <div class="card-header">
                 <div class="badge badge-pill badge-primary" v-for="(tag, index) in account.tags.split(',')" v-bind:key="index">
