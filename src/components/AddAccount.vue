@@ -150,15 +150,30 @@
 
     .modal-content {
       border: none;
-      background: #ffffffdb;
+      background: #ffffff;
     }
 	
 	@media (prefers-color-scheme: dark) {
 		.modal-content {
 			color: #e4e6eb;
-			background: #242526db;
+			background: #242526;
 		}
 	}
+	
+	@media only screen and (min-width: 500px) {
+        .modal-content {
+			background: #ffffffdb;
+            border-radius: 8px;
+            margin: 10px;
+            box-shadow: 0 0 2rem rgba(0,0,255,.1);
+        }
+		
+		@media (prefers-color-scheme: dark) {
+			.modal-content {
+				background: #242526db;
+			}
+		}
+    }
 
     .form-control {
         color: #343a40;
@@ -167,14 +182,6 @@
     .form-control::placeholder {
         color: #343a40;
         opacity: 1;
-    }
-
-    @media only screen and (min-width: 500px) {
-        .modal-content {
-            border-radius: 8px;
-            margin: 10px;
-            box-shadow: 0 0 2rem rgba(0,0,255,.1);
-        }
     }
 
     .text-muted, a {

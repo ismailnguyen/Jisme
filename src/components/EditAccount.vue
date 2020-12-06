@@ -168,12 +168,13 @@
 
     .modal-content {
         color: #f8f9fa;
-        background: #162056db;
+        background: #162056;
         border: none;
     }
 
     @media only screen and (min-width: 500px) {
         .modal-content {
+			background: #162056db;
             border-radius: 8px;
             margin: 10px;
             box-shadow: 0 0 2rem rgba(0,0,255,.1);
