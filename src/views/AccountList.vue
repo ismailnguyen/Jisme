@@ -61,7 +61,8 @@
         {
             return {
                 user: getUser(),
-                searchQuery: '',
+                // Default search query is looked up from query string
+                searchQuery: this.$route.query.search || '',
                 currentTag: this.$store.state.currentTag,
                 loading: true,
                 pagination_offset: 0,
