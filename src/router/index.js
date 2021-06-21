@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter);
 
-import AccountList from '../views/AccountList.vue'
+import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import JsonPrint from '../views/JsonPrint.vue'
@@ -18,10 +18,10 @@ const router = new VueRouter({
             redirect: '/'
         },
 		{
-            name: 'AccountList',
+            name: 'Home',
             path: '/',
             beforeEnter: requireAuth,
-            component: AccountList 
+            component: Home 
         },
         {
             name: 'Login',

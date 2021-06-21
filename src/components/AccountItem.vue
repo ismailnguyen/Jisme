@@ -3,7 +3,7 @@
         <div class="card clickable" :id="account._id" @click.prevent="edit()">
             <div class="card-header">
                 <div class="badge badge-pill badge-primary" v-for="(tag, index) in account.tags.split(',')" v-bind:key="index">
-                    {{tag}}
+                    
                 </div>
             </div>
 
