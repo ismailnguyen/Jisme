@@ -11,7 +11,8 @@ class Account
 					tags = '', 
 					created_date = new Date(), 
 					social_login = '', 
-					notes = ''
+					notes = '',
+                    logoUrl = ''
 				)
     {
         this._id = _id;
@@ -23,6 +24,7 @@ class Account
         this.created_date = new Date(created_date).toUTCString();
 		this.social_login = social_login;
 		this.notes = notes;
+        this.logoUrl = logoUrl;
     }
 
     get displayPlatform ()

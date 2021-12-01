@@ -9,7 +9,7 @@
 </template>
 
 <script>
-    import NavBar from './components/NavBar.vue'
+    import NavBar from './components/Header.vue'
     import AlertBox from './components/AlertBox.vue'
     
     export default {
