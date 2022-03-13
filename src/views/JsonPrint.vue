@@ -6,8 +6,6 @@
 
 <script>
     import { getUser } from '../utils/auth'
-    import Account from '../models/Account'
-    import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
 
     export default {
@@ -15,14 +13,6 @@
         {
             return {
                 user: getUser(),
-                searchQuery: '',
-                currentTag: this.$store.state.currentTag,
-                loading: true,
-                pagination_offset: 0,
-                editAccount: new Account(),
-                filterService: {},
-                showAddAccountModal: false,
-                showEditAccountModal: false
             }
         },
         mounted() {
@@ -44,7 +34,7 @@
         },
 		filters: {
 			pretty: function(value) {
-			  return JSON.stringify(value, null, 2);
+                return JSON.stringify(value, null, 2);
 			}
 		}
     }

@@ -54,7 +54,6 @@
     import EditAccountModal from '../components/EditAccount.vue'
     import AccountItem from '../components/AccountItem.vue'
     import Loader from '../components/Loader.vue'
-    import Alert from '../models/Alert'
     
     export default {
         data()
@@ -192,7 +191,8 @@
 
                 this.filterService.filterByTag(this.currentTag);
                 this.filterService.filterByQuery(this.searchQuery);
-                this.filterService.sortByName();
+                this.filterService.sortByOpenedCount();
+                this.filterService.sortByLastOpened();
 
                 return this.filterService.getAccounts();
             }

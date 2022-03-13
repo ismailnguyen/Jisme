@@ -7,7 +7,7 @@ var router = new VueRouter({
     mode: 'history'
 });
 
-import { getUser, createSession, destroySession } from '../utils/auth'
+import { createSession, destroySession } from '../utils/auth'
 import { BASE_API_URL } from '../utils/api'
 import { getHeaders, getHeadersWithAuth } from '../utils/requestHeader'
 

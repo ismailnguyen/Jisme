@@ -9,7 +9,7 @@
 
             <div class="card-body">
                 <h2 class="card-title">
-				{{ account.displayPlatform }}
+				    {{ account.displayPlatform }}
 				</h2>
 
                 <div class="row">
