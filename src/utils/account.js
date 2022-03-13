@@ -12,7 +12,10 @@ export function parseAccount(account)
         account.tags,
         account.created_date,
 		account.social_login,
-		account.notes
+		account.notes,
+        account.last_modified_date,
+        account.last_opened_date,
+        account.opened_count
     );
 }
 

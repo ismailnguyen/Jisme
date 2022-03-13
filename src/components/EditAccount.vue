@@ -54,9 +54,17 @@
                                     <textarea id="editAccount_notes_input" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                                 </div>
 								
-								 <div class="form-group col-md-12">
+								 <div class="form-group col-md-4 small">
                                     <label>Created date</label>
                                     <input class="form-control" v-model="createdDate" disabled />
+                                </div>
+                                <div class="form-group col-md-4 small">
+                                    <label>Last modified date</label>
+                                    <input class="form-control" v-model="lastModifiedDate" disabled />
+                                </div>
+                                <div class="form-group col-md-4 small">
+                                    <label>Last opened date</label>
+                                    <input class="form-control" v-model="lastOpenedDate" disabled />
                                 </div>
                             </div>
                         </form>
@@ -102,6 +110,7 @@
                     return;
                 }
 
+                this.account.last_modified_date = new Date();
                 this.accountsService.save(this.account);
                 this.userService.update(this.user);
 
@@ -113,6 +122,16 @@
             toggleModalContent: function() 
             {
                 this.showModalContent = !this.showModalContent;
+
+                // Update the last opened date of this account each time the modal is opened
+                if(this.showModalContent) {
+                    // Leave this console log here for debugging purpose
+                    console.log(this.account);
+
+                    this.account.last_opened_date = new Date();
+                    this.account.opened_count = this.account.opened_count ? this.account.opened_count + 1 : 1;
+                    this.accountsService.save(this.account);
+                }
             },
 
             remove: function ()
@@ -155,6 +174,12 @@
         computed: {
             createdDate: function () {
                 return (new Date(this.account.created_date)).toDateString();
+            },
+            lastModifiedDate: function () {
+                return (new Date(this.account.last_modified_date)).toDateString();
+            },
+            lastOpenedDate: function () {
+                return (new Date(this.account.last_opened_date)).toDateString();
             }
         }
     } 

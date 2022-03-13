@@ -1,4 +1,4 @@
-import { sortBy } from '../utils/sort'
+import { sortByInt, sortByString, sortByDate } from '../utils/sort'
 
 function FilterService (accounts)
 {
@@ -21,7 +21,17 @@ function FilterService (accounts)
 
     this.sortByName = function ()
     {
-        this.accounts = this.accounts.sort((account1, account2) => sortBy(account1.displayPlatform, account2.displayPlatform));
+        this.accounts = this.accounts.sort((account1, account2) => sortByString(account1.displayPlatform, account2.displayPlatform));
+    }
+
+    this.sortByLastOpened = function ()
+    {
+        this.accounts = this.accounts.sort((account1, account2) => sortByDate(account2.last_opened_date, account1.last_opened_date));
+    }
+
+    this.sortByOpenedCount = function ()
+    {
+        this.accounts = this.accounts.sort((account1, account2) => sortByInt(account2.opened_count, account1.opened_count));
     }
 
     this.containsTag = function (account, tag)

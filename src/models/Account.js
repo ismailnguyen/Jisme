@@ -11,7 +11,10 @@ class Account
 					tags = '', 
 					created_date = new Date(), 
 					social_login = '', 
-					notes = ''
+					notes = '',
+					last_modified_date = null, 
+					last_opened_date = null, 
+                    opened_count = 0
 				)
     {
         this._id = _id;
@@ -23,6 +26,9 @@ class Account
         this.created_date = new Date(created_date).toUTCString();
 		this.social_login = social_login;
 		this.notes = notes;
+        this.last_modified_date = new Date(last_modified_date).toUTCString();
+        this.last_opened_date = new Date(last_opened_date).toUTCString();
+        this.opened_count = opened_count;
     }
 
     get displayPlatform ()
