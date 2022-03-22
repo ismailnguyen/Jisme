@@ -36,24 +36,15 @@ function FilterService (accounts)
 
     this.containsTag = function (account, tag)
     {
-        if (!tag || tag === 'All')
-        {
-            return true;
-        }
-
-        if (account.tags.includes(tag))
-        {
-            return true;
-        }
-
-        return false;
+        return !tag
+            || tag === 'All'
+            || account.tags.includes(tag);
     }
 
     this.containsQuery = function (account, query)
     {
-        if (!query) {
+        if (!query)
             return true;
-        }
 
         try {
             query = query.trim().toLowerCase();

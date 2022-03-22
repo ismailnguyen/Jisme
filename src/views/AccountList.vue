@@ -19,26 +19,47 @@
             </div>
         </header>
 
-        <div class="main-container container-fluid">
+        <div class="main-container container-fluid" v-if="searchQuery">
             <div class="row" v-if="!loading">
                 <AccountItem 
-                    v-for="(account, index) in truncatedAccounts"
+                    v-for="(account, index) in truncate(accountsFilteredByQuery)"
                     v-bind:key="index"
                     v-on:toggleEditAccountModal="onEditAccountModalToggled"
-                     :user="user" 
                     :account="account" />
             </div>
-
-            <div class="row loadMore justify-content-center" v-if="sortedAccounts.length > truncatedAccounts.length && !loading">
-                <div class="col-xs-12 col-lg-6">
-                    <button id="loadMore" @click="loadMore()" type="button" class="btn btn-lg btn-light btn-block load-more-button">
-                        More
-                    </button>
-                </div>
-            </div>
-
-            <Loader :isVisible="loading" />
         </div>
+
+        <div class="main-container container-fluid" v-if="!searchQuery">
+            Most opened
+            <div class="row" v-if="!loading">
+                <AccountItem 
+                    v-for="(account, index) in truncate(mostOpenedAccounts)"
+                    v-bind:key="index"
+                    v-on:toggleEditAccountModal="onEditAccountModalToggled"
+                    :account="account" />
+            </div>
+        </div>
+
+        <div class="main-container container-fluid" v-if="!searchQuery">
+            <div class="row" v-if="!loading">
+                Last opened
+                <AccountItem 
+                    v-for="(account, index) in truncate(lastOpenedAccounts)"
+                    v-bind:key="index"
+                    v-on:toggleEditAccountModal="onEditAccountModalToggled"
+                    :account="account" />
+            </div>
+        </div>
+
+        <div class="row loadMore justify-content-center" v-if="accountsFilteredByQuery.length > truncate(accountsFilteredByQuery).length && !loading && searchQuery">
+            <div class="col-xs-12 col-lg-6">
+                <button id="loadMore" @click="loadMore()" type="button" class="btn btn-lg btn-light btn-block load-more-button">
+                    More
+                </button>
+            </div>
+        </div>
+
+        <Loader :isVisible="loading" />
 
         <a class="floating-button" @click="showAddAccountModal = !showAddAccountModal" v-if="!loading"><i class="fa fa-plus float-plus"></i></a>
     </div>
@@ -47,7 +68,6 @@
 <script>
     import { getUser } from '../utils/auth'
     import Account from '../models/Account'
-    import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
     import FilterService from '../services/FilterService'
     import AddAccountModal from '../components/AddAccount.vue'
@@ -66,10 +86,8 @@
                 loading: true,
                 pagination_offset: 0,
                 editAccount: new Account(),
-                filterService: {},
                 showAddAccountModal: false,
-                showEditAccountModal: false,
-				hasScrolledToBottom: false
+                showEditAccountModal: false
             }
         },
         components: {
@@ -136,18 +154,10 @@
             {
                 this.$emit('showAlert', alertDetails);
             },
-			handleScroll: function(el) {
-			console.log('scrolling')
-				if((el.srcElement.offsetHeight + el.srcElement.scrollTop) >= el.srcElement.scrollHeight) {
-				  this.hasScrolledToBottom = true;
-				  console.log('hasScrolledToBottom !')
-				}
-			  },
 
             loadMoreOnScrollToBottom: function () {
                 window.onscroll = () => {
                     let bottomOfWindow = (window.innerHeight + window.scrollY) >= document.body.offsetHeight;
-
 
                     if (bottomOfWindow) {
                         this.loadMore();
@@ -178,23 +188,43 @@
 				else {
 					document.body.classList.remove('modal-open');
 				}
-			}
+			},
+
+            truncate: function (elements)
+            {
+                return elements.slice(0, this.pagination_offset);
+            },
+
+            getFilterService: function ()
+            {
+                return new FilterService(this.$store.state.accounts);
+            }
         },
         computed: {
-            truncatedAccounts: function ()
-            {
-                return this.sortedAccounts.slice(0, this.pagination_offset);
+            accountsFilteredByQuery: function () {
+                const filterService = this.getFilterService();
+
+                filterService.filterByTag(this.currentTag);
+                filterService.filterByQuery(this.searchQuery);
+                filterService.sortByLastOpened();
+
+                return filterService.getAccounts();
             },
-            sortedAccounts: function ()
-            {
-                this.filterService = new FilterService(this.$store.state.accounts);
 
-                this.filterService.filterByTag(this.currentTag);
-                this.filterService.filterByQuery(this.searchQuery);
-                this.filterService.sortByOpenedCount();
-                this.filterService.sortByLastOpened();
+            lastOpenedAccounts: function () {
+                const filterService = this.getFilterService();
+                filterService.filterByTag(this.currentTag);
+                filterService.sortByLastOpened();
 
-                return this.filterService.getAccounts();
+                return filterService.getAccounts().slice(0, 4);
+            },
+
+            mostOpenedAccounts: function () {
+                const filterService = this.getFilterService();
+                filterService.filterByTag(this.currentTag);
+                filterService.sortByOpenedCount();
+
+                return filterService.getAccounts().slice(0, 4);
             }
         }
     }
