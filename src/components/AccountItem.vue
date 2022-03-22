@@ -1,5 +1,5 @@
 <template>
-    <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+    <div class="card-wrapper col-sm-12 col-md-6 col-lg-4 col-xl-3">
         <div class="card clickable" :id="account._id" @click.prevent="edit()">
             <div class="card-header">
                 <div class="badge badge-pill badge-primary" v-for="(tag, index) in account.tags.split(',')" v-bind:key="index">
@@ -44,6 +44,10 @@
 </script>
 
 <style scoped>
+    .card-wrapper {
+        padding: 15px;
+    }
+
     .card {
         color: #162056;
         background: #fff;
@@ -51,6 +55,7 @@
         margin: 10px;
         border-radius: 8px;
         box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
+        height: 100%;
     }
 	
 	@media (prefers-color-scheme: dark) {
