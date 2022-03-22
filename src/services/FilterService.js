@@ -9,6 +9,11 @@ function FilterService (accounts)
         return this.accounts;
     }
 
+    this.getTags = function ()
+    {
+        return this.accounts.map(account => account.tags).reduce((acc, curr) => acc.concat(curr), []).filter((value, index, self) => self.indexOf(value) === index);
+    }
+
     this.filterByTag = function (tag)
     {
         this.accounts = this.accounts.filter(account => this.containsTag(account, tag));

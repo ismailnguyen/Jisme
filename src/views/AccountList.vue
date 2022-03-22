@@ -1,11 +1,5 @@
 <template>
-    <div class="container-fluid">
-        <AddAccountModal 
-            :user="user" 
-            v-on:showAlert="onShowAlert"
-            v-on:toggleAddAccountModal="onAddAccountModalToggled"
-            v-if="showAddAccountModal" />
-
+    <div id="page-content-wrapper" class="container-fluid">
         <EditAccountModal 
             :user="user" 
             :account="editAccount" 
@@ -19,7 +13,10 @@
             </div>
         </header>
 
-        <div class="main-container container-fluid" v-if="searchQuery">
+        <div class="main-container container-fluid" v-if="searchQuery || this.$route.query.tag">
+            <span class="badge badge-pill badge-secondary" @click="removeTag()" v-if="this.$route.query.tag">
+                X {{ this.$route.query.tag }}
+            </span>
             <div class="row" v-if="!loading">
                 <AccountItem 
                     v-for="(account, index) in truncate(accountsFilteredByQuery)"
@@ -29,8 +26,8 @@
             </div>
         </div>
 
-        <div class="main-container container-fluid" v-if="!searchQuery">
-            Most opened
+        <div class="main-container container-fluid" v-if="!searchQuery && !this.$route.query.tag">
+            <span class="category-title">Most opened</span>
             <div class="row" v-if="!loading">
                 <AccountItem 
                     v-for="(account, index) in truncate(mostOpenedAccounts)"
@@ -40,9 +37,9 @@
             </div>
         </div>
 
-        <div class="main-container container-fluid" v-if="!searchQuery">
+        <div class="main-container container-fluid" v-if="!searchQuery && !this.$route.query.tag">
+            <span class="category-title">Last opened</span>
             <div class="row" v-if="!loading">
-                Last opened
                 <AccountItem 
                     v-for="(account, index) in truncate(lastOpenedAccounts)"
                     v-bind:key="index"
@@ -60,38 +57,31 @@
         </div>
 
         <Loader :isVisible="loading" />
-
-        <a class="floating-button" @click="showAddAccountModal = !showAddAccountModal" v-if="!loading"><i class="fa fa-plus float-plus"></i></a>
     </div>
 </template>
 
 <script>
-    import { getUser } from '../utils/auth'
     import Account from '../models/Account'
-    import AccountsService from '../services/AccountsService'
     import FilterService from '../services/FilterService'
-    import AddAccountModal from '../components/AddAccount.vue'
     import EditAccountModal from '../components/EditAccount.vue'
     import AccountItem from '../components/AccountItem.vue'
     import Loader from '../components/Loader.vue'
     
     export default {
-        data()
-        {
+        props: {
+            user: Object,
+            account: Array
+        },
+        data() {
             return {
-                user: getUser(),
-                // Default search query is looked up from query string
-                searchQuery: this.$route.query.search || '',
-                currentTag: this.$store.state.currentTag,
+                searchQuery: this.$route.query.search || '', // Default search query is looked up from query string
                 loading: true,
                 pagination_offset: 0,
                 editAccount: new Account(),
-                showAddAccountModal: false,
                 showEditAccountModal: false
             }
         },
         components: {
-            AddAccountModal,
             EditAccountModal,
             AccountItem,
             Loader
@@ -103,25 +93,16 @@
         },
         mounted() {
             this.initPagination();
-
-            this.fetchAccounts();
-
             this.loadMoreOnScrollToBottom();
         },
 		watch: {
-			showAddAccountModal: function () {
-				this.triggerModalOpened(this.showAddAccountModal);
-			},
 			showEditAccountModal: function () {
 				this.triggerModalOpened(this.showEditAccountModal);
 			}
 		},
         methods: {
-            fetchAccounts: function ()
-            {
-                let accountsService = new AccountsService(this.user, this.$store);
-
-                accountsService.get();
+            removeTag: function () {
+                this.$router.push({name: 'AccountList', query: { tag: '' }});
             },
 
             updateSearchQuery: function (event)
@@ -137,10 +118,6 @@
             initPagination: function ()
             {
                 this.pagination_offset = 20;
-            },
-
-            onAddAccountModalToggled: function () {
-                this.showAddAccountModal = !this.showAddAccountModal;
             },
 
             onEditAccountModalToggled: function (account)
@@ -203,8 +180,7 @@
         computed: {
             accountsFilteredByQuery: function () {
                 const filterService = this.getFilterService();
-
-                filterService.filterByTag(this.currentTag);
+                filterService.filterByTag(this.$route.query.tag);
                 filterService.filterByQuery(this.searchQuery);
                 filterService.sortByLastOpened();
 
@@ -213,7 +189,7 @@
 
             lastOpenedAccounts: function () {
                 const filterService = this.getFilterService();
-                filterService.filterByTag(this.currentTag);
+                filterService.filterByTag(this.$route.query.tag);
                 filterService.sortByLastOpened();
 
                 return filterService.getAccounts().slice(0, 4);
@@ -221,7 +197,7 @@
 
             mostOpenedAccounts: function () {
                 const filterService = this.getFilterService();
-                filterService.filterByTag(this.currentTag);
+                filterService.filterByTag(this.$route.query.tag);
                 filterService.sortByOpenedCount();
 
                 return filterService.getAccounts().slice(0, 4);
@@ -317,6 +293,15 @@
         margin: auto;
     }
     
+    @media (max-width: 767.98px) { 
+        .header-search {
+            position: fixed;
+            bottom: 10px;
+            left: 0;
+            right: 0;
+        }
+    }
+    
     .searchBar {
         border-radius: 2rem;
         color: #818182;
@@ -382,45 +367,6 @@
 			color: #e4e6eb;
 			background: #4b4c4f;
 			box-shadow: none;
-		}
-	}
-
-    .floating-button {
-        position:fixed;
-        cursor: pointer;
-        width: 48px;
-        height: 48px;
-        bottom: 15px;
-        right: 15px;
-        border-radius: 100px;
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 100px;
-        text-align: center;
-        background-color: #fff;
-        box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
-    }
-
-    .floating-button:hover {
-		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
-	}
-
-    .float-plus {
-        color: #162056;
-        margin-top:17px;
-    }
-	
-	@media (prefers-color-scheme: dark) {
-		.floating-button,
-		.floating-button:hover {
-			color: #e4e6eb;
-			background: #4b4c4f;
-			box-shadow: none;
-		}
-		
-		.float-plus {
-			color: #eee;
-			margin-top:17px;
 		}
 	}
 </style>

@@ -1,29 +1,70 @@
 <template>
-    <div id="app">
-        <NavBar />
+    <div id="app" :class="isMenuToggled ? 'menuDisplayed' : ''">
+        <Menu
+            v-on:toggleAddAccountModal="onAddAccountModalToggled"
+            v-on:toggleMenu="onToggleMenu" />
+ 
+        <AddAccountModal 
+            :user="user" 
+            v-on:showAlert="onShowAlert"
+            v-on:toggleAddAccountModal="onAddAccountModalToggled"
+            v-if="showAddAccountModal" />
 
-        <router-view v-on:showAlert="onShowAlert" />
+        <router-view
+            :user="user"
+            v-on:showAlert="onShowAlert"
+            :addAccountModalToggled="showAddAccountModal" />
 
-        <AlertBox :alertDetails="alertDetails" v-if="showAlert" v-on:closeAlert="onToggleAlert()" />
-    </div> 
+        <a id="menu-toggle" class="floating-button" @click="onToggleMenu">
+            <i class="fa fa-solid fa-bars"></i>
+        </a>
+
+        <AlertBox :alertDetails="alertDetails" v-if="showAlert" v-on:closeAlert="onToggleAlert" />
+    </div>
 </template>
 
 <script>
-    import NavBar from './components/NavBar.vue'
+    import { getUser } from './utils/auth'
+    import AccountsService from './services/AccountsService'
+    import Menu from './components/Menu.vue'
     import AlertBox from './components/AlertBox.vue'
-    
+    import AddAccountModal from './components/AddAccount.vue'
+
     export default {
         data () {
             return {
+                user: getUser(),
                 alertDetails: {},
-                showAlert: false
+                showAddAccountModal: false,
+                showAlert: false,
+                isMenuToggled: false
             }
         },
         components: {
-            NavBar,
-            AlertBox
+            Menu,
+            AlertBox,
+            AddAccountModal,
+        },
+        mounted() {
+            this.fetchAccounts();
+        },
+        computed: {
+            accounts: function () {
+                return this.$store.state.accounts;
+            }
         },
         methods: {
+            fetchAccounts: function () {
+                const accountsService = new AccountsService(this.user, this.$store);
+
+                accountsService.get();
+            },
+
+            onAddAccountModalToggled: function () {
+                this.showAddAccountModal = !this.showAddAccountModal;
+                this.addAccountModalToggled = !this.addAccountModalToggled;
+            },
+
             onShowAlert: function (alertDetails)
             {
                 this.alertDetails = alertDetails;
@@ -42,8 +83,26 @@
 
             onToggleAlert: function () {
                 this.showAlert = !this.showAlert;
-            }
-        }
+            },
+
+            onToggleMenu: function () {
+                this.isMenuToggled = !this.isMenuToggled;
+            },
+
+            triggerModalOpened: function (isModalOpened) {
+				if (isModalOpened) {
+					document.body.classList.add('modal-open');
+				}
+				else {
+					document.body.classList.remove('modal-open');
+				}
+			},
+        },
+        watch: {
+			showAddAccountModal: function () {
+				this.triggerModalOpened(this.showAddAccountModal);
+			},
+		}
     }
 </script>
 
@@ -78,15 +137,27 @@
     }
 
     .main-container {
-        padding-top: 100px;
+        padding-top: 50px;
+    }
+
+    @media (min-width: 767.98px) { 
+        .main-container:last-child {
+            padding-top: 100px;
+        }
+    }
+
+    @media (max-width: 767.98px) { 
+        .main-container:last-child {
+            padding-bottom: 100px;
+        }
     }
 	  
     header {
         width: 100%;
         position: fixed;
         color: #162056;
-        padding: 20px;
-        z-index: 999;
+        padding: 20px 20px 20px 40px;
+        z-index: 99;
     }
 
     .form-control {
@@ -104,4 +175,76 @@
     .btn {
         border-radius: .75rem;
     }
+
+    /* Main Content */
+    #page-content-wrapper {
+        width: 100%;	
+        position: absolute;
+        transition:all .5s;
+    }
+
+    #menu-toggle {
+        transition:all .3s;
+        font-size: 2em;
+    }
+
+    /* Change the width of the sidebar to display it*/
+    #app.menuDisplayed #sidebar-wrapper {
+        width: 250px;
+    }
+
+    @media (min-width: 767.98px) { 
+        #app.menuDisplayed #menu-toggle {
+            top: 20px;
+            right: 265px;
+        }
+    }   
+
+    @media (max-width: 767.98px) { 
+        #app.menuDisplayed #sidebar-wrapper {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    @media (min-width: 767.98px) { 
+        #app.menuDisplayed #page-content-wrapper {
+            padding-right: 250px;
+        }
+    }
+
+    .floating-button {
+        position: fixed;
+        cursor: pointer;
+        width: 48px;
+        height: 48px;
+        border-radius: 100px;
+        text-align: center;
+        background-color: #fff;
+        box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
+        top: 20px;
+        right: 15px;
+        z-index: 9999;
+    }
+
+    .floating-button:hover {
+		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
+	}
+
+    .floating-button i {
+        color: #162056;
+    }
+	
+	@media (prefers-color-scheme: dark) {
+		.floating-button,
+		.floating-button:hover {
+			color: #e4e6eb;
+			background: #4b4c4f;
+			box-shadow: none;
+		}
+		
+		.floating-button i {
+			color: #eee;
+		}
+	}
 </style>
