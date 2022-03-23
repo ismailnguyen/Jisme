@@ -190,6 +190,7 @@
 
     /* Change the width of the sidebar to display it*/
     #app.menuDisplayed #sidebar-wrapper {
+        position: fixed;
         width: 250px;
     }
 

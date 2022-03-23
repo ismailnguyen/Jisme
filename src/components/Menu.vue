@@ -8,8 +8,6 @@
                 </a>
             </li>
             <li class="no-hover">
-        
-                {{ this.$route.query.tag }}
                 <span
                     class="badge badge-pill"
                     @click="selectTag(tag)"
@@ -17,7 +15,8 @@
                     v-bind:key="index"
                     :class="isCurrentTag(tag) ? 'badge-danger' : 'badge-primary'"
                     >
-                    {{ isCurrentTag(tag) ? 'X ' : '' }}{{  tag }}
+                    <i class="fa fa-close" v-if="isCurrentTag(tag)"></i>
+                    {{  tag }}
                 </span>
             </li>
             <li class="last-item">
@@ -32,6 +31,7 @@
 
 <script>
     import { isLoggedIn } from '../utils/auth'
+    import FilterService from '../services/FilterService'
     import UserService from '../services/UserService'
 
     export default {
@@ -47,12 +47,38 @@
             },
 
             selectTag: function (tag) {
-                this.$router.push({name: 'AccountList', query: { tag: this.isCurrentTag(tag) ? '' : tag }});
+                const tags = this.updateTags(tag);
+
+                this.$router.push({name: 'AccountList', query: { tags: tags }});
                 this.$emit('toggleMenu');
             },
 
+            updateTags: function (tag) {
+                if (this.isCurrentTag(tag)) {
+                    return this.removeTag(tag);
+                }
+
+                return this.addTag(tag);
+            },
+
+            addTag: function (tag) {
+
+                let newTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
+                newTags.push(tag);
+
+                return newTags.join(',');
+            },
+
+            removeTag: function (tag) {
+                let newTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
+                newTags.splice(newTags.indexOf(tag), 1);
+                console.log('remove tag', tag, this.$route.query.tags, newTags);
+                
+                return newTags.join(',');
+            },
+
             isCurrentTag: function (tag) {
-                return this.$route.query.tag === tag;
+                return this.$route.query.tags && this.$route.query.tags.split(',').includes(tag);
             },
 
             signOut: function () {
@@ -62,11 +88,10 @@
             }
         },
         computed: {
-            getUniqueTags: function ()
-            {
+            getUniqueTags: function () {
                 let tags = [];
 
-                this.$store.state.accounts.forEach(account =>
+                this.accountsFilteredByQuery.forEach(account =>
                 {
                     account.tags.split(',').map(t => t.trim()).forEach(tag =>
                     {
@@ -77,6 +102,14 @@
                 });
 
                 return tags.sort();
+            },
+
+            accountsFilteredByQuery: function () {
+                const filterService = new FilterService(this.$store.state.accounts);
+                filterService.filterByTags(this.$route.query.tags);
+                filterService.filterByQuery(this.$route.query.search);
+
+                return filterService.getAccounts();
             },
         },
     }
@@ -120,16 +153,7 @@
     .sidebar-nav li a {
         display: block;
         text-decoration: none;
-        color: #fff;
         cursor: pointer;
-    }
-
-    .sidebar-nav li:hover {
-        background: #007bff;
-    }
-
-    .sidebar-nav li.no-hover:hover {
-        background: #162056db;
     }
 
     li .badge {
@@ -141,8 +165,15 @@
         color: #162056db;
     }
 
-    li.first-item {
-        border: 1px solid white;
+    li.first-item a {
+        color: #fff;
+        background-color: #dc3545;
+        border-radius: 50px;
+    }
+
+    li.first-item a:hover {
+        background-color: #fff;
+        color: #dc3545;
     }
 
     li.last-item {

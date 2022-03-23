@@ -1,29 +1,7 @@
 <template>
-    <div class="loader" v-if="isVisible">
+    <div class="loader">
     </div>
 </template>
-
-<script>
-    export default {
-        props: {
-            isVisible: Boolean
-        },
-        data()
-        {
-            return {
-            }
-        },
-        methods: {
-        },
-        created() {
-        },
-        mounted() {
-        },
-        computed: {
-
-        }
-    }
-</script>
 
 <style>
     .loader {

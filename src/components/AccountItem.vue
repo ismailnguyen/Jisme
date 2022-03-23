@@ -1,13 +1,17 @@
 <template>
     <div class="card-wrapper col-sm-12 col-md-6 col-lg-4 col-xl-3">
-        <div class="card clickable" :id="account._id" @click.prevent="edit()">
+        <div class="card clickable" :id="account._id">
             <div class="card-header">
-                <div class="badge badge-pill badge-primary" v-for="(tag, index) in account.tags.split(',')" v-bind:key="index">
+                <div
+                    class="badge badge-pill badge-primary"
+                    v-for="(tag, index) in account.tags.split(',')"
+                    @click="selectTag(tag)"
+                    v-bind:key="index">
                     {{tag}}
                 </div>
             </div>
 
-            <div class="card-body">
+            <div class="card-body" @click.prevent="edit()">
                 <h2 class="card-title">
 				    {{ account.displayPlatform }}
 				</h2>
@@ -38,7 +42,26 @@
         {
             edit() {
                 this.$emit('toggleEditAccountModal', this.account);
-            }
+            },
+
+            selectTag: function (tag) {
+                // Don't add the tag if it is already selected
+                if (this.$route.query.tags && this.$route.query.tags.split(',').map(x => x.trim()).includes(tag.trim())) {
+                    console.log('Already selected')
+                    return;
+                }
+
+                const tags = this.addTag(tag);
+
+                this.$router.push({name: 'AccountList', query: { tags: tags }});
+            },
+
+            addTag: function (tag) {
+                let newTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
+                newTags.push(tag.trim());
+
+                return newTags.join(',');
+            },
         }
     }
 </script>
@@ -81,10 +104,6 @@
 
     .clickable {
         cursor: pointer;
-    }
-
-    .badge-pill {
-        margin-right: 5px;
     }
 
     .badge-primary {

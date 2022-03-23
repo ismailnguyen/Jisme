@@ -13,10 +13,15 @@
             </div>
         </header>
 
-        <div class="main-container container-fluid" v-if="searchQuery || this.$route.query.tag">
-            <span class="badge badge-pill badge-secondary" @click="removeTag()" v-if="this.$route.query.tag">
-                X {{ this.$route.query.tag }}
+        <div class="main-container container-fluid" v-if="isSearching">
+            <span
+                class="badge badge-pill badge-secondary"
+                v-for="(tag, index) in selectedTags"
+                v-bind:key="index"
+                @click="removeTag(tag)">
+                <i class="fa fa-close"></i> {{ tag }}
             </span>
+
             <div class="row" v-if="!loading">
                 <AccountItem 
                     v-for="(account, index) in truncate(accountsFilteredByQuery)"
@@ -26,27 +31,11 @@
             </div>
         </div>
 
-        <div class="main-container container-fluid" v-if="!searchQuery && !this.$route.query.tag">
-            <span class="category-title">Most opened</span>
-            <div class="row" v-if="!loading">
-                <AccountItem 
-                    v-for="(account, index) in truncate(mostOpenedAccounts)"
-                    v-bind:key="index"
-                    v-on:toggleEditAccountModal="onEditAccountModalToggled"
-                    :account="account" />
-            </div>
-        </div>
-
-        <div class="main-container container-fluid" v-if="!searchQuery && !this.$route.query.tag">
-            <span class="category-title">Last opened</span>
-            <div class="row" v-if="!loading">
-                <AccountItem 
-                    v-for="(account, index) in truncate(lastOpenedAccounts)"
-                    v-bind:key="index"
-                    v-on:toggleEditAccountModal="onEditAccountModalToggled"
-                    :account="account" />
-            </div>
-        </div>
+        <MiniAccountList
+            :accounts="mostAndLastOpened"
+            title="Frequently used"
+            v-on:toggleEditAccountModal="onEditAccountModalToggled"
+            v-if="!isSearching && !loading" />
 
         <div class="row loadMore justify-content-center" v-if="accountsFilteredByQuery.length > truncate(accountsFilteredByQuery).length && !loading && searchQuery">
             <div class="col-xs-12 col-lg-6">
@@ -56,7 +45,7 @@
             </div>
         </div>
 
-        <Loader :isVisible="loading" />
+        <Loader v-if="loading" :isVisible="loading" />
     </div>
 </template>
 
@@ -65,12 +54,12 @@
     import FilterService from '../services/FilterService'
     import EditAccountModal from '../components/EditAccount.vue'
     import AccountItem from '../components/AccountItem.vue'
+    import MiniAccountList from '../components/MiniAccountList.vue'
     import Loader from '../components/Loader.vue'
     
     export default {
         props: {
-            user: Object,
-            account: Array
+            user: Object
         },
         data() {
             return {
@@ -84,7 +73,8 @@
         components: {
             EditAccountModal,
             AccountItem,
-            Loader
+            Loader,
+            MiniAccountList
         },
         created() {
             this.$store.watch((state) => state.accounts, () => {
@@ -101,8 +91,11 @@
 			}
 		},
         methods: {
-            removeTag: function () {
-                this.$router.push({name: 'AccountList', query: { tag: '' }});
+            removeTag: function (tag) {
+                let newTags = this.$route.query.tags.split(',').map(x => x.trim());
+                newTags.splice(newTags.indexOf(tag), 1);
+                
+                this.$router.push({name: 'AccountList', query: { tags: newTags.join(',') }});
             },
 
             updateSearchQuery: function (event)
@@ -170,17 +163,12 @@
             truncate: function (elements)
             {
                 return elements.slice(0, this.pagination_offset);
-            },
-
-            getFilterService: function ()
-            {
-                return new FilterService(this.$store.state.accounts);
             }
         },
         computed: {
             accountsFilteredByQuery: function () {
-                const filterService = this.getFilterService();
-                filterService.filterByTag(this.$route.query.tag);
+                const filterService = new FilterService(this.$store.state.accounts);
+                filterService.filterByTags(this.$route.query.tags);
                 filterService.filterByQuery(this.searchQuery);
                 filterService.sortByLastOpened();
 
@@ -188,19 +176,39 @@
             },
 
             lastOpenedAccounts: function () {
-                const filterService = this.getFilterService();
-                filterService.filterByTag(this.$route.query.tag);
+                const filterService = new FilterService(this.$store.state.accounts);
                 filterService.sortByLastOpened();
 
-                return filterService.getAccounts().slice(0, 4);
+                return filterService.getAccounts();
+            },
+
+            mostAndLastOpened: function () {
+                let mostAndLastOpened = this.mostOpenedAccounts.slice(0, 4);
+                const lastOpenedAccounts = this.lastOpenedAccounts;
+                const MAX_ACCOUNTS_TO_SHOW = 8;
+
+                lastOpenedAccounts.forEach(account => {
+                    if (mostAndLastOpened.map(a => a._id).indexOf(account._id) == -1 && mostAndLastOpened.length < MAX_ACCOUNTS_TO_SHOW) {
+                        mostAndLastOpened.push(account);
+                    } 
+                });          
+                
+                return mostAndLastOpened;
             },
 
             mostOpenedAccounts: function () {
-                const filterService = this.getFilterService();
-                filterService.filterByTag(this.$route.query.tag);
+                const filterService = new FilterService(this.$store.state.accounts);
                 filterService.sortByOpenedCount();
 
-                return filterService.getAccounts().slice(0, 4);
+                return filterService.getAccounts();
+            },
+
+            selectedTags: function () {
+                return this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
+            },
+
+            isSearching: function () {
+                return this.searchQuery || this.$route.query.tags;
             }
         }
     }

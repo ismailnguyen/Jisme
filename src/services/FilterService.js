@@ -4,23 +4,35 @@ function FilterService (accounts)
 {
     this.accounts = accounts;
 
-    this.getAccounts = function ()
-    {
+    this.getAccounts = function () {
         return this.accounts;
     }
 
-    this.getTags = function ()
-    {
+    this.getTags = function () {
         return this.accounts.map(account => account.tags).reduce((acc, curr) => acc.concat(curr), []).filter((value, index, self) => self.indexOf(value) === index);
     }
 
-    this.filterByTag = function (tag)
-    {
-        this.accounts = this.accounts.filter(account => this.containsTag(account, tag));
+    this.filterByTags = function (tags) {
+        if (!tags)
+            return;
+
+        tags = tags.split(',').map(tag => tag.trim());
+
+        let filteredAccounts = [];
+        this.accounts.forEach(account => {
+            // Don't push duplicates
+            if (filteredAccounts.indexOf(account) === -1) {
+                // Check if all tags in the query are present in the account
+                if (account.tags && tags.every(tag => account.tags.includes(tag))) {
+                    filteredAccounts.push(account);
+                }
+            }
+        });
+
+        this.accounts = filteredAccounts;
     }
 
-    this.filterByQuery = function (query)
-    {
+    this.filterByQuery = function (query) {
         this.accounts = this.accounts.filter(account => this.containsQuery(account, query));
     }
 
