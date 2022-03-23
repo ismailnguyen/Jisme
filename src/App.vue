@@ -247,4 +247,9 @@
 			color: #eee;
 		}
 	}
+
+    .badge-pill {
+        margin-right: 5px;
+        cursor: pointer;
+    }
 </style>
