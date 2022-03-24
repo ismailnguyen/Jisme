@@ -30,25 +30,7 @@ function capitalizeFirstLetter (str)
 
 function extractHostname (url)
 {
-	let hostname;
-	
-    //find & remove protocol (http, ftp, etc.) and get hostname
-	if (url.indexOf("://") > -1)
-	{
-        hostname = url.split('/')[2];
-    }
-	else
-	{
-        hostname = url.split('/')[0];
-    }
-
-    //find & remove port number
-	hostname = hostname.split(':')[0];
-	
-    //find & remove "?"
-	hostname = hostname.split('?')[0];
-	
-	hostname = hostname.replace(/^www\./, '');
+	let hostname = extractDomain(url);
 
 	if (hostname.indexOf('.') > 0)
 	{
@@ -56,4 +38,29 @@ function extractHostname (url)
 	}
 
     return hostname;
+}
+
+export function extractDomain (url)
+{
+	let domain;
+	
+    //find & remove protocol (http, ftp, etc.) and get hostname
+	if (url.indexOf("://") > -1)
+	{
+        domain = url.split('/')[2];
+    }
+	else
+	{
+        domain = url.split('/')[0];
+    }
+
+    //find & remove port number
+	domain = domain.split(':')[0];
+	
+    //find & remove "?"
+	domain = domain.split('?')[0];
+	
+	domain = domain.replace(/^www\./, '');
+
+    return domain;
 }

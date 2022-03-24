@@ -19,6 +19,10 @@
                                     <input id="addAccount_platform_input" class="form-control" placeholder="Platform" type="text" ref="platform" v-model="account.platform" @keyup.enter="add()" required />
                                 </div>
                                 <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                                    <label for="addAccount_platform_input">Icon</label>
+                                    <input id="addAccount_platform_input" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="add()" />
+                                </div>
+                                <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="addAccount_tags_input">Tags</label>
                                     <input id="addAccount_tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="addAccount_tagsHelp" v-model="account.tags" @keyup.enter="add()" required />
                                     <small id="addAccount_tagsHelp" class="form-text text-muted">Separated with comma.</small>

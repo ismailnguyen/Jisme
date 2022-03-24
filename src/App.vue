@@ -2,7 +2,8 @@
     <div id="app" :class="isMenuToggled ? 'menuDisplayed' : ''">
         <Menu
             v-on:toggleAddAccountModal="onAddAccountModalToggled"
-            v-on:toggleMenu="onToggleMenu" />
+            v-on:toggleMenu="onToggleMenu"
+            :searchQuery="searchQuery" />
  
         <AddAccountModal 
             :user="user" 
@@ -13,7 +14,8 @@
         <router-view
             :user="user"
             v-on:showAlert="onShowAlert"
-            :addAccountModalToggled="showAddAccountModal" />
+            :addAccountModalToggled="showAddAccountModal"
+            v-on:searchQueryUpdated="onSearchQueryUpdated" />
 
         <a id="menu-toggle" class="floating-button" @click="onToggleMenu">
             <i class="fa fa-solid fa-bars"></i>
@@ -37,7 +39,8 @@
                 alertDetails: {},
                 showAddAccountModal: false,
                 showAlert: false,
-                isMenuToggled: false
+                isMenuToggled: false,
+                searchQuery: '',
             }
         },
         components: {
@@ -69,12 +72,10 @@
             {
                 this.alertDetails = alertDetails;
 
-                if (!this.showAlert)
-                {
+                if (!this.showAlert) {
                     this.onToggleAlert();
 
-                    setTimeout(() => 
-                    {
+                    setTimeout(() => {
                         this.onToggleAlert();
                     }
                     , 5000);
@@ -97,6 +98,10 @@
 					document.body.classList.remove('modal-open');
 				}
 			},
+
+            onSearchQueryUpdated: function (newValue) {
+                this.searchQuery = newValue;
+            }
         },
         watch: {
 			showAddAccountModal: function () {

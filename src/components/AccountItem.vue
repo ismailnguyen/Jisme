@@ -1,6 +1,15 @@
 <template>
     <div class="card-wrapper col-sm-12 col-md-6 col-lg-4 col-xl-3">
         <div class="card clickable" :id="account._id">
+            <div class="card-image-wrapper col-xs-3">
+                <img
+                    :src="getIcon"
+                    loading="lazy"
+                    :alt="account.displayPlatform"
+                    :title="account.displayPlatform"
+                    class="card-icon" />
+            </div>
+
             <div class="card-header">
                 <div
                     class="badge badge-pill badge-primary"
@@ -13,15 +22,15 @@
 
             <div class="card-body" @click.prevent="edit()">
                 <h2 class="card-title">
-				    {{ account.displayPlatform }}
-				</h2>
+                    {{ account.displayPlatform }}
+                </h2>
 
                 <div class="row">
-					<div class="col-sm-3" v-show="account.social_login">
-						<div class="badge badge-pill badge-danger">
-							{{ account.social_login }}
-						</div>
-					</div>
+                    <div class="col-sm-3" v-show="account.social_login">
+                        <div class="badge badge-pill badge-danger">
+                            {{ account.social_login }}
+                        </div>
+                    </div>
                     <div :class="account.social_login ? 'col-sm-9' : 'col-sm-12'">
                         <span class="small description">{{account.login}}</span>
                     </div>
@@ -38,8 +47,7 @@
         props: {
             account: Account
         },
-        methods:
-        {
+        methods: {
             edit() {
                 this.$emit('toggleEditAccountModal', this.account);
             },
@@ -62,6 +70,58 @@
 
                 return newTags.join(',');
             },
+
+            generateInitialIcon: function () {
+                let avatar, ctx, color;
+
+                //creating canvas
+                avatar = document.createElement("canvas");
+                avatar.width = avatar.height = "48";
+                ctx = avatar.getContext("2d");
+                ctx.font = `${avatar.width / 2}px Arial`;
+                ctx.textAlign = "center";
+
+                //generating color
+                color = [
+                    "#5050ff",
+                    "#50ff50",
+                    "#ff5050",
+                    "#ff5000",
+                    "#ff0050",
+                    "#0050ff",
+                    "#00ff50",
+                    "#50ff00",
+                    "#5000ff"
+                ];
+
+                var initials = this.account.displayPlatform.split(' ').map(s => s[0].toUpperCase()).join('');
+
+                //function to create avatar
+                let random = Math.floor(Math.random() * color.length);
+                //clear canvas
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, avatar.width, avatar.height);
+
+                //add background
+                ctx.fillStyle = `${color[random]}60`;
+                ctx.fillRect(0, 0, avatar.width, avatar.height);
+
+                //add text
+                ctx.fillStyle = color[random];
+                ctx.fillText(initials, avatar.width / 2, (65 / 100) * avatar.height);
+
+                //generate as Image
+                return avatar.toDataURL();
+            }
+        },
+        computed: {
+            getIcon: function () {
+                if (this.account.icon) {
+                    return this.account.icon;
+                }
+
+                return this.generateInitialIcon();
+            },
         }
     }
 </script>
@@ -75,7 +135,7 @@
         color: #162056;
         background: #fff;
         border: none;
-        margin: 10px;
+        margin: 0 10px;
         border-radius: 8px;
         box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
         height: 100%;
@@ -96,6 +156,7 @@
     .card-header {
         background: none;
         border: none;
+        margin-left: 30px;
     }
 
     .card a {
@@ -120,5 +181,24 @@
 
     .description {
         color: #818182;
+    }
+
+    .card-image-wrapper {
+        position: absolute;
+        top: -14px;
+        left: -14px;
+        border-radius: 15px;
+        background: #f9f9f9;
+        padding: 2px;
+    }
+
+    .card-icon {
+        border-radius: 15px;
+        height: 48px;
+        width: 48px;
+    }
+
+    .card-icon-placeholder {
+        background-color: red;
     }
 </style>

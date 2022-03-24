@@ -18,19 +18,23 @@
                                     <input id="editAccount_platform_input_hidden" type="hidden" :value="account.platform" />
                                 </div>
                                 <div class="form-group col-xs-12 col-md-6 col-lg-3">
+                                    <label for="editAccount_icon_input">Icon</label>
+                                    <input id="editAccount_icon_input" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="save()" />
+                                </div>
+                                <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_tags_input">Tags</label>
-                                    <input id="editAccount_tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="editAccount_tagsHelp" v-model="account.tags" />
+                                    <input id="editAccount_tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="editAccount_tagsHelp" @keyup.enter="save()" v-model="account.tags" />
                                     <small id="editAccount_tagsHelp" class="form-text text-muted">Separated with comma.</small>
                                 </div>
                                 <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_login_input">Login</label>
-                                    <input id="editAccount_login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" v-on:dblclick="copyToClipboard('editAccount_login_input_hidden')" />
+                                    <input id="editAccount_login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="save()" v-on:dblclick="copyToClipboard('editAccount_login_input_hidden')" />
                                     <input id="editAccount_login_input_hidden" type="hidden" :value="account.login" />
                                 </div>
                                 <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_password_input">Password</label>
                                     <div class="input-group">
-                                        <input id="editAccount_password_input" class="form-control" type="text" aria-describedby="editAccount_passwordHelp" v-model="account.password" />
+                                        <input id="editAccount_password_input" class="form-control" type="text" aria-describedby="editAccount_passwordHelp" v-model="account.password" @keyup.enter="save()" />
                                         <input id="editAccount_password_input_hidden" type="hidden" :value="account.password" />
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-light" type="button" @click="account.generatePassword()">Generate</button>
@@ -41,12 +45,12 @@
 								
 								<div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_social_login_input">Social login</label>
-                                    <input id="editAccount_social_login_input" class="form-control" type="text" v-model="account.social_login" />
+                                    <input id="editAccount_social_login_input" class="form-control" type="text" v-model="account.social_login" @keyup.enter="save()" />
                                 </div>
 								
 								<div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="editAccount_password_clue_input">Password clue</label>
-                                    <input id="editAccount_password_clue_input" class="form-control" type="text" v-model="account.password_clue" />
+                                    <input id="editAccount_password_clue_input" class="form-control" type="text" v-model="account.password_clue" @keyup.enter="save()" />
                                 </div>
 								
 								<div class="form-group col-md-12 col-lg-6">
@@ -55,15 +59,15 @@
                                 </div>
 								
 								 <div class="form-group col-md-4 small">
-                                    <label>Created date</label>
+                                    <label>Created</label>
                                     <input class="form-control" v-model="createdDate" disabled />
                                 </div>
                                 <div class="form-group col-md-4 small">
-                                    <label>Last modified date</label>
+                                    <label>Modified</label>
                                     <input class="form-control" v-model="lastModifiedDate" disabled />
                                 </div>
                                 <div class="form-group col-md-4 small">
-                                    <label>Last opened date</label>
+                                    <label>Opened</label>
                                     <input class="form-control" v-model="lastOpenedDate" disabled />
                                 </div>
                             </div>
@@ -94,8 +98,7 @@
             user: Object,
             account: Account
         },
-        data()
-        {
+        data() {
             return {
                 accountsService: new AccountsService(this.user, this.$store),
                 userService: new UserService(),
@@ -103,8 +106,7 @@
             }
         },
         methods: {
-            save: function()
-            {
+            save: function() {
                 if (!this.account.isValid()) {
                     this.showAlert('Error', 'Please fill all fields !', 'danger');
                     return;
@@ -119,8 +121,7 @@
                 this.$emit('showAlert', new Alert(this.account.displayPlatform, 'updated !', 'success'));
             },
 
-            toggleModalContent: function() 
-            {
+            toggleModalContent: function() {
                 this.showModalContent = !this.showModalContent;
 
                 // Update the last opened date of this account each time the modal is opened
@@ -134,8 +135,7 @@
                 }
             },
 
-            remove: function ()
-            {
+            remove: function () {
                 if (confirm(`Are you sure to delete : ${this.account.displayPlatform } ?`) === true)
                 {
                     this.accountsService.remove(this.account);
@@ -147,13 +147,11 @@
                 }
             },
 
-            showAlert: function (title, message, type)
-            {
+            showAlert: function (title, message, type) {
                 this.$emit('showAlert', new Alert(title, message, type));
             },
 
-            copyToClipboard: function (input)
-            {
+            copyToClipboard: function (input) {
                 let inputToCopy = document.querySelector('#' + input);
                 inputToCopy.setAttribute('type', 'text');
                 inputToCopy.select();
@@ -169,17 +167,23 @@
 
             closeModal: function () {
                 this.$emit('toggleEditAccountModal', new Account());
+            },
+            
+            formatDate: function (date) {
+                return date.getDate() + '/' + (date.getMonth()+1)  + '/' + date.getFullYear();
             }
         },
         computed: {
             createdDate: function () {
-                return (new Date(this.account.created_date)).toDateString();
+                return this.formatDate(new Date(this.account.created_date));
             },
+
             lastModifiedDate: function () {
-                return (new Date(this.account.last_modified_date)).toDateString();
+                return this.formatDate(new Date(this.account.last_modified_date));
             },
+            
             lastOpenedDate: function () {
-                return (new Date(this.account.last_opened_date)).toDateString();
+                return this.formatDate(new Date(this.account.last_opened_date));
             }
         }
     } 

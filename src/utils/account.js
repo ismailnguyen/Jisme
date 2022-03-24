@@ -1,11 +1,11 @@
 import { encrypt, decrypt } from './cypher'
 import Account from '../models/Account'
 
-export function parseAccount(account)
-{
+export function parseAccount(account) {
     return new Account(
         account._id,
         account.platform,
+        account.icon,
         account.login,
         account.password,
         account.password_clue,
@@ -21,6 +21,7 @@ export function parseAccount(account)
 
 const cryptedArgs = [
 	'platform',
+    'icon',
 	'login',
 	'password',
 	'password_clue',
@@ -29,8 +30,7 @@ const cryptedArgs = [
 	'notes'
 ];
 
-export function getEncryptedAccount (account, token)
-{
+export function getEncryptedAccount (account, token) {
     let encryptedAccount = JSON.parse(JSON.stringify(account)); // Clone object without reference
 	
 	cryptedArgs
@@ -40,8 +40,7 @@ export function getEncryptedAccount (account, token)
     return encryptedAccount;
 }
 
-export function getDecryptedAccount (account, token)
-{
+export function getDecryptedAccount (account, token) {
     let decryptedAccount = JSON.parse(JSON.stringify(account)); // Clone object without reference
 
 	cryptedArgs

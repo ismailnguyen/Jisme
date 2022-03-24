@@ -35,6 +35,7 @@
     import UserService from '../services/UserService'
 
     export default {
+        props: ['searchQuery'],
         data () {
             return {
                 isLoggedIn: isLoggedIn()
@@ -62,7 +63,6 @@
             },
 
             addTag: function (tag) {
-
                 let newTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
                 newTags.push(tag);
 
@@ -72,7 +72,6 @@
             removeTag: function (tag) {
                 let newTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
                 newTags.splice(newTags.indexOf(tag), 1);
-                console.log('remove tag', tag, this.$route.query.tags, newTags);
                 
                 return newTags.join(',');
             },
@@ -91,10 +90,8 @@
             getUniqueTags: function () {
                 let tags = [];
 
-                this.accountsFilteredByQuery.forEach(account =>
-                {
-                    account.tags.split(',').map(t => t.trim()).forEach(tag =>
-                    {
+                this.accountsFilteredByQuery.forEach(account => {
+                    account.tags.split(',').map(t => t.trim()).forEach(tag => {
                         if (tags.indexOf(tag) === -1) {
                             tags.push(tag);
                         }
@@ -107,7 +104,7 @@
             accountsFilteredByQuery: function () {
                 const filterService = new FilterService(this.$store.state.accounts);
                 filterService.filterByTags(this.$route.query.tags);
-                filterService.filterByQuery(this.$route.query.search);
+                filterService.filterByQuery(this.searchQuery);
 
                 return filterService.getAccounts();
             },

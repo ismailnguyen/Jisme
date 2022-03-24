@@ -1,10 +1,10 @@
-import { cleanUrl } from '../utils/textFormat'
+import { cleanUrl, extractDomain } from '../utils/textFormat'
 import { randomPassword } from '../utils/textFormat'
 
-class Account
-{
+class Account {
     constructor (_id = 0, 
-					platform = '', 
+					platform = '',
+                    icon = '',
 					login = '', 
 					password = '', 
 					password_clue = '', 
@@ -15,9 +15,9 @@ class Account
 					last_modified_date = null, 
 					last_opened_date = null, 
                     opened_count = 0
-				)
-    {
+				) {
         this._id = _id;
+        this.icon = icon;
         this.platform = platform;
         this.login = login;
         this.password = password;
@@ -31,18 +31,19 @@ class Account
         this.opened_count = opened_count;
     }
 
-    get displayPlatform ()
-    {
+    get displayPlatform () {
         return cleanUrl(this.platform);
     }
 
-    generatePassword ()
-    {
+    get domain () {
+        return extractDomain(this.platform);
+    }
+
+    generatePassword () {
         this.password = randomPassword(8);
     }
 
-    isValid ()
-    {
+    isValid () {
         return this.platform !== ''
                 && this.login !== '';
     }

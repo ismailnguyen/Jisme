@@ -101,6 +101,7 @@
             updateSearchQuery: function (event)
             {
                 this.searchQuery = event.target.value;
+                this.$emit('searchQueryUpdated', this.searchQuery)
             },
 
             loadMore: function ()
@@ -311,7 +312,7 @@
     }
     
     .searchBar {
-        border-radius: 2rem;
+        border-radius: 15px;
         color: #818182;
         line-height: 2.5;
         box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
