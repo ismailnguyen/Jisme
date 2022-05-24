@@ -298,6 +298,11 @@
         transform: scale(0.3) translateY(-50%);
     }
 
+    /* Reduce search bar size when sidebar menu is opened */
+    .menuDisplayed .header-search {
+        padding-right: 250px;
+    }
+
     .header-search {
         margin: auto;
     }
