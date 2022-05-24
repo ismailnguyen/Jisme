@@ -1,7 +1,7 @@
 <template>
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
-            <li class="first-item">
+            <li class="first-item d-lg-none d-xl-block">
                 <a @click="add()">
                     <i class="fa fa-plus"></i>
                     Add
