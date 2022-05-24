@@ -17,8 +17,12 @@
             :addAccountModalToggled="showAddAccountModal"
             v-on:searchQueryUpdated="onSearchQueryUpdated" />
 
-        <a id="menu-toggle" class="floating-button" @click="onToggleMenu">
+        <a id="menu-toggle" class="floating-button floating-button--menu" @click="onToggleMenu">
             <i class="fa fa-solid fa-bars"></i>
+        </a>
+
+        <a id="menu-toggle" class="floating-button floating-button--add d-none d-lg-block d-xl-none" @click="onAddAccountModalToggled" v-if="!isMenuToggled">
+            <i class="fa fa-plus"></i>
         </a>
 
         <AlertBox :alertDetails="alertDetails" v-if="showAlert" v-on:closeAlert="onToggleAlert" />
@@ -219,6 +223,20 @@
         }
     }
 
+    .floating-button.floating-button--menu {
+        top: 20px;
+        right: 15px;
+        color: #fff;
+        background: #4b4c4f;
+    }
+
+    .floating-button.floating-button--add {
+        top: 20px;
+        right: 80px;
+        color: #fff;
+        background-color: #dc3545;
+    }
+
     .floating-button {
         position: fixed;
         cursor: pointer;
@@ -228,8 +246,6 @@
         text-align: center;
         background-color: #fff;
         box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
-        top: 20px;
-        right: 15px;
         z-index: 9999;
     }
 
@@ -245,9 +261,16 @@
 		.floating-button,
 		.floating-button:hover {
 			color: #e4e6eb;
-			background: #4b4c4f;
 			box-shadow: none;
 		}
+
+        .floating-button.floating-button--menu:hover {
+			background: #232324;
+        }
+
+        .floating-button.floating-button--add:hover {
+			background: #990f1c;
+        }
 		
 		.floating-button i {
 			color: #eee;
