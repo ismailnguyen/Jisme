@@ -15,7 +15,14 @@ export function parseAccount(account) {
 		account.notes,
         account.last_modified_date,
         account.last_opened_date,
-        account.opened_count
+        account.opened_count,
+        account.type,
+        account.card_number,
+        account.card_name,
+        account.card_pin,
+        account.card_expiracy,
+        account.card_cryptogram,
+        account.totp_secret
     );
 }
 
@@ -27,15 +34,21 @@ const cryptedArgs = [
 	'password_clue',
 	'tags',
 	'social_login',
-	'notes'
+	'notes',
+    'card_number',
+    'card_pin',
+    'card_expiracy',
+    'card_cryptogram',
+    'card_number',
+    'totp_secret'
 ];
 
 export function getEncryptedAccount (account, token) {
     let encryptedAccount = JSON.parse(JSON.stringify(account)); // Clone object without reference
 	
-	cryptedArgs
-	.filter(cryptedArg => account[cryptedArg])
-	.forEach(cryptedArg => encryptedAccount[cryptedArg] = encrypt(account[cryptedArg], token))
+    cryptedArgs
+    .filter(cryptedArg => account[cryptedArg])
+    .forEach(cryptedArg => encryptedAccount[cryptedArg] = encrypt(account[cryptedArg], token))
 
     return encryptedAccount;
 }
@@ -43,9 +56,10 @@ export function getEncryptedAccount (account, token) {
 export function getDecryptedAccount (account, token) {
     let decryptedAccount = JSON.parse(JSON.stringify(account)); // Clone object without reference
 
-	cryptedArgs
-	.filter(cryptedArg => account[cryptedArg])
-	.forEach(cryptedArg => decryptedAccount[cryptedArg] = decrypt(account[cryptedArg], token))
+        cryptedArgs
+        .filter(cryptedArg => account[cryptedArg])
+        .forEach(cryptedArg => decryptedAccount[cryptedArg] = decrypt(account[cryptedArg], token))
+    
 
     return decryptedAccount;
 }
