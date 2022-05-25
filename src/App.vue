@@ -21,7 +21,7 @@
             <i class="fa fa-solid fa-bars"></i>
         </a>
 
-        <a id="menu-toggle" class="floating-button floating-button--add d-none d-lg-block d-xl-none" @click="onAddAccountModalToggled" v-if="!isMenuToggled">
+        <a id="menu-toggle" class="floating-button floating-button--add d-none d-lg-block d-xl-block" @click="onAddAccountModalToggled" v-if="!isMenuToggled">
             <i class="fa fa-plus"></i>
         </a>
 
@@ -189,11 +189,11 @@
     #page-content-wrapper {
         width: 100%;	
         position: absolute;
-        transition:all .5s;
+        transition: all .5s;
     }
 
     #menu-toggle {
-        transition:all .3s;
+        transition: all .3s;
         font-size: 2em;
     }
 
@@ -227,7 +227,7 @@
         top: 20px;
         right: 15px;
         color: #fff;
-        background: #4b4c4f;
+        background: #162056;
     }
 
     .floating-button.floating-button--add {
@@ -254,7 +254,7 @@
 	}
 
     .floating-button i {
-        color: #162056;
+        color: #eee;
     }
 	
 	@media (prefers-color-scheme: dark) {
@@ -264,6 +264,10 @@
 			box-shadow: none;
 		}
 
+        .floating-button.floating-button--menu {
+            background: #4b4c4f;
+        }
+
         .floating-button.floating-button--menu:hover {
 			background: #232324;
         }
@@ -271,10 +275,6 @@
         .floating-button.floating-button--add:hover {
 			background: #990f1c;
         }
-		
-		.floating-button i {
-			color: #eee;
-		}
 	}
 
     .badge-pill {
