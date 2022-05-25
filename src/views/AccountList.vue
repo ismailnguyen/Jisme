@@ -21,7 +21,7 @@
                 @click="removeTag(tag)">
                 <i class="fa fa-close"></i> {{ tag }}
             </span>
-
+            <br><br>
             <div class="row" v-if="!loading">
                 <AccountItem 
                     v-for="(account, index) in truncate(accountsFilteredByQuery)"

@@ -1,6 +1,7 @@
 <template>
     <div class="main-container container-fluid">
         <span class="category-title">{{ title }}</span>
+        <br><br>
         <div class="row">
             <AccountItem 
                 v-for="(account, index) in accounts"
