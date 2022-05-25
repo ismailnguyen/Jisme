@@ -13,10 +13,17 @@
             <div class="card-header">
                 <div
                     class="badge badge-pill badge-primary"
-                    v-for="(tag, index) in account.tags.split(',')"
+                    v-for="tag in account.tags.split(',')"
                     @click="selectTag(tag)"
-                    v-bind:key="index">
+                    v-bind:key="tag">
                     {{tag}}
+                </div>
+                <div
+                    class="badge badge-pill badge-danger"
+                    v-for="socialLogin in account.social_login.split(',')"
+                    v-show="account.social_login"
+                    v-bind:key="socialLogin">
+                    {{ socialLogin }}
                 </div>
             </div>
 
@@ -26,13 +33,9 @@
                 </h2>
 
                 <div class="row">
-                    <div class="col-sm-3" v-show="account.social_login">
-                        <div class="badge badge-pill badge-danger">
-                            {{ account.social_login }}
-                        </div>
-                    </div>
-                    <div :class="account.social_login ? 'col-sm-9' : 'col-sm-12'">
-                        <span class="small description">{{account.login}}</span>
+                    <div class="col-sm-12">
+                        <span class="small description" v-if="account.type == 'account' || account.type == '2fa'">{{account.login}}</span>
+                        <span class="small description" v-if="account.type == 'card'">{{account.card_name}}</span>
                     </div>
                 </div>
             </div>
@@ -116,12 +119,12 @@
         },
         computed: {
             getIcon: function () {
-                if (this.account.icon) {
+                if (this.account && this.account.icon) {
                     return this.account.icon;
                 }
 
                 return this.generateInitialIcon();
-            },
+            }
         }
     }
 </script>
