@@ -17,12 +17,7 @@ export function requireAuth (to, from, next)
 
 export function isLoggedIn ()
 {
-    if (localStorage.getItem('user') === null)
-    {
-        return false;
-    }
-
-    return true;
+    return localStorage.getItem('user') !== null;
 }
 
 export function getUser ()

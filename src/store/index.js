@@ -16,7 +16,7 @@ const state =
 
 let mutations =
 {
-    initialiseStore (state)
+    initialiseStore (_state)
     {
         // Check if the store exists
         localforage.getItem('store').then(cachedAccounts =>
@@ -24,40 +24,40 @@ let mutations =
             if (cachedAccounts == null)
                 return;
 
-            state.accounts = cachedAccounts.accounts.map(account => parseAccount(account));
+            _state.accounts = cachedAccounts.accounts.map(account => parseAccount(account));
         });
     },
 
-    updateAccounts (state, accounts)
+    updateAccounts (_state, _accounts)
     {
-        state.accounts = accounts.map(account => parseAccount(account));
+        _state.accounts = _accounts.map(account => parseAccount(account));
 
-        localforage.setItem('store', state);
+        localforage.setItem('store', _state);
     },
 
-    addAccount (state, account)
+    addAccount (_state, _account)
     {
-        state.accounts.push(account);
+        _state.accounts.push(_account);
 
-        localforage.setItem('store', state);
+        localforage.setItem('store', _state);
     },
     
-    updateAccount (state, account)
+    updateAccount (_state, _account)
     {
-        let index = state.accounts.indexOf(account);
+        let index = _state.accounts.indexOf(_account);
 
-        state.accounts[index] = account;
+        _state.accounts[index] = _account;
 
-        localforage.setItem('store', state);
+        localforage.setItem('store', _state);
     },
 
-    removeAccount (state, account)
+    removeAccount (_state, _account)
     {
-        let index = state.accounts.indexOf(account);
+        let index = _state.accounts.indexOf(_account);
 
-        state.accounts.splice(index, 1);
+        _state.accounts.splice(index, 1);
 
-        localforage.setItem('store', state);
+        localforage.setItem('store', _state);
     }
 };
 
