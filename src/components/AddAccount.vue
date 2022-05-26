@@ -153,7 +153,7 @@
 
                 accountsService
                 .add(this.account)
-                .then(response => this.updateUI())
+                .then(() => this.updateUI())
                 .catch(error =>
                 {
                     this.showAlert('Error', error.toString(), 'danger');
