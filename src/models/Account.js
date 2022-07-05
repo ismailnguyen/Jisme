@@ -1,7 +1,8 @@
 import { cleanUrl, extractDomain, randomPassword } from '../utils/textFormat'
 
 class Account {
-    constructor (_id = 0, 
+    constructor (
+                    _id = 0, 
 					platform = '',
                     icon = '',
 					login = '', 
