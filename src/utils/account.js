@@ -19,9 +19,9 @@ export function parseAccount(account) {
         account.type,
         account.card_number,
         account.card_name,
-        account.card_pin,
         account.card_expiracy,
         account.card_cryptogram,
+        account.card_pin,
         account.totp_secret
     );
 }
@@ -59,7 +59,6 @@ export function getDecryptedAccount (account, token) {
         cryptedArgs
         .filter(cryptedArg => account[cryptedArg])
         .forEach(cryptedArg => decryptedAccount[cryptedArg] = decrypt(account[cryptedArg], token))
-    
 
     return decryptedAccount;
 }
