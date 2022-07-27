@@ -253,7 +253,9 @@
 
             totpToken: function () {
                 if (this.account.type == '2fa' && this.account.totp_secret) {
-                    return totpGenerator(this.account.totp_secret);
+                     // Remove all spaces because spaces are forbidden for TOTP generation
+                     // And some websites give the secret with spaces for better human readability
+                    return totpGenerator(this.account.totp_secret.replace(/ /g,''));
                 }
 
                 return 'Please fill the secret key';
