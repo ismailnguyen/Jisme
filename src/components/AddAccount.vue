@@ -177,7 +177,7 @@
 
                 this.closeModal();
 
-                this.showAlert(this.account.displayPlatform, 'Created !', 'success');
+                this.showAlert(this.account.displayPlatform, 'Created !', 'success', this.account.icon);
                 
                 this.cleanForm();
             },

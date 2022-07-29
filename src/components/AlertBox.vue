@@ -1,6 +1,14 @@
 <template>
     <div id="alert" class="alert alert-dismissible fade show" :class="type">
         
+        <img
+            v-if="image"
+            :src="image"
+            loading="lazy"
+            :alt="title"
+            :title="title"
+            class="alert-image" />
+
         <strong>
             {{ title }}
         </strong>
@@ -17,11 +25,6 @@
 </template>
 
 <script>
-    import { getUser } from '../utils/auth'
-    import UserService from '../services/UserService'
-    import AccountsService from '../services/AccountsService'
-    import { cleanUrl, randomPassword } from '../utils/textFormat'
-
     export default {
         props: {
             alertDetails: Object
@@ -40,6 +43,10 @@
                 return this.alertDetails.message;
             },
 
+            image: function () {
+                return this.alertDetails.image;
+            },
+
             type: function () {
                 return  'alert-' + this.alertDetails.type;
             }
@@ -53,5 +60,13 @@
         bottom: 20px;
         right: 20px;
         z-index: 99999;
+    }
+
+    .alert-image {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+        background-color: white;
+        border-radius: 15px;
     }
 </style>

@@ -183,7 +183,7 @@
 
                 this.closeModal();
 
-                this.$emit('showAlert', new Alert(this.account.displayPlatform, 'updated !', 'success'));
+                this.$emit('showAlert', new Alert(this.account.displayPlatform, 'updated !', 'success', this.account.icon));
             },
 
             toggleModalContent: function() {
