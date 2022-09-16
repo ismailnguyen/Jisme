@@ -36,7 +36,7 @@ function UserService()
             password: password
         };
 
-        return fetch(USERS_API_URL + 'login/',
+        return fetch(USERS_API_URL + 'login',
         {
             method: 'POST',
             headers: getHeaders(),
