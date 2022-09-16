@@ -21,8 +21,9 @@ let mutations =
         // Check if the store exists
         localforage.getItem('store').then(cachedAccounts =>
         {
-            if (cachedAccounts == null)
+            if (cachedAccounts == null) {
                 return;
+            }
 
             _state.accounts = cachedAccounts.accounts.map(account => parseAccount(account));
         });
@@ -44,7 +45,7 @@ let mutations =
     
     updateAccount (_state, _account)
     {
-        let index = _state.accounts.indexOf(_account);
+        let index = _state.accounts.findIndex(a => a._id === _account._id);
 
         _state.accounts[index] = _account;
 
@@ -53,7 +54,7 @@ let mutations =
 
     removeAccount (_state, _account)
     {
-        let index = _state.accounts.indexOf(_account);
+        let index = _state.accounts.findIndex(a => a._id === _account._id);
 
         _state.accounts.splice(index, 1);
 
