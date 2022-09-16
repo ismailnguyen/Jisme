@@ -2,7 +2,7 @@
     <div class="text-center">
         <form class="form-signin">
             <img class="mb-4" src="images/touch/favicon64.png" alt="" width="72" height="72" v-show="!isLoading">
-            <Loader :isVisible="isLoading" />
+            <Loader v-show="isLoading" />
 
             <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
 

@@ -17,11 +17,11 @@
             :addAccountModalToggled="showAddAccountModal"
             v-on:searchQueryUpdated="onSearchQueryUpdated" />
 
-        <a id="menu-toggle" class="floating-button floating-button--menu" @click="onToggleMenu">
+        <a id="menu-toggle" class="floating-button floating-button--menu" @click="onToggleMenu" v-show="user">
             <i class="fa fa-solid fa-bars"></i>
         </a>
 
-        <a id="menu-toggle" class="floating-button floating-button--add d-none d-lg-block d-xl-block" @click="onAddAccountModalToggled" v-if="!isMenuToggled">
+        <a id="menu-toggle" class="floating-button floating-button--add d-none d-lg-block d-xl-block" @click="onAddAccountModalToggled" v-if="!isMenuToggled && user">
             <i class="fa fa-plus"></i>
         </a>
 
@@ -53,7 +53,9 @@
             AddAccountModal,
         },
         mounted() {
-            this.fetchAccounts();
+            if (this.user) {
+                this.fetchAccounts();
+            }
         },
         computed: {
             accounts: function () {
@@ -64,7 +66,7 @@
             fetchAccounts: function () {
                 const accountsService = new AccountsService(this.user, this.$store);
 
-                accountsService.get();
+                accountsService.getAll();
             },
 
             onAddAccountModalToggled: function () {

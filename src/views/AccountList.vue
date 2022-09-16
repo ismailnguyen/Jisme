@@ -16,16 +16,16 @@
         <div class="main-container container-fluid" v-if="isSearching">
             <span
                 class="badge badge-pill badge-secondary"
-                v-for="(tag, index) in selectedTags"
-                v-bind:key="index"
+                v-for="(tag, tagIndex) in selectedTags"
+                v-bind:key="tagIndex"
                 @click="removeTag(tag)">
                 <i class="fa fa-close"></i> {{ tag }}
             </span>
             <br><br>
             <div class="row" v-if="!loading">
                 <AccountItem 
-                    v-for="(account, index) in truncate(accountsFilteredByQuery)"
-                    v-bind:key="index"
+                    v-for="(account, accountIndex) in truncate(accountsFilteredByQuery)"
+                    v-bind:key="accountIndex"
                     v-on:toggleEditAccountModal="onEditAccountModalToggled"
                     :account="account" />
             </div>
@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <Loader v-if="loading" :isVisible="loading" />
+        <Loader v-show="loading" />
     </div>
 </template>
 
