@@ -1,10 +1,3 @@
-function getAuthorizationString(email, token)
-{
-    var authorizationBasic = btoa(email + ":" + token).toString("base64");
-
-    return 'Basic ' + authorizationBasic;
-}
-
 export function getHeaders()
 {
     let headers = new Headers();
@@ -14,11 +7,11 @@ export function getHeaders()
     return headers;
 }
 
-export function getHeadersWithAuth(email, token)
+export function getHeadersWithAuth(token)
 {
     let headers = getHeaders();
 
-    headers.append('Authorization', getAuthorizationString(email, token));
+    headers.append('Authorization', `Bearer ${token}`);
 
     return headers;
 }

@@ -6,11 +6,27 @@ function AccountsService (user, store)
 {
     this.user = user;
     this.store = store;
-    this.headers = getHeadersWithAuth(user.email, user.token);
+    this.headers = getHeadersWithAuth(user.token);
 
     const ACCOUNTS_API_URL = BASE_API_URL + 'accounts/';
 
-    this.get = function()
+    this.get = function(account)
+    {
+        return fetch(ACCOUNTS_API_URL + account._id,
+        {
+            method: 'GET',
+            headers: this.headers
+        })
+        .then(handleErrors)
+        .then(response => response.clone().json())
+        .then(encryptedAccount => parseAccount(getDecryptedAccount(encryptedAccount, this.user.uuid)))
+        .then(account => 
+        {	
+            console.log(account)
+        });
+    }
+
+    this.getAll = function()
     {
         return fetch(ACCOUNTS_API_URL,
         {
@@ -19,7 +35,7 @@ function AccountsService (user, store)
         })
         .then(handleErrors)
         .then(response => response.clone().json())
-        .then(accounts => accounts.map(account => parseAccount(getDecryptedAccount(account, this.user.token))))
+        .then(accounts => accounts.map(account => parseAccount(getDecryptedAccount(account, this.user.uuid))))
         .then(accounts => 
         {	
             this.store.commit('updateAccounts', accounts);
@@ -30,7 +46,7 @@ function AccountsService (user, store)
 
     this.add = function(accountToAdd)
     {
-        let encryptedAccount = getEncryptedAccount(accountToAdd, this.user.token);
+        let encryptedAccount = getEncryptedAccount(accountToAdd, this.user.uuid);
 
         return fetch(ACCOUNTS_API_URL,
         {
@@ -40,14 +56,13 @@ function AccountsService (user, store)
         })
         .then(handleErrors)
         .then(response => response.clone().json())
-        .then(addedAccount => parseAccount(getDecryptedAccount(addedAccount, this.user.token)))
+        .then(addedAccount => parseAccount(getDecryptedAccount(addedAccount, this.user.uuid)))
         .then(addedAccount => this.store.commit('addAccount', addedAccount))
     }
 
     this.save = function(accountToSave)
     {
-        let encryptedAccount = getEncryptedAccount(accountToSave, this.user.token);
-
+        let encryptedAccount = getEncryptedAccount(accountToSave, this.user.uuid);
         return fetch(ACCOUNTS_API_URL + accountToSave._id,
         {
             method: 'PUT',

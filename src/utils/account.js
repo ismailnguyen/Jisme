@@ -43,22 +43,22 @@ const cryptedArgs = [
     'totp_secret'
 ];
 
-export function getEncryptedAccount (account, token) {
+export function getEncryptedAccount (account, secret) {
     let encryptedAccount = JSON.parse(JSON.stringify(account)); // Clone object without reference
 	
     cryptedArgs
     .filter(cryptedArg => account[cryptedArg])
-    .forEach(cryptedArg => encryptedAccount[cryptedArg] = encrypt(account[cryptedArg], token))
+    .forEach(cryptedArg => encryptedAccount[cryptedArg] = encrypt(account[cryptedArg], secret))
 
     return encryptedAccount;
 }
 
-export function getDecryptedAccount (account, token) {
+export function getDecryptedAccount (account, secret) {
     let decryptedAccount = JSON.parse(JSON.stringify(account)); // Clone object without reference
 
         cryptedArgs
         .filter(cryptedArg => account[cryptedArg])
-        .forEach(cryptedArg => decryptedAccount[cryptedArg] = decrypt(account[cryptedArg], token))
+        .forEach(cryptedArg => decryptedAccount[cryptedArg] = decrypt(account[cryptedArg], secret))
 
     return decryptedAccount;
 }

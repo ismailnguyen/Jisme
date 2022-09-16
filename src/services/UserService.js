@@ -19,10 +19,10 @@ function UserService()
     {
         user.last_update_date = new Date();
 
-        return fetch(USERS_API_URL + user._id,
+        return fetch(USERS_API_URL,
         {
             method: 'PUT',
-            headers: getHeadersWithAuth(user.email, user.token),
+            headers: getHeadersWithAuth(user.token),
             body: JSON.stringify(user)
         })
         .then(response => createSession(user));
