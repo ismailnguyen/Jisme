@@ -1,2 +1,2 @@
 //export const BASE_API_URL = 'https://cors-proxy-eu.herokuapp.com/https://jisme-api.netlify.app/.netlify/functions/'; // Bypass CORS for local developments
-export const BASE_API_URL = 'https://jisme-api.netlify.app/.netlify/functions/';
+export const BASE_API_URL = 'https://api.jisme.app/.netlify/functions/';
