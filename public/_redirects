@@ -1,2 +1,3 @@
 https://jisme.app/api/* https://api.jisme.app/:splat 200!
 https://www.jisme.app/api/* https://api.jisme.app/:splat 200!
+/* /index.html 200
