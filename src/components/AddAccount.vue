@@ -116,7 +116,7 @@
                     </div>
                     
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" @click="add()">Create</button>
+                        <button type="button" class="btn" :class="isCreating ? 'btn-dark': 'btn-primary'" @click="add()">{{ isCreating ? 'Creating ...' : 'Create' }}</button>
                     </div>
                 </div>
             </div>
@@ -138,7 +138,8 @@
         {
             return {
                 account: new Account(),
-                showModalContent: false
+                showModalContent: false,
+                isCreating: false
             }
         },
         methods: {
@@ -149,6 +150,8 @@
                     return;
                 }
 
+                this.isCreating = true;
+
                 let accountsService = new AccountsService(this.user, this.$store);
 
                 accountsService
@@ -157,6 +160,7 @@
                 .catch(error =>
                 {
                     this.showAlert('Error', error.toString(), 'danger');
+                    this.isCreating = false;
                 });
             },
             
@@ -174,6 +178,8 @@
             {
                 let userService = new UserService();
                 userService.update(this.user);
+
+                this.isCreating = false;
 
                 this.closeModal();
 

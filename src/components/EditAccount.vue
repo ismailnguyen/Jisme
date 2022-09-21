@@ -139,10 +139,10 @@
                     </div>
                     <div class="modal-footer">
                         <div class="col-xs-12 col-md-6">
-                            <button type="button" class="btn btn-outline-danger" @click="remove()">Delete</button>
+                            <button type="button" class="btn" :class="isDeleting ? 'btn-dark': 'btn-outline-danger'" @click="remove()">{{ isDeleting ? 'Deleting ...' : 'Delete' }}</button>
                         </div>
                         <div class=" col-xs-12 col-md-6">
-                            <button type="button" class="btn btn-light" @click="save()">Save</button>
+                            <button type="button" class="btn" :class="isSaving ? 'btn-dark': 'btn-light'" @click="save()">{{ isSaving ? 'Saving ...' : 'Save' }}</button>
                         </div>
                     </div>
                 </div>
@@ -167,7 +167,9 @@
             return {
                 accountsService: new AccountsService(this.user, this.$store),
                 userService: new UserService(),
-                showModalContent: false
+                showModalContent: false,
+                isSaving: false,
+                isDeleting: false
             }
         },
         methods: {
@@ -177,15 +179,32 @@
                     return;
                 }
 
+                this.isSaving = true;
+
                 this.account.last_modified_date = new Date();
-                this.accountsService.save(this.account);
-                this.userService.update(this.user);
 
-                this.closeModal();
-
-                this.$emit('showAlert', new Alert(this.account.displayPlatform, 'updated !', 'success', this.account.icon));
+                this.accountsService
+                .save(this.account)
+                .then(() => {
+                    this.updateUI();
+                    this.$emit('showAlert', new Alert(this.account.displayPlatform, 'updated !', 'success', this.account.icon));
+                })
+                .catch(error => {
+                    this.showAlert('Error', error.toString(), 'danger');
+                    this.isSaving = false;
+                })
             },
 
+            updateUI: function ()
+            {
+                this.userService.update(this.user);
+
+                this.isSaving = false;
+                this.isDeleting = false;
+
+                this.closeModal();
+            },
+            
             toggleModalContent: function() {
                 this.showModalContent = !this.showModalContent;
 
@@ -203,12 +222,18 @@
             remove: function () {
                 if (confirm(`Are you sure to delete : ${this.account.displayPlatform } ?`) === true)
                 {
-                    this.accountsService.remove(this.account);
-                    this.userService.update(this.user);
+                    this.isDeleting = true;
 
-                    this.closeModal();
-
-                    this.showAlert(this.account.displayPlatform, 'Removed !', 'success');
+                    this.accountsService
+                    .remove(this.account)
+                    .then(() => {
+                        this.updateUI();
+                        this.showAlert(this.account.displayPlatform, 'Removed !', 'success');
+                    })
+                    .catch(error => {
+                        this.showAlert('Error', error.toString(), 'danger');
+                        this.isDeleting = false;
+                    })
                 }
             },
 
