@@ -1,6 +1,7 @@
 import { getEncryptedAccount, getDecryptedAccount, parseAccount } from '../utils/account'
 import { BASE_API_URL } from '../utils/api'
 import { getHeadersWithAuth } from '../utils/requestHeader'
+import { Exception, SessionExpiredException } from '../utils/errors'
 
 function AccountsService (user, store)
 {
@@ -18,12 +19,12 @@ function AccountsService (user, store)
             headers: this.headers
         })
         .then(handleErrors)
-        .then(response => response.clone().json())
         .then(encryptedAccount => parseAccount(getDecryptedAccount(encryptedAccount, this.user.uuid)))
         .then(account => 
         {	
             console.log(account)
-        });
+        })
+        .catch(throwError);
     }
 
     this.getAll = function()
@@ -34,14 +35,14 @@ function AccountsService (user, store)
             headers: this.headers
         })
         .then(handleErrors)
-        .then(response => response.clone().json())
         .then(accounts => accounts.map(account => parseAccount(getDecryptedAccount(account, this.user.uuid))))
         .then(accounts => 
         {	
             this.store.commit('updateAccounts', accounts);
 
             return accounts;
-        });
+        })
+        .catch(throwError);
     }
 
     this.add = function(accountToAdd)
@@ -55,9 +56,10 @@ function AccountsService (user, store)
             body: JSON.stringify(encryptedAccount)
         })
         .then(handleErrors)
-        .then(response => response.clone().json())
+        //.then(response => response.clone().json())
         .then(addedAccount => parseAccount(getDecryptedAccount(addedAccount, this.user.uuid)))
         .then(addedAccount => this.store.commit('addAccount', addedAccount))
+        .catch(throwError);
     }
 
     this.save = function(accountToSave)
@@ -70,7 +72,8 @@ function AccountsService (user, store)
             body: JSON.stringify(encryptedAccount)
         })
         .then(handleErrors)
-        .then(response => this.store.commit('updateAccount', accountToSave));
+        .then(response => this.store.commit('updateAccount', accountToSave))
+        .catch(throwError);
     }
 
     this.remove = function(accountToRemove)
@@ -81,18 +84,26 @@ function AccountsService (user, store)
             headers: this.headers
         })
         .then(handleErrors)
-        .then(response => this.store.commit('removeAccount', accountToRemove));
+        .then(response => this.store.commit('removeAccount', accountToRemove))
+        .catch(throwError);
     }
 
     function handleErrors (response)
     {
-        let clonedResponse = response.clone();
-        if (!clonedResponse.ok)
+        if (!response.ok)
         {
-            throw Error(clonedResponse.statusText);
+            throw response;
         }
 
-        return clonedResponse;
+        return response.json();
+    }
+
+    function throwError (response) {
+        if (response.status === 401) {
+            throw new SessionExpiredException();
+        }
+
+        throw new Exception('name', 'message', response.status);
     }
 };
 

@@ -31,10 +31,13 @@
 
 <script>
     import { getUser } from './utils/auth'
+    import UserService from './services/UserService'
     import AccountsService from './services/AccountsService'
     import Menu from './components/Menu.vue'
+    import Alert from './models/Alert'
     import AlertBox from './components/AlertBox.vue'
     import AddAccountModal from './components/AddAccount.vue'
+    import { SessionExpiredException } from './utils/errors'
 
     export default {
         data () {
@@ -66,7 +69,18 @@
             fetchAccounts: function () {
                 const accountsService = new AccountsService(this.user, this.$store);
 
-                accountsService.getAll();
+                accountsService.getAll()
+                .catch(error =>
+                {
+                    this.onShowAlert(
+                        new Alert(error.name, error.message, 'danger')
+                    )
+
+                    if (error instanceof SessionExpiredException) {
+                        let userService = new UserService();
+                        userService.logout();
+                    }
+                });
             },
 
             onAddAccountModalToggled: function () {
