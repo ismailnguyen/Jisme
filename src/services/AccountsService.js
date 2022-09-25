@@ -103,7 +103,7 @@ function AccountsService (user, store)
             throw new SessionExpiredException();
         }
 
-        throw new Exception('name', 'message', response.status);
+        throw new Exception('Error', 'Please retry', response.status);
     }
 };
 
