@@ -33,7 +33,8 @@ function UserService()
         let credentials =
         {
             email: email,
-            password: password
+            password: password,
+            extendSession: remember
         };
 
         return fetch(USERS_API_URL + 'login',
@@ -46,11 +47,6 @@ function UserService()
         .then(response => response.clone().json())
         .then(user => 
         {
-            if (remember === true)
-            {
-                //createCookie(user);
-            }
-
             createSession(user);
 
             router.push('/');
