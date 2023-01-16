@@ -3,13 +3,15 @@
         <Menu
             v-on:toggleAddAccountModal="onAddAccountModalToggled"
             v-on:toggleMenu="onToggleMenu"
-            :searchQuery="searchQuery" />
+            :user="user"
+            :searchQuery="searchQuery"
+            v-if="user" />
  
         <AddAccountModal 
             :user="user" 
             v-on:showAlert="onShowAlert"
             v-on:toggleAddAccountModal="onAddAccountModalToggled"
-            v-if="showAddAccountModal" />
+            v-if="user && showAddAccountModal" />
 
         <router-view
             :user="user"
@@ -78,7 +80,9 @@
 
                     if (error instanceof SessionExpiredException) {
                         let userService = new UserService();
-                        userService.logout();
+                        userService.logout(() => {
+                            this.$router.go('/');
+                        });
                     }
                 });
             },

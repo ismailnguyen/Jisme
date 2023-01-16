@@ -1,6 +1,8 @@
 <template>
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
+            <img :src="user.avatarUrl" class="rounded-circle mb-3" style="width: 150px;" alt="Avatar" />
+            <p class="text-muted">{{ user.email }}</p>
             <li class="first-item">
                 <a @click="add()">
                     <i class="fa fa-plus"></i>
@@ -35,7 +37,7 @@
     import UserService from '../services/UserService'
 
     export default {
-        props: ['searchQuery'],
+        props: ['user', 'searchQuery'],
         data () {
             return {
                 isLoggedIn: isLoggedIn()
@@ -83,7 +85,9 @@
             signOut: function () {
                 let userService = new UserService();
 
-                userService.logout();
+                userService.logout(() => {
+                            this.$router.go('/');
+                        });
             }
         },
         computed: {

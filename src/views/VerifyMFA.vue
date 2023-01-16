@@ -1,41 +1,30 @@
 <template>
     <div class="text-center">
         <form class="form-signin">
-            <img class="mb-4" src="images/touch/favicon64.png" alt="" width="72" height="72" v-show="!isLoading">
+            <img class="mb-4" :src="user && user.avatarUrl ? user.avatarUrl : 'images/touch/favicon64.png'" alt="" width="72" height="72" v-show="!isLoading">
             <Loader v-show="isLoading" />
-
-            <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+            <h1 class="h3 mb-3 font-weight-normal">Validate OTP</h1>
 
             <p class="text-danger">{{error.message}}</p>
 
-            <label for="inputEmail" class="sr-only">Email address</label>
-            <input type="email" id="inputEmail" class="form-control" placeholder="Email address" aria-describedby="emailHelp" v-model="email" @keyup.enter="handleLogin()" required>
+            <label for="inputOtp" class="sr-only">One Time Password</label>
+            <input type="text" id="inputOtp" class="form-control" placeholder="XXX XXX" v-model="totpToken" @keyup.enter="verify()" required>
 
-            <label for="inputPassword" class="sr-only">Password</label>
-            <input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="password" @keyup.enter="handleLogin()" required>
-
-            <div class="checkbox mb-3">
-                <label>
-                    <input type="checkbox" value="remember-me" v-model="remember"> Remember me
-                </label>
-            </div>
-
-            <span class="btn btn-lg btn-outline-primary btn-block" @click="handleLogin">Sign in</span>
-
-            <p class="mt-5 mb-3 text-muted"><router-link to="/register">Don't have account ? Sign up</router-link></p>
+            <span class="btn btn-lg btn-outline-primary btn-block" @click="verify">Verify</span>
         </form>
     </div>
 </template>
 
 <script>
+    import { getUser } from '../utils/auth'
     import UserService from '../services/UserService'
     import Loader from '../components/Loader.vue'
 
     export default {
         data() {
             return {
-                email: '',
-                password: '',
+                user: getUser(),
+                totpToken: '',
                 error: {
                     message: ''
                 },
@@ -47,25 +36,20 @@
             Loader
         },
         methods: {
-            handleLogin: function ()
+            verify: function ()
             {
                 this.isLoading = true;
 
                 let userService = new UserService();
+                console.log('verifiyin', getUser())
 
-                userService.login({
-                    email: this.email,
-                    password:this.password,
-                    remember: this.remember
-                }, (isMFARequired) => {
-                    if (isMFARequired) {
-                        this.$router.push({name: 'VerifyMFA'});
-                    }
-                    else {
+                userService.verifyMFA({
+                    accessToken: this.user.token, 
+                    totpToken: this.totpToken
+                    }, () => {
                         this.$router.push('/');
                         location.reload();
-                    }
-                })
+                    })
                 .catch(error => 
                 {
                     this.isLoading = false;

@@ -1,12 +1,3 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-
-Vue.use(VueRouter);
-
-var router = new VueRouter({
-    mode: 'history'
-});
-
 import { createSession, destroySession } from '../utils/auth'
 import { BASE_API_URL } from '../utils/api'
 import { getHeaders, getHeadersWithAuth } from '../utils/requestHeader'
@@ -28,7 +19,7 @@ function UserService()
         .then(response => createSession(user));
     }
 
-    this.login = function (email, password, remember)
+    this.login = function ({ email, password, remember }, callback)
     {
         let credentials =
         {
@@ -49,16 +40,38 @@ function UserService()
         {
             createSession(user);
 
-            router.push('/');
-            location.reload();
+            callback(user.isMFARequired);
         });
     }
 
-    this.logout = function ()
+    this.verifyMFA = function ({ accessToken, totpToken }, callback)
+    {
+        let mfa =
+        {
+            totpToken: totpToken
+        };
+
+        return fetch(USERS_API_URL + 'verify-mfa',
+        {
+            method: 'POST',
+            headers: getHeadersWithAuth(accessToken),
+            body: JSON.stringify(mfa)
+        })
+        .then(handleLoginErrors)
+        .then(response => response.clone().json())
+        .then(user => 
+        {
+            createSession(user);
+
+            callback();
+        });
+    }
+
+    this.logout = function (callback)
     {
         destroySession();
 
-        router.go('/');
+        callback();
     }
 
     function handleLoginErrors (response)
@@ -69,6 +82,11 @@ function UserService()
             if (clonedResponse.status === 404)
             {
                 throw Error('Invalid username/password !');
+            }
+
+            if (clonedResponse.status === 401)
+            {
+                throw Error('Invalid !');
             }
             
             throw Error(clonedResponse.statusText);

@@ -5,6 +5,7 @@ Vue.use(VueRouter);
 
 import AccountList from '../views/AccountList.vue'
 import Login from '../views/Login.vue'
+import VerifyMFA from '../views/VerifyMFA.vue'
 import Register from '../views/Register.vue'
 import JsonPrint from '../views/JsonPrint.vue'
 
@@ -27,6 +28,11 @@ const router = new VueRouter({
             name: 'Login',
             path: '/login', 
             component: Login 
+        },
+        {
+            name: 'VerifyMFA',
+            path: '/VerifyMFA',
+            component: VerifyMFA
         },
         {
             name: 'Register',
