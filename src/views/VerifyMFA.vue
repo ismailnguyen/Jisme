@@ -41,7 +41,6 @@
                 this.isLoading = true;
 
                 let userService = new UserService();
-                console.log('verifiyin', getUser())
 
                 userService.verifyMFA({
                     accessToken: this.user.token, 
