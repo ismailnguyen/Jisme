@@ -124,8 +124,7 @@
         right: 0;
         height: 100%;
         overflow-y: hidden;
-        background: #162056db;
-        backdrop-filter: blur(8px);
+        backdrop-filter: blur(18px);
         transition: all .5s;
         display: flex;
         align-items: center;
@@ -180,7 +179,8 @@
     li.last-item {
         position: fixed;
         bottom: 0;
-        background: #162056;
+        backdrop-filter: blur(20px);
+        background: #fff;
     }
 
     li.last-item:hover {
