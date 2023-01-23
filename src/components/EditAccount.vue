@@ -366,29 +366,15 @@
 
     .btn-group label.btn {
         background: none;
-        color: #000;
-        border-color: #000;
+        color: #fff;
+        border-color: #fff;
     }
 
     .btn-group label.btn.active {
-        background: #000;
-        color: #fff;
-        border-color: #000;
+        background: #fff;
+        color: #000;
+        border-color: #fff;
     }
-
-    @media (prefers-color-scheme: dark) {
-		.btn-group label.btn {
-            background: none;
-            color: #fff;
-            border-color: #fff;
-        }
-
-        .btn-group label.btn.active {
-            background: #fff;
-            color: #000;
-            border-color: #fff;
-        }
-	}
 
     .modal.hasIcon .modal-title {
         margin-left: 2rem;
