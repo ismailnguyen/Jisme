@@ -139,8 +139,9 @@
         background: #fff;
         border: none;
         margin: 0 10px;
-        border-radius: 8px;
-        box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
+        border-radius: 18px;
+        box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
+        transition: all .3s cubic-bezier(0,0,.5,1);
         height: 100%;
     }
 	
@@ -153,7 +154,8 @@
 	}
 	
 	.card:hover {
-		box-shadow: none;
+        box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
+        transform: scale3d(1.01,1.01,1.01);
 	}
 
     .card-header {

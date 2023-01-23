@@ -222,8 +222,6 @@
         overflow: hidden;
         display: block;
         z-index: 10500;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 0 1rem 0 rgba(0, 0, 0, .2);   
     }
 
     .modal:before {
@@ -235,8 +233,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        box-shadow: inset 0 0 2000px rgba(255, 255, 255, .5);
-        filter: blur(10px);
+        background-color: rgba(50,50,50,.88);
         margin: -20px;
     }
 
@@ -317,7 +314,7 @@
     }
     
     .searchBar {
-        border-radius: 15px;
+        border-radius: 18px;
         color: #818182;
         line-height: 2.5;
         box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;

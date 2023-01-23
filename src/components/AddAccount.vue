@@ -14,7 +14,9 @@
                         </div>
                         <h2 class="modal-title">{{ account.displayPlatform || 'Add' }}</h2>
                         <button type="button" class="close" @click="closeModal()">
-                            <span aria-hidden="true">&times;</span>
+                            <span class="close-svg-container">
+                                <svg width="21" height="21" class="as-svgicon as-svgicon-close as-svgicon-tiny as-svgicon-closetiny" role="img" aria-hidden="true"><path fill="none" d="M0 0h21v21H0z"></path><path d="M12.12 10l4.07-4.06a1.5 1.5 0 10-2.11-2.12L10 7.88 5.94 3.81a1.5 1.5 0 10-2.12 2.12L7.88 10l-4.07 4.06a1.5 1.5 0 000 2.12 1.51 1.51 0 002.13 0L10 12.12l4.06 4.07a1.45 1.45 0 001.06.44 1.5 1.5 0 001.06-2.56z"></path></svg>
+                            </span>
                         </button>
                     </div>
                     <div class="modal-body">
@@ -203,10 +205,31 @@
 </script>
 
 <style scoped>
+    .close-svg-container {
+        background: #e8e8ed;
+        border-radius: 50%;
+        color: #6e6e73;
+        display: flex;
+        align-items: center;
+        height: 36px;
+        width: 36px;
+        outline: none;
+        position: relative;
+    }
+
+    .close-svg-container svg {
+        fill: currentColor;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        height: 20px;
+        width: 20px;
+    }
+	
     .modal-header .close {
         font-size: 2.5rem;
     }
-	
+
 	@media (prefers-color-scheme: dark) {
 		.modal-header .close {
 			color: #e4e6eb;
@@ -227,8 +250,8 @@
 	
 	@media only screen and (min-width: 500px) {
         .modal-content {
-			background: #f0f2f5db;
-            border-radius: 8px;
+			background: #fff;
+            border-radius: 18px;
             margin: 10px;
             box-shadow: 0 0 2rem rgba(0,0,255,.1);
         }

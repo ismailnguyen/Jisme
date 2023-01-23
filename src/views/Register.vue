@@ -80,7 +80,7 @@
         border: none;
         border-radius: 1.55rem;
         box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
-        border-radius: 8px;
+        border-radius: 18px;
     }
 
     .form-signin .checkbox {
