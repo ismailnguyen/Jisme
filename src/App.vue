@@ -166,7 +166,7 @@
     }
 
     .main-container {
-        padding-top: 50px;
+        padding-top: 80px;
     }
 
     @media (min-width: 767.98px) { 
@@ -176,6 +176,10 @@
     }
 
     @media (max-width: 767.98px) { 
+        .main-container {
+            padding-top: 30px;
+        }
+
         .main-container:last-child {
             padding-bottom: 100px;
         }
@@ -262,39 +266,27 @@
         cursor: pointer;
         width: 48px;
         height: 48px;
-        border-radius: 100px;
+        border-radius: 15px;
         text-align: center;
         background-color: #fff;
         box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
         z-index: 9999;
     }
 
-    .floating-button:hover {
-		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
-	}
+    .floating-button.floating-button--menu:hover,
+    .floating-button.floating-button--add:hover {
+        box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
+        transform: scale3d(1.01,1.01,1.01);
+    }
 
     .floating-button i {
         color: #eee;
     }
 	
 	@media (prefers-color-scheme: dark) {
-		.floating-button,
-		.floating-button:hover {
-			color: #e4e6eb;
+		.floating-button {
 			box-shadow: none;
 		}
-
-        .floating-button.floating-button--menu {
-            background: #4b4c4f;
-        }
-
-        .floating-button.floating-button--menu:hover {
-			background: #232324;
-        }
-
-        .floating-button.floating-button--add:hover {
-			background: #990f1c;
-        }
 	}
 
     .badge-pill {
