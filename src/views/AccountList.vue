@@ -284,6 +284,7 @@
         }
     } 
         
+
     /* Reduce search bar size when sidebar menu is opened */
     .menuDisplayed .header-search {
         padding-right: 250px;
@@ -331,7 +332,8 @@
     .searchBar:focus {
         border: none !important;
         background-color: #ced4da70;
-		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
+		box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
+        transform: scale3d(1.01,1.01,1.01);
 	}
 	
 	@media (prefers-color-scheme: dark) {
@@ -339,7 +341,6 @@
 		.searchBar:active,
 		.searchBar:focus {
 			color: #fff;
-			box-shadow: none;
 		}
 	}
 
