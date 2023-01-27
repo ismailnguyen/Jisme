@@ -1,6 +1,6 @@
 <template>
-    <div class="modal" @keyup.esc="closeModal()" tabindex="0" @click.self="closeModal()" :class="account.icon ? 'hasIcon' : ''">
-        <transition name="pop" appear v-on:before-enter="toggleModalContent()">
+    <div class="modal" @keyup.esc="closeModal()" tabindex="0" :class="account.icon ? 'hasIcon' : ''">
+        <transition name="modal-animation" appear v-on:before-enter="toggleModalContent()">
             <div class="modal-dialog">
                 <div class="modal-content" v-if="showModalContent">
                     <div class="modal-header">

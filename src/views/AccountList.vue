@@ -284,17 +284,6 @@
         }
     } 
         
-    .pop-enter-active,
-    .pop-leave-active {
-        transition: transform 0.3s cubic-bezier(0.5, 0, 0.5, 1), opacity 0.3s linear;
-    }
-
-    .pop-enter,
-    .pop-leave-to {
-        opacity: 0;
-        transform: scale(0.3) translateY(-50%);
-    }
-
     /* Reduce search bar size when sidebar menu is opened */
     .menuDisplayed .header-search {
         padding-right: 250px;
