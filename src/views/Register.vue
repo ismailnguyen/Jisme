@@ -14,9 +14,9 @@
             <label for="inputPassword" class="sr-only">Password</label>
             <input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="password" @keyup.enter="signUp" required>
 
-            <button class="btn btn-lg btn-primary btn-block" @click="signUp">Sign Up</button>
+            <span class="btn btn-lg btn-primary btn-block" @click="signUp">Sign up</span>
 
-            <p class="mt-5 mb-3 text-muted"><router-link to="/login">Already an user ? Sign in</router-link></p>
+            <p class="mt-5 mb-3 text-muted">Already an user? <router-link to="/login">Sign in</router-link></p>
         </form>
     </div>
 </template>
@@ -34,6 +34,9 @@
                 },
                 isLoading: false
             }
+        },
+        components: {
+            Loader
         },
         methods: {
             signUp() {
