@@ -3,10 +3,13 @@
         <ul class="sidebar-nav">
             <img :src="user.avatarUrl" class="rounded-circle mb-3" style="width: 150px;" alt="Avatar" />
             <p class="text-muted">{{ user.email }}</p>
-            <li class="first-item">
-                <a @click="add()">
+            <li class="menu-actions">
+                <a class="menu-actions-add" @click="add()">
                     <i class="fa fa-plus"></i>
-                    Add
+                </a>
+
+                <a class="menu-actions-logout" @click="signOut()">
+                    <i class="fa fa-power-off"></i>
                 </a>
             </li>
             <li class="no-hover">
@@ -21,28 +24,16 @@
                     {{  tag }}
                 </span>
             </li>
-            <li class="last-item">
-                <a @click="signOut()">
-                    <i class="text-danger fa fa-power-off"></i>
-                    Logout
-                </a>
-            </li>
         </ul>
     </div>
 </template>
 
 <script>
-    import { isLoggedIn } from '../utils/auth'
     import FilterService from '../services/FilterService'
     import UserService from '../services/UserService'
 
     export default {
         props: ['user', 'searchQuery'],
-        data () {
-            return {
-                isLoggedIn: isLoggedIn()
-            }
-        },
         methods: {
             add: function () {
                 this.$emit('toggleAddAccountModal');
@@ -165,29 +156,49 @@
         color: #162056db;
     }
 
-    li.first-item a {
+    .menu-actions {
+        display: flex;
+        justify-content: space-evenly;
+    }
+
+    .menu-actions a {
+        border-radius: 15px;
+        height: 48px;
+        width: 48px;
+        font-size: 2em;
+        text-align: center;
+        box-shadow: 9px 9px 16px rgb(163 177 198 / 60%), -9px -9px 16px rgb(255 255 255 / 50%);
+    }
+
+    .menu-actions i {
+        margin-top: 9px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+		.menu-actions a {
+			box-shadow: none;
+		}
+	}
+
+    .menu-actions-add i {
         color: #fff;
+    }
+
+    .menu-actions a:active,
+    .menu-actions a:hover {
+        box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
+        transform: scale3d(1.01,1.01,1.01);
+    }
+
+    .menu-actions-add {
         background-color: #dc3545;
-        border-radius: 50px;
     }
 
-    li.first-item a:hover {
-        background-color: #fff;
+    .menu-actions-logout i {
         color: #dc3545;
     }
 
-    li.last-item {
-        position: fixed;
-        bottom: 0;
-        backdrop-filter: blur(20px);
-        background: #fff;
-    }
-
-    li.last-item:hover {
+    .menu-actions-logout {
         background-color: #fff;
-    }
-
-    li.last-item a {
-        color: #dc3545;
     }
 </style>
