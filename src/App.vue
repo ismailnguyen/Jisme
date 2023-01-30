@@ -5,13 +5,13 @@
             v-on:toggleMenu="onToggleMenu"
             :user="user"
             :searchQuery="searchQuery"
-            v-if="user" />
+            v-if="displayMenus" />
  
         <AddAccountModal 
             :user="user" 
             v-on:showAlert="onShowAlert"
             v-on:toggleAddAccountModal="onAddAccountModalToggled"
-            v-if="user && showAddAccountModal" />
+            v-if="displayMenus && showAddAccountModal" />
 
         <router-view
             :user="user"
@@ -19,11 +19,11 @@
             :addAccountModalToggled="showAddAccountModal"
             v-on:searchQueryUpdated="onSearchQueryUpdated" />
 
-        <a id="menu-toggle" class="floating-button" :class="isMenuToggled ? 'floating-button--close' : 'floating-button--menu'" @click="onToggleMenu" v-show="user">
+        <a id="menu-toggle" class="floating-button" :class="isMenuToggled ? 'floating-button--close' : 'floating-button--menu'" @click="onToggleMenu" v-show="displayMenus">
             <i class="fa fa-solid" :class="isMenuToggled ? 'fa-close' : 'fa-bars'"></i>
         </a>
 
-        <a id="menu-toggle" class="floating-button floating-button--add d-none d-lg-block d-xl-block" @click="onAddAccountModalToggled" v-if="!isMenuToggled && user">
+        <a id="menu-toggle" class="floating-button floating-button--add d-none d-lg-block d-xl-block" @click="onAddAccountModalToggled" v-if="!isMenuToggled && displayMenus">
             <i class="fa fa-plus"></i>
         </a>
 
@@ -65,6 +65,16 @@
         computed: {
             accounts: function () {
                 return this.$store.state.accounts;
+            },
+
+            displayMenus: function () {
+                return this.user
+                    && this.$route
+                    && this.$route.matched
+                    && this.$route.matched.length
+                    && this.$route.matched[0].props
+                    && this.$route.matched[0].props.default
+                    && this.$route.matched[0].props.default.menubar;
             }
         },
         methods: {

@@ -22,27 +22,32 @@ const router = new VueRouter({
             name: 'AccountList',
             path: '/',
             beforeEnter: requireAuth,
-            component: AccountList 
+            component: AccountList,
+            props: { menubar: true }
         },
         {
             name: 'Login',
             path: '/login', 
-            component: Login 
+            component: Login,
+            props: { menubar: false }
         },
         {
             name: 'VerifyMFA',
             path: '/VerifyMFA',
-            component: VerifyMFA
+            component: VerifyMFA,
+            props: { menubar: false }
         },
         {
             name: 'Register',
             path: '/register', 
-            component: Register 
+            component: Register,
+            props: { menubar: false }
         },
         {
             name: 'JsonPrint',
             path: '/json',
-            component: JsonPrint 
+            component: JsonPrint,
+            props: { menubar: false }
         }
     ]
 });
