@@ -117,6 +117,7 @@
         overflow-y: hidden;
         backdrop-filter: blur(18px) contrast(60%);
         -webkit-backdrop-filter: blur(18px) contrast(60%);
+        background: #162056db;
         transition: all .5s;
         display: flex;
         align-items: center;
@@ -168,18 +169,11 @@
         width: 48px;
         font-size: 2em;
         text-align: center;
-        box-shadow: 9px 9px 16px rgb(163 177 198 / 60%), -9px -9px 16px rgb(255 255 255 / 50%);
     }
 
     .menu-actions i {
         margin-top: 9px;
     }
-
-    @media (prefers-color-scheme: dark) {
-		.menu-actions a {
-			box-shadow: none;
-		}
-	}
 
     .menu-actions-add i {
         color: #fff;
