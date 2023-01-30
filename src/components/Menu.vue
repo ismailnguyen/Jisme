@@ -115,7 +115,7 @@
         right: 0;
         height: 100%;
         overflow-y: hidden;
-        backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px) contrast(60%);
         transition: all .5s;
         display: flex;
         align-items: center;
