@@ -19,8 +19,8 @@
             :addAccountModalToggled="showAddAccountModal"
             v-on:searchQueryUpdated="onSearchQueryUpdated" />
 
-        <a id="menu-toggle" class="floating-button floating-button--menu" @click="onToggleMenu" v-show="user">
-            <i class="fa fa-solid fa-bars"></i>
+        <a id="menu-toggle" class="floating-button" :class="isMenuToggled ? 'floating-button--close' : 'floating-button--menu'" @click="onToggleMenu" v-show="user">
+            <i class="fa fa-solid" :class="isMenuToggled ? 'fa-close' : 'fa-bars'"></i>
         </a>
 
         <a id="menu-toggle" class="floating-button floating-button--add d-none d-lg-block d-xl-block" @click="onAddAccountModalToggled" v-if="!isMenuToggled && user">
@@ -252,6 +252,16 @@
         right: 15px;
         color: #fff;
         background: #162056;
+    }
+
+    .floating-button.floating-button--close {
+        top: 20px;
+        right: 15px;
+        background: #fff;
+    }
+
+    .floating-button.floating-button--close i {
+        color: #162056;
     }
 
     .floating-button.floating-button--add {
