@@ -320,9 +320,15 @@
 
     .modal-content {
         color: #f8f9fa;
-        background: #162056;
+        background: linear-gradient(141.13deg,#106cde 26.29%,#36a5ef 100%);
         border: none;
     }
+
+    @media (prefers-color-scheme: dark) {
+		.modal-content {
+            background: linear-gradient(141.69deg,#3077e2 0%,#1b42ab 100%);
+		}
+	}
 
     @media only screen and (min-width: 500px) {
         .modal-content {
