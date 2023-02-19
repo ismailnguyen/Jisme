@@ -261,7 +261,7 @@
         top: 20px;
         right: 15px;
         color: #fff;
-        background: #162056;
+        background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
     }
 
     .floating-button.floating-button--close {

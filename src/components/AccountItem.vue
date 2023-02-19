@@ -174,15 +174,8 @@
 
     .badge-primary {
         color: #fff;
-        background-color: #162056;
+        background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
     }
-	
-	@media (prefers-color-scheme: dark) {
-		.badge-primary {
-			color: #fff;
-			background-color: #007bff;
-		}
-	}
 
     .description {
         color: #818182;
