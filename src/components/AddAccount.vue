@@ -281,17 +281,10 @@
 
     .modal-footer .btn-primary {
         color: #f8f9fa;
-        background-color: #162056;
         border-color: #162056;
+        background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
     }
 	
-	@media (prefers-color-scheme: dark) {
-		.modal-footer .btn-primary {
-			color: #fff;
-			background-color: #007bff;
-		}
-	}
-
     .btn-group .btn-check {
         display: none;
     }
@@ -308,27 +301,22 @@
 
     .btn-group label.btn {
         background: none;
-        color: #000;
-        border-color: #000;
+        color: #2870ea;
+        border-color: #2870ea;
     }
 
     .btn-group label.btn.active {
-        background: #000;
+        background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
         color: #fff;
-        border-color: #000;
     }
 
     @media (prefers-color-scheme: dark) {
 		.btn-group label.btn {
-            background: none;
             color: #fff;
-            border-color: #fff;
         }
 
         .btn-group label.btn.active {
-            background: #fff;
-            color: #000;
-            border-color: #fff;
+            color: #fff;
         }
 	}
 

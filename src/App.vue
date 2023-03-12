@@ -257,6 +257,15 @@
         }
     }
 
+    .badge-primary {
+        color: #fff;
+        background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
+    }
+
+    .badge-primary:hover {
+        color: #162056db;
+    }
+
     .floating-button.floating-button--menu {
         top: 20px;
         right: 15px;

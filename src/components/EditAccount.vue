@@ -109,20 +109,20 @@
                                     <textarea id="editAccount_input_notes" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                                 </div>
 								
-                                <div class="form-group col-xs-3 small">
+                                <div class="form-group col-xs-3 col-md-3 col-lg-3 small">
                                     <label>Created</label>
                                     <input class="form-control" v-model="createdDate" disabled />
                                 </div>
-                                <div class="form-group col-xs-3 small">
+                                <div class="form-group col-xs-3 col-md-3 col-lg-3 small">
                                     <label>Modified</label>
                                     <input class="form-control" v-model="lastModifiedDate" disabled />
                                 </div>
-                                <div class="form-group col-xs-3 small">
+                                <div class="form-group col-xs-3 col-md-3 col-lg-3 small">
                                     <label>Opened</label>
                                     <input class="form-control" v-model="lastOpenedDate" disabled />
                                 </div>
                                 
-                                <div class="form-group col-xs-3 small">
+                                <div class="form-group col-xs-3 col-md-3 col-lg-3 small">
                                     <label>Type</label>
                                     <br>
                                     <div class="btn-group" role="group" aria-label="Account type">
@@ -332,10 +332,8 @@
 
     @media only screen and (min-width: 500px) {
         .modal-content {
-			background: #162056db;
             border-radius: 18px;
             margin: 10px;
-            box-shadow: 0 0 2rem rgba(0,0,255,.1);
         }
     }
 

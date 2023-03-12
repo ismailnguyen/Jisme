@@ -172,10 +172,7 @@
         cursor: pointer;
     }
 
-    .badge-primary {
-        color: #fff;
-        background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
-    }
+    
 
     .description {
         color: #818182;

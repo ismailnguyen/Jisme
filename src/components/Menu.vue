@@ -116,7 +116,6 @@
         height: 100%;
         overflow-y: hidden;
         backdrop-filter: blur(18px) contrast(60%);
-        -webkit-backdrop-filter: blur(18px) contrast(60%);
         background: #162056db;
         transition: all .5s;
         display: flex;
@@ -154,9 +153,7 @@
         margin: 5px;
     }
 
-    li .badge:hover {
-        color: #162056db;
-    }
+    
 
     .menu-actions {
         display: flex;
