@@ -207,7 +207,7 @@
 <style scoped>
     .close-svg-container {
         background: #e8e8ed;
-        border-radius: 50%;
+        border-radius: 15px;
         color: #6e6e73;
         display: flex;
         align-items: center;
@@ -251,7 +251,7 @@
 	@media only screen and (min-width: 500px) {
         .modal-content {
 			background: #fff;
-            border-radius: 18px;
+            border-radius: 15px;
             margin: 10px;
             box-shadow: 0 0 2rem rgba(0,0,255,.1);
         }
@@ -290,13 +290,13 @@
     }
 
     .btn-group label.btn:first-of-type{
-        border-top-left-radius: 30px;
-        border-bottom-left-radius: 30px;
+        border-top-left-radius: 15px;
+        border-bottom-left-radius: 15px;
     }
 
     .btn-group label.btn:last-of-type{
-        border-top-right-radius: 30px;
-        border-bottom-right-radius: 30px;
+        border-top-right-radius: 15px;
+        border-bottom-right-radius: 15px;
     }
 
     .btn-group label.btn {

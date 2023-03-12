@@ -206,7 +206,7 @@
     .form-control {
         color: #f8f9fa;
         border: none;
-        border-radius: 0.75rem;
+        border-radius: 15px;
         background-color: #ced4da70;
     }
 
@@ -216,7 +216,7 @@
     }
 
     .btn {
-        border-radius: .75rem;
+        border-radius: 15px;
     }
 
     /* Main Content */

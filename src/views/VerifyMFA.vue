@@ -80,7 +80,7 @@
     .form-control {
         color: #162056;
         border: none;
-        border-radius: 0.75rem;
+        border-radius: 15px;
         background-color: #ced4da70;
     }
 
@@ -97,7 +97,7 @@
         color: #162056;
         background: #f8f9fa;
         border: none;
-        border-radius: 1.55rem;
+        border-radius: 15px;
         box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
     }
     

@@ -268,7 +268,7 @@
 
     @media(min-width:768px) {
         .modal-content {
-            border-radius: 1.55rem;
+            border-radius: 15px;
             min-height: 90%;
         }
     }
@@ -304,7 +304,7 @@
     }
     
     .searchBar {
-        border-radius: 18px;
+        border-radius: 15px;
         color: #818182;
         line-height: 2.5;
         box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
@@ -346,7 +346,7 @@
 
     .load-more-button {
 		width: 35%;
-        border-radius: 100px;
+        border-radius: 15px;
 		border: none;
         margin-left: auto;
         margin-right: auto;
