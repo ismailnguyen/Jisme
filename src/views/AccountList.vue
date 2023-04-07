@@ -15,11 +15,12 @@
 
         <div class="main-container container-fluid" v-if="isSearching">
             <span
-                class="badge badge-pill badge-secondary"
+                class="badge badge-pill badge-primary"
                 v-for="(tag, tagIndex) in selectedTags"
                 v-bind:key="tagIndex"
                 @click="removeTag(tag)">
-                <i class="fa fa-close"></i> {{ tag }}
+                {{ tag }}
+                <i class="fa fa-close"></i>
             </span>
             <br><br>
             <div class="row" v-if="!loading">

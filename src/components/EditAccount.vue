@@ -22,16 +22,40 @@
                     <div class="modal-body">
                         <form class="card-text lead">
                             <div class="row">
-                                <div class="form-group col-xs-12 col-md-6 col-lg-6">
+                                <div class="form-group col-xs-6 col-md-6 col-lg-6 small">
+                                    <label>Type</label>
+                                    <br>
+                                    <div class="btn-group" role="group" aria-label="Account type">
+                                        <label class="btn btn-outline-primary" for="editAccount_radiobutton_accounttype_account" :class="account.type == 'account' ? 'active' : ''">Account</label>
+                                        <input type="radio" class="btn-check" id="editAccount_radiobutton_accounttype_account" value="account" v-model="account.type">
+
+                                        <label class="btn btn-outline-primary" for="editAccount_radiobutton_accounttype_card" :class="account.type == 'card' ? 'active' : ''">Card</label>
+                                        <input type="radio" class="btn-check" id="editAccount_radiobutton_accounttype_card" value="card" v-model="account.type">
+
+                                        <label class="btn btn-outline-primary" for="editAccount_radiobutton_accounttype_2fa" :class="account.type == '2fa' ? 'active' : ''">2FA</label>
+                                        <input type="radio" class="btn-check" id="editAccount_radiobutton_accounttype_2fa" value="2fa" v-model="account.type">
+                                    </div>
+                                </div>
+                                <div class="form-group col-xs-6 col-md-6 col-lg-6">
                                     <label for="editAccount_input_platform">Platform</label>
                                     <input id="editAccount_input_platform" class="form-control" placeholder="Platform" type="text" v-model="account.platform" v-on:dblclick="copyToClipboard('editAccount_input_platform_hidden')" autofocus />
                                     <input id="editAccount_input_platform_hidden" type="hidden" :value="account.platform" />
                                 </div>
 
                                 <div class="form-group col-xs-12 col-md-6 col-lg-6">
-                                    <label for="editAccount_input_tags">Tags</label>
-                                    <input id="editAccount_input_tags" class="form-control" placeholder="Tags" type="text" aria-describedby="editAccount_input_tagsHelp" @keyup.enter="save()" v-model="account.tags" />
-                                    <small id="editAccount_input_tagsHelp" class="form-text text-muted">Separated with comma.</small>
+                                    <label for="editAccount_input_new_tag">Tags</label>
+                                    <div id="editAccount_input_tags" class="form-control tags">
+                                        <span
+                                            class="badge badge-pill badge-primary"
+                                            v-for="(tag, tagIndex) in account.tags.split(',')"
+                                            v-bind:key="tagIndex"
+                                            @click="removeTag(tag)">
+                                            {{ tag }}
+                                            <i class="fa fa-close" v-if="tag"></i>
+                                        </span>
+                                    </div>
+
+                                    <input id="editAccount_input_new_tag" class="form-control" placeholder="Tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
                                 </div>
 
                                 <!-- region_start -- Account type: card -->
@@ -122,20 +146,7 @@
                                     <input class="form-control" v-model="lastOpenedDate" disabled />
                                 </div>
                                 
-                                <div class="form-group col-xs-3 col-md-3 col-lg-3 small">
-                                    <label>Type</label>
-                                    <br>
-                                    <div class="btn-group" role="group" aria-label="Account type">
-                                        <label class="btn btn-outline-primary" for="editAccount_radiobutton_accounttype_account" :class="account.type == 'account' ? 'active' : ''">Account</label>
-                                        <input type="radio" class="btn-check" id="editAccount_radiobutton_accounttype_account" value="account" v-model="account.type">
-
-                                        <label class="btn btn-outline-primary" for="editAccount_radiobutton_accounttype_card" :class="account.type == 'card' ? 'active' : ''">Card</label>
-                                        <input type="radio" class="btn-check" id="editAccount_radiobutton_accounttype_card" value="card" v-model="account.type">
-
-                                        <label class="btn btn-outline-primary" for="editAccount_radiobutton_accounttype_2fa" :class="account.type == '2fa' ? 'active' : ''">2FA</label>
-                                        <input type="radio" class="btn-check" id="editAccount_radiobutton_accounttype_2fa" value="2fa" v-model="account.type">
-                                    </div>
-                                </div>
+                                
                             </div>
                         </form>
                     </div>
@@ -171,7 +182,8 @@
                 userService: new UserService(),
                 showModalContent: false,
                 isSaving: false,
-                isDeleting: false
+                isDeleting: false,
+                newTag: ''
             }
         },
         methods: {
@@ -237,6 +249,17 @@
                         this.isDeleting = false;
                     })
                 }
+            },
+
+            addTag: function () {
+                this.account.tags += ',' + this.newTag;
+                this.newTag = '';
+            },
+
+            removeTag: function (tag) {
+                let newTags = this.account.tags.split(',').map(t => t.trim());
+                newTags.splice(newTags.indexOf(tag), 1);
+                this.account.tags = newTags.join(',');
             },
 
             showAlert: function (title, message, type) {
@@ -348,6 +371,16 @@
     .form-control:disabled,
     .form-control[readonly] {
         background: none;
+    }
+
+    .form-control#editAccount_input_tags {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .form-control#editAccount_input_new_tag {
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
     }
 
     .modal-footer .btn {

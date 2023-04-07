@@ -42,9 +42,18 @@
                                     <input id="addAccount_platform_input" class="form-control" placeholder="Platform" type="text" ref="platform" v-model="account.platform" @keyup.enter="add()" required />
                                 </div>
                                 <div class="form-group col-xs-12 col-md-6 col-lg-6">
-                                    <label for="addAccount_tags_input">Tags</label>
-                                    <input id="addAccount_tags_input" class="form-control" placeholder="Tags" type="text" aria-describedby="addAccount_tagsHelp" v-model="account.tags" @keyup.enter="add()" required />
-                                    <small id="addAccount_tagsHelp" class="form-text text-muted">Separated with comma.</small>
+                                    <label for="addAccount_input_new_tag">Tags</label>
+                                    <div id="addAccount_input_tags" class="form-control tags">
+                                        <span
+                                            class="badge badge-pill badge-primary"
+                                            v-for="(tag, tagIndex) in account.tags.split(',')"
+                                            v-bind:key="tagIndex"
+                                            @click="removeTag(tag)">
+                                            {{ tag }}
+                                            <i class="fa fa-close" v-if="tag"></i>
+                                        </span>
+                                    </div>
+                                    <input id="addAccount_input_new_tag" class="form-control" placeholder="Tag" type="text" v-model="newTag" @keyup.enter="addTag()" required />
                                 </div>
                                 <div class="form-group col-xs-12 col-md-6 col-lg-3">
                                     <label for="addAccount_platform_input">Icon</label>
@@ -141,7 +150,8 @@
             return {
                 account: new Account(),
                 showModalContent: false,
-                isCreating: false
+                isCreating: false,
+                newTag: ''
             }
         },
         methods: {
@@ -164,6 +174,23 @@
                     this.showAlert('Error', error.toString(), 'danger');
                     this.isCreating = false;
                 });
+            },
+
+            addTag: function () {
+                const tags = this.account.tags.split(',').map(t => t.trim());
+
+                // add the tag only if it wasn't already existing
+                if (tags.indexOf(this.newTag) == -1) {
+                    this.account.tags += (this.account.tags ? ',' : '') + this.newTag;
+                }
+
+                this.newTag = '';
+            },
+
+            removeTag: function (tag) {
+                let newTags = this.account.tags.split(',').map(t => t.trim());
+                newTags.splice(newTags.indexOf(tag), 1);
+                this.account.tags = newTags.join(',');
             },
             
             cleanForm: function ()
@@ -269,6 +296,16 @@
 
     .form-control::placeholder {
         color: #ced4da70;
+    }
+
+    .form-control#addAccount_input_tags {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    .form-control#addAccount_input_new_tag {
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
     }
 
     .text-muted, a {
