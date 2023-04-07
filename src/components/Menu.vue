@@ -21,7 +21,8 @@
                     :class="isCurrentTag(tag) ? 'badge-danger' : 'badge-primary'"
                     >
                     <i class="fa fa-close" v-if="isCurrentTag(tag)"></i>
-                    {{  tag }}
+                    {{  tag.name }}
+                    <span class="badge badge-light">{{ tag.count }}</span>
                 </span>
             </li>
         </ul>
@@ -41,7 +42,7 @@
             },
 
             selectTag: function (tag) {
-                const tags = this.updateTags(tag);
+                const tags = this.updateTags(tag.name);
 
                 this.$router.push({name: 'AccountList', query: { tags: tags }});
                 this.$emit('toggleMenu');
@@ -77,23 +78,32 @@
                 let userService = new UserService();
 
                 userService.logout(() => {
-                            this.$router.go('/');
-                        });
+                    this.$router.go('/');
+                });
             }
         },
         computed: {
             getUniqueTags: function () {
-                let tags = [];
+                let uniqueTags = [];
 
                 this.accountsFilteredByQuery.forEach(account => {
-                    account.tags.split(',').map(t => t.trim()).forEach(tag => {
-                        if (tags.indexOf(tag) === -1) {
-                            tags.push(tag);
+                    account.tags.split(',').map(t => t.trim()).forEach(tagName => {
+                        // look if the tag was already added
+                        let alreadyAddedTag = uniqueTags.find(uniqueTag => uniqueTag.name === tagName);
+                        if (alreadyAddedTag) {
+                            alreadyAddedTag.count++;
+                        }
+                        // otherwise add it and init its counter to 0
+                        else {
+                            uniqueTags.push({
+                                name: tagName,
+                                count: 1
+                            })
                         }
                     });
                 });
 
-                return tags.sort();
+                return uniqueTags.sort((a, b) => (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0);
             },
 
             accountsFilteredByQuery: function () {
