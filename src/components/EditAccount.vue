@@ -55,7 +55,7 @@
                                         </span>
                                     </div>
 
-                                    <input id="editAccount_input_new_tag" class="form-control" placeholder="Tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
+                                    <input id="editAccount_input_new_tag" class="form-control" placeholder="Enter new tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
                                 </div>
 
                                 <!-- region_start -- Account type: card -->
@@ -201,7 +201,7 @@
                 .save(this.account)
                 .then(() => {
                     this.updateUI();
-                    this.$emit('showAlert', new Alert(this.account.displayPlatform, 'updated !', 'success', this.account.icon));
+                    this.$emit('showAlert', new Alert(this.account.displayPlatform, 'Updated !', 'success', this.account.icon));
                 })
                 .catch(error => {
                     this.showAlert('Error', error.toString(), 'danger');

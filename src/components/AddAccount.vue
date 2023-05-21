@@ -136,10 +136,10 @@
 </template>
 
 <script>
+    import Alert from '../models/Alert'
     import Account from '../models/Account'
     import UserService from '../services/UserService'
     import AccountsService from '../services/AccountsService'
-    import Alert from '../models/Alert'
 
     export default {
         props: {
@@ -212,8 +212,8 @@
 
                 this.closeModal();
 
-                this.showAlert(this.account.displayPlatform, 'Created !', 'success', this.account.icon);
-                
+                this.$emit('showAlert', new Alert(this.account.displayPlatform, 'Created !', 'success', this.account.icon));
+
                 this.cleanForm();
             },
             
