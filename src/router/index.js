@@ -8,6 +8,7 @@ import Login from '../views/Login.vue'
 import VerifyMFA from '../views/VerifyMFA.vue'
 import Register from '../views/Register.vue'
 import JsonPrint from '../views/JsonPrint.vue'
+import Settings from '../views/Settings.vue'
 
 import { requireAuth } from '../utils/auth'
 
@@ -24,6 +25,14 @@ const router = new VueRouter({
             beforeEnter: requireAuth,
             component: AccountList,
             props: { menubar: true }
+        },
+        {
+            name: 'Settings',
+            path: '/Settings',
+            beforeEnter: requireAuth,
+            component: Settings,
+            props: { menubar: false }
+
         },
         {
             name: 'Login',
@@ -46,6 +55,7 @@ const router = new VueRouter({
         {
             name: 'JsonPrint',
             path: '/json',
+            beforeEnter: requireAuth,
             component: JsonPrint,
             props: { menubar: false }
         }

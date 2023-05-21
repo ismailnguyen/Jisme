@@ -8,8 +8,8 @@
                     <i class="fa fa-plus"></i>
                 </a>
 
-                <a class="menu-actions-logout" @click="signOut()">
-                    <i class="fa fa-power-off"></i>
+                <a class="menu-actions-settings" @click="openSettings()">
+                    <i class="fa fa-gear"></i>
                 </a>
             </li>
             <li class="no-hover">
@@ -31,7 +31,6 @@
 
 <script>
     import FilterService from '../services/FilterService'
-    import UserService from '../services/UserService'
 
     export default {
         props: ['user', 'searchQuery'],
@@ -39,6 +38,11 @@
             add: function () {
                 this.$emit('toggleAddAccountModal');
                 this.$emit('toggleMenu');
+            },
+
+            openSettings: function () {
+                this.$emit('toggleMenu');
+                this.$router.push({name: 'Settings'});
             },
 
             selectTag: function (tag) {
@@ -73,14 +77,6 @@
             isCurrentTag: function (tag) {
                 return this.$route.query.tags && this.$route.query.tags.split(',').includes(tag);
             },
-
-            signOut: function () {
-                let userService = new UserService();
-
-                userService.logout(() => {
-                    this.$router.go('/');
-                });
-            }
         },
         computed: {
             getUniqueTags: function () {
@@ -163,8 +159,6 @@
         margin: 5px;
     }
 
-    
-
     .menu-actions {
         display: flex;
         justify-content: space-evenly;
@@ -196,11 +190,7 @@
         background-color: #dc3545;
     }
 
-    .menu-actions-logout i {
-        color: #dc3545;
-    }
-
-    .menu-actions-logout {
-        background-color: #fff;
+    .menu-actions-settings {
+        background-color: #313a6c;
     }
 </style>

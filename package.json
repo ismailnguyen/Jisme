@@ -10,6 +10,7 @@
     "production": "node node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules"
   },
   "dependencies": {
+    "@github/webauthn-json": "^2.1.1",
     "connect-history-api-fallback": "^1.6.0",
     "localforage": "^1.7.3",
     "totp-generator": "0.0.13",

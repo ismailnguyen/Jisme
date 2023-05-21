@@ -8,15 +8,17 @@ function UserService()
 
     this.update = function (user)
     {
-        user.last_update_date = new Date();
-
         return fetch(USERS_API_URL,
         {
             method: 'PUT',
             headers: getHeadersWithAuth(user.token),
             body: JSON.stringify(user)
         })
-        .then(response => createSession(user));
+        .then(response => response.clone().json())
+        .then(updatedUser => {
+            console.log(updatedUser)
+            createSession(updatedUser)
+        });
     }
 
     this.login = function ({ email, password, remember }, callback)
@@ -41,6 +43,21 @@ function UserService()
             createSession(user);
 
             callback(user.isMFARequired);
+        });
+    }
+
+    this.loginPasswordless = function (passkey) {
+        return fetch(USERS_API_URL + 'login-passkey',
+        {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(passkey)
+        })
+        .then(handleLoginErrors)
+        .then(response => response.clone().json())
+        .then(user => 
+        {
+            createSession(user);
         });
     }
 
