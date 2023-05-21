@@ -14,7 +14,7 @@
             <label for="inputPassword" class="sr-only">Password</label>
             <input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="password" @keyup.enter="signUp" required>
 
-            <span class="btn btn-lg btn-primary btn-block" @click="signUp">Sign up</span>
+            <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="signUp()">Sign up</span>
 
             <p class="mt-5 mb-3 text-muted">Already an user? <router-link to="/login">Sign in</router-link></p>
         </form>
@@ -103,13 +103,13 @@
         z-index: 2;
     }
 
-    .form-signin input[type="email"] {
+    .form-signin input:first-of-type {
         margin-bottom: -1px;
         border-bottom-right-radius: 0;
         border-bottom-left-radius: 0;
     }
 
-    .form-signin input[type="password"] {
+    .form-signin input:last-of-type {
         margin-bottom: 10px;
         border-top-left-radius: 0;
         border-top-right-radius: 0;
