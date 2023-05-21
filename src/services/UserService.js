@@ -103,7 +103,7 @@ function UserService()
 
             if (clonedResponse.status === 401)
             {
-                throw Error('Invalid !');
+                throw Error('Invalid or expired !');
             }
             
             throw Error(clonedResponse.statusText);
