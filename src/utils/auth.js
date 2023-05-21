@@ -35,6 +35,16 @@ export function createSession (user)
     localStorage.setItem('user', JSON.stringify(user));
 }
 
+export function getLastRememberedUsername ()
+{
+    return localStorage.getItem('last_remembered_username');
+}
+
+export function setLastRememberedUsername (username)
+{
+    localStorage.setItem('last_remembered_username', username);
+}
+
 export function destroySession ()
 {
     localStorage.removeItem('user');

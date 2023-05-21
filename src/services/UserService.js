@@ -1,4 +1,7 @@
-import { createSession, destroySession } from '../utils/auth'
+import {
+    setLastRememberedUsername,
+    createSession,
+    destroySession } from '../utils/auth'
 import { BASE_API_URL } from '../utils/api'
 import { getHeaders, getHeadersWithAuth } from '../utils/requestHeader'
 
@@ -41,6 +44,10 @@ function UserService()
         .then(user => 
         {
             createSession(user);
+            
+            if (remember) {
+                setLastRememberedUsername(user.email);
+            }
 
             callback(user.isMFARequired);
         });
