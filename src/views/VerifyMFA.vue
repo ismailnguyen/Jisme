@@ -11,7 +11,7 @@
             <label for="inputOtp" class="">Enter the code displayed in the authenticator app on your mobile device​​</label>
             <input type="tel" id="inputOtp" class="form-control" placeholder="XXX XXX" v-model="totpToken" @keyup.enter="verify()" required>
 
-            <span class="btn btn-lg btn-primary btn-block" @click="verify">Verify</span>
+            <span class="btn btn-lg btn-primary btn-block" @click="verify()">Verify</span>
 
             <p class="mt-5 mb-3 text-muted">Having trouble? <router-link to="/login">Sign in another way</router-link></p>
 
@@ -58,6 +58,13 @@
                     this.isLoading = false;
                     this.error = error;
                 });
+            }
+        },
+        watch: {
+            totpToken: function (newValue, oldValue) {
+                if (newValue && newValue.length >= 6) {
+                    this.verify();
+                }
             }
         }
     }
