@@ -9,7 +9,18 @@
             <p class="text-danger">{{error.message}}</p>
 
             <label v-if="!isEmailFilled" for="inputEmail" class="sr-only">Email address, phone number</label>
-            <input v-if="!isEmailFilled" type="email" id="inputEmail" class="form-control" placeholder="Email address, phone number" aria-describedby="emailHelp" v-model="email" @keyup.enter="submitEmail()" required>
+            <input v-if="!isEmailFilled"
+                type="text"
+                id="inputEmail"
+                name="username"
+                autocomplete="username webauthn"
+                class="form-control"
+                placeholder="Email address, phone number"
+                aria-describedby="emailHelp"
+                v-model="email"
+                @keyup.enter="submitEmail()"
+                autofocus
+                required>
 
             <label v-if="isEmailFilled" for="inputPassword" class="sr-only">Password</label>
             <input v-if="isEmailFilled" type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="password" @keyup.enter="handleLogin()" required>
@@ -20,8 +31,14 @@
                 </label>
             </div>
 
-            <span class="btn btn-lg btn-outline-primary btn-block" @click="submitEmail" v-if="!isEmailFilled">Next</span>
-            <span class="btn btn-lg btn-outline-primary btn-block" @click="handleLogin" v-if="isEmailFilled">Sign in</span>
+            <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @click="submitEmail()" v-if="!isEmailFilled">Next</span>
+            <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @click="handleLogin()" v-if="isEmailFilled">Sign in</span>
+
+            <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="handlePasswordlessLogin()" v-if="isPasswordlessLoginBtnVisible && !isEmailFilled">
+                <i class="fa fa-key"></i>
+                One button sign-in
+            </span>
+
 
             <p class="mt-5 mb-3 text-muted">Don't have account? <router-link to="/register">Sign up</router-link></p>
         </form>
@@ -31,6 +48,10 @@
 <script>
     import UserService from '../services/UserService'
     import Loader from '../components/Loader.vue'
+    import {
+        get,
+        parseRequestOptionsFromJSON
+    } from '@github/webauthn-json/browser-ponyfill'
 
     export default {
         data() {
@@ -42,11 +63,25 @@
                 },
                 isEmailFilled: false,
                 remember: false,
-                isLoading: false
+                isLoading: false,
+                isPasswordlessLoginBtnVisible: false
             }
         },
         components: {
             Loader
+        },
+        mounted() {
+            // Availability of `window.PublicKeyCredential` means WebAuthn is usable.  
+            if (window.PublicKeyCredential &&  
+                PublicKeyCredential.isConditionalMediationAvailable) {  
+                // Check if conditional mediation is available.  
+                PublicKeyCredential.isConditionalMediationAvailable().then(isCMA => {
+                    if (isCMA) {  
+                        // Call WebAuthn authentication  
+                        this.isPasswordlessLoginBtnVisible = true;
+                    }  
+                })
+            }
         },
         methods: {
             submitEmail: function () {
@@ -61,7 +96,7 @@
 
                 userService.login({
                     email: this.email,
-                    password:this.password,
+                    password: this.password,
                     remember: this.remember
                 }, (isMFARequired) => {
                     if (isMFARequired) {
@@ -71,6 +106,38 @@
                         this.$router.push('/');
                         location.reload();
                     }
+                })
+                .catch(error => 
+                {
+                    this.isLoading = false;
+                    this.error = error;
+                });
+            },
+
+            handlePasswordlessLogin: function () {
+                this.isLoading = true;
+
+                get(
+                    parseRequestOptionsFromJSON({
+                        publicKey: {
+                            challenge: '44e2059b66260ba010601c26d5cbd6e80f3d1232bdba2dc4d3e5c87cd1c87f8e',
+                            allowCredentials: [],
+                            userVerification: "preferred",
+                        }
+                    })
+                ).then(passkey => {
+                    let userService = new UserService();
+
+                    userService.loginPasswordless(passkey)
+                    .then(() => {
+                        this.$router.push('/');
+                        location.reload();
+                    })
+                    .catch(error => 
+                    {
+                        this.isLoading = false;
+                        this.error = error;
+                    });
                 })
                 .catch(error => 
                 {
@@ -145,6 +212,12 @@
     .form-signin .btn-outline-primary {
         color: #162056;
         border-color: #162056 !important;
+    }
+
+    .form-signin .btn-primary {
+        color: #f8f9fa;
+        background-color: #162056;
+        border-color: #162056;
     }
 
     .form-signin .btn-outline-primary:hover,
