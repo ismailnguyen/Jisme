@@ -35,7 +35,7 @@
             <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @click="handleLogin()" v-if="isEmailFilled">Sign in</span>
 
             <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="handlePasswordlessLogin()" v-if="isPasswordlessLoginBtnVisible && !isEmailFilled">
-                <i class="fa fa-key"></i>
+                <i class="fa fa-lock"></i>
                 One button sign-in
             </span>
 
@@ -46,6 +46,7 @@
 </template>
 
 <script>
+    import { getLastRememberedUsername } from '../utils/auth'
     import UserService from '../services/UserService'
     import Loader from '../components/Loader.vue'
     import {
@@ -71,6 +72,11 @@
             Loader
         },
         mounted() {
+            const lastRememberedUsername = getLastRememberedUsername();
+            if (lastRememberedUsername) {
+                this.email = lastRememberedUsername;
+            }
+
             // Availability of `window.PublicKeyCredential` means WebAuthn is usable.  
             if (window.PublicKeyCredential &&  
                 PublicKeyCredential.isConditionalMediationAvailable) {  
@@ -204,8 +210,7 @@
         z-index: 2;
     }
 
-    .form-signin input[type="email"],
-    .form-signin input[type="password"] {
+    .form-signin input {
         margin-bottom: 10px;
     }
 
