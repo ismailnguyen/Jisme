@@ -27,6 +27,23 @@ function AccountsService (user, store)
         .catch(throwError);
     }
 
+    this.getRecents = function () {
+        return fetch(ACCOUNTS_API_URL + 'recents/',
+        {
+            method: 'GET',
+            headers: this.headers
+        })
+        .then(handleErrors)
+        .then(accounts => accounts.map(account => parseAccount(getDecryptedAccount(account, this.user.uuid))))
+        .then(accounts => 
+        {	
+            this.store.commit('updateAccounts', accounts);
+
+            return accounts;
+        })
+        .catch(throwError);
+    },
+
     this.getAll = function()
     {
         return fetch(ACCOUNTS_API_URL,

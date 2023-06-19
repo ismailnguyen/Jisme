@@ -59,7 +59,33 @@
         },
         mounted() {
             if (this.user) {
-                this.fetchAccounts();
+                // If there is no account to display at loading, first retrieve the 10 most recents
+                // then load asynchronously the rest
+                if (!this.$store.state.accounts || !this.$store.state.accounts) {
+                    this.fetchRecentAccounts()
+                    .then(() => {
+                        this.onShowAlert(
+                            new Alert('Refreshing', 'Please wait...', 'info')
+                        )
+
+                        this.fetchAccounts()
+                        .then(() => {
+                            this.onShowAlert(
+                                new Alert('Refreshing', 'Done.', 'success')
+                            )
+                        });
+                    });
+                } else {
+                    this.onShowAlert(
+                        new Alert('Refreshing', 'Please wait...', 'info')
+                    )
+                    this.fetchAccounts()
+                    .then(() => {
+                        this.onShowAlert(
+                            new Alert('Refreshing', 'Done.', 'success')
+                        )
+                    });
+                }
             }
         },
         computed: {
@@ -78,10 +104,29 @@
             }
         },
         methods: {
+            fetchRecentAccounts: function () {
+                const accountsService = new AccountsService(this.user, this.$store);
+
+                return accountsService.getRecents()
+                .catch(error =>
+                {
+                    this.onShowAlert(
+                        new Alert(error.name, error.message, 'danger')
+                    )
+
+                    if (error instanceof SessionExpiredException) {
+                        let userService = new UserService();
+                        userService.logout(() => {
+                            this.$router.go('/');
+                        });
+                    }
+                });
+            },
+    
             fetchAccounts: function () {
                 const accountsService = new AccountsService(this.user, this.$store);
 
-                accountsService.getAll()
+                return accountsService.getAll()
                 .catch(error =>
                 {
                     this.onShowAlert(
