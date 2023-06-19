@@ -1,6 +1,6 @@
 <template>
     <div class="text-center">
-        <form class="form-signin">
+        <form class="form-signin" @submit.prevent>
             <img class="mb-4" src="images/touch/favicon64.png" alt="" width="72" height="72" v-show="!isLoading">
             <Loader v-show="isLoading" />
 
@@ -91,11 +91,17 @@
         },
         methods: {
             submitEmail: function () {
-                this.isEmailFilled = true;
+                if (!this.isEmailFilled) {
+                    this.isEmailFilled = true;
+                }
             },
 
             handleLogin: function ()
             {
+                if (!this.isEmailFilled) {
+                    return;
+                }
+
                 this.isLoading = true;
 
                 let userService = new UserService();
