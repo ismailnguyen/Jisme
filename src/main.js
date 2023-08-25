@@ -1,4 +1,4 @@
-import 'core-js/stable';
+import 'core-js/actual';
 
 import Vue from 'vue'
 import App from './App.vue'
