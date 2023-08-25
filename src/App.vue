@@ -40,7 +40,6 @@
     import AlertBox from './components/AlertBox.vue'
     import AddAccountModal from './components/AddAccount.vue'
     import { SessionExpiredException } from './utils/errors'
-    import 'core-js/stable';
     import 'regenerator-runtime/runtime';
 
     export default {
