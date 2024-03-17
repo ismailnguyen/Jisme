@@ -1,4 +1,4 @@
-import { encrypt, decrypt } from './cypher'
+import { encrypt, decrypt, encryptionKey } from './cypher'
 import Account from '../models/Account'
 
 export function parseAccount(account) {
@@ -12,6 +12,7 @@ export function parseAccount(account) {
         account.tags,
         account.created_date,
 		account.social_login,
+		account.description,
 		account.notes,
         account.last_modified_date,
         account.last_opened_date,
@@ -34,6 +35,7 @@ const cryptedArgs = [
 	'password_clue',
 	'tags',
 	'social_login',
+	'description',
 	'notes',
     'card_number',
     'card_pin',
@@ -48,7 +50,7 @@ export function getEncryptedAccount (account, secret) {
 	
     cryptedArgs
     .filter(cryptedArg => account[cryptedArg])
-    .forEach(cryptedArg => encryptedAccount[cryptedArg] = encrypt(account[cryptedArg], secret))
+    .forEach(cryptedArg => encryptedAccount[cryptedArg] = encrypt(account[cryptedArg], secret));
 
     return encryptedAccount;
 }
@@ -56,9 +58,13 @@ export function getEncryptedAccount (account, secret) {
 export function getDecryptedAccount (account, secret) {
     let decryptedAccount = JSON.parse(JSON.stringify(account)); // Clone object without reference
 
-        cryptedArgs
-        .filter(cryptedArg => account[cryptedArg])
-        .forEach(cryptedArg => decryptedAccount[cryptedArg] = decrypt(account[cryptedArg], secret))
+    cryptedArgs
+    .filter(cryptedArg => account[cryptedArg])
+    .forEach(cryptedArg => decryptedAccount[cryptedArg] = decrypt(account[cryptedArg], secret));
 
     return decryptedAccount;
+}
+
+export function getEncryptionKey(user) {
+    return encryptionKey(user.uuid);
 }
