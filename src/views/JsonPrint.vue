@@ -1,7 +1,5 @@
 <template>
-    <pre id="data">
-		{{ prettifiedJson }}
-	</pre>
+    <pre>{{ prettifiedJson }}</pre>
 </template>
 
 <script>
