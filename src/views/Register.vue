@@ -6,8 +6,6 @@
 
             <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
 
-            <p class="text-danger">{{error.message}}</p>
-
             <label for="inputEmail" class="sr-only">Email address</label>
             <input type="email" id="inputEmail" class="form-control" placeholder="Email address" aria-describedby="emailHelp" v-model="email" @keyup.enter="signUp" required>
 
@@ -22,6 +20,10 @@
 </template>
 
 <script>
+    import '../assets/auth.css'
+    import Alert from '../models/Alert'
+
+    import { useAlertStore } from '@/store'
     import Loader from '../components/Loader.vue'
 
     export default {
@@ -29,10 +31,14 @@
             return {
                 email: '',
                 password: '',
-                error: {
-                    message: ''
-                },
                 isLoading: false
+            }
+        },
+        setup() {
+            const { openAlert } = useAlertStore()
+
+            return {
+                openAlert
             }
         },
         components: {
@@ -40,69 +46,13 @@
         },
         methods: {
             signUp() {
-                this.isLoading = true;
-                this.error.message = 'Error : Functionnality non available';
+                this.openAlert(new Alert('Error', 'Registration are closed. Please contact administrator for assistance.', 'danger'))
             }
         }
     }
 </script>
 
-<style>
-    html, body {
-        height: 100%;
-    }
-
-    body {
-        background-color: #f8f9fa;
-        color: #162056;
-        -ms-flex-align: center;
-        align-items: center;
-        padding-top: 40px;
-        padding-bottom: 40px;
-    }
-
-    .form-control {
-        color: #162056;
-        border: none;
-        border-radius: 15px;
-        background-color: #ced4da70;
-    }
-
-    .form-control::placeholder {
-      color: #162056;
-      opacity: 1;
-    }
-
-    .form-signin {
-        width: 100%;
-        max-width: 330px;
-        padding: 15px;
-        margin: auto;
-        color: #162056;
-        background: #f8f9fa;
-        border: none;
-        border-radius: 15px;
-        box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
-        border-radius: 15px;
-    }
-
-    .form-signin .checkbox {
-        font-weight: 400;
-    }
-
-    .form-signin .form-control {
-        opacity: 0.9;
-        position: relative;
-        box-sizing: border-box;
-        height: auto;
-        padding: 10px;
-        font-size: 16px;
-    }
-
-    .form-signin .form-control:focus {
-        z-index: 2;
-    }
-
+<style scoped>
     .form-signin input:first-of-type {
         margin-bottom: -1px;
         border-bottom-right-radius: 0;
