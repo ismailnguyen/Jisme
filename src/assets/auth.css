@@ -1,0 +1,92 @@
+@import './base.css';
+
+body {
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+}
+
+.form-control {
+  color: #162056;
+  border: none;
+  border-radius: 15px;
+  background-color: #ced4da70;
+}
+
+.form-control::placeholder {
+  color: #162056;
+  opacity: 1;
+}
+
+.form-signin {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: auto;
+  color: #162056;
+  background: #f8f9fa;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
+}
+
+@media(prefers-color-scheme: dark) {
+  .form-signin {
+    color: #e4e6eb;
+    background: #242526;
+    box-shadow: none;
+  }
+}
+
+.form-signin .checkbox {
+  font-weight: 400;
+}
+
+.form-signin .form-control {
+  opacity: 0.9;
+  position: relative;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+}
+
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+
+.form-signin .btn-primary {
+  color: #f8f9fa;
+  background-color: #162056;
+  border-color: #162056;
+}
+
+.form-signin .btn-outline-primary {
+  color: #162056;
+  border-color: #162056 !important;
+}
+
+.form-signin .btn-outline-primary:hover,
+.form-signin .btn-outline-primary:active {
+  color: #f8f9fa !important;
+  background-color: #162056 !important;
+}
+
+@media(prefers-color-scheme: dark) {
+  .form-signin .btn-outline-primary {
+    color: #e4e6eb;
+    border-color: #e4e6eb !important;
+  }
+
+  .form-signin .btn-primary {
+    color: #f8f9fa;
+    background-color: #162056;
+    border-color: #162056;
+  }
+
+  .form-signin .btn-outline-primary:hover,
+  .form-signin .btn-outline-primary:active {
+    color: #162056 !important;
+    background-color: #f8f9fa !important;
+  }
+}
