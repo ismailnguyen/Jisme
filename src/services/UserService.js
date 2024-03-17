@@ -1,105 +1,116 @@
-import {
-    setLastRememberedUsername,
-    createSession,
-    destroySession } from '../utils/auth'
 import { BASE_API_URL } from '../utils/api'
 import { getHeaders, getHeadersWithAuth } from '../utils/requestHeader'
 
-function UserService()
-{
+function UserService() {
     const USERS_API_URL = BASE_API_URL + 'users/';
 
-    this.update = function (user)
-    {
-        return fetch(USERS_API_URL,
-        {
-            method: 'PUT',
-            headers: getHeadersWithAuth(user.token),
-            body: JSON.stringify(user)
-        })
-        .then(response => response.clone().json())
-        .then(updatedUser => {
-            console.log(updatedUser)
-            createSession(updatedUser)
-        });
+    this.update = async function (user) {
+        try {
+            const response = await fetch(USERS_API_URL,
+            {
+                method: 'PUT',
+                headers: getHeadersWithAuth(user.token),
+                body: JSON.stringify(user)
+            })
+
+            return await response.json();
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
 
-    this.login = function ({ email, password, remember }, callback)
-    {
+    this.getAccountInformation = async function (accessToken) {
+        try {
+            const response = await fetch(USERS_API_URL,
+            {
+                method: 'GET',
+                headers: getHeadersWithAuth(accessToken)
+            });
+
+            return await response.json();
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
+
+    this.login = async function ({ username, password }, remember) {
         let credentials =
         {
-            email: email,
+            email: username,
             password: password,
             extendSession: remember
         };
 
-        return fetch(USERS_API_URL + 'login',
-        {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify(credentials)
-        })
-        .then(handleLoginErrors)
-        .then(response => response.clone().json())
-        .then(user => 
-        {
-            createSession(user);
-            
-            if (remember) {
-                setLastRememberedUsername(user.email);
+        const response = await fetch(USERS_API_URL + 'login',
+            {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(credentials)
+            });
+
+        const body = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 400) {
+                throw new Error('Username and password are mandatory!');
             }
 
-            callback(user.isMFARequired);
-        });
+            if (response.status === 404) {
+                throw new Error('Invalid username/password !');
+            }
+                
+            throw new Error(body.message);
+        }
+
+        return body;
     }
 
-    this.loginPasswordless = function (passkey) {
-        return fetch(USERS_API_URL + 'login-passkey',
-        {
-            method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify(passkey)
-        })
-        .then(handleLoginErrors)
-        .then(response => response.clone().json())
-        .then(user => 
-        {
-            createSession(user);
-        });
+    this.loginPasswordless = async function (passkey) {
+        try {
+            const response =  await fetch(USERS_API_URL + 'login-passkey',
+            {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(passkey)
+            })
+
+            return await response.json();
+
+        }
+        catch (error) {
+            console.log(error)
+        }
     }
 
-    this.verifyMFA = function ({ accessToken, totpToken }, callback)
-    {
+    this.verifyMFA = async function ({ accessToken, totpToken }) {
         let mfa =
         {
             totpToken: totpToken
         };
 
-        return fetch(USERS_API_URL + 'verify-mfa',
+        const response = await fetch(USERS_API_URL + 'verify-mfa',
         {
             method: 'POST',
             headers: getHeadersWithAuth(accessToken),
             body: JSON.stringify(mfa)
-        })
-        .then(handleLoginErrors)
-        .then(response => response.clone().json())
-        .then(user => 
-        {
-            createSession(user);
-
-            callback();
         });
+
+        const body = await response.json();
+
+        if (!response.ok) {
+            if (response.status === 401) {
+                throw new Error('Invalid TOTP code!');
+            }
+                
+            throw new Error(body.message);
+        }
+
+        return body;
     }
 
-    this.logout = function (callback)
-    {
-        destroySession();
-
-        callback();
-    }
-
-    function handleLoginErrors (response)
-    {
+    function handleLoginErrors (response) {
         let clonedResponse = response.clone();
         if (!clonedResponse.ok)
         {
