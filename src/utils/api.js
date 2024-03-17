@@ -1,3 +1,1 @@
-//export const BASE_API_URL = 'http://localhost:8888/' // Dev mode
-//export const BASE_API_URL = 'https://cors-proxy-eu.herokuapp.com/https://api.jisme.app/'; // Bypass CORS for local developments
-export const BASE_API_URL = 'https://www.jisme.app/api/';
+export const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
