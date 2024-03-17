@@ -1,16 +1,16 @@
-exports.Exception = function (reason, message, code) {
+export function Exception (reason, message, code) {
     this.name = reason;
     this.message = message;
     this.code = code;
 }
 
-exports.SessionExpiredException = function (reason, message, code) {
+export function SessionExpiredException (reason, message, code) {
     this.name = 'Session expired';
     this.message = 'Please login again';
     this.code = code;
 }
 
-exports.HttpException = function (response) {
+export function HttpException (response) {
     this.name = '';
     this.message = '';
     this.code = response.status;
