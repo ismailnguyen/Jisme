@@ -1,46 +1,50 @@
 <template>
     <pre id="data">
-		{{ jsonAccounts | pretty }}
+		{{ prettifiedJson }}
 	</pre>
 </template>
 
 <script>
-    import { getUser } from '../utils/auth'
-    import AccountsService from '../services/AccountsService'
+    import { onBeforeMount } from 'vue'
+    import { storeToRefs } from 'pinia'
+    import {
+        useAccountsStore,
+        useAlertStore,
+     } from '@/store'
+    import Alert from '../models/Alert'
 
     export default {
-        data()
-        {
-            return {
-                user: getUser(),
-            }
-        },
-        mounted() {
-            this.fetchAccounts();
-        },
-        methods: {
-            fetchAccounts: function ()
-            {
-                let accountsService = new AccountsService(this.user, this.$store);
+        setup() {
+            const accountsStore = useAccountsStore()
+            const { accounts } = storeToRefs(accountsStore)
+            const { fetchAccounts } = accountsStore
+            const { openAlert } = useAlertStore()
 
-                accountsService.get();
+            onBeforeMount(async () => {
+                try {
+                    await fetchAccounts()
+                } catch (error) {
+                    openAlert(new Alert('Error while loading accounts', error.message, 'danger'));
+                }
+            })
+
+            return {
+                accounts
             }
         },
         computed: {
-            jsonAccounts: function ()
-            {
-                return this.$store.state.accounts;
-            }
-        },
-		filters: {
-			pretty: function(value) {
-                return JSON.stringify(value, null, 2);
+			prettifiedJson: function() {
+                if (this.accounts.length === 0) {
+                    return 'Loading, please wait...'
+                }
+
+                return JSON.stringify(this.accounts, null, 2);
 			}
 		}
     }
 </script>
 
-<style>
+<style scoped>
 	@media (prefers-color-scheme: dark) {
 		pre {
 			color: #eee;
