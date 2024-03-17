@@ -1,65 +1,64 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
+import { useUserStore } from '@/store'
 
-Vue.use(VueRouter);
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/home',
+      meta: { requiresAuth: true }
+    },
+    {
+      name: 'Home',
+      path: '/home',
+      component: () => import('../views/Home.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      name: 'Login',
+      path: '/login', 
+      component: () => import('../views/Login.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      name: 'VerifyMFA',
+      path: '/VerifyMFA',
+      component: () => import('../views/VerifyMFA.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      name: 'Register',
+      path: '/register', 
+      component: () => import('../views/Register.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      name: 'JsonPrint',
+      path: '/json',
+      component: () => import('../views/JsonPrint.vue'),
+      meta: { requiresAuth: true }
+    }
+  ]
+})
 
-import AccountList from '../views/AccountList.vue'
-import Login from '../views/Login.vue'
-import VerifyMFA from '../views/VerifyMFA.vue'
-import Register from '../views/Register.vue'
-import JsonPrint from '../views/JsonPrint.vue'
-import Settings from '../views/Settings.vue'
+router.beforeEach(async (to, from, next) => {
+  // If authentication is required and user is not logged in redirect to login page
+  if (to.meta.requiresAuth && !useUserStore()?.isLoggedIn) {
+    next({
+      path: '/login',
+    });
+  }
+  // If a logged in used tries to access the login page redirect to home
+  else if (!to.meta.requiresAuth && useUserStore()?.isLoggedIn) {
+    next({
+      path: '/home',
+    });
+  }
+  else
+    {
+        next();
+    }
+})
 
-import { requireAuth } from '../utils/auth'
-
-const router = new VueRouter({
-    mode: 'history',
-    routes: [
-        {
-            path: '*',
-            redirect: '/'
-        },
-		{
-            name: 'AccountList',
-            path: '/',
-            beforeEnter: requireAuth,
-            component: AccountList,
-            props: { menubar: true }
-        },
-        {
-            name: 'Settings',
-            path: '/Settings',
-            beforeEnter: requireAuth,
-            component: Settings,
-            props: { menubar: false }
-
-        },
-        {
-            name: 'Login',
-            path: '/login', 
-            component: Login,
-            props: { menubar: false }
-        },
-        {
-            name: 'VerifyMFA',
-            path: '/VerifyMFA',
-            component: VerifyMFA,
-            props: { menubar: false }
-        },
-        {
-            name: 'Register',
-            path: '/register', 
-            component: Register,
-            props: { menubar: false }
-        },
-        {
-            name: 'JsonPrint',
-            path: '/json',
-            beforeEnter: requireAuth,
-            component: JsonPrint,
-            props: { menubar: false }
-        }
-    ]
-});
-
-export default router;
+export default router
