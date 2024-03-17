@@ -1,22 +1,23 @@
-import 'core-js/actual';
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 
-import Vue from 'vue'
+import { useUserStore } from '@/store'
+
 import App from './App.vue'
-
 import router from './router'
-import store from './store'
-import registerServiceWorker from './service-worker'
 
+import registerServiceWorker from './service-worker'
 if (process.env.NODE_ENV === 'production') {
-  registerServiceWorker();
+    registerServiceWorker();
 }
 
-new Vue({
-    el: '#app',
-    router,
-    store,
-    beforeCreate() {
-      this.$store.commit('initialiseStore');
-    },
-    render: h => h(App)
-});
+const pinia = createPinia()
+const app = createApp(App)
+
+app.use(pinia)
+// initialize the user before mounting the routes to avoid redirecting to login
+await useUserStore().init()
+
+app.use(router)
+
+app.mount('#app')
