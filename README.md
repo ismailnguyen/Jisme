@@ -4,7 +4,7 @@
 
 Live : [https://jisme.app](https://jisme.app)
 
-`Progressive Web App` `Vue JS` `Bootstrap`, `Neumorphism design`, `Stanford Javascript Crypto Library`
+`Progressive Web App` `Vue JS`, `Stanford Javascript Crypto Library`
 
 ## Screenshots
 
