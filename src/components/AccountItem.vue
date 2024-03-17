@@ -1,5 +1,5 @@
 <template>
-    <div class="card-wrapper col-sm-12 col-md-6 col-lg-4 col-xl-3">
+    <div class="card-wrapper col-12 col-xs-12 col-sm-12" :class="layoutAdjustmentCss">
         <div class="card clickable" :id="account._id">
             <div class="card-image-wrapper col-xs-3">
                 <img
@@ -34,8 +34,14 @@
 
                 <div class="row">
                     <div class="col-sm-12">
-                        <span class="small description" v-if="account.type == 'account' || account.type == '2fa'">{{account.login}}</span>
-                        <span class="small description" v-if="account.type == 'card'">{{account.card_name}}</span>
+                        <span class="small" v-if="account.type == 'account' || account.type == '2fa'">{{account.login}}</span>
+                        <span class="small" v-if="account.type == 'card'">{{account.card_name}}</span>
+                    </div>
+                </div>
+
+                <div class="row" v-if="account.description">
+                    <div class="col-sm-12">
+                        <span class="small description">{{account.description}}</span>
                     </div>
                 </div>
             </div>
@@ -44,27 +50,70 @@
 </template>
 
 <script>
+    import '../assets/card.css'
+    
+    import { storeToRefs } from 'pinia'
+    import {
+        useUiStore,
+    } from '@/store'
     import Account from '../models/Account'
 
     export default {
         props: {
-            account: Account
+            account: Account,
+        },
+        setup() {
+            const uiStore = useUiStore()
+            const { openEditAccountModal } = uiStore
+            const { isMenuOpened, isAccountOpened, isSettingsOpened } = storeToRefs(uiStore)
+
+            return {
+                isMenuOpened,
+                isAccountOpened,
+                isSettingsOpened,
+                openEditAccountModal
+            }
+        },
+        computed: {
+            layoutAdjustmentCss: function () {
+                let cssClass = 'col-md-4 col-lg-3'
+
+                if (this.isMenuOpened) {
+                    cssClass = 'col-lg-4 col-xl-4'
+
+                    if (this.isAccountOpened || this.isSettingsOpened) {
+                        cssClass = 'col-lg-12 col-xl-12'
+                    }
+                }
+                else if (this.isAccountOpened || this.isSettingsOpened) {
+                    cssClass = 'col-md-6 col-lg-6 col-xl-6'
+                }
+
+                return cssClass
+            },
+
+            getIcon: function () {
+                if (this.account && this.account.icon) {
+                    return this.account.icon;
+                }
+
+                return this.generateInitialIcon();
+            }
         },
         methods: {
             edit() {
-                this.$emit('toggleEditAccountModal', this.account);
+                this.openEditAccountModal(this.account)
             },
 
             selectTag: function (tag) {
                 // Don't add the tag if it is already selected
                 if (this.$route.query.tags && this.$route.query.tags.split(',').map(x => x.trim()).includes(tag.trim())) {
-                    console.log('Already selected')
                     return;
                 }
 
                 const tags = this.addTag(tag);
 
-                this.$router.push({name: 'AccountList', query: { tags: tags }});
+                this.$router.push({name: 'Home', query: { tags: tags }});
             },
 
             addTag: function (tag) {
@@ -72,6 +121,24 @@
                 newTags.push(tag.trim());
 
                 return newTags.join(',');
+            },
+
+            generateRandomColor: function () {
+                const color = [
+                    "#5050ff",
+                    "#50ff50",
+                    "#ff5050",
+                    "#ff5000",
+                    "#ff0050",
+                    "#0050ff",
+                    "#00ff50",
+                    "#50ff00",
+                    "#5000ff"
+                ];
+
+                let random = Math.floor(Math.random() * color.length);
+
+                return color[random];
             },
 
             generateInitialIcon: function () {
@@ -84,116 +151,30 @@
                 ctx.font = `${avatar.width / 2}px Arial`;
                 ctx.textAlign = "center";
 
-                //generating color
-                color = [
-                    "#5050ff",
-                    "#50ff50",
-                    "#ff5050",
-                    "#ff5000",
-                    "#ff0050",
-                    "#0050ff",
-                    "#00ff50",
-                    "#50ff00",
-                    "#5000ff"
-                ];
-
                 var initials = this.account.displayPlatform.split(' ').map(s => s[0].toUpperCase()).join('');
 
+                //generating color
+                color = this.generateRandomColor();
+
                 //function to create avatar
-                let random = Math.floor(Math.random() * color.length);
                 //clear canvas
                 ctx.fillStyle = "#ffffff";
                 ctx.fillRect(0, 0, avatar.width, avatar.height);
 
                 //add background
-                ctx.fillStyle = `${color[random]}60`;
+                ctx.fillStyle = `${color}60`;
                 ctx.fillRect(0, 0, avatar.width, avatar.height);
 
                 //add text
-                ctx.fillStyle = color[random];
+                ctx.fillStyle = color;
                 ctx.fillText(initials, avatar.width / 2, (65 / 100) * avatar.height);
 
                 //generate as Image
                 return avatar.toDataURL();
-            }
-        },
-        computed: {
-            getIcon: function () {
-                if (this.account && this.account.icon) {
-                    return this.account.icon;
-                }
-
-                return this.generateInitialIcon();
             }
         }
     }
 </script>
 
 <style scoped>
-    .card-wrapper {
-        padding: 15px;
-    }
-
-    .card {
-        color: #162056;
-        background: #fff;
-        border: none;
-        margin: 0 10px;
-        border-radius: 15px;
-        box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
-        transition: all .3s cubic-bezier(0,0,.5,1);
-        height: 100%;
-    }
-	
-	@media (prefers-color-scheme: dark) {
-		.card {
-			color: #e4e6eb;
-			background: #242526;
-			box-shadow: none;
-		}
-	}
-	
-	.card:hover {
-        box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
-        transform: scale3d(1.01,1.01,1.01);
-	}
-
-    .card-header {
-        background: none;
-        border: none;
-        margin-left: 30px;
-    }
-
-    .card a {
-        text-decoration: none;
-    }
-
-    .clickable {
-        cursor: pointer;
-    }
-
-    
-
-    .description {
-        color: #818182;
-    }
-
-    .card-image-wrapper {
-        position: absolute;
-        top: -14px;
-        left: -14px;
-        border-radius: 15px;
-        background: #f9f9f9;
-        padding: 2px;
-    }
-
-    .card-icon {
-        border-radius: 15px;
-        height: 48px;
-        width: 48px;
-    }
-
-    .card-icon-placeholder {
-        background-color: red;
-    }
 </style>
