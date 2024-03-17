@@ -1,6 +1,5 @@
 <template>
     <div id="alert" class="alert alert-dismissible fade show" :class="type">
-        
         <img
             v-if="image"
             :src="image"
@@ -20,35 +19,44 @@
         <button type="button" class="close" @click="close()" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
-
     </div>
 </template>
 
 <script>
+    import { useAlertStore } from '@/store'
+    import { storeToRefs } from 'pinia'
+
     export default {
-        props: {
-            alertDetails: Object
+        setup() {
+            const alertStore = useAlertStore()
+            const { currentAlert } = storeToRefs(alertStore)
+            const { clearAlert } = alertStore
+
+            return {
+                currentAlert,
+                clearAlert
+            }
         },
         methods: {
             close: function () {
-                this.$emit('closeAlert');
+                this.clearAlert();
             }
         },
         computed: {
             title: function () {
-                return this.alertDetails.title;
+                return this.currentAlert.title;
             },
 
             message: function () {
-                return this.alertDetails.message;
+                return this.currentAlert.message;
             },
 
             image: function () {
-                return this.alertDetails.image;
+                return this.currentAlert.image;
             },
 
             type: function () {
-                return  'alert-' + this.alertDetails.type;
+                return  'alert-' + this.currentAlert.type;
             }
         }
     } 
