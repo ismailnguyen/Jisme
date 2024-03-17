@@ -11,6 +11,7 @@ class Account {
 					tags = '', 
 					created_date = new Date(), 
 					social_login = '', 
+					description = '',
 					notes = '',
 					last_modified_date = null, 
 					last_opened_date = null, 
@@ -32,6 +33,7 @@ class Account {
         this.tags = tags;
         this.created_date = new Date(created_date).toUTCString();
 		this.social_login = social_login;
+		this.description = description;
 		this.notes = notes;
         // if account never modified, take creation date as last modification date
         this.last_modified_date = new Date((last_modified_date instanceof Date && !isNaN(last_modified_date)) ? last_modified_date : created_date).toUTCString();
