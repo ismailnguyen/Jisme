@@ -39,14 +39,4 @@
     .stacked-cards .card-wrapper .card {
         width: 100%;
     }
-
-    /* .stacked-cards .card-wrapper:nth-child(2) {
-        transform: translate3d(-20px, -20px, 0);
-    }
-    .stacked-cards .slide:nth-child(3) {
-        transform: translate3d(-40px, -40px, 0);
-    }
-    .stacked-cards .slide:nth-child(4) {
-        transform: translate3d(-60px, -60px, 0);
-    } */
 </style>
