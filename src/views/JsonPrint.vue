@@ -32,7 +32,7 @@
         },
         computed: {
 			prettifiedJson: function() {
-                if (this.accounts.length === 0) {
+                if (!this.accounts || this.accounts.length === 0) {
                     return 'Loading, please wait...'
                 }
 
