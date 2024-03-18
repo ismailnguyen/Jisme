@@ -8,6 +8,7 @@
 
         <div class="main-container container-fluid" v-if="isSearching">
             <span class="category-title">{{accountsFilteredByQuery.length}} results out of {{accounts.length}}</span>
+            <br><br>
             <span
                 class="badge badge-pill badge-primary"
                 v-for="(tag, tagIndex) in selectedTags"
@@ -130,7 +131,7 @@
                 let newTags = this.$route.query.tags.split(',').map(x => x.trim());
                 newTags.splice(newTags.indexOf(tag), 1);
                 
-                this.$router.push({name: 'AccountList', query: { tags: newTags.join(',') }});
+                this.$router.push({name: 'Home', query: { tags: newTags.join(',') }});
             },
 
             updateSearchQuery: function (event)

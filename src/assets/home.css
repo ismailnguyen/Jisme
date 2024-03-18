@@ -62,18 +62,18 @@ a {
 
   /* Change the width of the sidebar to display it*/
   .menuDisplayed #sidebar-wrapper {
-      position: fixed;
-      width: 250px;
+      position: fixed !important;
+      width: 250px !important;
   }
 
   .accountOpened #account-sidebar-wrapper {
-      position: fixed;
-      width: 50%;
+      position: fixed !important;
+      width: 50% !important;
   }
 
   .settingsOpened #settings-sidebar-wrapper {
-      position: fixed;
-      width: 50%;
+      position: fixed !important;
+      width: 50% !important;
   }
 
   @media (min-width: 767.98px) { 
