@@ -12,22 +12,9 @@
                     <i class="fa fa-tag"></i>
                 </a>
 
-                <a class="menu-actions-add" @click="add()">
+                <a class="menu-actions-add" @click="addAccount()">
                     <i class="fa fa-plus"></i>
                 </a>
-            </li>
-            <li class="no-hover">
-                <span
-                    class="badge badge-pill"
-                    @click="selectTag(tag)"
-                    v-for="(tag, index) in getUniqueTags()"
-                    v-bind:key="index"
-                    :class="isCurrentTag(tag) ? 'badge-danger' : 'badge-primary'"
-                    >
-                    <i class="fa fa-close" v-if="isCurrentTag(tag)"></i>
-                    {{  tag.name || 'None' }}
-                    <span class="badge badge-light">{{ tag.count }}</span>
-                </span>
             </li>
         </ul>
     </div>
@@ -39,13 +26,11 @@
     import { storeToRefs } from 'pinia'
     import {
         useUiStore,
-        useAccountsStore,
         useUserStore
     } from '@/store'
 
     export default {
         setup() {
-            const { getUniqueTags } = useAccountsStore()
             const {
                 openAddAccountModal,
                 toggleMenu,
@@ -56,7 +41,6 @@
 
             return {
                 user,
-                getUniqueTags,
                 openAddAccountModal,
                 toggleMenu,
                 openSettings,
@@ -64,7 +48,7 @@
             }
         },
         methods: {
-            add: function () {
+            addAccount: function () {
                 this.openAddAccountModal()
                 this.toggleMenu()
             },
@@ -77,40 +61,7 @@
             openTags: function () {
                 this.openTags();
                 this.toggleMenu()
-            },
-
-            selectTag: function (tag) {
-                const tags = this.updateTags(tag.name);
-
-                this.$router.push({name: 'Home', query: { tags: tags }});
-                this.toggleMenu()
-            },
-
-            updateTags: function (tag) {
-                if (this.isCurrentTag(tag)) {
-                    return this.removeTag(tag);
-                }
-
-                return this.addTag(tag);
-            },
-
-            addTag: function (tag) {
-                let newTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
-                newTags.push(tag);
-
-                return newTags.join(',');
-            },
-
-            removeTag: function (tag) {
-                let newTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
-                newTags.splice(newTags.indexOf(tag), 1);
-                
-                return newTags.join(',');
-            },
-
-            isCurrentTag: function (tag) {
-                return this.$route.query.tags && this.$route.query.tags.split(',').includes(tag);
-            },
+            }
         }
     }
 </script>
