@@ -66,15 +66,12 @@ a {
       width: 250px !important;
   }
 
-  .accountOpened #account-sidebar-wrapper {
-      position: fixed !important;
-      width: 50% !important;
-  }
-
-  .settingsOpened #settings-sidebar-wrapper {
-      position: fixed !important;
-      width: 50% !important;
-  }
+  .accountOpened #account-sidebar-wrapper,
+  .settingsOpened #settings-sidebar-wrapper,
+  .tagsOpened #tags-sidebar-wrapper {
+    position: fixed !important;
+    width: 50% !important;
+}
 
   @media (min-width: 767.98px) { 
       .menuDisplayed #menu-toggle {
@@ -86,21 +83,23 @@ a {
   @media (max-width: 767.98px) { 
       .menuDisplayed #sidebar-wrapper,
       .accountOpened #account-sidebar-wrapper,
-      .settingsOpened #settings-sidebar-wrapper {
-          width: 100%;
-          height: 100%;
+      .settingsOpened #settings-sidebar-wrapper,
+      .tagsOpened #tags-sidebar-wrapper {
+          width: 100% !important;
+          height: 100% !important;
       }
   }
 
   @media (min-width: 767.98px) { 
-      .accountOpened #page-content-wrapper,
-      .settingsOpened #settings-content-wrapper {
-          width: 50%;
-      }
+    .accountOpened #page-content-wrapper,
+    .settingsOpened #settings-content-wrapper,
+    .tagsOpened #tags-content-wrapper {
+        width: 50% !important;
+    }   
 
-      .menuDisplayed #page-content-wrapper {
-          padding-left: 250px;
-      }
+    .menuDisplayed #page-content-wrapper {
+        padding-left: 250px;
+    }
   }
 
   .badge-primary {
