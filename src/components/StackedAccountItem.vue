@@ -52,7 +52,6 @@
 <script>
     import '../assets/card.css'
 
-    import { storeToRefs } from 'pinia'
     import {
         useUiStore,
     } from '@/store'
@@ -65,12 +64,8 @@
         setup() {
             const uiStore = useUiStore()
             const { openEditAccountModal } = uiStore
-            const { isMenuOpened, isAccountOpened, isSettingsOpened } = storeToRefs(uiStore)
 
             return {
-                isMenuOpened,
-                isAccountOpened,
-                isSettingsOpened,
                 openEditAccountModal
             }
         },

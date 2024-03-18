@@ -8,6 +8,10 @@
                     <i class="fa fa-gear"></i>
                 </a>
 
+                <a class="menu-actions-tags" @click="tags()">
+                    <i class="fa fa-tag"></i>
+                </a>
+
                 <a class="menu-actions-add" @click="add()">
                     <i class="fa fa-plus"></i>
                 </a>
@@ -16,7 +20,7 @@
                 <span
                     class="badge badge-pill"
                     @click="selectTag(tag)"
-                    v-for="(tag, index) in getUniqueTags"
+                    v-for="(tag, index) in getUniqueTags()"
                     v-bind:key="index"
                     :class="isCurrentTag(tag) ? 'badge-danger' : 'badge-primary'"
                     >
@@ -64,10 +68,15 @@
                 this.openSettings();
             },
 
+            tags: function () {
+                this.$router.push({name: 'Tags'});
+                this.toggleMenu()
+            },
+
             selectTag: function (tag) {
                 const tags = this.updateTags(tag.name);
 
-                this.$router.push({name: 'AccountList', query: { tags: tags }});
+                this.$router.push({name: 'Home', query: { tags: tags }});
                 this.toggleMenu()
             },
 
