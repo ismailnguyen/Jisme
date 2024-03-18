@@ -28,7 +28,7 @@ function AccountsService (user)
     this.get = async function(account)
     {
         try {
-            const response = await fetch(AACCOUNTS_API_URL + account._id,
+            const response = await fetch(`${ACCOUNTS_API_URL}${account._id}`,
             {
                 method: 'GET',
                 headers: this.headers
@@ -55,7 +55,7 @@ function AccountsService (user)
 
     this.getRecents = async function () {
         try {
-            const response = await fetch(ACCOUNTS_API_URL + 'recents/',
+            const response = await fetch(`${ACCOUNTS_API_URL}recents/`,
             {
                 method: 'GET',
                 headers: this.headers
@@ -79,18 +79,28 @@ function AccountsService (user)
         return [];
     }
 
-    this.getAll = async function()
+    this.getAll = async function(successCallback, page = 0, limit = 100, accounts = [])
     {
         try {
-            const response = await fetch(ACCOUNTS_API_URL,
+            const response = await fetch(`${ACCOUNTS_API_URL}?page=${page}&limit=${limit}`,
             {
                 method: 'GET',
                 headers: this.headers
             })
 
-            const encryptedAccounts = await response.json();
+            const { data, next } = await response.json();
 
-            return encryptedAccounts.map(account => parseAccount(getDecryptedAccount(account, getEncryptionKey(this.user))))
+            // Each time we get a page, we add the accounts to the list
+            accounts = [...accounts, ...data];
+            
+            if (next && next.pageNumber && next.limit) {
+                this.getAll(successCallback, next.pageNumber, next.limit, accounts);
+            }
+
+            // Only at the end of the pagination, call the successCallback with the full list of accounts
+            if (!next) {
+                successCallback(accounts.map(account => parseAccount(getDecryptedAccount(account, getEncryptionKey(this.user)))));
+            }
         }
         catch(error) {
             throwError (error);
@@ -123,7 +133,7 @@ function AccountsService (user)
         let encryptedAccount = getEncryptedAccount(accountToSave, getEncryptionKey(this.user));
 
         try {
-            const response = await fetch(ACCOUNTS_API_URL + accountToSave._id,
+            const response = await fetch(`${ACCOUNTS_API_URL}${accountToSave._id}`,
             {
                 method: 'PUT',
                 headers: this.headers,
@@ -142,7 +152,7 @@ function AccountsService (user)
     this.remove = async function(accountToRemove)
     {
         try {
-            await fetch(ACCOUNTS_API_URL + accountToRemove._id,
+            await fetch(`${ACCOUNTS_API_URL}${accountToRemove._id}`,
             {
                 method: 'DELETE',
                 headers: this.headers

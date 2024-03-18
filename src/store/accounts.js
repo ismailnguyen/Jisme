@@ -66,9 +66,12 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     }
 
     async function fetchAccounts () {
-        accounts.value = await accountsService.getAll();
+        // Update account while getting page by page from server
+        await accountsService.getAll((fetchedAccounts) => {
+            accounts.value = fetchedAccounts;
 
-        updateLocalAccounts(accounts.value);
+            updateLocalAccounts(accounts.value);
+        });
     }
 
     async function updateLocalAccounts(accounts) {
