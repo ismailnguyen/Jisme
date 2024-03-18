@@ -165,10 +165,6 @@
                 this.$router.go('/');
             },
 
-            closeSettings: function () {
-                this.closeSettings();
-            },
-
             generatePasskey: async function () {
                 const deviceName = prompt('Enter a device name', 'Device #1');
                 if (deviceName) {
@@ -229,6 +225,7 @@
         transition: all .5s;
         overflow-y: auto;
         height: 100%;
+        width: 100%;
         padding: 1rem;
         border-bottom: 1px solid #e9ecef;
         border-top-left-radius: 0.3rem;

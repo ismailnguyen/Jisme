@@ -8,7 +8,7 @@
                     <i class="fa fa-gear"></i>
                 </a>
 
-                <a class="menu-actions-tags" @click="tags()">
+                <a class="menu-actions-tags" @click="openTags()">
                     <i class="fa fa-tag"></i>
                 </a>
 
@@ -25,7 +25,7 @@
                     :class="isCurrentTag(tag) ? 'badge-danger' : 'badge-primary'"
                     >
                     <i class="fa fa-close" v-if="isCurrentTag(tag)"></i>
-                    {{  tag.name }}
+                    {{  tag.name || 'None' }}
                     <span class="badge badge-light">{{ tag.count }}</span>
                 </span>
             </li>
@@ -46,7 +46,12 @@
     export default {
         setup() {
             const { getUniqueTags } = useAccountsStore()
-            const { openAddAccountModal, toggleMenu, openSettings } = useUiStore()
+            const {
+                openAddAccountModal,
+                toggleMenu,
+                openSettings,
+                openTags
+            } = useUiStore()
             const { user } = storeToRefs(useUserStore())
 
             return {
@@ -54,7 +59,8 @@
                 getUniqueTags,
                 openAddAccountModal,
                 toggleMenu,
-                openSettings
+                openSettings,
+                openTags
             }
         },
         methods: {
@@ -68,8 +74,8 @@
                 this.openSettings();
             },
 
-            tags: function () {
-                this.$router.push({name: 'Tags'});
+            openTags: function () {
+                this.openTags();
                 this.toggleMenu()
             },
 
