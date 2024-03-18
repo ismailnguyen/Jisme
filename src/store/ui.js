@@ -6,6 +6,7 @@ const store = defineStore('ui', () => {
     const isAddAccountModalOpened = ref(false)
     const isEditAccountModalOpened = ref(false)
     const isSettingsOpened = ref(false)
+    const isTagsOpened = ref(false)
     const currentEditingAccount = ref(null)
 
     const isAccountOpened = computed(() => {
@@ -23,6 +24,14 @@ const store = defineStore('ui', () => {
 
     const closeSettings = () => {
         isSettingsOpened.value = false
+    }
+
+    const openTags = () => {
+        isTagsOpened.value = true
+    }
+
+    const closeTags = () => {
+        isTagsOpened.value = false
     }
 
     const openAddAccountModal = () => {
@@ -60,7 +69,11 @@ const store = defineStore('ui', () => {
 
         isSettingsOpened,
         openSettings,
-        closeSettings
+        closeSettings,
+
+        isTagsOpened,
+        openTags,
+        closeTags
     }
 })
 

@@ -13,6 +13,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     const recentAccounts = ref([]);
     const accounts = ref([]);
+    const filteredAccounts = ref([]);
 
     let accountsService = new AccountsService(user.value);
 
@@ -26,14 +27,16 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
                 filterService.sortByLastOpened();
             }
 
-            return filterService.getAccounts();
+            filteredAccounts.value = filterService.getAccounts();
+
+            return filteredAccounts.value;
         }
     })
 
     const getUniqueTags = () => {
         let uniqueTags = [];
 
-        accounts.value.forEach(account => {
+        filteredAccounts.value.forEach(account => {
             account.tags.split(',').map(t => t.trim()).forEach(tagName => {
                 // look if the tag was already added
                 let alreadyAddedTag = uniqueTags.find(uniqueTag => uniqueTag.name === tagName);

@@ -11,6 +11,7 @@
             v-if="displayMenus && isEditAccountModalOpened" />
 
         <Settings v-if="isSettingsOpened" />
+        <TagsList v-if="isTagsOpened" />
 
         <AccountList />
 
@@ -45,6 +46,7 @@
     import EditAccountModal from '../components/EditAccount.vue'
     import AccountList from '../components/AccountList.vue'
     import Settings from '../components/Settings.vue'
+    import TagsList from '../components/TagsList.vue'
 
     export default {
         components: {
@@ -52,7 +54,8 @@
             AddAccountModal,
             EditAccountModal,
             AccountList,
-            Settings
+            Settings,
+            TagsList
         },
         setup() {
             const uiStore = useUiStore()
@@ -60,6 +63,7 @@
                 currentEditingAccount,
                 isMenuOpened,
                 isSettingsOpened,
+                isTagsOpened,
                 isAddAccountModalOpened,
                 isEditAccountModalOpened
             } = storeToRefs(uiStore)
@@ -76,6 +80,7 @@
                 toggleMenu,
                 openAddAccountModal,
                 isSettingsOpened,
+                isTagsOpened,
 
                 user,
                 isLoggedIn
@@ -103,6 +108,10 @@
 
                 if (this.isSettingsOpened) {
                     cssClass += ' settingsOpened'
+                }
+
+                if (this.isTagsOpened) {
+                    cssClass += ' tagsOpened'
                 }
 
                 return cssClass

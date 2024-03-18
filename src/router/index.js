@@ -34,12 +34,6 @@ const router = createRouter({
       meta: { requiresAuth: false }
     },
     {
-      name: 'Tags',
-      path: '/tags',
-      component: () => import('../views/TagsList.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
       name: 'JsonPrint',
       path: '/json',
       component: () => import('../views/JsonPrint.vue'),
