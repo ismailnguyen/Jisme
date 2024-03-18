@@ -7,6 +7,7 @@
         </header>
 
         <div class="main-container container-fluid" v-if="isSearching">
+            <span class="category-title">{{accountsFilteredByQuery.length}} results out of {{accounts.length}}</span>
             <span
                 class="badge badge-pill badge-primary"
                 v-for="(tag, tagIndex) in selectedTags"
@@ -180,7 +181,6 @@
         },
         computed: {
             accountsFilteredByQuery: function () {
-                return []
                 return this.getAccountsFilteredByQuery(this.searchQuery, this.$route.query.tags, true)
             },
 
