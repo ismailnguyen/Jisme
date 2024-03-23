@@ -122,6 +122,27 @@
                             <label for="editAccount_input_password_clue">Password clue</label>
                             <input id="editAccount_input_password_clue" class="form-control" type="text" v-model="account.password_clue" @keyup.enter="save()" />
                         </div>
+
+                        <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == '2fa'">
+                            
+                        </div>
+
+                        <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
+                            <label for="editAccount_input_passwordless">Password less</label>
+                            <div class="input-group" v-show="account.passwordLess">
+                                <input id="editAccount_input_passwordless_generatedPassword" class="form-control" placeholder="" type="text" v-model="account.passwordLess" />
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-light" type="button" @click="account.resetPasswordLess()">Reset</button>
+                                </div>
+                            </div>
+                            <div class="input-group" v-show="!account.passwordLess">
+                                <input id="editAccount_input_passwordless_masterPassword" class="form-control" type="password" aria-describedby="editAccount_input_passwordlessHelp_masterPassword" v-model="passwordLessMasterpPassword" />
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-light" type="button" @click="account.generatePasswordLess(passwordLessMasterpPassword)">Generate</button>
+                                </div>
+                            </div>
+                            <small id="editAccount_input_passwordlessHelp_masterPassword" class="form-text text-muted" v-show="!account.passwordLess">Type your master password to generate the password less.</small>
+                        </div>
                         
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
                             <label for="editAccount_input_social_login">Social login</label>
@@ -143,15 +164,15 @@
                             <textarea id="editAccount_input_notes" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                         </div>
                         
-                        <div class="form-group col-xs-12 col-md-12 col-lg-12 small">
+                        <div class="form-group col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 small">
                             <label>Created</label>
                             <input class="form-control" v-model="createdDate" disabled />
                         </div>
-                        <div class="form-group col-xs-12 col-md-12 col-lg-12 small">
+                        <div class="form-group col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 small">
                             <label>Modified</label>
                             <input class="form-control" v-model="lastModifiedDate" disabled />
                         </div>
-                        <div class="form-group col-xs-12 col-md-12 col-lg-12 small">
+                        <div class="form-group col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 small">
                             <label>Opened</label>
                             <input class="form-control" v-model="lastOpenedDate" disabled />
                         </div>
@@ -193,7 +214,8 @@
                 showModalContent: false,
                 isSaving: false,
                 isDeleting: false,
-                newTag: ''
+                newTag: '',
+                passwordLessMasterpPassword: '' // Used to generate the password less
             }
         },
         setup() {
