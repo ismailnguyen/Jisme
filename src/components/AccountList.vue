@@ -113,7 +113,6 @@
             fetchLatestAccounts: async function () {
                 try {
                     await this.fetchRecentAccounts();
-                    await this.fetchAccounts();
                 } catch (error) {
                     if (error instanceof SessionExpiredException) {
                         this.openAlert(new Alert('Session expired', error.message, 'danger'));
@@ -122,7 +121,23 @@
                         this.$router.go('/');
                     }
                     else {
-                        this.openAlert(new Alert('Error while loading accounts', error.message, 'danger'));
+                        this.openAlert(new Alert(error.name || 'Error while loading accounts', error.message, 'danger'));
+                    }
+                }
+
+                try {
+                    await this.fetchAccounts();
+                } catch (error) {
+                        console.log('acclist', error)
+
+                    if (error instanceof SessionExpiredException) {
+                        this.openAlert(new Alert('Session expired', error.message, 'danger'));
+
+                        this.signOut();
+                        this.$router.go('/');
+                    }
+                    else {
+                        this.openAlert(new Alert(error.name || 'Error while loading accounts', error.message, 'danger'));
                     }
                 }
             },

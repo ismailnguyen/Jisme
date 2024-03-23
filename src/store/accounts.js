@@ -63,9 +63,9 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     }
 
     async function fetchRecentAccounts() {
-        recentAccounts.value = await accountsService.getRecents();
+        recentAccounts.value = await accountsService.getRecents() || [];
 
-        await accountsService.updateLocalRecentAccounts(recentAccounts.value );
+        await accountsService.updateLocalRecentAccounts(recentAccounts.value);
     }
 
     async function fetchAccounts () {

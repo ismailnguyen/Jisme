@@ -4,10 +4,10 @@ export function Exception (reason, message, code) {
     this.code = code;
 }
 
-export function SessionExpiredException (reason, message, code) {
+export function SessionExpiredException () {
     this.name = 'Session expired';
     this.message = 'Please login again';
-    this.code = code;
+    this.code = 401;
 }
 
 export function HttpException (response) {

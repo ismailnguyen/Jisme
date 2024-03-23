@@ -34,9 +34,16 @@ function AccountsService (user)
                 headers: this.headers
             })
 
-            const encryptedAccount = await response.json();
+            if (response.ok) {
+                const data = await response.json();
 
-            return parseAccount(getDecryptedAccount(encryptedAccount, getEncryptionKey(this.user)))
+                return parseAccount(getDecryptedAccount(data, getEncryptionKey(this.user)))
+            }
+
+            const { error } = await response.json();
+
+            error.code = error.code || response.status;
+            throwError (error);
         }
         catch(error) {
             throwError (error);
@@ -61,8 +68,20 @@ function AccountsService (user)
                 headers: this.headers
             })
 
-            const recentEncryptedAccounts = await response.json();
-            return recentEncryptedAccounts.map(account => parseAccount(getDecryptedAccount(account, getEncryptionKey(this.user))))
+            if (response.ok) {
+                const accounts = await response.json();
+
+                if (accounts) {
+                    return accounts.map(account => parseAccount(getDecryptedAccount(account, getEncryptionKey(this.user))));
+                }
+
+                return [];
+            }
+
+            const { error } = await response.json();
+
+            error.code = error.code || response.status;
+            throwError (error);
         }
         catch(error) {
             throwError (error);
@@ -88,19 +107,30 @@ function AccountsService (user)
                 headers: this.headers
             })
 
-            const { data, next } = await response.json();
+            if (response.ok) {
+                // Destructure data here because in this payload accounts are
+                // store inside the 'data' key unlike other endpoints, because of pagination
+                const { data, next } = await response.json();
 
-            // Each time we get a page, we add the accounts to the list
-            accounts = [...accounts, ...data];
-            
-            if (next && next.pageNumber && next.limit) {
-                this.getAll(successCallback, next.pageNumber, next.limit, accounts);
+                // Each time we get a page, we add the accounts to the list
+                accounts = [...accounts, ...data];
+                
+                if (next && next.pageNumber && next.limit) {
+                    this.getAll(successCallback, next.pageNumber, next.limit, accounts);
+                }
+    
+                // Only at the end of the pagination, call the successCallback with the full list of accounts
+                if (!next) {
+                    successCallback(accounts.map(account => parseAccount(getDecryptedAccount(account, getEncryptionKey(this.user)))));
+                }
+
+                return;
             }
 
-            // Only at the end of the pagination, call the successCallback with the full list of accounts
-            if (!next) {
-                successCallback(accounts.map(account => parseAccount(getDecryptedAccount(account, getEncryptionKey(this.user)))));
-            }
+            const { error } = await response.json();
+
+            error.code = error.code || response.status;
+            throwError (error);
         }
         catch(error) {
             throwError (error);
@@ -119,9 +149,16 @@ function AccountsService (user)
                 body: JSON.stringify(encryptedAccount)
             })
 
-            const addedAccount = await response.json();
+            if (response.ok) {
+                const data = await response.json();
 
-            return parseAccount(getDecryptedAccount(addedAccount, getEncryptionKey(this.user)))
+                return parseAccount(getDecryptedAccount(data, getEncryptionKey(this.user)));
+            }
+
+            const { error } = await response.json();
+
+            error.code = error.code || response.status;
+            throwError (error);
         }
         catch(error) {
             throwError (error);
@@ -140,9 +177,16 @@ function AccountsService (user)
                 body: JSON.stringify(encryptedAccount)
             })
 
-            const savedAccount = await response.json();
+            if (response.ok) {
+                const data = await response.json();
 
-            return parseAccount(getDecryptedAccount(savedAccount, getEncryptionKey(this.user)))
+                return parseAccount(getDecryptedAccount(data, getEncryptionKey(this.user)));
+            }
+
+            const { error } = await response.json();
+
+            error.code = error.code || response.status;
+            throwError (error);
         }
         catch(error) {
             throwError (error);
@@ -152,13 +196,20 @@ function AccountsService (user)
     this.remove = async function(accountToRemove)
     {
         try {
-            await fetch(`${ACCOUNTS_API_URL}${accountToRemove._id}`,
+            const response = await fetch(`${ACCOUNTS_API_URL}${accountToRemove._id}`,
             {
                 method: 'DELETE',
                 headers: this.headers
             })
 
-            return accountToRemove
+            if (response.ok) {
+                return accountToRemove;
+            }
+
+            const { error } = await response.json();
+
+            error.code = error.code || response.status;
+            throwError (error);
         }
         catch(error) {
             throwError (error);
@@ -178,11 +229,15 @@ function AccountsService (user)
     }
 
     function throwError (error) {
-        if (error.status === 401) {
+        if (error.code === 401) {
             throw new SessionExpiredException();
         }
-
-        throw new Exception('Error', 'Please retry', error.status);
+        
+        throw new Exception(
+            error.reason || 'Error',
+            error.message || 'Please retry',
+            error.code || 500
+        );
     }
 };
 

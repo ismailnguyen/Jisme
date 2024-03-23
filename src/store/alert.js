@@ -1,27 +1,26 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import { ref, computed } from 'vue';
+import { defineStore } from 'pinia';
 
 const store = defineStore('alert', () => {
-    const currentAlert = ref(null)
+    const currentAlert = ref(null);
 
-    const hasAlert = computed(() => currentAlert.value !== null)
+    const hasAlert = computed(() => currentAlert.value !== null);
 
     const openAlert = (alert) => {
-        currentAlert.value = alert
-    }
+        currentAlert.value = alert;
+    };
 
     const clearAlert = () => {
-        currentAlert.value = null
-    }
+        currentAlert.value = null;
+    };
 
-    return {    
+    return {
         currentAlert,
 
         hasAlert,
         openAlert,
         clearAlert
+    };
+});
 
-    }
-})
-
-export default store
+export default store;
