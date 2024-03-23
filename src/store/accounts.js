@@ -24,7 +24,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             filterService.filterByQuery(searchQuery);
 
             if (sort) {
-                filterService.sortByLastOpened();
+                filterService.sortByName();
             }
 
             filteredAccounts.value = filterService.getAccounts();
