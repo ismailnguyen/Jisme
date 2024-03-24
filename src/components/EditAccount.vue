@@ -129,19 +129,19 @@
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
                             <label for="editAccount_input_passwordless">Password less</label>
-                            <div class="input-group" v-show="account.passwordLess">
-                                <input id="editAccount_input_passwordless_generatedPassword" class="form-control" placeholder="" type="text" v-model="account.passwordLess" />
+                            <div class="input-group" v-show="passwordLess.generatedPassword">
+                                <input id="editAccount_input_passwordless_generatedPassword" class="form-control" placeholder="" type="text" v-model="passwordLess.generatedPassword" readonly />
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-light" type="button" @click="account.resetPasswordLess()">Reset</button>
+                                    <button class="btn btn-outline-light" type="button" @click="resetPasswordLess()">Reset</button>
                                 </div>
                             </div>
-                            <div class="input-group" v-show="!account.passwordLess">
-                                <input id="editAccount_input_passwordless_masterPassword" class="form-control" type="password" aria-describedby="editAccount_input_passwordlessHelp_masterPassword" v-model="passwordLessMasterpPassword" />
+                            <div class="input-group" v-show="!passwordLess.generatedPassword">
+                                <input id="editAccount_input_passwordless_masterPassword" class="form-control" type="password" aria-describedby="editAccount_input_passwordlessHelp_masterPassword" v-model="passwordLess.masterPassword" />
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-light" type="button" @click="account.generatePasswordLess(passwordLessMasterpPassword)">Generate</button>
+                                    <button class="btn btn-outline-light" type="button" @click="generatePasswordLess()">Generate</button>
                                 </div>
                             </div>
-                            <small id="editAccount_input_passwordlessHelp_masterPassword" class="form-text text-muted" v-show="!account.passwordLess">Type your master password to generate the password less.</small>
+                            <small id="editAccount_input_passwordlessHelp_masterPassword" class="form-text text-muted" v-show="!passwordLess.generatedPassword">Type your master password to generate the password less.</small>
                         </div>
                         
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
@@ -215,7 +215,10 @@
                 isSaving: false,
                 isDeleting: false,
                 newTag: '',
-                passwordLessMasterpPassword: '' // Used to generate the password less
+                passwordLess: {
+                    masterPassword: '',
+                    generatedPassword: ''
+                }
             }
         },
         setup() {
@@ -280,6 +283,16 @@
                         this.showAlert('Error', error.toString(), 'danger');
                     }
                 }
+            },
+
+            generatePasswordLess: function () {
+                this.account.generatePasswordLess(this.passwordLess.masterPassword).then((generatedPassword) => {
+                    this.passwordLess.generatedPassword = generatedPassword;
+                });
+            },
+
+            resetPasswordLess: function () {
+                this.passwordLess.generatedPassword = '';
             },
 
             remove: async function () {
@@ -388,6 +401,16 @@
     .form-control:disabled,
     .form-control[readonly] {
         background: none;
+        border: 1px solid #ced4da70;
+    }
+
+    .btn-outline-light {
+        border-color: #ced4da70;
+    }
+
+    .btn-group label.btn.btn-outline-primary:hover {
+        background: #fff;
+        color: #000;
     }
 
     .form-control#editAccount_input_tags {

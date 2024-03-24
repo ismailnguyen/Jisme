@@ -49,7 +49,6 @@ class Account {
         this.card_cryptogram = card_cryptogram;
         this.card_pin = card_pin;
         this.totp_secret = totp_secret;
-        this.passwordLess = '';
     }
 
     get displayPlatform () {
@@ -73,16 +72,9 @@ class Account {
             length: 16,
             counter: 1,
             version: 2
-          };
+        };
 
-        generatePassword(this.platform, this.login, masterPassword, passwordProfile)
-        .then((passwordLess) => {
-            this.passwordLess = passwordLess;
-        });
-    }
-
-    resetPasswordLess () {
-        this.passwordLess = '';
+        return generatePassword(this.platform, this.login, masterPassword, passwordProfile);
     }
 
     isValid () {
