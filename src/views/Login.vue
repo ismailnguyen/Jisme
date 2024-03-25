@@ -102,6 +102,12 @@
         },
         methods: {
             submitUsername: function () {
+                if (!this.username) {
+                    this.openAlert(new Alert('Error', 'Please fill username!', 'danger'))
+
+                    return;
+                }
+
                 if (!this.isUsernameFilled) {
                     this.isUsernameFilled = true;
                 }
