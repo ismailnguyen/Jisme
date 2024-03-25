@@ -1,6 +1,5 @@
 <template>
-    <div class="loader">
-    </div>
+    <div class="loader loader-animate"></div>
 </template>
 
 <style>
@@ -9,9 +8,13 @@
         height: 100px;
         margin: auto;
         background: url('/images/touch/favicon512.png') center center no-repeat;
-        animation: loader-rotation 2s linear infinite;
         background-size: 100%;
     }
+
+    .loader-animate {
+        animation: loader-rotation 2s linear infinite;
+    }
+
     @-moz-keyframes loader-rotation {
         from {
             transform: rotate(360deg);

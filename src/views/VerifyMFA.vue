@@ -1,34 +1,46 @@
 <template>
-    <form class="form-signin text-center">
-        <img class="rounded-circle mb-3" :src="user && user.avatarUrl ? user.avatarUrl : 'images/touch/favicon64.png'" alt="" width="72" height="72" v-show="!isLoading">
-        <p class="text-muted" v-if="user">{{ user.email }}</p>
-        <Loader v-show="isLoading" />
-        <h1 class="h3 mb-3 font-weight-normal">Enter code</h1>
+    <section class="py-3 py-md-5 py-xl-8">
+        <div class="container">
+            <div class="row gy-4 align-items-center">
+                <div class="col-12 col-md-6 col-xl-7 d-none d-md-block">
+                    <LoginHero :isLoading="isLoading" />
+                </div>
+                <div class="col-12 col-md-6 col-xl-5">
+                    <form class="form-signin">
+                        <img class="rounded-circle mb-3" :src="user && user.avatarUrl ? user.avatarUrl : ''" alt="" width="72" height="72">
 
-        <label for="inputOtp" class="">Enter the code displayed in the authenticator app on your mobile device​​</label>
-        <div class="otp-input-container">
-            <input
-                v-for="(v, index) in totpToken"
-                :key="index"
-                :ref="'otpInput_' + index"
-                @input="onOtpInput(index)"
-                @keydown="onOtpKeydown(index, $event)"
-                required="required"
-                maxlength="1"
-                step="1"
-                min="0"
-                max="9"
-                autocomplete="no"
-                pattern="\d*"
-                type="text"
-                class="otp-input"
-                v-model="totpToken[index]">
+                        <p class="text-muted" v-if="user">{{ user.email }}</p>
+
+                        <h1 class="h3 mb-3 font-weight-normal">Enter code</h1>
+
+                        <label for="inputOtp" class="">Enter the code displayed in the authenticator app on your mobile device​​</label>
+                        <div class="otp-input-container">
+                            <input
+                                v-for="(v, index) in totpToken"
+                                :key="index"
+                                :ref="'otpInput_' + index"
+                                @input="onOtpInput(index)"
+                                @keydown="onOtpKeydown(index, $event)"
+                                required="required"
+                                maxlength="1"
+                                step="1"
+                                min="0"
+                                max="9"
+                                autocomplete="no"
+                                pattern="\d*"
+                                type="text"
+                                class="otp-input"
+                                v-model="totpToken[index]">
+                        </div>
+
+                        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="verify()">Verify</span>
+
+                        <p class="mt-5 mb-3 text-muted">Having trouble? <router-link to="/login">Sign in another way</router-link></p>
+                    </form>
+                </div>
+            </div>
         </div>
-
-        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="verify()">Verify</span>
-
-        <p class="mt-5 mb-3 text-muted">Having trouble? <router-link to="/login">Sign in another way</router-link></p>
-    </form>
+    </section>
 </template>
 
 <script>
@@ -41,6 +53,7 @@
      } from '@/store'
     import { storeToRefs } from 'pinia'
     import Loader from '../components/Loader.vue'
+    import LoginHero from '../components/LoginHero.vue'
 
     export default {
         data() {
@@ -69,7 +82,8 @@
             }
         },
         components: {
-            Loader
+            Loader,
+            LoginHero
         },
         mounted() {
             // Put focus on first input
