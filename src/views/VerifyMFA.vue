@@ -1,19 +1,17 @@
 <template>
-    <div class="text-center">
-        <form class="form-signin">
-            <img class="rounded-circle mb-3" :src="user && user.avatarUrl ? user.avatarUrl : 'images/touch/favicon64.png'" alt="" width="72" height="72" v-show="!isLoading">
-            <p class="text-muted" v-if="user">{{ user.email }}</p>
-            <Loader v-show="isLoading" />
-            <h1 class="h3 mb-3 font-weight-normal">Enter code</h1>
+    <form class="form-signin text-center">
+        <img class="rounded-circle mb-3" :src="user && user.avatarUrl ? user.avatarUrl : 'images/touch/favicon64.png'" alt="" width="72" height="72" v-show="!isLoading">
+        <p class="text-muted" v-if="user">{{ user.email }}</p>
+        <Loader v-show="isLoading" />
+        <h1 class="h3 mb-3 font-weight-normal">Enter code</h1>
 
-            <label for="inputOtp" class="">Enter the code displayed in the authenticator app on your mobile device​​</label>
-            <input type="tel" id="inputOtp" class="form-control" placeholder="XXX XXX" v-model="totpToken" @keyup.enter="verify()" required>
+        <label for="inputOtp" class="">Enter the code displayed in the authenticator app on your mobile device​​</label>
+        <input type="tel" id="inputOtp" class="form-control" placeholder="XXX XXX" v-model="totpToken" @keyup.enter="verify()" required>
 
-            <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="verify()">Verify</span>
+        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="verify()">Verify</span>
 
-            <p class="mt-5 mb-3 text-muted">Having trouble? <router-link to="/login">Sign in another way</router-link></p>
-        </form>
-    </div>
+        <p class="mt-5 mb-3 text-muted">Having trouble? <router-link to="/login">Sign in another way</router-link></p>
+    </form>
 </template>
 
 <script>

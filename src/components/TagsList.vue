@@ -129,10 +129,6 @@
         backdrop-filter: blur(18px) contrast(60%);
     }
 
-    .button--close i {
-        color: #162056;
-    }
-
     .sidebar-header .justify-content-end {
         display: flex;
     }
@@ -155,7 +151,7 @@
 	@media (prefers-color-scheme: dark) {
 		.tags-sidebar {
 			color: #e4e6eb;
-			background: #242526;
+			background: var(--color-background-soft);
 		}
 	}
 	
@@ -171,12 +167,12 @@
 		
 		@media (prefers-color-scheme: dark) {
 			.tags-sidebar {
-				background: #242526db;
+				background: var(--color-background-mute);
 			}
 		}
     }
 
     .list-group-item {
-        color: #162056;
+        color: var(--color-text);
 	}
 </style>

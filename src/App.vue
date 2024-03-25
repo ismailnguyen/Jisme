@@ -7,6 +7,8 @@
 </template>
 
 <script>
+    import './assets/base.css';
+
     import { useAlertStore } from '@/store'
     import { storeToRefs } from 'pinia'
     import AlertBox from './components/AlertBox.vue'
@@ -49,34 +51,3 @@
         }
     }
 </script>
-
-<style>
-    * {
-        margin: 0;
-        position: relative;
-    }
-	
-	html, body {
-	  height: 100%;
-	}
-
-	#app {
-	  height: 100%;
-	}
-
-    body {
-      color: #162056;
-      background: #f0f2f5;
-    }
-	
-	@media(prefers-color-scheme: dark) {
-		body {
-			color: #eee;
-			background: #18191a;
-		}
-	}
-
-    .btn {
-        border-radius: 15px;
-    }
-</style>

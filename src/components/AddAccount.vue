@@ -1,6 +1,6 @@
 <template>
     <div id="account-sidebar-wrapper">
-        <div class="account-sidebar">
+        <div class="right-sidebar">
             <div class="sidebar-header">
                 <div class="row">
                     <div class="form-group col-xs-3 col-md-3 col-lg-3" v-show="account.icon">
@@ -61,8 +61,8 @@
                             <input id="addAccount_input_new_tag" class="form-control" placeholder="Tag" type="text" v-model="newTag" @keyup.enter="addTag()" required />
                         </div>
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="addAccount_platform_input">Icon</label>
-                            <input id="addAccount_platform_input" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="add()" />
+                            <label for="addAccount_platform_icon">Icon</label>
+                            <input id="addAccount_platform_icon" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="add()" />
                         </div>
 
                         <!-- region_start -- Account type: card -->
@@ -248,19 +248,19 @@
 </script>
 
 <style scoped>
-    .account-sidebar {
+    #account-sidebar-wrapper .account-sidebar {
       background: #ffffff;
     }
 	
 	@media (prefers-color-scheme: dark) {
-		.account-sidebar {
+		#account-sidebar-wrapper .account-sidebar {
 			color: #e4e6eb;
-			background: #242526;
+			background: var(--color-background-soft);
 		}
 	}
 	
 	@media only screen and (min-width: 500px) {
-        .account-sidebar {
+        #account-sidebar-wrapper .account-sidebar {
 			background: #fff;
             border-top-left-radius: 15px;
             border-top-right-radius: 0;
@@ -270,8 +270,8 @@
         }
 		
 		@media (prefers-color-scheme: dark) {
-			.account-sidebar {
-				background: #242526db;
+			#account-sidebar-wrapper .account-sidebar {
+				background: var(--color-background-mute);
 			}
 		}
     }
@@ -292,7 +292,7 @@
 
     .sidebar-footer .btn-primary {
         color: #f8f9fa;
-        border-color: #162056;
+        border-color: var(--color-text);
         background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
     }
 

@@ -1,6 +1,6 @@
 <template>
     <div id="account-sidebar-wrapper">
-        <div class="account-sidebar">
+        <div class="right-sidebar">
             <div class="sidebar-header">
                 <div class="row">
                     <div class="form-group col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3" v-show="account.icon">
@@ -377,20 +377,20 @@
 </script>
 
 <style scoped>
-    .account-sidebar {
+    #account-sidebar-wrapper .account-sidebar {
         color: #f8f9fa;
         background: linear-gradient(141.13deg,#106cde 26.29%,#36a5ef 100%);
     }
 	
 	@media (prefers-color-scheme: dark) {
-		.account-sidebar {
+		#account-sidebar-wrapper .account-sidebar {
 			color: #e4e6eb;
 			background: linear-gradient(141.69deg,#3077e2 0%,#1b42ab 100%);
 		}
 	}
 	
 	@media only screen and (min-width: 500px) {
-        .account-sidebar {
+        #account-sidebar-wrapper .account-sidebar {
 			border-top-left-radius: 15px;
             border-top-right-radius: 0;
             border-bottom-left-radius: 15px;

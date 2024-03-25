@@ -1,7 +1,7 @@
 @import './base.css';
 
 a {
-    color: #162056;
+    color: var(--color-text);
   }
 
   .main-container {
@@ -31,7 +31,7 @@ a {
   header {
       width: 100%;
       position: fixed;
-      color: #162056;
+      color: var(--color-text);
       padding: 20px 20px 20px 40px;
       z-index: 99;
   }
@@ -125,7 +125,7 @@ a {
   }
 
   .floating-button.floating-button--close i {
-      color: #162056;
+    color: var(--color-text-inverted);
   }
 
   .floating-button.floating-button--add {

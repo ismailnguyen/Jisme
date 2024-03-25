@@ -1,6 +1,7 @@
 @import './base.css';
 
-#account-sidebar-wrapper {
+#account-sidebar-wrapper,
+#settings-sidebar-wrapper {
     position: absolute;
     width: 0;
     right: 0;
@@ -12,7 +13,7 @@
     z-index: 9999;
 }
 
-.account-sidebar {
+.right-sidebar {
     transition: all .5s;
     overflow-y: auto;
     height: 100%;
@@ -30,14 +31,9 @@
     border-radius: 15px;
     text-align: center;
     background-color: #fff;
-    background: #fff;
     border: none;
     transition: all .3s;
     font-size: 2em;
-}
-
-.button--close i {
-    color: #162056;
 }
 
 .sidebar-header .justify-content-end {
@@ -74,7 +70,7 @@
     padding: 2px;
 }
 
-.account-sidebar {
+.right-sidebar {
     border: none;
 }
 

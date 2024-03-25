@@ -3,7 +3,7 @@
 }
 
 .card {
-    color: #162056;
+    color: var(--color-text);
     background: #fff;
     border: none;
     margin: 0 10px;
@@ -16,7 +16,7 @@
 @media (prefers-color-scheme: dark) {
     .card {
         color: #e4e6eb;
-        background: #242526;
+        background: var(--color-background-soft);
         box-shadow: none;
     }
 }

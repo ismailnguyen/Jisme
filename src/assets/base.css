@@ -1,5 +1,6 @@
 :root {
-  --color-background: var(--vt-c-white);
+  --color-background: #f0f2f5;
+  --color-background-inverted: #000;
   --color-background-soft: var(--vt-c-white-soft);
   --color-background-mute: var(--vt-c-white-mute);
 
@@ -7,20 +8,22 @@
   --color-border-hover: var(--vt-c-divider-light-1);
 
   --color-heading: var(--vt-c-text-light-1);
-  --color-text: var(--vt-c-text-light-1);
+  --color-text: #162056;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background: var(--vt-c-black);
-    --color-background-soft: var(--vt-c-black-soft);
-    --color-background-mute: var(--vt-c-black-mute);
+    /* --color-background: #18191a; */
+    --color-background: #000;
+    --color-background-soft: #1c1c1d;
+    --color-background-mute: #242526db;
 
     --color-border: var(--vt-c-divider-dark-2);
     --color-border-hover: var(--vt-c-divider-dark-1);
 
     --color-heading: var(--vt-c-text-dark-1);
-    --color-text: var(--vt-c-text-dark-2);
+    --color-text: #eee;
+    --color-text-inverted: #162056;
   }
 }
 
@@ -38,13 +41,14 @@ html, body {
 }
 
 body {
-  color: #162056;
-  background: #f0f2f5;
+  color: var(--color-text);
+  background: var(--color-background);
 }
 
-@media(prefers-color-scheme: dark) {
-  body {
-    color: #eee;
-    background: #18191a;
-  }
+.btn {
+  border-radius: 15px;
+}
+
+.button--close i {
+  color: var(--color-text-inverted);
 }

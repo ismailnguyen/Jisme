@@ -1,6 +1,6 @@
 <template>
     <div id="settings-sidebar-wrapper">
-        <div class="settings-sidebar">
+        <div class="right-sidebar">
             <div class="sidebar-header">
                 <div class="row">
                     <div class="form-group col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3">
@@ -89,6 +89,8 @@
 </template>
 
 <script>
+    import '../assets/right_sidebar.css'
+
     import { onBeforeMount } from 'vue'
     import { storeToRefs } from 'pinia'
     import {
@@ -209,75 +211,19 @@
 </script>
 
 <style scoped>
-    #settings-sidebar-wrapper {
-        position: absolute;
-        width: 0;
-        right: 0;
-        height: 100%;
-        overflow-y: hidden;
-        transition: all .5s;
-        display: flex;
-        align-items: center;
-        z-index: 9999;
-    }
-
-    .settings-sidebar {
-        transition: all .5s;
-        overflow-y: auto;
-        height: 100%;
-        width: 100%;
-        padding: 1rem;
-        border-bottom: 1px solid #e9ecef;
-        border-top-left-radius: 0.3rem;
-        border-top-right-radius: 0.3rem;
-        backdrop-filter: blur(18px) contrast(60%);
-    }
-
-    .button--close {
-        cursor: pointer;
-        width: 48px;
-        height: 48px;
-        border-radius: 15px;
-        text-align: center;
-        background-color: #fff;
-        background: #fff;
-        border: none;
-        transition: all .3s;
-        font-size: 2em;
-    }
-
-    .button--close i {
-        color: #162056;
-    }
-
-    .sidebar-header .justify-content-end {
-        display: flex;
-    }
-
-   .sidebar-header .close {
-        font-size: 2.5rem;
-    }
-
-	@media (prefers-color-scheme: dark) {
-		.sidebar-header .close {
-			color: #e4e6eb;
-		}
-	}
-
-    .settings-sidebar {
-      border: none;
+    #settings-sidebar-wrapper .right-sidebar {
       background: #ffffff;
     }
 	
 	@media (prefers-color-scheme: dark) {
-		.settings-sidebar {
+		#settings-sidebar-wrapper .right-sidebar {
 			color: #e4e6eb;
-			background: #242526;
+			background: var(--color-background-soft);
 		}
 	}
 	
 	@media only screen and (min-width: 500px) {
-        .settings-sidebar {
+        #settings-sidebar-wrapper .right-sidebar {
 			background: #fff;
             border-top-left-radius: 15px;
             border-top-right-radius: 0;
@@ -287,8 +233,8 @@
         }
 		
 		@media (prefers-color-scheme: dark) {
-			.settings-sidebar {
-				background: #242526db;
+			#settings-sidebar-wrapper .right-sidebar {
+				background: var(--color-background-mute);
 			}
 		}
     }
@@ -297,78 +243,11 @@
         color: #343a40;
     }
 
-    .form-control::placeholder {
-        color: #ced4da70;
-    }
-
-    .text-muted, a {
-      color: #99c9ff !important;
-    }
-
     .sidebar-footer {
         padding: 1rem;
         position: fixed;
         bottom: 1rem;
         display: flex;
         width: 100%;
-    }
-
-    .sidebar-footer .btn {
-        width:100%;
-    }
-	
-    .btn-group .btn-check {
-        display: none;
-    }
-
-    .btn-group label.btn:first-of-type{
-        border-top-left-radius: 15px;
-        border-bottom-left-radius: 15px;
-    }
-
-    .btn-group label.btn:last-of-type{
-        border-top-right-radius: 15px;
-        border-bottom-right-radius: 15px;
-    }
-
-    .btn-group label.btn {
-        background: none;
-        color: #2870ea;
-        border-color: #2870ea;
-    }
-
-    .btn-group label.btn.active {
-        background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
-        color: #fff;
-    }
-
-    @media (prefers-color-scheme: dark) {
-		.btn-group label.btn {
-            color: #fff;
-        }
-
-        .btn-group label.btn.active {
-            color: #fff;
-        }
-	}
-
-    .sidebar.hasIcon .sidebar-title {
-        margin-left: 2rem;
-        transition: all .5s;
-    }
-
-    .sidebar-image-wrapper {
-        position: absolute;
-        top: -14px;
-        left: -14px;
-        border-radius: 15px;
-        background: #f9f9f9;
-        padding: 2px;
-    }
-
-    .sidebar-icon {
-        border-radius: 15px;
-        height: 48px;
-        width: 48px;
     }
 </style>

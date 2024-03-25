@@ -308,7 +308,7 @@
         margin-bottom: 20px;
         text-align: center;
         background-color: #f8f9fa;
-        color: #162056;
+        color: var(--color-text);
         box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
     }
 
