@@ -1,4 +1,4 @@
-import { encrypt, decrypt, encryptionKey } from './cypher'
+import { encrypt, decrypt } from './cypher'
 import Account from '../models/Account'
 
 export function parseAccount(account) {
@@ -63,8 +63,4 @@ export function getDecryptedAccount (account, secret) {
     .forEach(cryptedArg => decryptedAccount[cryptedArg] = decrypt(account[cryptedArg], secret));
 
     return decryptedAccount;
-}
-
-export function getEncryptionKey(user) {
-    return encryptionKey(user.uuid);
 }

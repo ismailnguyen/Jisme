@@ -7,8 +7,7 @@ import localforage from 'localforage'
 import {
     getEncryptedAccount,
     getDecryptedAccount,
-    parseAccount,
-    getEncryptionKey
+    parseAccount
 } from '../utils/account'
 import { BASE_API_URL } from '../utils/api'
 import { getHeadersWithAuth } from '../utils/requestHeader'
@@ -37,7 +36,7 @@ function AccountsService (user)
             if (response.ok) {
                 const data = await response.json();
 
-                return parseAccount(getDecryptedAccount(data, getEncryptionKey(this.user)))
+                return parseAccount(getDecryptedAccount(data, this.user.uuid))
             }
 
             const { error } = await response.json();
@@ -54,7 +53,7 @@ function AccountsService (user)
         const cachedAccounts = await localforage.getItem(LOCAL_STORAGE_RECENT_ACCOUNTS_KEY);
 
         if (cachedAccounts) {
-            return cachedAccounts.map(account => parseAccount(getDecryptedAccount(account, getEncryptionKey(this.user))));
+            return cachedAccounts.map(account => parseAccount(getDecryptedAccount(account, this.user.uuid)));
         }
 
         return [];
@@ -72,7 +71,7 @@ function AccountsService (user)
                 const accounts = await response.json();
 
                 if (accounts) {
-                    return accounts.map(account => parseAccount(getDecryptedAccount(account, getEncryptionKey(this.user))));
+                    return accounts.map(account => parseAccount(getDecryptedAccount(account, this.user.uuid)));
                 }
 
                 return [];
@@ -92,7 +91,7 @@ function AccountsService (user)
         const cachedAccounts = await localforage.getItem(LOCAL_STORAGE_ACCOUNTS_KEY);
 
         if (cachedAccounts) {
-            return cachedAccounts.map(account => parseAccount(getDecryptedAccount(account, getEncryptionKey(this.user))));
+            return cachedAccounts.map(account => parseAccount(getDecryptedAccount(account, this.user.uuid)));
         }
 
         return [];
@@ -121,7 +120,7 @@ function AccountsService (user)
     
                 // Only at the end of the pagination, call the successCallback with the full list of accounts
                 if (!next) {
-                    successCallback(accounts.map(account => parseAccount(getDecryptedAccount(account, getEncryptionKey(this.user)))));
+                    successCallback(accounts.map(account => parseAccount(getDecryptedAccount(account, this.user.uuid))));
                 }
 
                 return;
@@ -139,7 +138,7 @@ function AccountsService (user)
 
     this.add = async function(accountToAdd)
     {
-        let encryptedAccount = getEncryptedAccount(accountToAdd, getEncryptionKey(this.user));
+        let encryptedAccount = getEncryptedAccount(accountToAdd, this.user.uuid);
 
         try {
             const response = await fetch(ACCOUNTS_API_URL,
@@ -152,7 +151,7 @@ function AccountsService (user)
             if (response.ok) {
                 const data = await response.json();
 
-                return parseAccount(getDecryptedAccount(data, getEncryptionKey(this.user)));
+                return parseAccount(getDecryptedAccount(data, this.user.uuid));
             }
 
             const { error } = await response.json();
@@ -167,7 +166,7 @@ function AccountsService (user)
 
     this.save = async function(accountToSave)
     {
-        let encryptedAccount = getEncryptedAccount(accountToSave, getEncryptionKey(this.user));
+        let encryptedAccount = getEncryptedAccount(accountToSave, this.user.uuid);
 
         try {
             const response = await fetch(`${ACCOUNTS_API_URL}${accountToSave._id}`,
@@ -180,7 +179,7 @@ function AccountsService (user)
             if (response.ok) {
                 const data = await response.json();
 
-                return parseAccount(getDecryptedAccount(data, getEncryptionKey(this.user)));
+                return parseAccount(getDecryptedAccount(data, this.user.uuid));
             }
 
             const { error } = await response.json();
@@ -218,13 +217,13 @@ function AccountsService (user)
     
     this.updateLocalRecentAccounts = async function(accounts) {
         await localforage.setItem(LOCAL_STORAGE_RECENT_ACCOUNTS_KEY,
-            accounts.map(account => parseAccount(getEncryptedAccount(account, getEncryptionKey(this.user))))
+            accounts.map(account => parseAccount(getEncryptedAccount(account, this.user.uuid)))
         );
     }
 
     this.updateLocalAccounts = async function(accounts) {
         await localforage.setItem(LOCAL_STORAGE_ACCOUNTS_KEY,
-            accounts.map(account => parseAccount(getEncryptedAccount(account, getEncryptionKey(this.user))))
+            accounts.map(account => parseAccount(getEncryptedAccount(account, this.user.uuid)))
         );
     }
 
