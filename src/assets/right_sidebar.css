@@ -24,6 +24,15 @@
     backdrop-filter: blur(18px) contrast(60%);
 }
 
+@media only screen and (min-width: 500px) {
+    .right-sidebar {
+        border-top-left-radius: 15px;
+        border-top-right-radius: 0;
+        border-bottom-left-radius: 15px;
+        border-bottom-right-radius: 0;
+    }
+}
+
 .button--close {
     cursor: pointer;
     width: 48px;
@@ -80,6 +89,36 @@
 
 .form-control::placeholder {
     color: #ced4da70;
+}
+
+.form-control:disabled,
+    .form-control[readonly] {
+        background: none;
+        border: 1px solid #ced4da70;
+    }
+
+.tags-input {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.tags-new-input {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.btn-group label.btn {
+    background: none;
+}
+
+.btn-group label.btn:first-of-type{
+    border-top-left-radius: 15px !important;;
+    border-bottom-left-radius: 15px !important;;
+}
+
+.btn-group label.btn:last-of-type{
+    border-top-right-radius: 15px !important;
+    border-bottom-right-radius: 15px !important;;
 }
 
 .sidebar-footer {
