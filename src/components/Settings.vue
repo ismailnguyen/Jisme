@@ -30,41 +30,39 @@
                 <form class="card-text lead">
                     <div class="row">
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputEmail">Username</label>
+                            <label for="inputEmail"><i class="fa fa-user" aria-hidden="true"></i> Username</label>
                             <input id="inputEmail" class="form-control" placeholder="Email address, phone number" type="email" v-model="user.email" disabled />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputAvatar">Avatar</label>
+                            <label for="inputAvatar"><i class="fa fa-circle" aria-hidden="true"></i> Avatar</label>
                             <input id="inputAvatar" class="form-control" type="text" laceholder="Avatar image URL" v-model="user.avatarUrl" />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputTotpSecret">TOTP Secret</label>
+                            <label for="inputTotpSecret"><i class="fa fa-user-secret" aria-hidden="true"></i> TOTP Secret</label>
                             <input id="inputTotpSecret" class="form-control" type="text" laceholder="MFA TOTP secret" v-model="user.totp_secret" disabled />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputEncryptionKey">Public encryption key</label>
+                            <label for="inputEncryptionKey"><i class="fa fa-user-secret" aria-hidden="true"></i> Public encryption key</label>
                             <input id="inputEncryptionKey" class="form-control" type="text" laceholder="Encryption key" v-model="user.public_encryption_key" disabled />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="user.passkeys">
-                            <label for="passwordlesslogin_btn">Password-less login</label>
-                            <button
-                                class="btn btn-md btn-outline-danger btn-block"
+                            <label for="passwordlesslogin_btn"><i class="fa fa-key" aria-hidden="true"></i> Password-less login</label>
+                            <div class="input-group"
                                 v-for="passkey in user.passkeys"
-                                :key="passkey.passkey.id"
-                                @click.prevent="removePasskey(passkey)">
-                                <i class="fa fa-trash"></i>
-                                {{ passkey.deviceName }}
-                            </button>
-                        </div>
-
-                        <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="generatePasskey_btn">Passkey</label>
-                            <button class="btn btn-lg btn-danger btn-block" @click.prevent="generatePasskey()" v-if="isGeneratePasskeyBtnVisible">
-                                Generate a passkey
+                                :key="passkey.passkey.id">
+                                <input class="form-control" type="text" v-model="passkey.deviceName" readonly />
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" @click="removePasskey(passkey)">
+                                        <i class="fa fa-trash"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn  btn-danger btn-block" @click.prevent="generatePasskey()" v-if="isGeneratePasskeyBtnVisible">
+                                <i class="fa fa-plus"></i> Add a passkey
                             </button>
                         </div>
                     </div>
@@ -80,6 +78,7 @@
                 </div>
                 <div class="col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6">
                     <button type="button" class="btn" :class="isLoading ? 'btn-dark' : 'btn-primary'" @click="save()">
+                        <i class="fa fa-save"></i>
                         Save
                     </button>
                 </div>
@@ -212,35 +211,25 @@
 
 <style scoped>
     #settings-sidebar-wrapper .right-sidebar {
-      background: #ffffff;
+        background: var(--color-background-mute);
     }
 	
 	@media (prefers-color-scheme: dark) {
 		#settings-sidebar-wrapper .right-sidebar {
-			color: #e4e6eb;
-			background: var(--color-background-soft);
+			color: var(--color-text);
 		}
 	}
-	
-	@media only screen and (min-width: 500px) {
-        #settings-sidebar-wrapper .right-sidebar {
-			background: #fff;
-            border-top-left-radius: 15px;
-            border-top-right-radius: 0;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 0;
-            box-shadow: 0 0 2rem rgba(0,0,255,.1);
-        }
-		
-		@media (prefers-color-scheme: dark) {
-			#settings-sidebar-wrapper .right-sidebar {
-				background: var(--color-background-mute);
-			}
-		}
+
+    .form-group {
+        margin-bottom: 2rem;
     }
 
     .form-control {
         color: #343a40;
+    }
+
+    .input-group {
+        margin-bottom: 1rem;
     }
 
     .sidebar-footer {

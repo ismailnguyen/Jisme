@@ -28,8 +28,6 @@
                 <form class="card-text lead">
                     <div class="row">
                         <div class="form-group col-xs-12 col-md-12 col-lg-12 small">
-                            <label>Type</label>
-                            <br>
                             <div class="btn-group" role="group" aria-label="Account type">
                                 <label class="btn btn-outline-primary" for="editAccount_radiobutton_accounttype_account" :class="account.type == 'account' ? 'active' : ''">Account</label>
                                 <input type="radio" class="btn-check" id="editAccount_radiobutton_accounttype_account" value="account" v-model="account.type">
@@ -42,14 +40,14 @@
                             </div>
                         </div>
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="editAccount_input_platform">Platform</label>
+                            <label for="editAccount_input_platform"><i class="fa fa-globe" aria-hidden="true"></i> Platform</label>
                             <input id="editAccount_input_platform" class="form-control" placeholder="Platform" type="text" v-model="account.platform" v-on:dblclick="copyToClipboard('editAccount_input_platform_hidden')" autofocus />
                             <input id="editAccount_input_platform_hidden" type="hidden" :value="account.platform" />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="editAccount_input_new_tag">Tags</label>
-                            <div id="editAccount_input_tags" class="form-control tags">
+                            <label for="editAccount_input_new_tag"><i class="fa fa-tags" aria-hidden="true"></i> Tags</label>
+                            <div class="form-control tags tags-input">
                                 <span
                                     class="badge badge-pill badge-primary"
                                     v-for="(tag, tagIndex) in account.tags.split(',')"
@@ -60,66 +58,66 @@
                                 </span>
                             </div>
 
-                            <input id="editAccount_input_new_tag" class="form-control" placeholder="Enter new tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
+                            <input id="editAccount_input_new_tag" class="form-control tags-new-input" placeholder="Enter new tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
                         </div>
 
                         <!-- region_start -- Account type: card -->
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label for="editAccount_input_card_number">Number</label>
+                            <label for="editAccount_input_card_number"><i class="fa fa-hashtag" aria-hidden="true"></i> Number</label>
                             <input id="editAccount_input_card_number" class="form-control" placeholder="Card number" type="text" v-model="account.card_number" @keyup.enter="add()" />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label for="editAccount_input_card_name">Name</label>
+                            <label for="editAccount_input_card_name"><i class="fa fa-user" aria-hidden="true"></i> Name</label>
                             <input id="editAccount_input_card_name" class="form-control" placeholder="Name on card" type="text" v-model="account.card_name" @keyup.enter="add()" />
                         </div>
                         
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label for="editAccount_input_card_pin">PIN</label>
+                            <label for="editAccount_input_card_pin"><i class="fa fa-key" aria-hidden="true"></i> PIN</label>
                             <input id="editAccount_input_card_pin" class="form-control" placeholder="PIN" type="text" v-model="account.card_pin" @keyup.enter="add()" />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label for="editAccount_input_card_expiracy">Expiracy</label>
+                            <label for="editAccount_input_card_expiracy"><i class="fa fa-calendar" aria-hidden="true"></i> Expiracy</label>
                             <input id="editAccount_input_card_expiracy" class="form-control" placeholder="Expiracy" type="text" v-model="account.card_expiracy" @keyup.enter="add()" />
                         </div>
                         
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label for="editAccount_input_card_cryptogram">Cryptogram</label>
+                            <label for="editAccount_input_card_cryptogram"><i class="fa fa-lock" aria-hidden="true"></i> Cryptogram</label>
                             <input id="editAccount_input_card_cryptogram" class="form-control" placeholder="CVC/CVV" type="text" v-model="account.card_cryptogram" @keyup.enter="add()" />
                         </div>
                         <!-- region_end -- Account type: card -->
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == '2fa'">
-                            <label for="editAccount_input_totp_token">TOTP Token</label>
+                            <label for="editAccount_input_totp_token"><i class="fa fa-unlock" aria-hidden="true"></i> TOTP Token</label>
                             <input id="editAccount_input_totp_token" class="form-control" placeholder="Generated token" type="text" v-model="totpToken" readonly />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account' || account.type == '2fa'">
-                            <label for="editAccount_input_login">Login</label>
+                            <label for="editAccount_input_login"><i class="fa fa-user" aria-hidden="true"></i> Login</label>
                             <input id="editAccount_input_login" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="save()" v-on:dblclick="copyToClipboard('editAccount_input_login_hidden')" />
                             <input id="editAccount_input_login_hidden" type="hidden" :value="account.login" />
                         </div>
                         
                         <div class="form-group col-xs-12 col-md-12 col-lg-9" v-if="account.type == '2fa'">
-                            <label for="editAccount_input_totp_secret">TOTP Secret</label>
+                            <label for="editAccount_input_totp_secret"><i class="fa fa-key" aria-hidden="true"></i> TOTP Secret</label>
                             <input id="editAccount_input_totp_secret" class="form-control" placeholder="TOTP Secret" type="text" v-model="account.totp_secret" @keyup.enter="add()" />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label for="editAccount_input_password">Password</label>
+                            <label for="editAccount_input_password"><i class="fa fa-lock" aria-hidden="true"></i> Password</label>
                             <div class="input-group">
                                 <input id="editAccount_input_password" class="form-control" type="text" aria-describedby="editAccount_input_passwordHelp" v-model="account.password" @keyup.enter="save()" />
                                 <input id="editAccount_input_password_hidden" type="hidden" :value="account.password" />
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-light" type="button" @click="account.generatePassword()">Generate</button>
+                                    <button class="btn btn-outline-light" type="button" @click="account.generatePassword()"><i class="fa fa-cogs"></i> Generate</button>
                                 </div>
                             </div>
                             <small id="editAccount_input_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label for="editAccount_input_password_clue">Password clue</label>
+                            <label for="editAccount_input_password_clue"><i class="fa fa-eye" aria-hidden="true"></i> Password clue</label>
                             <input id="editAccount_input_password_clue" class="form-control" type="text" v-model="account.password_clue" @keyup.enter="save()" />
                         </div>
 
@@ -128,39 +126,39 @@
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label for="editAccount_input_passwordless">Password less</label>
+                            <label for="editAccount_input_passwordless"><i class="fa fa-bolt" aria-hidden="true"></i> Password less</label>
                             <div class="input-group" v-show="passwordLess.generatedPassword">
-                                <input id="editAccount_input_passwordless_generatedPassword" class="form-control" placeholder="" type="text" v-model="passwordLess.generatedPassword" readonly />
+                                <input id="editAccount_input_passwordless_generatedPassword" class="form-control" type="text" v-model="passwordLess.generatedPassword" readonly />
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-light" type="button" @click="resetPasswordLess()">Reset</button>
+                                    <button class="btn btn-outline-light" type="button" @click="resetPasswordLess()"><i class="fa fa-undo"></i> Reset</button>
                                 </div>
                             </div>
                             <div class="input-group" v-show="!passwordLess.generatedPassword">
                                 <input id="editAccount_input_passwordless_masterPassword" class="form-control" type="password" aria-describedby="editAccount_input_passwordlessHelp_masterPassword" v-model="passwordLess.masterPassword" />
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-light" type="button" @click="generatePasswordLess()">Generate</button>
+                                    <button class="btn btn-outline-light" type="button" @click="generatePasswordLess()"><i class="fa fa-cogs"></i> Generate</button>
                                 </div>
                             </div>
                             <small id="editAccount_input_passwordlessHelp_masterPassword" class="form-text text-muted" v-show="!passwordLess.generatedPassword">Type your master password to generate the password less.</small>
                         </div>
                         
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label for="editAccount_input_social_login">Social login</label>
+                            <label for="editAccount_input_social_login"><i class="fa fa-users" aria-hidden="true"></i> Social login</label>
                             <input id="editAccount_input_social_login" class="form-control" type="text" v-model="account.social_login" @keyup.enter="save()" />
                         </div>
                         
                         <div class="form-group col-xs-12 col-md-12" :class="account.type == 'account' ? 'col-lg-12' : 'col-lg-12'">
-                            <label for="editAccount_input_icon">Icon</label>
+                            <label for="editAccount_input_icon"><i class="fa fa-circle" aria-hidden="true"></i> Icon</label>
                             <input id="editAccount_input_icon" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="save()" />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="editAccount_input_description">Description</label>
+                            <label for="editAccount_input_description"><i class="fa fa-quote-left" aria-hidden="true"></i> Description</label>
                             <textarea id="editAccount_input_description" class="form-control" type="text" v-model="account.description" rows="3"></textarea>
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="editAccount_input_notes">Notes</label>
+                            <label for="editAccount_input_notes"><i class="fa fa-sticky-note" aria-hidden="true"></i> Notes</label>
                             <textarea id="editAccount_input_notes" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                         </div>
                         
@@ -183,12 +181,12 @@
             <div class="sidebar-footer row">
                 <div class="col-6 col-xs-6 col-md-6 col-lg-6">
                     <button type="button" class="btn" :class="isDeleting ? 'btn-dark': 'btn-outline-danger'" @click="remove()">
-                        {{ isDeleting ? 'Deleting ...' : 'Delete' }}
+                        <i class="fa fa-trash"></i> {{ isDeleting ? 'Deleting ...' : 'Delete' }}
                     </button>
                 </div>
                 <div class="col-6 col-xs-6 col-md-6 col-lg-6">
                     <button type="button" class="btn" :class="isSaving ? 'btn-dark': 'btn-light'" @click="save()">
-                        {{ isSaving ? 'Saving ...' : 'Save' }}
+                        <i class="fa fa-save"></i> {{ isSaving ? 'Saving ...' : 'Save' }}
                     </button>
                 </div>
             </div>
@@ -377,32 +375,17 @@
 </script>
 
 <style scoped>
-    #account-sidebar-wrapper .account-sidebar {
+    #account-sidebar-wrapper .right-sidebar {
         color: #f8f9fa;
         background: linear-gradient(141.13deg,#106cde 26.29%,#36a5ef 100%);
     }
 	
 	@media (prefers-color-scheme: dark) {
-		#account-sidebar-wrapper .account-sidebar {
+		#account-sidebar-wrapper .right-sidebar {
 			color: #e4e6eb;
 			background: linear-gradient(141.69deg,#3077e2 0%,#1b42ab 100%);
 		}
 	}
-	
-	@media only screen and (min-width: 500px) {
-        #account-sidebar-wrapper .account-sidebar {
-			border-top-left-radius: 15px;
-            border-top-right-radius: 0;
-            border-bottom-left-radius: 15px;
-            border-bottom-right-radius: 0;
-        }
-    }
-
-    .form-control:disabled,
-    .form-control[readonly] {
-        background: none;
-        border: 1px solid #ced4da70;
-    }
 
     .btn-outline-light {
         border-color: #ced4da70;
@@ -413,28 +396,7 @@
         color: #000;
     }
 
-    .form-control#editAccount_input_tags {
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-
-    .form-control#editAccount_input_new_tag {
-        border-top-right-radius: 0;
-        border-top-left-radius: 0;
-    }
-
-    .btn-group label.btn:first-of-type{
-        border-top-left-radius: 15px;
-        border-bottom-left-radius: 15px;
-    }
-
-    .btn-group label.btn:last-of-type{
-        border-top-right-radius: 15px;
-        border-bottom-right-radius: 15px;
-    }
-
     .btn-group label.btn {
-        background: none;
         color: #fff;
         border-color: #fff;
     }
