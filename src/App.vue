@@ -7,13 +7,14 @@
 </template>
 
 <script>
-    import '@fortawesome/fontawesome-free/css/all.css'
+    import '@fortawesome/fontawesome-free/css/all.css';
+    import 'bootstrap/dist/css/bootstrap.css';
 
     import './assets/base.css';
 
-    import { useAlertStore } from '@/store'
-    import { storeToRefs } from 'pinia'
-    import AlertBox from './components/AlertBox.vue'
+    import { useAlertStore } from '@/store';
+    import { storeToRefs } from 'pinia';
+    import AlertBox from './components/AlertBox.vue';
 
     export default {
         data () {

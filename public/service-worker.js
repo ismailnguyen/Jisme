@@ -4,13 +4,6 @@ var CACHE = 'jisme-precache';
 var precacheFiles = [
       '/',
   	'/index.html',
-      '/css/fontawesome.min.css',
-      '/css/bootstrap.min.css',
-      '/fonts/fontawesome-webfont.eot',
-      '/fonts/fontawesome-webfont.svg',
-      '/fonts/fontawesome-webfont.ttf',
-      '/fonts/fontawesome-webfont.woff',
-      '/fonts/fontawesome-webfont.woff2',
       '/dist/build.js',
       '/js/sha256.min.js',
       '/js/sjcl.js'
