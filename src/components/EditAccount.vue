@@ -41,7 +41,12 @@
                         </div>
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
                             <label for="editAccount_input_platform"><i class="fa fa-globe" aria-hidden="true"></i> Platform</label>
-                            <input id="editAccount_input_platform" class="form-control" placeholder="Platform" type="text" v-model="account.platform" v-on:dblclick="copyToClipboard('editAccount_input_platform_hidden')" autofocus />
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-light" type="button" @click="copyToClipboard('editAccount_input_platform_hidden')"><i class="fa fa-clipboard"></i></button>
+                                </div>
+                                <input id="editAccount_input_platform" class="form-control" placeholder="Platform" type="text" v-model="account.platform" autofocus />
+                            </div>
                             <input id="editAccount_input_platform_hidden" type="hidden" :value="account.platform" />
                         </div>
 
@@ -63,7 +68,7 @@
 
                         <!-- region_start -- Account type: card -->
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label for="editAccount_input_card_number"><i class="fa fa-hashtag" aria-hidden="true"></i> Number</label>
+                            <label for="editAccount_input_card_number"><i class="fa fa-barcode" aria-hidden="true"></i> Number</label>
                             <input id="editAccount_input_card_number" class="form-control" placeholder="Card number" type="text" v-model="account.card_number" @keyup.enter="add()" />
                         </div>
 
@@ -89,13 +94,18 @@
                         <!-- region_end -- Account type: card -->
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == '2fa'">
-                            <label for="editAccount_input_totp_token"><i class="fa fa-unlock" aria-hidden="true"></i> TOTP Token</label>
+                            <label for="editAccount_input_totp_token"><i class="fa fa-qrcode" aria-hidden="true"></i> TOTP Token</label>
                             <input id="editAccount_input_totp_token" class="form-control" placeholder="Generated token" type="text" v-model="totpToken" readonly />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account' || account.type == '2fa'">
-                            <label for="editAccount_input_login"><i class="fa fa-user" aria-hidden="true"></i> Login</label>
-                            <input id="editAccount_input_login" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="save()" v-on:dblclick="copyToClipboard('editAccount_input_login_hidden')" />
+                            <label for="editAccount_input_login"><i class="fa fa-id-badge" aria-hidden="true"></i> Login</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <button class="btn btn-outline-light" type="button" @click="copyToClipboard('editAccount_input_login_hidden')"><i class="fa fa-clipboard"></i></button>
+                                </div>
+                                <input id="editAccount_input_login" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="save()" />
+                            </div>
                             <input id="editAccount_input_login_hidden" type="hidden" :value="account.login" />
                         </div>
                         
@@ -148,7 +158,7 @@
                         </div>
                         
                         <div class="form-group col-xs-12 col-md-12" :class="account.type == 'account' ? 'col-lg-12' : 'col-lg-12'">
-                            <label for="editAccount_input_icon"><i class="fa fa-circle" aria-hidden="true"></i> Icon</label>
+                            <label for="editAccount_input_icon"><i class="fa fa-icons" aria-hidden="true"></i> Icon</label>
                             <input id="editAccount_input_icon" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="save()" />
                         </div>
 
@@ -158,7 +168,7 @@
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="editAccount_input_notes"><i class="fa fa-sticky-note" aria-hidden="true"></i> Notes</label>
+                            <label for="editAccount_input_notes"><i class="fa fa-marker" aria-hidden="true"></i> Notes</label>
                             <textarea id="editAccount_input_notes" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                         </div>
                         

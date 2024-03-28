@@ -61,13 +61,13 @@
                             <input id="addAccount_input_new_tag" class="form-control tags-new-input" placeholder="Tag" type="text" v-model="newTag" @keyup.enter="addTag()" required />
                         </div>
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="addAccount_platform_icon"><i class="fa fa-circle" aria-hidden="true"></i> Icon</label>
+                            <label for="addAccount_platform_icon"><i class="fa fa-icons" aria-hidden="true"></i> Icon</label>
                             <input id="addAccount_platform_icon" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="add()" />
                         </div>
 
                         <!-- region_start -- Account type: card -->
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label for="addAccount_card_number_input"><i class="fa fa-hashtag" aria-hidden="true"></i> Number</label>
+                            <label for="addAccount_card_number_input"><i class="fa fa-barcode" aria-hidden="true"></i> Number</label>
                             <input id="addAccount_card_number_input" class="form-control" placeholder="Card number" type="text" v-model="account.card_number" @keyup.enter="add()" />
                         </div>
                         
@@ -93,7 +93,7 @@
                         <!-- region_end -- Account type: card -->
                         
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account' || account.type == '2fa'" :class="account.type == 'account' ? 'col-lg-3' : 'col-lg-6'">
-                            <label for="addAccount_login_input"><i class="fa fa-user" aria-hidden="true"></i> Login</label>
+                            <label for="addAccount_login_input"><i class="fa fa-id-badge" aria-hidden="true"></i> Login</label>
                             <input id="addAccount_login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="add()" />
                         </div>
 
@@ -129,7 +129,7 @@
                         </div>
                         
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="addAccount_notes_input"><i class="fa fa-sticky-note" aria-hidden="true"></i> Notes</label>
+                            <label for="addAccount_notes_input"><i class="fa fa-marker" aria-hidden="true"></i> Notes</label>
                             <textarea id="addAccount_notes_input" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                         </div>
                     </div>

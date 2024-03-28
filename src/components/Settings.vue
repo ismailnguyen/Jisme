@@ -30,12 +30,12 @@
                 <form class="card-text lead">
                     <div class="row">
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputEmail"><i class="fa fa-user" aria-hidden="true"></i> Username</label>
+                            <label for="inputEmail"><i class="fa fa-id-badge" aria-hidden="true"></i> Username</label>
                             <input id="inputEmail" class="form-control" placeholder="Email address, phone number" type="email" v-model="user.email" disabled />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputAvatar"><i class="fa fa-circle" aria-hidden="true"></i> Avatar</label>
+                            <label for="inputAvatar"><i class="fa fa-circle-user" aria-hidden="true"></i> Avatar</label>
                             <input id="inputAvatar" class="form-control" type="text" laceholder="Avatar image URL" v-model="user.avatarUrl" />
                         </div>
 
@@ -45,12 +45,12 @@
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputEncryptionKey"><i class="fa fa-user-secret" aria-hidden="true"></i> Public encryption key</label>
+                            <label for="inputEncryptionKey"><i class="fa fa-key" aria-hidden="true"></i> Public encryption key</label>
                             <input id="inputEncryptionKey" class="form-control" type="text" laceholder="Encryption key" v-model="user.public_encryption_key" disabled />
                         </div>
 
                         <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="user.passkeys">
-                            <label for="passwordlesslogin_btn"><i class="fa fa-key" aria-hidden="true"></i> Password-less login</label>
+                            <label for="passwordlesslogin_btn"><i class="fa fa-fingerprint" aria-hidden="true"></i> Password-less login</label>
                             <div class="input-group"
                                 v-for="passkey in user.passkeys"
                                 :key="passkey.passkey.id">

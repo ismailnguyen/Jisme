@@ -20,7 +20,7 @@
             class="floating-button"
             :class="isMenuOpened ? 'floating-button--close' : 'floating-button--menu'"
             @click="onToggleMenu" v-show="displayMenus">
-            <i class="fa fa-solid" :class="isMenuOpened ? 'fa-close' : 'fa-bars'"></i>
+            <i class="fa fa-solid" :class="isMenuOpened ? 'fa-close' : 'fa-bars-staggered'"></i>
         </a>
 
         <a

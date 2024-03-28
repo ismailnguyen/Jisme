@@ -9,7 +9,7 @@
                 </a>
 
                 <a class="menu-actions-tags" @click="openTags()">
-                    <i class="fa fa-tag"></i>
+                    <i class="fa fa-tags"></i>
                 </a>
 
                 <a class="menu-actions-add" @click="addAccount()">

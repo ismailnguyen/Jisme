@@ -38,11 +38,17 @@
                             </label>
                         </div>
 
-                        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="submitUsername()" @click="submitUsername()" v-if="!isUsernameFilled" tabindex="3">Next</span>
-                        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="handleLogin()" @click="handleLogin()" tabindex="7" v-else>Sign in</span>
+                        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="submitUsername()" @click="submitUsername()" v-if="!isUsernameFilled" tabindex="3">
+                            <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+                            Next
+                        </span>
+                        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="handleLogin()" @click="handleLogin()" tabindex="7" v-else>
+                            <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+                            Sign in
+                        </span>
 
                         <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="handlePasswordlessLogin()" v-if="isPasswordlessLoginBtnVisible && !isUsernameFilled" tabindex="4">
-                            <i class="fa fa-lock"></i>
+                            <i class="fa fa-fingerprint" aria-hidden="true"></i>
                             One button sign-in
                         </span>
 
