@@ -90,3 +90,7 @@
     background-color: #f8f9fa !important;
   }
 }
+
+.text-muted, a {
+  color: var(--color-text) !important;
+}
