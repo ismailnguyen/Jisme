@@ -29,14 +29,14 @@
                     <div class="row">
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12 small">
                             <div class="btn-group" role="group" aria-label="Account type">
-                                <label class="btn btn-outline-primary" for="editAccount_radiobutton_accounttype_account" :class="account.type == 'account' ? 'active' : ''">Account</label>
-                                <input type="radio" class="btn-check" id="editAccount_radiobutton_accounttype_account" value="account" v-model="account.type">
+                                <input type="radio" class="btn-check" name="account-type" id="editAccount_radiobutton_accounttype_account" v-model="account.type" value="account">
+                                <label class="btn" for="editAccount_radiobutton_accounttype_account" :class="account.type == 'account' ? 'active' : ''">Account</label>
 
-                                <label class="btn btn-outline-primary" for="editAccount_radiobutton_accounttype_card" :class="account.type == 'card' ? 'active' : ''">Card</label>
-                                <input type="radio" class="btn-check" id="editAccount_radiobutton_accounttype_card" value="card" v-model="account.type">
+                                <input type="radio" class="btn-check" name="account-type" id="editAccount_radiobutton_accounttype_card" v-model="account.type" value="card">
+                                <label class="btn" for="editAccount_radiobutton_accounttype_card" :class="account.type == 'card' ? 'active' : ''">Card</label>
 
-                                <label class="btn btn-outline-primary" for="editAccount_radiobutton_accounttype_2fa" :class="account.type == '2fa' ? 'active' : ''">2FA</label>
-                                <input type="radio" class="btn-check" id="editAccount_radiobutton_accounttype_2fa" value="2fa" v-model="account.type">
+                                <input type="radio" class="btn-check" name="account-type" id="editAccount_radiobutton_accounttype_2fa" v-model="account.type" value="2fa">
+                                <label class="btn" for="editAccount_radiobutton_accounttype_2fa" :class="account.type == '2fa' ? 'active' : ''">2FA</label>
                             </div>
                         </div>
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
@@ -63,6 +63,8 @@
 
                             <input id="editAccount_input_new_tag" class="form-control tags-new-input" placeholder="Enter new tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
                         </div>
+
+                        <hr class="my-4">
 
                         <!-- region_start -- Account type: card -->
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
@@ -125,10 +127,6 @@
                             <input id="editAccount_input_password_clue" class="form-control" type="text" v-model="account.password_clue" @keyup.enter="save()" />
                         </div>
 
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == '2fa'">
-                            
-                        </div>
-
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
                             <label class="form-label" for="editAccount_input_passwordless"><i class="fa fa-bolt" aria-hidden="true"></i> Password less</label>
                             <div class="input-group" v-show="passwordLess.generatedPassword">
@@ -146,7 +144,9 @@
                             <label class="form-label" for="editAccount_input_social_login"><i class="fa fa-users" aria-hidden="true"></i> Social login</label>
                             <input id="editAccount_input_social_login" class="form-control" type="text" v-model="account.social_login" @keyup.enter="save()" />
                         </div>
-                        
+
+                        <hr class="my-4">
+
                         <div class="mb-3 col-xs-12 col-md-12" :class="account.type == 'account' ? 'col-lg-12' : 'col-lg-12'">
                             <label class="form-label" for="editAccount_input_icon"><i class="fa fa-icons" aria-hidden="true"></i> Icon</label>
                             <input id="editAccount_input_icon" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="save()" />
@@ -161,7 +161,16 @@
                             <label class="form-label" for="editAccount_input_notes"><i class="fa fa-marker" aria-hidden="true"></i> Notes</label>
                             <textarea id="editAccount_input_notes" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                         </div>
-                        
+
+                        <hr class="my-4">
+
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <label class="form-label" for="editAccount_input_notes"><i class="fa fa-marker" aria-hidden="true"></i> Notes</label>
+                            <textarea id="editAccount_input_notes" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
+                        </div>
+
+                        <hr class="my-4">
+
                         <div class="mb-3 col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 small">
                             <label>Created</label>
                             <input class="form-control" v-model="createdDate" disabled />
@@ -174,6 +183,8 @@
                             <label>Opened</label>
                             <input class="form-control" v-model="lastOpenedDate" disabled />
                         </div>
+
+                        <hr class="my-4">
                     </div>
                 </form>
             </div>

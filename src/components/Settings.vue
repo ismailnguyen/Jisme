@@ -29,42 +29,46 @@
 
                 <form class="card-text lead">
                     <div class="row">
-                        <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputEmail"><i class="fa fa-id-badge" aria-hidden="true"></i> Username</label>
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <label class="form-label" for="inputEmail"><i class="fa fa-id-badge" aria-hidden="true"></i> Username</label>
                             <input id="inputEmail" class="form-control" placeholder="Email address, phone number" type="email" v-model="user.email" disabled />
                         </div>
 
-                        <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputAvatar"><i class="fa fa-circle-user" aria-hidden="true"></i> Avatar</label>
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <label class="form-label" for="inputAvatar"><i class="fa fa-circle-user" aria-hidden="true"></i> Avatar</label>
                             <input id="inputAvatar" class="form-control" type="text" laceholder="Avatar image URL" v-model="user.avatarUrl" />
                         </div>
 
-                        <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputTotpSecret"><i class="fa fa-user-secret" aria-hidden="true"></i> TOTP Secret</label>
+                        <hr class="my-4">
+
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <label class="form-label" for="inputTotpSecret"><i class="fa fa-user-secret" aria-hidden="true"></i> TOTP Secret</label>
                             <input id="inputTotpSecret" class="form-control" type="text" laceholder="MFA TOTP secret" v-model="user.totp_secret" disabled />
                         </div>
 
-                        <div class="form-group col-xs-12 col-md-12 col-lg-12">
-                            <label for="inputEncryptionKey"><i class="fa fa-key" aria-hidden="true"></i> Public encryption key</label>
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <label class="form-label" for="inputEncryptionKey"><i class="fa fa-key" aria-hidden="true"></i> Public encryption key</label>
                             <input id="inputEncryptionKey" class="form-control" type="text" laceholder="Encryption key" v-model="user.public_encryption_key" disabled />
                         </div>
 
-                        <div class="form-group col-xs-12 col-md-12 col-lg-12" v-if="user.passkeys">
-                            <label for="passwordlesslogin_btn"><i class="fa fa-fingerprint" aria-hidden="true"></i> Password-less login</label>
+                        <hr class="my-4">
+
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="user.passkeys">
+                            <label class="form-label" for="passwordlesslogin_btn"><i class="fa fa-fingerprint" aria-hidden="true"></i> Password-less login</label>
                             <div class="input-group"
                                 v-for="passkey in user.passkeys"
                                 :key="passkey.passkey.id">
-                                <input class="form-control" type="text" v-model="passkey.deviceName" readonly />
-                                <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button" @click="removePasskey(passkey)">
-                                        <i class="fa fa-trash"></i> Remove
-                                    </button>
+                                <div class="input-group">
+                                    <input class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="passkey.deviceName" readonly />
+                                    <button class="btn btn-outline-secondary" type="button" @click="removePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
                                 </div>
                             </div>
                             <button class="btn  btn-danger btn-block" @click.prevent="generatePasskey()" v-if="isGeneratePasskeyBtnVisible">
                                 <i class="fa fa-plus"></i> Add a passkey
                             </button>
                         </div>
+
+                        <hr class="my-4" v-if="user.passkeys">
                     </div>
                 </form>
             </div>
@@ -225,7 +229,7 @@
     }
 
     .form-control {
-        color: #343a40;
+        color: var(--color-text);
     }
 
     .input-group {
