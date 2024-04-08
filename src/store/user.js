@@ -32,12 +32,8 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         return await localforage.getItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY)
     })
 
-    async function login({ username, password }, remember) {
-        user.value = await userService.login({ username, password }, remember);
-
-        if (remember) {
-            setLastRememberedUsername(user.value.email);
-        }
+    async function login({ username, password }) {
+        user.value = await userService.login({ username, password });
 
         return {
             token: user.value.token,
@@ -61,9 +57,13 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         createSession(user);
     }
 
-    async function verifyMFA({ accessToken, totpToken }) {
-        user.value = await userService.verifyMFA({ accessToken, totpToken });
+    async function verifyMFA({ accessToken, totpToken, extendedSession }) {
+        user.value = await userService.verifyMFA({ accessToken, totpToken, extendedSession });
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
+
+        if (isLoggedIn.value && extendedSession) {
+            setLastRememberedUsername(user.value.email);
+        }
 
         createSession(user);
     }
@@ -73,7 +73,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function update() {
-        user.value = await userService.update(user);
+        user.value = await userService.update(user.value);
 
         createSession(user);
     }

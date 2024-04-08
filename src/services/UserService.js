@@ -35,12 +35,11 @@ function UserService() {
         }
     }
 
-    this.login = async function ({ username, password }, remember) {
+    this.login = async function ({ username, password }) {
         let credentials =
         {
             email: username,
-            password: password,
-            extendSession: remember
+            password: password
         };
 
         const response = await fetch(USERS_API_URL + 'login',
@@ -84,10 +83,11 @@ function UserService() {
         }
     }
 
-    this.verifyMFA = async function ({ accessToken, totpToken }) {
+    this.verifyMFA = async function ({ accessToken, totpToken, extendSession }) {
         let mfa =
         {
-            totpToken: totpToken
+            totpToken: totpToken,
+            extendSession: extendSession
         };
 
         const response = await fetch(USERS_API_URL + 'verify-mfa',
@@ -108,26 +108,6 @@ function UserService() {
         }
 
         return body;
-    }
-
-    function handleLoginErrors (response) {
-        let clonedResponse = response.clone();
-        if (!clonedResponse.ok)
-        {
-            if (clonedResponse.status === 404)
-            {
-                throw Error('Invalid username/password !');
-            }
-
-            if (clonedResponse.status === 401)
-            {
-                throw Error('Invalid or expired !');
-            }
-            
-            throw Error(clonedResponse.statusText);
-        }
-
-        return clonedResponse;
     }
 };
 
