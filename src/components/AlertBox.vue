@@ -1,25 +1,24 @@
 <template>
-    <div id="alert" class="alert alert-dismissible fade show" :class="type">
-        <img
-            v-if="image"
-            :src="image"
-            loading="lazy"
-            :alt="title"
-            :title="title"
-            class="alert-image" />
-
+    <div class="alert alert-dismissible fade show" role="alert" :class="type">
+    <img
+        v-if="image"
+        :src="image"
+        loading="lazy"
+        :alt="title"
+        :title="title"
+        class="alert-image" />
+            
         <strong>
             {{ title }}
         </strong>
-        
+
         <p>
             {{ message }}
         </p>
 
-        <button type="button" class="close" @click="close()" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
+        <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close" @click="close()"></button>
     </div>
+   
 </template>
 
 <script>
