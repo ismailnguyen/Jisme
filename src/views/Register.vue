@@ -1,33 +1,43 @@
 <template>
-    <section class="py-3 py-md-5 py-xl-8">
-        <div class="container">
-            <div class="row gy-4 align-items-center">
-                <div class="col-12 col-md-6 col-xl-7 d-none d-md-block">
-                    <LoginHero :isLoading="isLoading" />
-                </div>
-                <div class="col-12 col-md-6 col-xl-5">
-                    <form class="form-signin">
-                        <div class="d-block d-md-none">
-                            <img class="img-fluid rounded mb-4" loading="lazy" src="images/touch/favicon64.png" alt="Jisme" v-show="!isLoading">
-                            <Loader v-show="isLoading" />
-                        </div>
+    <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+        <div class="row align-items-center g-lg-5 py-5">
+            <LoginHero :isLoading="isLoading" />
 
-                        <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
+            <div class="col-md-10 mx-auto col-lg-5">
+                <form class="p-4 p-md-5 rounded-3 form-signin">
+                    <div class="d-block d-lg-none">
+                        <img class="img-fluid rounded mb-4" loading="lazy" src="images/touch/favicon64.png" alt="Jisme" v-show="!isLoading">
+                        <Loader v-show="isLoading" />
+                    </div>
 
-                        <label for="inputEmail" class="sr-only">Email address</label>
-                        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" aria-describedby="emailHelp" v-model="email" @keyup.enter="signUp" required>
+                    <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
 
-                        <label for="inputPassword" class="sr-only">Password</label>
-                        <input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="password" @keyup.enter="signUp" required>
+                   <div class="form-floating mb-3">
+                        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" @keyup.enter="signUp" required>
+                        <label for="floatingInput">Email address</label>
+                    </div>
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="floatingPassword" placeholder="Password" @keyup.enter="signUp" required>
+                        <label for="floatingPassword">Password</label>
+                    </div>
 
-                        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="signUp()">Sign up</span>
+                    <button
+                        type="submit"
+                        class="w-100 btn btn-lg"
+                        :class="isLoading ? 'btn-secondary' : 'btn-primary'"
+                        @click="signUp()"
+                        tabindex="3">
+                        <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+                        Next
+                    </button>
 
-                        <p class="mt-5 mb-3 text-muted">Already an user? <router-link to="/login">Sign in</router-link></p>
-                    </form>
-                </div>
+                    <hr class="my-4">
+
+                    <p class="mt-5 mb-3 text-muted">Already an user? <router-link to="/login">Sign in</router-link></p>
+                </form>
             </div>
         </div>
-    </section>
+    </div>
 </template>
 
 <script>
@@ -66,18 +76,6 @@
 </script>
 
 <style scoped>
-    .form-signin input:first-of-type {
-        margin-bottom: -1px;
-        border-bottom-right-radius: 0;
-        border-bottom-left-radius: 0;
-    }
-
-    .form-signin input:last-of-type {
-        margin-bottom: 10px;
-        border-top-left-radius: 0;
-        border-top-right-radius: 0;
-    }
-
     .form-signin .btn-primary {
         color: #f8f9fa;
         background-color: #162056;

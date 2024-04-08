@@ -1,46 +1,51 @@
 <template>
-    <section class="py-3 py-md-5 py-xl-8">
-        <div class="container">
-            <div class="row gy-4 align-items-center">
-                <div class="col-12 col-md-6 col-xl-7 d-none d-md-block">
-                    <LoginHero :isLoading="isLoading" />
-                </div>
-                <div class="col-12 col-md-6 col-xl-5">
-                    <form class="form-signin">
-                        <img class="rounded-circle mb-3" :src="user && user.avatarUrl ? user.avatarUrl : ''" alt="" width="72" height="72">
+    <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+        <div class="row align-items-center g-lg-5 py-5">
+            <LoginHero :isLoading="isLoading" />
 
-                        <p class="text-muted" v-if="user">{{ user.email }}</p>
+            <div class="col-md-10 mx-auto col-lg-5">
+                <form class="p-4 p-md-5 rounded-3 form-signin">
+                    <img class="rounded-circle mb-3" :src="user && user.avatarUrl ? user.avatarUrl : ''" alt="" width="72" height="72">
 
-                        <h1 class="h3 mb-3 font-weight-normal">Enter code</h1>
+                    <p class="text-muted" v-if="user">{{ user.email }}</p>
 
-                        <label for="inputOtp" class="">Enter the code displayed in the authenticator app on your mobile device​​</label>
-                        <div class="otp-input-container">
-                            <input
-                                v-for="(v, index) in totpToken"
-                                :key="index"
-                                :ref="'otpInput_' + index"
-                                @input="onOtpInput(index)"
-                                @keydown="onOtpKeydown(index, $event)"
-                                required="required"
-                                maxlength="1"
-                                step="1"
-                                min="0"
-                                max="9"
-                                autocomplete="no"
-                                pattern="\d*"
-                                type="text"
-                                class="otp-input"
-                                v-model="totpToken[index]">
+                    <h1 class="h3 mb-3 font-weight-normal">Enter code</h1>
+
+                    <label for="inputOtp" class="">Enter the code displayed in the authenticator app on your mobile device​​</label>
+                    <div class="otp-input-container">
+                        <input
+                            v-for="(v, index) in totpToken"
+                            :key="index"
+                            :ref="'otpInput_' + index"
+                            @input="onOtpInput(index)"
+                            @keydown="onOtpKeydown(index, $event)"
+                            required="required"
+                            maxlength="1"
+                            step="1"
+                            min="0"
+                            max="9"
+                            autocomplete="no"
+                            pattern="\d*"
+                            type="text"
+                            class="otp-input"
+                            v-model="totpToken[index]">
+                    </div>
+
+                    <div class="checkbox mb-3">
+                        <label>
+                            <input type="checkbox" v-model="remember" tabindex="2"> Remember me
+                        </label>
                         </div>
 
-                        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="verify()">Verify</span>
+                    <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="verify()">Verify</span>
 
-                        <p class="mt-5 mb-3 text-muted">Having trouble? <router-link to="/login">Sign in another way</router-link></p>
-                    </form>
-                </div>
+                    <hr class="my-4">
+
+                    <p class="mt-5 mb-3 text-muted">Having trouble? <router-link to="/login">Sign in another way</router-link></p>
+                </form>
             </div>
         </div>
-    </section>
+    </div>
 </template>
 
 <script>
@@ -180,7 +185,8 @@
                 try {
                     await this.verifyMFA({
                         accessToken: this.$route.query.token, 
-                        totpToken: this.totpToken.join('')
+                        totpToken: this.totpToken.join(''),
+                        extendSession: this.remember
                     })
 
                     this.$router.push({ name: 'Home' });

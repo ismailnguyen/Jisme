@@ -1,64 +1,81 @@
 <template>
-    <section class="py-3 py-md-5 py-xl-8">
-        <div class="container">
-            <div class="row gy-4 align-items-center">
-                <div class="col-12 col-md-6 col-xl-7 d-none d-md-block">
-                    <LoginHero :isLoading="isLoading" />
-                </div>
-                <div class="col-12 col-md-6 col-xl-5">
-                    <form class="form-signin" @submit.prevent>
-                        <div class="d-block d-md-none">
-                            <img class="img-fluid rounded mb-4" loading="lazy" src="images/touch/favicon64.png" alt="Jisme" v-show="!isLoading">
-                            <Loader v-show="isLoading" />
-                        </div>
+    <div class="container col-xl-10 col-xxl-8 px-4 py-5">
+        <div class="row align-items-center g-lg-5 py-5">
+            <LoginHero :isLoading="isLoading" />
 
-                        <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
+            <div class="col-md-10 mx-auto col-lg-5">
+                <form class="p-4 p-md-5 rounded-3 form-signin" v-if="!isUsernameFilled" @submit.prevent="">
+                    <div class="d-block d-lg-none">
+                        <img class="img-fluid rounded mb-4" loading="lazy" src="images/touch/favicon64.png" alt="Jisme" v-show="!isLoading">
+                        <Loader v-show="isLoading" />
+                    </div>
 
-                        <label v-if="!isUsernameFilled" for="inputUsername" class="sr-only">Email address, or phone number</label>
-                        <input v-if="!isUsernameFilled"
-                            type="text"
-                            id="inputUsername"
-                            name="username"
-                            autocomplete="username webauthn"
-                            class="form-control"
-                            placeholder="Email address, or phone number"
-                            aria-describedby="emailHelp"
-                            v-model="username"
-                            @keyup.enter="submitUsername()"
-                            autofocus
-                            tabindex="1"
-                            required>
+                    <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
 
-                        <label v-if="isUsernameFilled" for="inputPassword" class="sr-only">Password</label>
-                        <input v-if="isUsernameFilled" type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="password" @keyup.enter="handleLogin()" tabindex="6" required>
+                    <div class="form-floating mb-3">
+                            <input
+                                type="text"
+                                id="inputUsername"
+                                name="username"
+                                autocomplete="username webauthn"
+                                class="form-control"
+                                placeholder="Email address, or phone number"
+                                aria-describedby="emailHelp"
+                                v-model="username"
+                                @keyup.enter="submitUsername()"
+                                autofocus
+                                tabindex="1"
+                                required>
+                        <label for="inputUsername">Email address</label>
+                    </div>
+                    
+                    <button type="submit" class="w-100 btn btn-lg" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="submitUsername()" @click="submitUsername()" tabindex="3">
+                        <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+                        Next
+                    </button>
 
-                        <div v-if="!isUsernameFilled" class="checkbox mb-3">
-                            <label>
-                                <input type="checkbox" value="remember-me" v-model="remember" tabindex="2"> Remember me
-                            </label>
-                        </div>
+                    <div class="separator">Or</div>
 
-                        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="submitUsername()" @click="submitUsername()" v-if="!isUsernameFilled" tabindex="3">
-                            <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
-                            Next
-                        </span>
-                        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="handleLogin()" @click="handleLogin()" tabindex="7" v-else>
-                            <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
-                            Sign in
-                        </span>
+                    <button class="w-100 btn btn-lg btn-primary" type="submit" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="handlePasswordlessLogin()" v-if="isPasswordlessLoginBtnVisible" tabindex="4">
+                        <i class="fa fa-fingerprint" aria-hidden="true"></i>
+                        One button sign-in
+                    </button>
 
-                        <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="handlePasswordlessLogin()" v-if="isPasswordlessLoginBtnVisible && !isUsernameFilled" tabindex="4">
-                            <i class="fa fa-fingerprint" aria-hidden="true"></i>
-                            One button sign-in
-                        </span>
+                    <hr class="my-4">
 
-                        <p v-if="!isUsernameFilled" class="mt-5 mb-3 text-muted" tabindex="5">Don't have account? <router-link to="/register">Sign up</router-link></p>
-                        <p v-else class="mt-5 mb-3 text-muted" tabindex="5"><a @click="isUsernameFilled=false">Go back</a></p>
-                    </form>
-                </div>
+                    <p class="mt-5 mb-3 text-muted" tabindex="5">Don't have account? <router-link to="/register">Sign up</router-link></p>
+                </form>
+
+                <form class="p-4 p-md-5 rounded-3 form-signin" v-else @submit.prevent="">
+                    <div class="d-block d-md-none">
+                        <img class="img-fluid rounded mb-4" loading="lazy" src="images/touch/favicon64.png" alt="Jisme" v-show="!isLoading">
+                        <Loader v-show="isLoading" />
+                    </div>
+
+                    <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
+
+                    <div class="mb-3">
+                         <label for="inputPassword" class="sr-only">Password</label>
+                        <input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="password" @keyup.enter="handleLogin()" tabindex="6" required>
+                    </div>
+                    
+                    <button type="submit" class="w-100 btn btn-lg" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="handleLogin()" @click="handleLogin()" tabindex="7">
+                        <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+                        Sign in
+                    </button>
+
+                    <hr class="my-4">
+
+                    <p class="mt-5 mb-3 text-muted" tabindex="5">
+                        <a @click="isUsernameFilled=false">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            Go back
+                        </a>
+                    </p>
+                </form>
             </div>
         </div>
-    </section>
+    </div>
 </template>
 
 <script>
@@ -79,7 +96,6 @@
                 username: '',
                 password: '',
                 isUsernameFilled: false,
-                remember: false,
                 isLoading: false,
                 isPasswordlessLoginBtnVisible: false
             }
@@ -146,7 +162,7 @@
                     const loginResult = await this.login({
                         username: this.username,
                         password: this.password
-                    }, this.remember);
+                    });
 
                     if (loginResult.isMFARequired) {
                         this.$router.push({name: 'VerifyMFA', query: { token: loginResult.token }});
@@ -175,13 +191,3 @@
         }
     }
 </script>
-
-<style scoped>
-    .form-signin input {
-        margin-top: 20px;
-    }
-
-    .btn-outline-primary {
-        margin-top: 3rem;
-    }
-</style>
