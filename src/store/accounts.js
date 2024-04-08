@@ -87,8 +87,6 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         accounts.value.push(account);
 
         updateLocalAccounts(accounts.value);
-
-        userStore.update();
     }
 
     async function updateAccount (account) {
@@ -113,8 +111,6 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         accounts.value.splice(indexToRemove, 1);
 
         updateLocalAccounts(accounts.value);
-
-        userStore.update();
     }
 
     return {
