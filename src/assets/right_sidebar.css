@@ -1,6 +1,7 @@
 @import './base.css';
 
 #account-sidebar-wrapper,
+#tags-sidebar-wrapper,
 #settings-sidebar-wrapper {
     position: absolute;
     width: 0;
@@ -22,6 +23,7 @@
     border-top-left-radius: 0.3rem;
     border-top-right-radius: 0.3rem;
     backdrop-filter: blur(18px) contrast(60%);
+    border: none;
 }
 
 @media only screen and (min-width: 500px) {
@@ -77,10 +79,6 @@
     border-radius: 15px;
     background: #f9f9f9;
     padding: 2px;
-}
-
-.right-sidebar {
-    border: none;
 }
 
 .text-muted, a {
