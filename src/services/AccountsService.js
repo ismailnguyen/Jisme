@@ -97,7 +97,7 @@ function AccountsService (user)
         return [];
     }
 
-    this.getAll = async function(successCallback, page = 0, limit = 100, accounts = [])
+    this.getAll = async function(successCallback, page = 0, limit = 300, accounts = [])
     {
         try {
             const response = await fetch(`${ACCOUNTS_API_URL}?page=${page}&limit=${limit}`,
