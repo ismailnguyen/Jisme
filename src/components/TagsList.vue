@@ -3,11 +3,11 @@
         <div class="right-sidebar">
              <div class="sidebar-header">
                 <div class="row">
-                    <div class="form-group col-xs-9 col-sm-9 col-9 col-md-9 col-lg-9">
+                    <div class="mb-3 col-xs-9 col-sm-9 col-9 col-md-9 col-lg-9">
                         <h2 class="sidebar-title">Tags</h2>
                     </div>
 
-                    <div class="form-group col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
+                    <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
                         <button type="button" class="button--close" @click="closeTags()">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
@@ -35,13 +35,15 @@
                                 v-for="(tag, index) in getUniqueTags()"
                                 v-bind:key="index"
                                 @click="selectTag(tag)">
-                                {{  tag.name || 'None' }} ({{ tag.count }})
-
-                                <span class="pull-right">
+                                <span class="text-end">
                                     <span class="btn btn-xs btn-default" @click="selectTag(tag)">
-                                        <i class="fa" :class="isCurrentTag(tag) ? 'fa-check-square-o' : 'fa-square-o'"></i>
+                                        <i class="fa-regular " :class="isCurrentTag(tag) ? 'fa-square-check' : 'fa-square'"></i>
                                     </span>
                                 </span>
+                                
+                                {{  tag.name || 'None' }} ({{ tag.count }})
+
+                                
                             </li>
                         </ul>
                     </div>

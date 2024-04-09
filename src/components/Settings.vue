@@ -3,7 +3,7 @@
         <div class="right-sidebar">
             <div class="sidebar-header">
                 <div class="row">
-                    <div class="form-group col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3">
+                    <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3">
                         <img
                             class="rounded-circle mb-3 sidebar-icon"
                             :src="user && user.avatarUrl ? user.avatarUrl : 'images/touch/favicon64.png'"
@@ -12,11 +12,11 @@
                             v-show="!isLoading">
                     </div>
 
-                    <div class="form-group col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6">
+                    <div class="mb-3 col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6">
                         <h2 class="sidebar-title">Settings</h2>
                     </div>
 
-                    <div class="form-group col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
+                    <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
                         <button type="button" class="button--close" @click="closeSettings()">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
@@ -58,12 +58,10 @@
                             <div class="input-group"
                                 v-for="passkey in user.passkeys"
                                 :key="passkey.passkey.id">
-                                <div class="input-group">
-                                    <input class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="passkey.deviceName" readonly />
-                                    <button class="btn btn-outline-secondary" type="button" @click="removePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
-                                </div>
+                                <input class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="passkey.deviceName" readonly />
+                                <button class="btn btn-outline-secondary" type="button" @click="removePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
                             </div>
-                            <button class="btn  btn-danger btn-block" @click.prevent="generatePasskey()" v-if="isGeneratePasskeyBtnVisible">
+                            <button class="btn btn-danger btn-block" @click.prevent="generatePasskey()" v-if="isGeneratePasskeyBtnVisible">
                                 <i class="fa fa-plus"></i> Add a passkey
                             </button>
                         </div>
@@ -224,23 +222,7 @@
 		}
 	}
 
-    .form-group {
-        margin-bottom: 2rem;
-    }
-
-    .form-control {
-        color: var(--color-text);
-    }
-
     .input-group {
-        margin-bottom: 1rem;
-    }
-
-    .sidebar-footer {
-        padding: 1rem;
-        position: fixed;
-        bottom: 1rem;
-        display: flex;
-        width: 100%;
+        margin-bottom: .5rem;
     }
 </style>
