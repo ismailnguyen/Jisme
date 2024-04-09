@@ -37,7 +37,11 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         let uniqueTags = [];
 
         filteredAccounts.value.forEach(account => {
-            account.tags.split(',').map(t => t.trim()).forEach(tagName => {
+            account.tags
+            .split(',')
+            .map(t => t.trim())
+            .filter(t => t)
+            .forEach(tagName => {
                 // look if the tag was already added
                 let alreadyAddedTag = uniqueTags.find(uniqueTag => uniqueTag.name === tagName);
                 if (alreadyAddedTag) {
