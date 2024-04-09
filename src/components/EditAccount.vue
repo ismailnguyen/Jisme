@@ -55,7 +55,7 @@
                                     class="badge badge-pill badge-primary"
                                     v-for="(tag, tagIndex) in account.tags.split(',')"
                                     v-bind:key="tagIndex"
-                                    @click="removeTag(tag)">
+                                    @click="removeTag(tagIndex)">
                                     {{ tag }}
                                     <i class="fa fa-close" v-if="tag"></i>
                                 </span>
@@ -277,6 +277,7 @@
                 this.closeAccount();
             },
             
+            // TODO: to be moved because now there is no more modal open event
             toggleModalContent: async function() {
                 this.showModalContent = !this.showModalContent;
 
@@ -327,9 +328,9 @@
                 this.newTag = '';
             },
 
-            removeTag: function (tag) {
+            removeTag: function (index) {
                 let newTags = this.account.tags.split(',').map(t => t.trim());
-                newTags.splice(newTags.indexOf(tag), 1);
+                newTags.splice(index, 1);
                 this.account.tags = newTags.join(',');
             },
 
