@@ -7,6 +7,7 @@
                     loading="lazy"
                     :alt="account.displayPlatform"
                     :title="account.displayPlatform"
+                    @error="onImageLoadingError(account)"
                     class="card-icon" />
             </div>
 
@@ -171,6 +172,10 @@
 
                 //generate as Image
                 return avatar.toDataURL();
+            },
+
+            onImageLoadingError(account) {
+                account.icon = '';
             }
         }
     }
