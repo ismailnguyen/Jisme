@@ -2,7 +2,7 @@
     <div id="page-content-wrapper" class="container-fluid">
         <header class="row header-search justify-content-center" v-if="!loading">
             <div class="col-xs-12 col-lg-6">
-                <input class="form-control searchBar" :value="searchQuery" @input="updateSearchQuery" type="search" placeholder="Search" autofocus>
+                <input class="form-control searchBar" v-model="searchQuery" type="search" placeholder="Search" autofocus>
             </div>
         </header>
 
@@ -20,7 +20,7 @@
             <br><br>
             <div class="row" v-if="!loading">
                 <AccountItem 
-                    v-for="(account, accountIndex) in truncate(accountsFilteredByQuery)"
+                    v-for="(account, accountIndex) in accountsFilteredByQuery"
                     v-bind:key="accountIndex"
                     :account="account" />
             </div>
@@ -30,14 +30,6 @@
             <br><br>
 
             <StackedAccountList :accounts="recentAccounts" />
-        </div>
-
-        <div class="row loadMore justify-content-center" v-if="accountsFilteredByQuery && accountsFilteredByQuery.length > truncate(accountsFilteredByQuery).length && !loading && searchQuery">
-            <div class="col-xs-12 col-lg-6">
-                <button id="loadMore" @click="loadMore()" type="button" class="btn btn-lg btn-light btn-block load-more-button">
-                    More
-                </button>
-            </div>
         </div>
 
         <Loader v-show="loading" />
@@ -65,7 +57,6 @@
             return {
                 searchQuery: this.$route.query.search || '', // Default search query is looked up from query string
                 loading: true,
-                pagination_offset: 0,
                 editAccount: new Account(),
             }
         },
@@ -105,9 +96,6 @@
         },
         async mounted() {
             await this.fetchLatestAccounts();
-
-            this.initPagination();
-            this.loadMoreOnScrollToBottom();
         },
         methods: {
             fetchLatestAccounts: async function () {
@@ -149,30 +137,7 @@
                 this.$router.push({name: 'Home', query: { tags: newTags.join(',') }});
             },
 
-            updateSearchQuery: function (event)
-            {
-                this.searchQuery = event.target.value;
-            },
-
-            loadMore: function ()
-            {
-                this.pagination_offset += 1;
-            },
-
-            initPagination: function ()
-            {
-                this.pagination_offset = 20;
-            },
-
-            loadMoreOnScrollToBottom: function () {
-                window.onscroll = () => {
-                    let bottomOfWindow = (window.innerHeight + window.scrollY) >= document.body.offsetHeight;
-
-                    if (bottomOfWindow) {
-                        this.loadMore();
-                    }
-                };
-            },
+         
 
             // Function for testing purpose
             getDuplicatesOnly: function (initalArray) {
@@ -190,14 +155,10 @@
                 return duplicateAccounts;
             },
 			
-            truncate: function (elements)
-            {
-                return elements//.slice(0, this.pagination_offset);
-            }
         },
         computed: {
             accountsFilteredByQuery: function () {
-                return this.getAccountsFilteredByQuery(this.searchQuery, this.$route.query.tags, true)
+                return this.getAccountsFilteredByQuery(this.searchQuery, this.$route.query.tags, true);
             },
 
             selectedTags: function () {
@@ -205,7 +166,7 @@
             },
 
             isSearching: function () {
-                return this.searchQuery || this.$route.query.tags;
+                return (this.searchQuery && this.searchQuery.length >= 3) || this.$route.query.tags;
             }
         }
     }

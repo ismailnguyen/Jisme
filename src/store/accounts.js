@@ -8,12 +8,11 @@ import FilterService from '../services/FilterService';
 
 const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const userStore = useUserStore();
-    // const user = ref(userStore.user)
     const { user } = storeToRefs(userStore);
 
     const recentAccounts = ref([]);
     const accounts = ref([]);
-    const filteredAccounts = ref([]);
+    const _filteredAccounts = ref([]);
 
     let accountsService = new AccountsService(user.value);
 
@@ -27,16 +26,16 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
                 filterService.sortByName();
             }
 
-            filteredAccounts.value = filterService.getAccounts();
+            _filteredAccounts.value = filterService.getAccounts();
 
-            return filteredAccounts.value;
+            return _filteredAccounts.value;
         }
     })
 
     const getUniqueTags = () => {
         let uniqueTags = [];
 
-        filteredAccounts.value.forEach(account => {
+        _filteredAccounts.value.forEach(account => {
             account.tags
             .split(',')
             .map(t => t.trim())
