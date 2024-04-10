@@ -48,7 +48,7 @@
                         </div>
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <label class="form-label" for="addAccount_input_new_tag"><i class="fa fa-tags" aria-hidden="true"></i> Tags</label>
-                            <div class="form-control tags tags-input">
+                            <div class="form-control tags tags-input" @click="focusTagInput()">
                                 <span
                                     class="badge badge-pill badge-primary"
                                     v-for="(tag, tagIndex) in account.tags.split(',')"
@@ -58,7 +58,7 @@
                                     <i class="fa fa-close" v-if="tag"></i>
                                 </span>
                             </div>
-                            <input id="addAccount_input_new_tag" class="form-control tags-new-input" placeholder="Tag" type="text" v-model="newTag" @keyup.enter="addTag()" required />
+                            <input ref="tags" id="addAccount_input_new_tag" class="form-control tags-new-input" placeholder="Tag" type="text" v-model="newTag" @keyup.enter="addTag()" required />
                         </div>
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <label class="form-label" for="addAccount_platform_icon"><i class="fa fa-icons" aria-hidden="true"></i> Icon</label>
@@ -203,6 +203,10 @@
                     this.showAlert('Error', error.toString(), 'danger');
                     this.isCreating = false;
                 }
+            },
+
+            focusTagInput: function () {
+                this.$refs.tags.focus();
             },
 
             addTag: function () {

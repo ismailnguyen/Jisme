@@ -50,7 +50,7 @@
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <label class="form-label" for="editAccount_input_new_tag"><i class="fa fa-tags" aria-hidden="true"></i> Tags</label>
-                            <div class="form-control tags tags-input">
+                            <div class="form-control tags tags-input" @click="focusTagInput()">
                                 <span
                                     class="badge badge-pill badge-primary"
                                     v-for="(tag, tagIndex) in account.tags.split(',')"
@@ -61,7 +61,7 @@
                                 </span>
                             </div>
 
-                            <input id="editAccount_input_new_tag" class="form-control tags-new-input" placeholder="Enter new tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
+                            <input ref="tags" id="editAccount_input_new_tag" class="form-control tags-new-input" placeholder="Enter new tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
                         </div>
 
                         <hr class="my-4">
@@ -156,13 +156,6 @@
                             <label class="form-label" for="editAccount_input_description"><i class="fa fa-quote-left" aria-hidden="true"></i> Description</label>
                             <textarea id="editAccount_input_description" class="form-control" type="text" v-model="account.description" rows="3"></textarea>
                         </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="editAccount_input_notes"><i class="fa fa-marker" aria-hidden="true"></i> Notes</label>
-                            <textarea id="editAccount_input_notes" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
-                        </div>
-
-                        <hr class="my-4">
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <label class="form-label" for="editAccount_input_notes"><i class="fa fa-marker" aria-hidden="true"></i> Notes</label>
@@ -321,6 +314,10 @@
                         this.isDeleting = false;
                     }
                 }
+            },
+
+            focusTagInput: function () {
+                this.$refs.tags.focus();
             },
 
             addTag: function () {

@@ -3,6 +3,7 @@
         <header class="row header-search justify-content-center" v-if="!loading">
             <div class="col-xs-12 col-lg-6">
                 <input class="form-control searchBar" :value="searchQuery" @input="updateSearchQuery" type="search" placeholder="Search" autofocus>
+                <input class="form-control searchBar" id="searchbox">
             </div>
         </header>
 
@@ -59,6 +60,10 @@
     import AccountItem from '../components/AccountItem.vue'
     import StackedAccountList from '../components/StackedAccountList.vue'
     import Loader from '../components/Loader.vue'
+
+    import instantsearch from 'instantsearch.js'
+    import { searchBox } from 'instantsearch.js/es/widgets'
+    import InstantSearchAdapter from '../utils/InstantSearchAdapter'
     
     export default {
         data() {
@@ -108,6 +113,26 @@
 
             this.initPagination();
             this.loadMoreOnScrollToBottom();
+
+            const searchClient = new InstantSearchAdapter();
+
+            const search = instantsearch({
+                indexName: 'accounts',
+                searchClient: searchClient.searchClient
+            });
+
+            search.addWidgets([
+                searchBox({
+                    container: '#searchbox',
+                    placeholder: 'Search',
+                    showReset: false,
+                    showSubmit: false,
+                    showLoadingIndicator: false,
+                    cssClasses: {
+                        input: 'form-control searchBar',
+                    }
+                })
+            ])
         },
         methods: {
             fetchLatestAccounts: async function () {
