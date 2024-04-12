@@ -16,7 +16,7 @@ function UserService() {
             return await response.json();
         }
         catch (error) {
-            console.log(error)
+            throw new Error('Server unavailable!');
         }
     }
 
@@ -31,7 +31,7 @@ function UserService() {
             return await response.json();
         }
         catch (error) {
-            console.log(error)
+            throw new Error('Server unavailable!');
         }
     }
 
@@ -42,28 +42,33 @@ function UserService() {
             password: password
         };
 
-        const response = await fetch(USERS_API_URL + 'login',
+        try {
+            const response = await fetch(USERS_API_URL + 'login',
             {
                 method: 'POST',
                 headers: getHeaders(),
                 body: JSON.stringify(credentials)
             });
 
-        const body = await response.json();
+            const body = await response.json();
+            console.log('response status', response.status)
 
-        if (!response.ok) {
-            if (response.status === 400) {
-                throw new Error('Username and password are mandatory!');
+            if (!response.ok) {
+                if (response.status === 400) {
+                    throw new Error('Username and password are mandatory!');
+                }
+
+                if (response.status === 404) {
+                    throw new Error('Invalid username/password !');
+                }
+                    
+                throw new Error(body.message);
             }
 
-            if (response.status === 404) {
-                throw new Error('Invalid username/password !');
-            }
-                
-            throw new Error(body.message);
+            return body;
+        } catch (error) {
+            throw new Error('Server unavailable!');
         }
-
-        return body;
     }
 
     this.loginPasswordless = async function (passkey) {
@@ -76,10 +81,9 @@ function UserService() {
             })
 
             return await response.json();
-
         }
         catch (error) {
-            console.log(error)
+            throw new Error('Server unavailable!');
         }
     }
 
@@ -90,24 +94,29 @@ function UserService() {
             extendSession: extendSession
         };
 
-        const response = await fetch(USERS_API_URL + 'verify-mfa',
-        {
-            method: 'POST',
-            headers: getHeadersWithAuth(accessToken),
-            body: JSON.stringify(mfa)
-        });
+        try {
+            const response = await fetch(USERS_API_URL + 'verify-mfa',
+            {
+                method: 'POST',
+                headers: getHeadersWithAuth(accessToken),
+                body: JSON.stringify(mfa)
+            });
 
-        const body = await response.json();
+            const body = await response.json();
 
-        if (!response.ok) {
-            if (response.status === 401) {
-                throw new Error('Invalid TOTP code!');
+            if (!response.ok) {
+                if (response.status === 401) {
+                    throw new Error('Invalid TOTP code!');
+                }
+                    
+                throw new Error(body.message);
             }
-                
-            throw new Error(body.message);
-        }
 
-        return body;
+            return body;
+        }
+        catch (error) {
+            throw new Error('Server unavailable!');
+        }
     }
 };
 
