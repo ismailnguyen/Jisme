@@ -6,7 +6,7 @@
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3">
                         <img
                             class="rounded-circle mb-3 sidebar-icon"
-                            :src="user && user.avatarUrl ? user.avatarUrl : 'images/touch/favicon64.png'"
+                            :src="user && user.avatarUrl ? user.avatarUrl : '../assets/logo_medium.png'"
                             alt="" width="72" height="72"
                             loading="lazy"
                             v-show="!isLoading">

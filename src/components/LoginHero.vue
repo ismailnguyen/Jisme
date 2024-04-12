@@ -2,7 +2,7 @@
 
 <template>
     <div class="col-lg-7 text-center text-lg-start d-none d-lg-block">
-        <img class="img-fluid rounded mb-4" :class="isLoading ? 'loader-animate' : ''" loading="lazy" src="images/touch/favicon64.png" alt="Jisme">
+        <img class="img-fluid rounded mb-4" :class="isLoading ? 'loader-animate' : ''" loading="lazy" src="../assets/logo_medium.png" alt="Jisme">
 
         <h1 class="display-4 fw-bold lh-1 mb-3">We protect your integrity.</h1>
         <p class="col-lg-10 fs-4">
