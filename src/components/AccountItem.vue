@@ -11,16 +11,16 @@
                     class="card-icon" />
             </div>
 
-            <div class="card-header">
+            <div class="card-header tags">
                 <div
-                    class="badge badge-pill badge-primary"
+                    class="badge rounded-pill text-bg-primary"
                     v-for="tag in account.tags.split(',')"
                     @click="selectTag(tag)"
                     v-bind:key="tag">
                     {{tag}}
                 </div>
                 <div
-                    class="badge badge-pill badge-danger"
+                    class="badge rounded-pill text-bg-danger"
                     v-for="socialLogin in account.social_login.split(',')"
                     v-show="account.social_login"
                     v-bind:key="socialLogin">

@@ -74,3 +74,7 @@ body {
 .separator:not(:empty)::after {
   margin-left: .25em;
 }
+
+.tags .badge {
+  margin-right: .3rem;
+}

@@ -50,7 +50,7 @@
                             <label class="form-label" for="addAccount_input_new_tag"><i class="fa fa-tags" aria-hidden="true"></i> Tags</label>
                             <div class="form-control tags tags-input" @click="focusTagInput()">
                                 <span
-                                    class="badge badge-pill badge-primary"
+                                    class="badge rounded-pill badge-primary"
                                     v-for="(tag, tagIndex) in account.tags.split(',')"
                                     v-bind:key="tagIndex"
                                     @click="removeTag(tag)">
