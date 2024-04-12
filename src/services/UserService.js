@@ -117,6 +117,6 @@ function UserService() {
             throw new Error('Server unavailable!');
         }
     }
-};
+}
 
 export default UserService;

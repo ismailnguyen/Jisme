@@ -53,7 +53,7 @@
 
                         <hr class="my-4">
 
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="user.passkeys">
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12 input-group-list" v-if="user.passkeys">
                             <label class="form-label" for="passwordlesslogin_btn"><i class="fa fa-fingerprint" aria-hidden="true"></i> Password-less login</label>
                             <div class="input-group"
                                 v-for="passkey in user.passkeys"
@@ -210,19 +210,3 @@
         }
     }
 </script>
-
-<style scoped>
-    #settings-sidebar-wrapper .right-sidebar {
-        background: var(--color-background-mute);
-    }
-	
-	@media (prefers-color-scheme: dark) {
-		#settings-sidebar-wrapper .right-sidebar {
-			color: var(--color-text);
-		}
-	}
-
-    .input-group {
-        margin-bottom: .5rem;
-    }
-</style>

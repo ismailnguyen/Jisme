@@ -23,6 +23,14 @@
     border-top-right-radius: 0.3rem;
     backdrop-filter: blur(18px) contrast(60%);
     border: none;
+    background: var(--color-background-mute);
+}
+
+@media (max-width: 767.98px) { 
+    .right-sidebar {
+        background: var(--color-background-soft);
+        color: var(--color-text);
+    }
 }
 
 @media only screen and (min-width: 500px) {
@@ -32,6 +40,64 @@
         border-bottom-left-radius: 15px;
         border-bottom-right-radius: 0;
     }
+}
+
+.bg-gradient-blue {
+    color: #f8f9fa;
+    background: linear-gradient(141.13deg,#106cde 26.29%,#36a5ef 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+    .bg-gradient-blue {
+        color: #e4e6eb;
+        background: linear-gradient(141.69deg,#3077e2 0%,#1b42ab 100%);
+    }
+}
+
+.bg-gradient-blue .btn-group label.btn.btn-outline-primary:hover {
+    background: #fff;
+    color: #000;
+}
+
+.bg-gradient-blue .btn-group label.btn {
+    color: #fff;
+    border-color: #fff;
+}
+
+.bg-gradient-blue .btn-group label.btn.active {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+}
+
+.bg-gradient-blue .form-control {
+    color: #f8f9fa;
+}
+
+.btn-group label.btn {
+    color: #2870ea;
+    border-color: #2870ea;
+}
+
+.btn-group label.btn.active {
+    background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
+    color: #fff;
+    border-color: #2870ea;
+}
+
+@media (prefers-color-scheme: dark) {
+    .btn-group label.btn {
+        color: #fff;
+    }
+
+    .btn-group label.btn.active {
+        color: #fff;
+    }
+}
+
+.bg-gradient-blue .btn-group label.btn {
+    color: #fff;
+    border-color: #fff;
 }
 
 .button--close {
@@ -84,6 +150,10 @@
     color: #99c9ff !important;
 }
 
+.form-control {
+    color: #343a40;
+}
+
 .form-control::placeholder {
     color: #ced4da70;
 }
@@ -127,8 +197,22 @@
     width: 100%;
 }
 
+.sidebar-footer .btn-primary {
+    color: #f8f9fa;
+    border-color: var(--color-text);
+    background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
+}
+
 .btn-group .btn-check {
     display: none;
+}
+
+.btn-outline-light {
+    border-color: #ced4da70;
+}
+
+.input-group-list .input-group {
+    margin-bottom: .5rem;
 }
 
 hr {
@@ -136,7 +220,6 @@ hr {
     height: 1px;
     background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
 }
-
 
 @media (prefers-color-scheme: dark) {
     hr {

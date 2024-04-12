@@ -3,7 +3,7 @@
         <div class="right-sidebar">
             <div class="sidebar-header">
                 <div class="row">
-                    <div class="mb-3 col-xs-3 col-md-3 col-lg-3" v-show="account.icon">
+                    <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3" v-show="account.icon">
                         <img
                             :src="account.icon"
                             loading="lazy"
@@ -12,11 +12,11 @@
                             class="sidebar-icon" />
                     </div>
 
-                    <div class="mb-3" :class="account.icon ? 'col-xs-6 col-md-6 col-lg-6' : 'col-xs-9 col-md-9 col-lg-9'">
+                    <div class="mb-3" :class="account.icon ? 'col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6' : 'col-xs-9 col-sm-9 col-9 col-md-9 col-lg-9'">
                         <h2 class="sidebar-title">{{ account.displayPlatform || 'Add' }}</h2>
                     </div>
-
-                    <div class="mb-3 col-xs-3 col-md-3 col-lg-3 justify-content-end">
+                        
+                    <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
                         <button type="button" class="button--close" @click="closeAccount()">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
@@ -254,45 +254,3 @@
         }
     } 
 </script>
-
-<style scoped>
-    #account-sidebar-wrapper .right-sidebar {
-        background: var(--color-background-mute);
-    }
-	
-	@media (prefers-color-scheme: dark) {
-		#account-sidebar-wrapper .right-sidebar {
-			color: var(--color-text);
-		}
-	}
-
-    .form-control {
-        color: #343a40;
-    }
-
-    .sidebar-footer .btn-primary {
-        color: #f8f9fa;
-        border-color: var(--color-text);
-        background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
-    }
-
-    .btn-group label.btn {
-        color: #2870ea;
-        border-color: #2870ea;
-    }
-
-    .btn-group label.btn.active {
-        background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
-        color: #fff;
-    }
-
-    @media (prefers-color-scheme: dark) {
-		.btn-group label.btn {
-            color: #fff;
-        }
-
-        .btn-group label.btn.active {
-            color: #fff;
-        }
-	}
-</style>

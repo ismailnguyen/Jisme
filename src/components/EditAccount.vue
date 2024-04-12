@@ -1,6 +1,6 @@
 <template>
     <div id="account-sidebar-wrapper">
-        <div class="right-sidebar">
+        <div class="right-sidebar bg-gradient-blue">
             <div class="sidebar-header">
                 <div class="row">
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3" v-show="account.icon">
@@ -13,7 +13,7 @@
                     </div>
 
                     <div class="mb-3" :class="account.icon ? 'col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6' : 'col-xs-9 col-sm-9 col-9 col-md-9 col-lg-9'">
-                        <h2 class="sidebar-title">{{ account.displayPlatform}}</h2>
+                        <h2 class="sidebar-title">{{ account.displayPlatform }}</h2>
                     </div>
                         
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
@@ -382,37 +382,3 @@
         }
     } 
 </script>
-
-<style scoped>
-    #account-sidebar-wrapper .right-sidebar {
-        color: #f8f9fa;
-        background: linear-gradient(141.13deg,#106cde 26.29%,#36a5ef 100%);
-    }
-	
-	@media (prefers-color-scheme: dark) {
-		#account-sidebar-wrapper .right-sidebar {
-			color: #e4e6eb;
-			background: linear-gradient(141.69deg,#3077e2 0%,#1b42ab 100%);
-		}
-	}
-
-    .btn-outline-light {
-        border-color: #ced4da70;
-    }
-
-    .btn-group label.btn.btn-outline-primary:hover {
-        background: #fff;
-        color: #000;
-    }
-
-    .btn-group label.btn {
-        color: #fff;
-        border-color: #fff;
-    }
-
-    .btn-group label.btn.active {
-        background: #fff;
-        color: #000;
-        border-color: #fff;
-    }
-</style>
