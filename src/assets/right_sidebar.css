@@ -74,6 +74,10 @@
     color: #f8f9fa;
 }
 
+.bg-gradient-blue .form-control:focus {
+    color: #000;
+}
+
 .btn-group label.btn {
     color: #2870ea;
     border-color: #2870ea;
@@ -152,6 +156,7 @@
 
 .form-control {
     color: #343a40;
+    overflow-x: auto !important;
 }
 
 .form-control::placeholder {
@@ -159,10 +164,19 @@
 }
 
 .form-control:disabled,
-    .form-control[readonly] {
-        background: none;
-        border: 1px solid #ced4da70;
-    }
+.form-control[readonly] {
+    background: none;
+    border: 1px solid #ced4da70;
+}
+
+.form-label {
+    width: 100%;
+}
+
+.form-label.tags .badge  {
+    font-size: 12px;
+    line-height: 12px;
+}
 
 .tags-input {
     cursor: text;

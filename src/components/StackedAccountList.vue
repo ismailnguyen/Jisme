@@ -8,7 +8,7 @@
 </template>
 
 <script>
-    import StackedAccountItem from './StackedAccountItem.vue'
+    import StackedAccountItem from './AccountItem.vue'
     
     export default {
         props: ['accounts'],

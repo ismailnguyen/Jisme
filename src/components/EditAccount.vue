@@ -42,66 +42,192 @@
 
                         <!-- region_start -- Account type: card -->
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="editAccount_input_card_number"><i class="fa fa-barcode" aria-hidden="true"></i> Number</label>
-                            <input id="editAccount_input_card_number" class="form-control" placeholder="Card number" type="text" v-model="account.card_number" @keyup.enter="add()" />
+                            <label
+                                v-show="!fieldAttrs.card_number.isExpanded"
+                                @click="fieldAttrs.card_number.isExpanded=!fieldAttrs.card_number.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_card_number">
+                                <i class="fa fa-barcode" aria-hidden="true"></i> {{ account.card_number || 'Number' }}
+                                <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
+                            </label>
+                            <label
+                                v-show="fieldAttrs.card_number.isExpanded"
+                                @click="fieldAttrs.card_number.isExpanded=!fieldAttrs.card_number.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_card_number">
+                                <i class="fa fa-barcode" aria-hidden="true"></i> Number
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                            </label>
+                            <input v-show="fieldAttrs.card_number.isExpanded" id="editAccount_input_card_number" class="form-control" placeholder="Card number" type="text" v-model="account.card_number" @keyup.enter="add()" />
                         </div>
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="editAccount_input_card_name"><i class="fa fa-user" aria-hidden="true"></i> Name</label>
-                            <input id="editAccount_input_card_name" class="form-control" placeholder="Name on card" type="text" v-model="account.card_name" @keyup.enter="add()" />
+                            <label
+                                v-show="!fieldAttrs.card_name.isExpanded"
+                                @click="fieldAttrs.card_name.isExpanded=!fieldAttrs.card_name.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_card_name">
+                                <i class="fa fa-user" aria-hidden="true"></i> {{ account.card_name || 'Name' }}
+                                <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
+                            </label>
+                            <label
+                                v-show="fieldAttrs.card_name.isExpanded"
+                                @click="fieldAttrs.card_name.isExpanded=!fieldAttrs.card_name.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_card_name">
+                                <i class="fa fa-user" aria-hidden="true"></i> Name
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                            </label>
+                            <input v-show="fieldAttrs.card_name.isExpanded" id="editAccount_input_card_name" class="form-control" placeholder="Name on card" type="text" v-model="account.card_name" @keyup.enter="add()" />
                         </div>
                         
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="editAccount_input_card_pin"><i class="fa fa-key" aria-hidden="true"></i> PIN</label>
-                            <input id="editAccount_input_card_pin" class="form-control" placeholder="PIN" type="text" v-model="account.card_pin" @keyup.enter="add()" />
+                            <label
+                                v-show="!fieldAttrs.card_pin.isExpanded"
+                                @click="fieldAttrs.card_pin.isExpanded=!fieldAttrs.card_pin.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_card_pin">
+                                <i class="fa fa-key" aria-hidden="true"></i> {{ account.card_pin || 'PIN' }}
+                                <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
+                            </label>
+                            <label
+                                v-show="fieldAttrs.card_pin.isExpanded"
+                                @click="fieldAttrs.card_pin.isExpanded=!fieldAttrs.card_pin.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_card_pin">
+                                <i class="fa fa-key" aria-hidden="true"></i> PIN
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                            </label>
+                            <input v-show="fieldAttrs.card_pin.isExpanded" id="editAccount_input_card_pin" class="form-control" placeholder="PIN" type="text" v-model="account.card_pin" @keyup.enter="add()" />
                         </div>
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="editAccount_input_card_expiracy"><i class="fa fa-calendar" aria-hidden="true"></i> Expiracy</label>
-                            <input id="editAccount_input_card_expiracy" class="form-control" placeholder="Expiracy" type="text" v-model="account.card_expiracy" @keyup.enter="add()" />
+                            <label
+                                v-show="!fieldAttrs.card_expiracy.isExpanded"
+                                @click="fieldAttrs.card_expiracy.isExpanded=!fieldAttrs.card_expiracy.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_card_expiracy">
+                                <i class="fa fa-calendar" aria-hidden="true"></i> {{ account.card_expiracy || 'Expiracy' }}
+                                <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
+                            </label>
+                            <label
+                                v-show="fieldAttrs.card_expiracy.isExpanded"
+                                @click="fieldAttrs.card_expiracy.isExpanded=!fieldAttrs.card_expiracy.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_card_expiracy">
+                                <i class="fa fa-calendar" aria-hidden="true"></i> Expiracy
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                            </label>
+                            <input v-show="fieldAttrs.card_expiracy.isExpanded" id="editAccount_input_card_expiracy" class="form-control" placeholder="Expiracy" type="text" v-model="account.card_expiracy" @keyup.enter="add()" />
                         </div>
                         
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="editAccount_input_card_cryptogram"><i class="fa fa-lock" aria-hidden="true"></i> Cryptogram</label>
-                            <input id="editAccount_input_card_cryptogram" class="form-control" placeholder="CVC/CVV" type="text" v-model="account.card_cryptogram" @keyup.enter="add()" />
+                            <label
+                                v-show="!fieldAttrs.card_cryptogram.isExpanded"
+                                @click="fieldAttrs.card_cryptogram.isExpanded=!fieldAttrs.card_cryptogram.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_card_cryptogram">
+                                <i class="fa fa-lock" aria-hidden="true"></i> {{ account.card_cryptogram || 'Cryptogram' }}
+                                <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
+                            </label>
+                            <label
+                                v-show="fieldAttrs.card_cryptogram.isExpanded"
+                                @click="fieldAttrs.card_cryptogram.isExpanded=!fieldAttrs.card_cryptogram.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_card_cryptogram">
+                                <i class="fa fa-lock" aria-hidden="true"></i> Cryptogram
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                            </label>
+                            <input v-show="fieldAttrs.card_cryptogram.isExpanded" id="editAccount_input_card_cryptogram" class="form-control" placeholder="CVC/CVV" type="text" v-model="account.card_cryptogram" @keyup.enter="add()" />
                         </div>
                         <!-- region_end -- Account type: card -->
 
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == '2fa'">
-                            <label class="form-label" for="editAccount_input_totp_token"><i class="fa fa-qrcode" aria-hidden="true"></i> TOTP Token</label>
-                            <input id="editAccount_input_totp_token" class="form-control" placeholder="Generated token" type="text" v-model="totpToken" readonly />
-                        </div>
-
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account' || account.type == '2fa'">
-                            <label class="form-label" for="editAccount_input_login"><i class="fa fa-id-badge" aria-hidden="true"></i> Login</label>
-                            <div class="input-group">
+                            <label
+                                v-show="!fieldAttrs.login.isExpanded"
+                                @click="fieldAttrs.login.isExpanded=!fieldAttrs.login.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_login">
+                                <i class="fa fa-id-badge" aria-hidden="true"></i> {{ account.login || 'Login' }}
+                                <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
+                            </label>
+                            <label
+                                v-show="fieldAttrs.login.isExpanded"
+                                @click="fieldAttrs.login.isExpanded=!fieldAttrs.login.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_login">
+                                <i class="fa fa-id-badge" aria-hidden="true"></i> Login
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                            </label>
+                            <div class="input-group" v-show="fieldAttrs.login.isExpanded">
                                 <button class="btn btn-outline-light" type="button" @click="copyToClipboard('editAccount_input_login_hidden')"><i class="fa fa-clipboard"></i></button>
                                 <input id="editAccount_input_login" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="save()" />
                             </div>
-                            <input id="editAccount_input_login_hidden" type="hidden" :value="account.login" />
+                            <input v-show="fieldAttrs.login.isExpanded" id="editAccount_input_login_hidden" type="hidden" :value="account.login" />
+                        </div>
+
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == '2fa'">
+                            <label
+                                v-show="!fieldAttrs.totpToken.isExpanded"
+                                @click="fieldAttrs.totpToken.isExpanded=!fieldAttrs.totpToken.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_totp_token">
+                                <i class="fa fa-qrcode" aria-hidden="true"></i> {{ totpToken }}
+                                <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
+                            </label>
+                            <label
+                                v-show="fieldAttrs.totpToken.isExpanded"
+                                @click="fieldAttrs.totpToken.isExpanded=!fieldAttrs.totpToken.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_totp_token">
+                                <i class="fa fa-qrcode" aria-hidden="true"></i> TOTP Token
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                            </label>
+                            <input v-show="fieldAttrs.totpToken.isExpanded" id="editAccount_input_totp_token" class="form-control" placeholder="Generated token" type="text" v-model="totpToken" readonly />
                         </div>
                         
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == '2fa'">
+                        <div v-show="fieldAttrs.totpToken.isExpanded" class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == '2fa'">
                             <label class="form-label" for="editAccount_input_totp_secret"><i class="fa fa-key" aria-hidden="true"></i> TOTP Secret</label>
                             <input id="editAccount_input_totp_secret" class="form-control" placeholder="TOTP Secret" type="text" v-model="account.totp_secret" @keyup.enter="add()" />
                         </div>
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="editAccount_input_password"><i class="fa fa-lock" aria-hidden="true"></i> Password</label>
-                            <div class="input-group">
+                            <label
+                                v-show="!fieldAttrs.password.isExpanded"
+                                @click="fieldAttrs.password.isExpanded=!fieldAttrs.password.isExpanded"
+                                class="form-label tags"
+                                for="editAccount_input_password">
+                                <i class="fa fa-lock" aria-hidden="true"></i> {{ account.password || account.password_clue || (account.social_login? '' : 'Password') }} <div
+                                    class="badge rounded-pill text-bg-danger"
+                                    v-for="socialLogin in account.social_login.split(',')"
+                                    v-show="account.social_login"
+                                    v-bind:key="socialLogin">
+                                    {{ socialLogin }}
+                                </div>
+                                <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
+                            </label>
+                            <label
+                                v-show="fieldAttrs.password.isExpanded"
+                                @click="fieldAttrs.password.isExpanded=!fieldAttrs.password.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_password">
+                                <i class="fa fa-lock" aria-hidden="true"></i> Password
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                            </label>
+                            <div class="input-group" v-show="fieldAttrs.password.isExpanded">
                                 <input id="editAccount_input_password" class="form-control" type="text" aria-describedby="editAccount_input_passwordHelp" v-model="account.password" @keyup.enter="save()" />
                                 <input id="editAccount_input_password_hidden" type="hidden" :value="account.password" />
                                 <button class="btn btn-outline-light" type="button" @click="account.generatePassword()"><i class="fa fa-cogs"></i> Generate</button>
                             </div>
-                            <small id="editAccount_input_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
+                            <small v-show="fieldAttrs.password.isExpanded" id="editAccount_input_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
                         </div>
 
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
+                        <div v-show="fieldAttrs.password.isExpanded" class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
                             <label class="form-label" for="editAccount_input_password_clue"><i class="fa fa-eye" aria-hidden="true"></i> Password clue</label>
                             <input id="editAccount_input_password_clue" class="form-control" type="text" v-model="account.password_clue" @keyup.enter="save()" />
                         </div>
 
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
+                        <div v-show="fieldAttrs.password.isExpanded" class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
                             <label class="form-label" for="editAccount_input_passwordless"><i class="fa fa-bolt" aria-hidden="true"></i> Password less</label>
                             <div class="input-group" v-show="passwordLess.generatedPassword">
                                 <input id="editAccount_input_passwordless_generatedPassword" class="form-control" type="text" v-model="passwordLess.generatedPassword" readonly />
@@ -114,7 +240,7 @@
                             <small id="editAccount_input_passwordlessHelp_masterPassword" class="form-text text-muted" v-show="!passwordLess.generatedPassword">Type your master password to generate the password less.</small>
                         </div>
                         
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
+                        <div v-show="fieldAttrs.password.isExpanded" class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
                             <label class="form-label" for="editAccount_input_social_login"><i class="fa fa-users" aria-hidden="true"></i> Social login</label>
                             <input id="editAccount_input_social_login" class="form-control" type="text" v-model="account.social_login" @keyup.enter="save()" />
                         </div>
@@ -122,17 +248,59 @@
                         <hr class="my-4">
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="editAccount_input_platform"><i class="fa fa-globe" aria-hidden="true"></i> Platform</label>
-                            <div class="input-group">
+                            <label
+                                v-show="!fieldAttrs.platform.isExpanded"
+                                @click="fieldAttrs.platform.isExpanded=!fieldAttrs.platform.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_platform">
+                                <i class="fa fa-globe" aria-hidden="true"></i> {{ account.platform }}
+                                <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
+                            </label>
+                            <label
+                                v-show="fieldAttrs.platform.isExpanded"
+                                @click="fieldAttrs.platform.isExpanded=!fieldAttrs.platform.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_platform">
+                                <i class="fa fa-globe" aria-hidden="true"></i> Platform
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                            </label>
+                            <div v-show="fieldAttrs.platform.isExpanded" class="input-group">
                                 <button class="btn btn-outline-light" type="button" @click="copyToClipboard('editAccount_input_platform_hidden')"><i class="fa fa-clipboard"></i></button>
                                 <input id="editAccount_input_platform" class="form-control" placeholder="Platform" type="text" v-model="account.platform" autofocus />
                             </div>
-                            <input id="editAccount_input_platform_hidden" type="hidden" :value="account.platform" />
+                            <input v-show="fieldAttrs.platform.isExpanded" id="editAccount_input_platform_hidden" type="hidden" :value="account.platform" />
+                        </div>
+
+                         <div v-show="fieldAttrs.platform.isExpanded" class="mb-3 col-xs-12 col-md-12" :class="account.type == 'account' ? 'col-lg-12' : 'col-lg-12'">
+                            <label class="form-label" for="editAccount_input_icon"><i class="fa fa-icons" aria-hidden="true"></i> Icon</label>
+                            <input id="editAccount_input_icon" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="save()" />
                         </div>
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="editAccount_input_new_tag"><i class="fa fa-tags" aria-hidden="true"></i> Tags</label>
-                            <div class="form-control tags tags-input" @click="focusTagInput()">
+                            <label
+                                v-show="!fieldAttrs.tags.isExpanded"
+                                @click="fieldAttrs.tags.isExpanded=!fieldAttrs.tags.isExpanded"
+                                class="form-label tags"
+                                for="editAccount_input_new_tag">
+                                <i class="fa fa-tags" aria-hidden="true"></i>
+                                <span
+                                    class="badge rounded-pill badge-primary"
+                                    v-for="tag in account.tags.split(',')"
+                                    v-show="account.tags"
+                                    v-bind:key="tag">
+                                    {{ tag }}
+                                </span>
+                                <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
+                            </label>
+                            <label
+                                v-show="fieldAttrs.tags.isExpanded"
+                                @click="fieldAttrs.tags.isExpanded=!fieldAttrs.tags.isExpanded"
+                                class="form-label"
+                                for="editAccount_input_new_tag">
+                                <i class="fa fa-tags" aria-hidden="true"></i> Tags
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                            </label>
+                            <div v-show="fieldAttrs.tags.isExpanded" class="form-control tags tags-input" @click="focusTagInput()">
                                 <span
                                     class="badge rounded-pill badge-primary"
                                     v-for="(tag, tagIndex) in account.tags.split(',')"
@@ -143,15 +311,10 @@
                                 </span>
                             </div>
 
-                            <input ref="tags" id="editAccount_input_new_tag" class="form-control tags-new-input" placeholder="Enter new tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
+                            <input v-show="fieldAttrs.tags.isExpanded" ref="tags" id="editAccount_input_new_tag" class="form-control tags-new-input" placeholder="Enter new tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
                         </div>
 
                         <hr class="my-4">
-
-                        <div class="mb-3 col-xs-12 col-md-12" :class="account.type == 'account' ? 'col-lg-12' : 'col-lg-12'">
-                            <label class="form-label" for="editAccount_input_icon"><i class="fa fa-icons" aria-hidden="true"></i> Icon</label>
-                            <input id="editAccount_input_icon" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="save()" />
-                        </div>
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <label class="form-label" for="editAccount_input_description"><i class="fa fa-quote-left" aria-hidden="true"></i> Description</label>
@@ -221,6 +384,56 @@
                 passwordLess: {
                     masterPassword: '',
                     generatedPassword: ''
+                },
+                fieldAttrs: {
+                    login: {
+                        isExpanded: false
+                    },
+                    password: {
+                        isExpanded: false
+                    },
+                    password_clue: {
+                        isExpanded: false
+                    },
+                    passwordless: {
+                        isExpanded: false
+                    },
+                    social_login: {
+                        isExpanded: false
+                    },
+                    platform: {
+                        isExpanded: false
+                    },
+                    tags: {
+                        isExpanded: false
+                    },
+                    icon: {
+                        isExpanded: false
+                    },
+                    description: {
+                        isExpanded: false
+                    },
+                    notes: {
+                        isExpanded: false
+                    },
+                    totpToken: {
+                        isExpanded: false
+                    },
+                    card_number: {
+                        isExpanded: false
+                    },
+                    card_pin: {
+                        isExpanded: false
+                    },
+                    card_expiracy: {
+                        isExpanded: false
+                    },
+                    card_cryptogram: {
+                        isExpanded: false
+                    },
+                    card_name: {
+                        isExpanded: false
+                    }
                 }
             }
         },
