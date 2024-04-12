@@ -51,7 +51,6 @@ function UserService() {
             });
 
             const body = await response.json();
-            console.log('response status', response.status)
 
             if (!response.ok) {
                 if (response.status === 400) {
