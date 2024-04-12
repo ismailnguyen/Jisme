@@ -116,8 +116,6 @@
                 try {
                     await this.fetchAccounts();
                 } catch (error) {
-                        console.log('acclist', error)
-
                     if (error instanceof SessionExpiredException) {
                         this.openAlert(new Alert('Session expired', error.message, 'danger'));
 
