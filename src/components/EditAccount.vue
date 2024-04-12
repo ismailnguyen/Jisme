@@ -39,32 +39,6 @@
                                 <label class="btn" for="editAccount_radiobutton_accounttype_2fa" :class="account.type == '2fa' ? 'active' : ''">2FA</label>
                             </div>
                         </div>
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="editAccount_input_platform"><i class="fa fa-globe" aria-hidden="true"></i> Platform</label>
-                            <div class="input-group">
-                                <button class="btn btn-outline-light" type="button" @click="copyToClipboard('editAccount_input_platform_hidden')"><i class="fa fa-clipboard"></i></button>
-                                <input id="editAccount_input_platform" class="form-control" placeholder="Platform" type="text" v-model="account.platform" autofocus />
-                            </div>
-                            <input id="editAccount_input_platform_hidden" type="hidden" :value="account.platform" />
-                        </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="editAccount_input_new_tag"><i class="fa fa-tags" aria-hidden="true"></i> Tags</label>
-                            <div class="form-control tags tags-input" @click="focusTagInput()">
-                                <span
-                                    class="badge rounded-pill badge-primary"
-                                    v-for="(tag, tagIndex) in account.tags.split(',')"
-                                    v-bind:key="tagIndex"
-                                    @click="removeTag(tagIndex)">
-                                    {{ tag }}
-                                    <i class="fa fa-close" v-if="tag"></i>
-                                </span>
-                            </div>
-
-                            <input ref="tags" id="editAccount_input_new_tag" class="form-control tags-new-input" placeholder="Enter new tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
-                        </div>
-
-                        <hr class="my-4">
 
                         <!-- region_start -- Account type: card -->
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
@@ -143,6 +117,33 @@
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
                             <label class="form-label" for="editAccount_input_social_login"><i class="fa fa-users" aria-hidden="true"></i> Social login</label>
                             <input id="editAccount_input_social_login" class="form-control" type="text" v-model="account.social_login" @keyup.enter="save()" />
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <label class="form-label" for="editAccount_input_platform"><i class="fa fa-globe" aria-hidden="true"></i> Platform</label>
+                            <div class="input-group">
+                                <button class="btn btn-outline-light" type="button" @click="copyToClipboard('editAccount_input_platform_hidden')"><i class="fa fa-clipboard"></i></button>
+                                <input id="editAccount_input_platform" class="form-control" placeholder="Platform" type="text" v-model="account.platform" autofocus />
+                            </div>
+                            <input id="editAccount_input_platform_hidden" type="hidden" :value="account.platform" />
+                        </div>
+
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <label class="form-label" for="editAccount_input_new_tag"><i class="fa fa-tags" aria-hidden="true"></i> Tags</label>
+                            <div class="form-control tags tags-input" @click="focusTagInput()">
+                                <span
+                                    class="badge rounded-pill badge-primary"
+                                    v-for="(tag, tagIndex) in account.tags.split(',')"
+                                    v-bind:key="tagIndex"
+                                    @click="removeTag(tagIndex)">
+                                    {{ tag }}
+                                    <i class="fa fa-close" v-if="tag"></i>
+                                </span>
+                            </div>
+
+                            <input ref="tags" id="editAccount_input_new_tag" class="form-control tags-new-input" placeholder="Enter new tag" type="text" @keyup.enter="addTag()" v-model="newTag" />
                         </div>
 
                         <hr class="my-4">
