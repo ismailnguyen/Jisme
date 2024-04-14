@@ -3,7 +3,7 @@ import { getHeaders, getHeadersWithAuth } from '../utils/requestHeader'
 
 class UserService {
     constructor() {
-        const USERS_API_URL = BASE_API_URL + 'users/';
+        const USERS_API_URL = BASE_API_URL + 'users';
 
         this.getAccountInformation = async function (accessToken) {
             try {
