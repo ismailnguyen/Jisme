@@ -1,4 +1,4 @@
-import { cleanUrl, extractDomain } from '../utils/textFormat'
+import { cleanUrl } from '../utils/textFormat'
 import { randomPassword } from '../utils/password'
 import { generatePassword } from "../utils/passwordLess";
 
@@ -53,10 +53,6 @@ class Account {
 
     get displayPlatform () {
         return cleanUrl(this.platform);
-    }
-
-    get domain () {
-        return extractDomain(this.platform);
     }
 
     generatePassword () {

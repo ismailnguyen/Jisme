@@ -149,6 +149,10 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         updateLocalAccounts();
     }
 
+    async function enableServerEncryption() {
+        await accountsService.enableServerEncryption(accounts.value);
+    }
+
     return {
         user,
         recentAccounts,
@@ -162,7 +166,9 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         fetchAccounts,
         addAccount,
         updateAccount,
-        removeAccount
+        removeAccount,
+
+        enableServerEncryption
     }
 }); 
 

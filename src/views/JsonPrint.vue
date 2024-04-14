@@ -16,9 +16,9 @@
     export default {
         async created() {
             try {
-                await fetchAccounts()
+                await this.fetchAccounts()
             } catch (error) {
-                openAlert(new Alert('Error while loading accounts', error.message, 'danger'));
+                this.openAlert(new Alert('Error while loading accounts', error.message, 'danger'));
             }
         },
         computed: {

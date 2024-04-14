@@ -85,8 +85,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function createSession({ value }) {
-        if (!value)
-        {
+        if (!value) {
             return;
         }
 
