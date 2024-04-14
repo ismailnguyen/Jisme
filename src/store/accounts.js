@@ -18,14 +18,26 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     const getAccountsFilteredByQuery = computed(() => {
         return (searchQuery, tags, sort = false) => {
+            if (!searchQuery && !tags) {
+                _filteredAccounts.value = accounts.value;
+                return accounts.value;
+            }
+
             const filterService = new FilterService(toRaw(accounts.value));
-            filterService.filterByTags(tags);
-            filterService.filterByQuery(searchQuery);
+
+            if (tags) {
+                filterService.filterByTags(tags);
+            }
+
+            if (searchQuery) {
+                filterService.filterByQuery(searchQuery);
+            }
 
             if (sort) {
                 filterService.sortByName();
             }
 
+            // Store the filtered accounts to be used in other methods (like getUniqueTags)
             _filteredAccounts.value = filterService.getAccounts();
 
             return _filteredAccounts.value;
@@ -63,6 +75,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         // Pre fill the store with the cached accounts
         recentAccounts.value = await accountsService.getRecentsCached();
         accounts.value = await accountsService.getAllCached();
+        _filteredAccounts.value = accounts.value;
     }
 
     async function fetchRecentAccounts() {
@@ -73,23 +86,43 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     async function fetchAccounts () {
         // Update account while getting page by page from server
-        await accountsService.getAll((fetchedAccounts) => {
-            accounts.value = fetchedAccounts;
+        await accountsService.getAll(
+            (fetchedAccounts) => {
+                // If fetchedAccounts exist in accounts, update them, otherwise add them
+                fetchedAccounts.forEach(account => {
+                    let index = accounts.value.findIndex(a => a._id === account._id);
 
-            updateLocalAccounts(accounts.value);
-        });
+                    if (index !== -1) {
+                        // Update only accounts where last_modified_date is greater than the one in the store
+                        if (new Date(account.last_modified_date) > new Date(accounts.value[index].last_modified_date)) {
+                            accounts.value[index] = account;
+                            console.log('Updated account retrieved')//, account);
+                        }
+                    }
+                    else {
+                        accounts.value.push(account);
+                        console.log('New account retrieved')//, account);
+                    }
+                });
+            },
+            // Update cached accounts only when all accounts are fetched
+            (totalAccounts) => {
+                updateLocalAccounts();
+            }
+        );
     }
 
-    async function updateLocalAccounts(accounts) {
-        await accountsService.updateLocalAccounts(accounts);
+    async function updateLocalAccounts() {
+        await accountsService.updateLocalAccounts(accounts.value);
     }
 
     async function addAccount (account) {
-        await accountsService.add(account);
+        // Wait for account to come with newly created _id
+        const addedAccount = await accountsService.add(account);
 
-        accounts.value.push(account);
+        accounts.value.push(addedAccount);
 
-        updateLocalAccounts(accounts.value);
+        updateLocalAccounts();
     }
 
     async function updateAccount (account) {
@@ -103,7 +136,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
         accounts.value[index] = account;
 
-        updateLocalAccounts(accounts.value);
+        updateLocalAccounts();
     }
 
     async function removeAccount(account) {
@@ -113,7 +146,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
         accounts.value.splice(indexToRemove, 1);
 
-        updateLocalAccounts(accounts.value);
+        updateLocalAccounts();
     }
 
     return {
@@ -131,6 +164,6 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         updateAccount,
         removeAccount
     }
-})
+}); 
 
 export default store;
