@@ -4,7 +4,7 @@
             <LoginHero :isLoading="isLoading" />
 
             <div class="col-md-10 mx-auto col-lg-5">
-                <form class="p-4 p-md-5 rounded-3 form-signin" v-if="!isUsernameFilled" @submit.prevent="">
+                <form class="p-4 p-md-5 rounded-3 form-signin" v-show="!isUsernameFilled" @submit.prevent="submitUsername()">
                     <div class="d-block d-lg-none">
                         <img class="img-fluid rounded mb-4" loading="lazy" src="../assets/logo_medium.png" alt="Jisme" v-show="!isLoading">
                         <Loader v-show="isLoading" />
@@ -22,14 +22,14 @@
                                 placeholder="Email address, or phone number"
                                 aria-describedby="emailHelp"
                                 v-model="username"
-                                @keyup.enter="submitUsername()"
+                                @keyup.enter="submitUsername"
                                 autofocus
                                 tabindex="1"
                                 required>
                         <label for="inputUsername">Email address</label>
                     </div>
                     
-                    <button type="submit" class="w-100 btn btn-lg" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="submitUsername()" @click="submitUsername()" tabindex="3">
+                    <button type="submit" class="w-100 btn btn-lg" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="submitUsername" @click="submitUsername" tabindex="3">
                         <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
                         Next
                     </button>
@@ -46,7 +46,7 @@
                     <p class="mt-5 mb-3 text-muted" tabindex="5">Don't have account? <router-link to="/register">Sign up</router-link></p>
                 </form>
 
-                <form class="p-4 p-md-5 rounded-3 form-signin" v-else @submit.prevent="">
+                <form class="p-4 p-md-5 rounded-3 form-signin" v-show="isUsernameFilled" @submit.prevent="handleLogin()">
                     <div class="d-block d-md-none">
                         <img class="img-fluid rounded mb-4" loading="lazy" src="../assets/logo_medium.png" alt="Jisme" v-show="!isLoading">
                         <Loader v-show="isLoading" />
@@ -54,12 +54,25 @@
 
                     <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
 
+                    <div class="form-floating mb-3">
+                            <input
+                                type="text"
+                                id="readonlyInputUsername"
+                                name="username"
+                                autocomplete="username"
+                                class="form-control-plaintext"
+                                v-model="username"
+                                tabindex="1"
+                                readonly>
+                        <label for="readonlyInputUsername">Email address</label>
+                    </div>
+
                     <div class="mb-3">
                          <label for="inputPassword" class="sr-only">Password</label>
-                        <input type="password" id="inputPassword" class="form-control" placeholder="Password" v-model="password" @keyup.enter="handleLogin()" tabindex="6" required>
+                        <input type="password" ref="inputPassword" id="inputPassword" class="form-control" placeholder="Password" v-model="password" tabindex="6" autocomplete="current-password" required>
                     </div>
                     
-                    <button type="submit" class="w-100 btn btn-lg" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="handleLogin()" @click="handleLogin()" tabindex="7">
+                    <button type="submit" class="w-100 btn btn-lg" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="handleLogin" @click="handleLogin" tabindex="7">
                         <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
                         Sign in
                     </button>
@@ -81,6 +94,7 @@
 <script>
     import '../assets/auth.css'
 
+    import { ref } from 'vue';
     import Alert from '../models/Alert'
     import { 
         mapWritableState,
@@ -129,6 +143,11 @@
                 })
             }
         },
+        updated() {
+            if (this.isUsernameFilled) {
+                this.$refs.inputPassword.focus();
+            }
+        },
         methods: {
             ...mapActions(useAlertStore, [
                 'openAlert'
@@ -151,8 +170,7 @@
                 }
             },
 
-            handleLogin: async function ()
-            {
+            handleLogin: async function () {
                 if (!this.isUsernameFilled) {
                     return;
                 }

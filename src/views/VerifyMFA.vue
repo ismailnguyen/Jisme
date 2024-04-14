@@ -33,7 +33,7 @@
 
                     <div class="checkbox mb-3">
                         <label>
-                            <input type="checkbox" v-model="remember" tabindex="2"> Remember me
+                            <input type="checkbox" v-model="remember" tabindex="2" @change="focusOtpInput()"> Remember me
                         </label>
                         </div>
 
@@ -80,7 +80,7 @@
         },
         mounted() {
             // Put focus on first input
-            this.$refs['otpInput_0'][0].focus();
+            this.focusOtpInput();
         },
         computed: {
             ...mapState(useUserStore, ['user'])
@@ -93,6 +93,10 @@
             ...mapActions(useUserStore, [
                 'verifyMFA'
             ]),
+
+            focusOtpInput: function () {
+                this.$refs['otpInput_0'][0].focus();
+            },
 
             onOtpInput: function (index) {
                 // handling normal input

@@ -1,5 +1,6 @@
 import { BASE_API_URL } from '../utils/api'
 import { getHeaders, getHeadersWithAuth } from '../utils/requestHeader'
+import { LoginException } from '../utils/errors'
 
 class UserService {
     constructor() {
@@ -43,7 +44,7 @@ class UserService {
             };
 
             try {
-                const response = await fetch(`${USERS_API_URL}/login/`,
+                const response = await fetch(`${USERS_API_URL}/login`,
                     {
                         method: 'POST',
                         headers: getHeaders(),
@@ -54,25 +55,29 @@ class UserService {
 
                 if (!response.ok) {
                     if (response.status === 400) {
-                        throw new Error('Username and password are mandatory!');
+                        throw new LoginException('Username and password are mandatory!');
                     }
 
                     if (response.status === 404) {
-                        throw new Error('Invalid username/password !');
+                        throw new LoginException('Invalid username/password !');
                     }
 
-                    throw new Error(body.message);
+                    throw new LoginException(body.message);
                 }
 
                 return body;
             } catch (error) {
+                if (error instanceof LoginException) {
+                    throw error;
+                }
+
                 throw new Error('Server unavailable!');
             }
         };
 
         this.loginPasswordless = async function (passkey) {
             try {
-                const response = await fetch(`${USERS_API_URL}/login-passkey/`,
+                const response = await fetch(`${USERS_API_URL}/login-passkey`,
                     {
                         method: 'POST',
                         headers: getHeaders(),
@@ -93,7 +98,7 @@ class UserService {
             };
 
             try {
-                const response = await fetch(`${USERS_API_URL}/verify-mfa/`,
+                const response = await fetch(`${USERS_API_URL}/verify-mfa`,
                     {
                         method: 'POST',
                         headers: getHeadersWithAuth(accessToken),
@@ -104,15 +109,19 @@ class UserService {
 
                 if (!response.ok) {
                     if (response.status === 401) {
-                        throw new Error('Invalid TOTP code!');
+                        throw new LoginException('Invalid TOTP code!');
                     }
 
-                    throw new Error(body.message);
+                    throw new LoginException(body.message);
                 }
 
                 return body;
             }
             catch (error) {
+                if (error instanceof LoginException) {
+                    throw error;
+                }
+
                 throw new Error('Server unavailable!');
             }
         };
