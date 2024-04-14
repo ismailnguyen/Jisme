@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="main-container container-fluid" v-show="!isSearching && !isLoading">
-            <span class="category-title">Recently viewed (of {{ accounts.length }})</span>
+            <span class="category-title">Recently viewed ({{ recentAccounts.length }} of {{ accounts.length }})</span>
             <br><br>
             <StackedAccountList :accounts="recentAccounts" />
         </div>
