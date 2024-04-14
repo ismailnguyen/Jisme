@@ -1,55 +1,56 @@
-import { ref, computed } from 'vue'
-import { defineStore } from 'pinia'
+import { ref, computed } from 'vue';
+import { defineStore } from 'pinia';
+import Account from '../models/Account';
 
 const store = defineStore('ui', () => {
-    const isMenuOpened = ref(false)
-    const isAddAccountModalOpened = ref(false)
-    const isEditAccountModalOpened = ref(false)
-    const isSettingsOpened = ref(false)
-    const isTagsOpened = ref(false)
-    const currentEditingAccount = ref(null)
+    const isMenuOpened = ref(false);
+    const isAddAccountModalOpened = ref(false);
+    const isEditAccountModalOpened = ref(false);
+    const isSettingsOpened = ref(false);
+    const isTagsOpened = ref(false);
+    const currentEditingAccount = ref(new Account());
 
     const isAccountOpened = computed(() => {
         return isAddAccountModalOpened.value == true
-            || isEditAccountModalOpened.value == true
+            || isEditAccountModalOpened.value == true;
     })
 
     const toggleMenu = () => {
-        isMenuOpened.value = !isMenuOpened.value
+        isMenuOpened.value = !isMenuOpened.value;
     }
 
     const openSettings = () => {
-        isSettingsOpened.value = true
+        isSettingsOpened.value = true;
     }
 
     const closeSettings = () => {
-        isSettingsOpened.value = false
+        isSettingsOpened.value = false;
     }
 
     const openTags = () => {
-        isTagsOpened.value = true
+        isTagsOpened.value = true;
     }
 
     const closeTags = () => {
-        isTagsOpened.value = false
+        isTagsOpened.value = false;
     }
 
     const openAddAccountModal = () => {
-        isAddAccountModalOpened.value = true
+        isAddAccountModalOpened.value = true;
     }
 
     const closeAddAccountModal = () => {
-        isAddAccountModalOpened.value = false
+        isAddAccountModalOpened.value = false;
     }
 
     const openEditAccountModal = (account) => {
-        currentEditingAccount.value = account
-        isEditAccountModalOpened.value = true
+        currentEditingAccount.value = account;
+        isEditAccountModalOpened.value = true;
     }
 
     const closeEditAccountModal = () => {
-        isEditAccountModalOpened.value = false
-        currentEditingAccount.value = null
+        isEditAccountModalOpened.value = false;
+        currentEditingAccount.value = new Account();
     }
 
     return {    
@@ -74,7 +75,7 @@ const store = defineStore('ui', () => {
         isTagsOpened,
         openTags,
         closeTags
-    }
+    };
 })
 
-export default store
+export default store;
