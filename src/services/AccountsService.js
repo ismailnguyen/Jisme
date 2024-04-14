@@ -97,32 +97,37 @@ function AccountsService (user)
         return [];
     }
 
-    this.getAll = async function(successCallback, page = 0, limit = 300, accounts = [])
-    {
+    this.getAll = async function(fetchCallback, endCallback, page = 0, limit = 300) {
         try {
             const response = await fetch(`${ACCOUNTS_API_URL}?page=${page}&limit=${limit}`,
             {
                 method: 'GET',
                 headers: this.headers
-            })
+            });
 
             if (response.ok) {
                 // Destructure data here because in this payload accounts are
                 // store inside the 'data' key unlike other endpoints, because of pagination
-                const { data, next } = await response.json();
+                const { data, totalAccounts, next } = await response.json();
 
                 // Each time we get a page, we add the accounts to the list
-                accounts = [...accounts, ...data];
-                
+                fetchCallback(
+                    data.map(account => parseAccount(getDecryptedAccount(account, this.user.uuid)))
+                );
+
                 if (next && next.pageNumber && next.limit) {
-                    this.getAll(successCallback, next.pageNumber, next.limit, accounts);
-                }
-    
-                // Only at the end of the pagination, call the successCallback with the full list of accounts
-                if (!next) {
-                    successCallback(accounts.map(account => parseAccount(getDecryptedAccount(account, this.user.uuid))));
+                    this.getAll(
+                        fetchCallback,
+                        endCallback,
+                        next.pageNumber,
+                        next.limit
+                    );
+
+                    return;
                 }
 
+                endCallback(totalAccounts)
+    
                 return;
             }
 
