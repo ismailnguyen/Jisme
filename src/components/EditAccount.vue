@@ -1,5 +1,5 @@
 <template>
-    <div id="account-sidebar-wrapper">
+    <div id="account-sidebar-wrapper" class="right-sidebar-wrapper sidebar-wrapper">
         <div class="right-sidebar bg-gradient-blue">
             <div class="sidebar-header">
                 <div class="row">

@@ -1,5 +1,5 @@
 <template>
-    <div id="sidebar-wrapper">
+    <div id="menu-sidebar-wrapper">
         <ul class="sidebar-nav">
             <img :src="user.avatarUrl" class="rounded-circle mb-3" style="width: 150px;" alt="Avatar" />
             <p class="text-muted">{{ user.email }}</p>

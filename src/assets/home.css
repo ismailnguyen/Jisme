@@ -59,17 +59,23 @@ a {
   }
 
   /* Change the width of the sidebar to display it*/
-  .menuDisplayed #sidebar-wrapper {
+  .menuDisplayed #menu-sidebar-wrapper {
       position: fixed !important;
       width: 250px !important;
   }
 
-  .accountOpened #account-sidebar-wrapper,
-  .settingsOpened #settings-sidebar-wrapper,
-  .tagsOpened #tags-sidebar-wrapper {
-    position: fixed !important;
-    width: 50% !important;
-}
+    .accountOpened .right-sidebar-wrapper,
+    .settingsOpened .right-sidebar-wrapper,
+    .tagsOpened .right-sidebar-wrapper {
+        position: fixed !important;
+        width: 50% !important;
+    }
+
+    .accountOpened #page-content-wrapper,
+    .settingsOpened #page-content-wrapper,
+    .tagsOpened #page-content-wrapper {
+        padding-right: 0;
+    }
 
   @media (min-width: 767.98px) { 
       .menuDisplayed #menu-toggle {
@@ -79,10 +85,10 @@ a {
   }   
 
   @media (max-width: 767.98px) { 
-      .menuDisplayed #sidebar-wrapper,
-      .accountOpened #account-sidebar-wrapper,
-      .settingsOpened #settings-sidebar-wrapper,
-      .tagsOpened #tags-sidebar-wrapper {
+      .menuDisplayed #menu-sidebar-wrapper,
+      .accountOpened .right-sidebar-wrapper,
+      .settingsOpened .right-sidebar-wrapper,
+      .tagsOpened .right-sidebar-wrapper {
           width: 100% !important;
           height: 100% !important;
       }
@@ -90,8 +96,8 @@ a {
 
   @media (min-width: 767.98px) { 
     .accountOpened #page-content-wrapper,
-    .settingsOpened #settings-content-wrapper,
-    .tagsOpened #tags-content-wrapper {
+    .settingsOpened #page-content-wrapper,
+    .tagsOpened #page-content-wrapper {
         width: 50% !important;
     }   
 

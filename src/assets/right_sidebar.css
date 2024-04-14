@@ -1,6 +1,4 @@
-#account-sidebar-wrapper,
-#tags-sidebar-wrapper,
-#settings-sidebar-wrapper {
+.sidebar-wrapper {
     position: absolute;
     width: 0;
     right: 0;

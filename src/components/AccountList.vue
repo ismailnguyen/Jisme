@@ -172,6 +172,7 @@
 <style>
     /* Reduce search bar size when right sidebar is opened */
     .accountOpened .header-search,
+    .tagsOpened .header-search,
     .settingsOpened .header-search {
         padding-right: 50%;
     }
@@ -182,6 +183,7 @@
     }
 
     .menuDisplayed.accountOpened .header-search,
+    .menuDisplayed.tagsOpened .header-search,
     .menuDisplayed.settingsOpened .header-search{
         padding-right: 70%;
         padding-left: 10%;
