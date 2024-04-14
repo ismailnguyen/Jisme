@@ -53,10 +53,13 @@
 
     import Alert from '../models/Alert'
     import {
+        mapState,
+        mapActions
+    } from 'pinia'
+    import {
         useAlertStore,
         useUserStore
      } from '@/store'
-    import { storeToRefs } from 'pinia'
     import Loader from '../components/Loader.vue'
     import LoginHero from '../components/LoginHero.vue'
 
@@ -71,21 +74,6 @@
                 isLoading: false
             }
         },
-        setup() {
-            const userStore = useUserStore()
-
-            const { user } = storeToRefs(userStore)
-            const { verifyMFA } = userStore
-
-            const { openAlert } = useAlertStore()
-
-            return {
-                user,
-                verifyMFA,
-
-                openAlert
-            }
-        },
         components: {
             Loader,
             LoginHero
@@ -94,7 +82,18 @@
             // Put focus on first input
             this.$refs['otpInput_0'][0].focus();
         },
+        computed: {
+            ...mapState(useUserStore, ['user'])
+        },
         methods: {
+            ...mapActions(useAlertStore, [
+                'openAlert'
+            ]),
+
+            ...mapActions(useUserStore, [
+                'verifyMFA'
+            ]),
+
             onOtpInput: function (index) {
                 // handling normal input
                 if (this.totpToken[index].length == 1 && index+1 < this.totpToken.length) {

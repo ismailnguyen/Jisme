@@ -19,14 +19,14 @@
             id="menu-toggle"
             class="floating-button"
             :class="isMenuOpened ? 'floating-button--close' : 'floating-button--menu'"
-            @click="onToggleMenu" v-show="displayMenus">
+            @click="toggleMenu" v-show="displayMenus">
             <i class="fa fa-solid" :class="isMenuOpened ? 'fa-close' : 'fa-bars-staggered'"></i>
         </a>
 
         <a
             id="menu-toggle"
             class="floating-button floating-button--add d-none d-lg-block d-xl-block"
-            @click="onAddAccountModalToggled"
+            @click="openAddAccountModal"
             v-if="!isMenuOpened && displayMenus">
             <i class="fa fa-plus"></i>
         </a>
@@ -36,10 +36,13 @@
 <script>
     import '../assets/home.css'
 
-    import { storeToRefs } from 'pinia'
     import {
+        mapState,
+        mapActions
+    } from 'pinia'
+    import {
+        useUserStore,
         useUiStore,
-        useUserStore
     } from '@/store'
     import Menu from '../components/Menu.vue'
     import AddAccountModal from '../components/AddAccount.vue'
@@ -57,74 +60,53 @@
             Settings,
             TagsList
         },
-        setup() {
-            const uiStore = useUiStore()
-            const {
-                currentEditingAccount,
-                isMenuOpened,
-                isSettingsOpened,
-                isTagsOpened,
-                isAddAccountModalOpened,
-                isEditAccountModalOpened
-            } = storeToRefs(uiStore)
-            const { toggleMenu, openAddAccountModal } = uiStore 
-
-            const userStore = useUserStore()
-            const { user, isLoggedIn } = storeToRefs(userStore)
-
-            return {
-                currentEditingAccount,
-                isMenuOpened,
-                isAddAccountModalOpened,
-                isEditAccountModalOpened,
-                toggleMenu,
-                openAddAccountModal,
-                isSettingsOpened,
-                isTagsOpened,
-
-                user,
-                isLoggedIn
-            }
-        },
         computed: {
+            ...mapState(useUserStore, ['user', 'isLoggedIn']),
+            ...mapState(useUiStore, [
+                'currentEditingAccount',
+                'isMenuOpened',
+                'isSettingsOpened',
+                'isTagsOpened',
+                'isAddAccountModalOpened',
+                'isEditAccountModalOpened'
+            ]),
+
             isAccountOpened: function () {
-                return this.isAddAccountModalOpened || this.isEditAccountModalOpened;
+                return this.isAddAccountModalOpened
+                        || this.isEditAccountModalOpened;
             },
 
             displayMenus: function () {
-                return this.isLoggedIn
+                return this.isLoggedIn;
             },
 
             sidebarAdjustmentClasses: function () {
-                let cssClass = ''
+                let cssClass = '';
 
                 if (this.isMenuOpened) {
-                    cssClass += ' menuDisplayed'
+                    cssClass += ' menuDisplayed';
                 }
                 
                 if (this.isAccountOpened) {
-                    cssClass += ' accountOpened'
+                    cssClass += ' accountOpened';
                 }
 
                 if (this.isSettingsOpened) {
-                    cssClass += ' settingsOpened'
+                    cssClass += ' settingsOpened';
                 }
 
                 if (this.isTagsOpened) {
-                    cssClass += ' tagsOpened'
+                    cssClass += ' tagsOpened';
                 }
 
-                return cssClass
+                return cssClass;
             }
         },
         methods: {
-            onAddAccountModalToggled: function () {
-                this.openAddAccountModal();
-            },
-
-            onToggleMenu: function () {
-                this.toggleMenu()
-            }
+            ...mapActions(useUiStore, [
+                'toggleMenu',
+                'openAddAccountModal'
+            ])
         }
     }
 </script>

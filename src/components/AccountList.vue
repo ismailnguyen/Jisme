@@ -1,13 +1,17 @@
 <template>
     <div id="page-content-wrapper" class="container-fluid">
-        <header class="row header-search justify-content-center" v-if="!loading">
-            <div class="col-xs-12 col-lg-6">
-                <input class="form-control searchBar" v-model="searchQuery" type="search" placeholder="Search" autofocus>
+        <header class="row header-search justify-content-center" v-if="!isLoading">
+            <div class="col-xs-12 col-md-8 col-lg-6">
+                <input class="form-control searchBar" v-model="searchQuery" name="search" type="search" placeholder="Search" autofocus>
             </div>
         </header>
 
-        <div class="main-container container-fluid" v-if="isSearching">
-            <span class="category-title">{{accountsFilteredByQuery.length}} results out of {{accounts.length}}</span>
+        <div class="main-container container-fluid" v-show="isLoading">
+            <Loader />
+        </div>
+
+        <div class="main-container container-fluid" v-show="isSearching && !isLoading">
+            <span class="category-title" >{{ accountsFilteredByQuery.length }} results out of {{ accounts.length }}</span>
             <br><br>
             <span
                 class="badge badge-pill badge-primary"
@@ -18,27 +22,27 @@
                 <i class="fa fa-close"></i>
             </span>
             <br><br>
-            <div class="row" v-if="!loading">
+            <div class="row">
                 <AccountItem 
                     v-for="(account, accountIndex) in accountsFilteredByQuery"
                     v-bind:key="accountIndex"
                     :account="account" />
             </div>
         </div>
-        <div class="main-container container-fluid" v-else>
-            <span class="category-title">Recently viewed</span>
+        <div class="main-container container-fluid" v-show="!isSearching && !isLoading">
+            <span class="category-title">Recently viewed (of {{ accounts.length }})</span>
             <br><br>
-
             <StackedAccountList :accounts="recentAccounts" />
         </div>
-
-        <Loader v-show="loading" />
     </div>
 </template>
 
 <script>
-    import { onBeforeMount } from 'vue'
-    import { storeToRefs } from 'pinia'
+    import {
+        mapState,
+        mapActions,
+        mapStores
+    } from 'pinia'
     import {
         useAccountsStore,
         useAlertStore,
@@ -53,51 +57,61 @@
     import Loader from '../components/Loader.vue'
     
     export default {
-        data() {
-            return {
-                searchQuery: this.$route.query.search || '', // Default search query is looked up from query string
-                loading: true,
-                editAccount: new Account(),
-            }
-        },
         components: {
             EditAccountModal,
             AccountItem,
             StackedAccountList,
             Loader,
         },
-        setup() {
-            const accountsStore = useAccountsStore()
-            const { signOut } = useUserStore()
-            const { openAlert } = useAlertStore()
-
-            const { recentAccounts, accounts } = storeToRefs(accountsStore)
-            const { loadCache, fetchRecentAccounts, fetchAccounts, getAccountsFilteredByQuery } = accountsStore
-
-            onBeforeMount(async () => {
-                await loadCache()
-            })
-
+        data() {
             return {
-                openAlert,
-                fetchRecentAccounts,
-                fetchAccounts,
-                accountsStore,
-                getAccountsFilteredByQuery,
-                accounts,
-                recentAccounts,
-                signOut
+                searchQuery: this.$route.query.search || '', // Default search query is looked up from query string
+                isLoading: true,
+                editAccount: new Account(),
             }
         },
-        created() {
+        async created() {
+            await this.loadCache();
+
             this.accountsStore.$subscribe((mutation, state) => {
-                this.loading = false;
+                this.isLoading = false;
             })
         },
         async mounted() {
             await this.fetchLatestAccounts();
         },
+        computed: {
+            ...mapStores(useAccountsStore),
+            ...mapState(useAccountsStore, ['recentAccounts', 'accounts']),
+
+            accountsFilteredByQuery: function () {
+                return this.getAccountsFilteredByQuery(this.searchQuery, this.$route.query.tags, true);
+            },
+
+            selectedTags: function () {
+                return this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
+            },
+
+            isSearching: function () {
+                return (this.searchQuery && this.searchQuery.length >= 3) || this.$route.query.tags;
+            }
+        },
         methods: {
+            ...mapActions(useAccountsStore, [
+                'loadCache',
+                'fetchRecentAccounts',
+                'fetchAccounts',
+                'getAccountsFilteredByQuery'
+            ]),
+
+            ...mapActions(useUserStore, [
+                'signOut'
+            ]),
+
+            ...mapActions(useAlertStore, [
+                'openAlert'
+            ]),
+
             fetchLatestAccounts: async function () {
                 try {
                     await this.fetchRecentAccounts();
@@ -135,8 +149,6 @@
                 this.$router.push({name: 'Home', query: { tags: newTags.join(',') }});
             },
 
-         
-
             // Function for testing purpose
             getDuplicatesOnly: function (initalArray) {
                 var sorted_arr = initalArray;
@@ -153,20 +165,7 @@
                 return duplicateAccounts;
             },
 			
-        },
-        computed: {
-            accountsFilteredByQuery: function () {
-                return this.getAccountsFilteredByQuery(this.searchQuery, this.$route.query.tags, true);
-            },
-
-            selectedTags: function () {
-                return this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
-            },
-
-            isSearching: function () {
-                return (this.searchQuery && this.searchQuery.length >= 3) || this.$route.query.tags;
-            }
-        }
+        } 
     }
 </script>
 

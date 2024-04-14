@@ -59,9 +59,9 @@
                                 v-for="passkey in user.passkeys"
                                 :key="passkey.passkey.id">
                                 <input class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="passkey.deviceName" readonly />
-                                <button class="btn btn-outline-secondary" type="button" @click="removePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
+                                <button class="btn btn-outline-secondary" type="button" @click="onRemovePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
                             </div>
-                            <button class="btn btn-danger btn-block" @click.prevent="generatePasskey()" v-if="isGeneratePasskeyBtnVisible">
+                            <button class="btn btn-danger btn-block" @click.prevent="onGeneratePasskey()" v-if="isGeneratePasskeyBtnVisible">
                                 <i class="fa fa-plus"></i> Add a passkey
                             </button>
                         </div>
@@ -73,13 +73,13 @@
 
             <div class="row sidebar-footer">
                 <div class="col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6">
-                    <button type="button" class="btn btn-outline-danger" @click="signOut()">
+                    <button type="button" class="btn btn-outline-danger" @click="onSignOut()">
                         <i class="fa fa-power-off"></i>
                             Logout
                     </button>
                 </div>
                 <div class="col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6">
-                    <button type="button" class="btn" :class="isLoading ? 'btn-dark' : 'btn-primary'" @click="save()">
+                    <button type="button" class="btn" :class="isLoading ? 'btn-dark' : 'btn-primary'" @click="onSave()">
                         <i class="fa fa-save"></i>
                         Save
                     </button>
@@ -92,8 +92,10 @@
 <script>
     import '../assets/right_sidebar.css'
 
-    import { onBeforeMount } from 'vue'
-    import { storeToRefs } from 'pinia'
+    import {
+        mapState,
+        mapActions
+    } from 'pinia'
     import {
         useUiStore,
         useAlertStore,
@@ -103,6 +105,9 @@
     import Loader from './Loader.vue'
 
     export default {
+        components: {
+            Loader
+        },
         data() {
             return {
                 totpToken: '',
@@ -114,34 +119,12 @@
                 isGeneratePasskeyBtnVisible: false
             }
         },
-        setup() {
-            const userStore = useUserStore()
-            const { user } = storeToRefs(userStore)
-            const { getAccountInformation } = userStore
-
-            const { closeSettings } = useUiStore()
-
-            const { openAlert } = useAlertStore()
-
-            onBeforeMount(async () => {
-                try {
-                    await getAccountInformation()
-                } catch (error) {
-                    console.error(error)    
-                }
-            })
-
-            return {
-                user,
-                userStore,
-
-                closeSettings,
-
-                openAlert
+        async created() {
+            try {
+                await this.getAccountInformation();
+            } catch (error) {
+                this.openAlert(new Alert('Error!', error, 'danger'));
             }
-        },
-        components: {
-            Loader
         },
         mounted() {
             // Availability of `window.PublicKeyCredential` means WebAuthn is usable.  
@@ -161,18 +144,37 @@
                 });  
             }  
         },
+        computed: {
+            ...mapState(useUserStore, ['user'])
+        },
         methods: {
-            signOut: async function () {
-                await this.userStore.signOut();
+            ...mapActions(useUserStore, [
+                'getAccountInformation',
+                'signOut',
+                'generatePasskey',
+                'removePasskey',
+                'update'
+            ]),
+
+            ...mapActions(useAlertStore, [
+                'openAlert'
+            ]),
+
+            ...mapActions(useUiStore, [
+                'closeSettings'
+            ]),
+
+            onSignOut: async function () {
+                await this.signOut();
 
                 this.$router.go('/');
             },
 
-            generatePasskey: async function () {
+            onGeneratePasskey: async function () {
                 const deviceName = prompt('Enter a device name', 'Device #1');
                 if (deviceName) {
                     try {
-                        await this.userStore.generatePasskey(deviceName);
+                        await this.generatePasskey(deviceName);
                         
                         this.openAlert(new Alert('Passkey added!', 'Save to confirm.'));
 
@@ -184,21 +186,21 @@
                 }
             },
 
-            removePasskey: function (passkeyToDelete) {
+            onRemovePasskey: function (passkeyToDelete) {
                 //need to stringify and parse because Vuejs gives an observer instead of the object
                 passkeyToDelete = JSON.parse(JSON.stringify(passkeyToDelete));
                 if(confirm("Do you want to delete passkey for " + passkeyToDelete.deviceName + "?")) {
-                    this.userStore.removePasskey(passkeyToDelete);
+                    this.removePasskey(passkeyToDelete);
                     this.openAlert(new Alert('Passkey deleted!', 'Save to confirm.'));
                 }
             },
 
-            save: async function ()
-            {
+            onSave: async function () {
                 this.isLoading = true;
 
                 try {
-                    await this.userStore.update();
+                    await this.update();
+
                     this.isLoading = false;
                     this.openAlert(new Alert('Saved!', '', 'success'));
                 }

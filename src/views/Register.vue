@@ -44,11 +44,18 @@
     import '../assets/auth.css'
     import Alert from '../models/Alert'
 
+    import {
+        mapActions
+    } from 'pinia'
     import { useAlertStore } from '@/store'
     import Loader from '../components/Loader.vue'
     import LoginHero from '../components/LoginHero.vue'
 
     export default {
+        components: {
+            Loader,
+            LoginHero
+        },
         data() {
             return {
                 email: '',
@@ -56,18 +63,11 @@
                 isLoading: false
             }
         },
-        setup() {
-            const { openAlert } = useAlertStore()
-
-            return {
-                openAlert
-            }
-        },
-        components: {
-            Loader,
-            LoginHero
-        },
         methods: {
+            ...mapActions(useAlertStore, [
+                'openAlert'
+            ]),
+
             signUp() {
                 this.openAlert(new Alert('Error', 'Registration are closed. Please contact administrator for assistance.', 'danger'))
             }

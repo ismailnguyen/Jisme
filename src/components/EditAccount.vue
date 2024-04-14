@@ -13,7 +13,7 @@
                     </div>
 
                     <div class="mb-3" :class="account.icon ? 'col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6' : 'col-xs-9 col-sm-9 col-9 col-md-9 col-lg-9'">
-                        <h2 class="sidebar-title">{{ account.displayPlatform }}</h2>
+                        <h2 class="sidebar-title" :title="account._id">{{ account.displayPlatform }}</h2>
                     </div>
                         
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
@@ -161,7 +161,7 @@
                             </label>
                             <div class="input-group" v-show="fieldAttrs.login.isExpanded">
                                 <button class="btn btn-outline-light" type="button" @click="copyToClipboard('editAccount_input_login_hidden')"><i class="fa fa-clipboard"></i></button>
-                                <input id="editAccount_input_login" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="save()" />
+                                <input id="editAccount_input_login" class="form-control" placeholder="Login" type="text" autocomplete="username" v-model="account.login" @keyup.enter="save()" />
                             </div>
                             <input v-show="fieldAttrs.login.isExpanded" id="editAccount_input_login_hidden" type="hidden" :value="account.login" />
                         </div>
@@ -215,7 +215,7 @@
                                 <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
                             </label>
                             <div class="input-group" v-show="fieldAttrs.password.isExpanded">
-                                <input id="editAccount_input_password" class="form-control" type="text" aria-describedby="editAccount_input_passwordHelp" v-model="account.password" @keyup.enter="save()" />
+                                <input id="editAccount_input_password" class="form-control" type="text" autocomplete="new-password" aria-describedby="editAccount_input_passwordHelp" v-model="account.password" @keyup.enter="save()" />
                                 <input id="editAccount_input_password_hidden" type="hidden" :value="account.password" />
                                 <button class="btn btn-outline-light" type="button" @click="account.generatePassword()"><i class="fa fa-cogs"></i> Generate</button>
                             </div>
@@ -234,7 +234,7 @@
                                 <button class="btn btn-outline-light" type="button" @click="resetPasswordLess()"><i class="fa fa-undo"></i> Reset</button>
                             </div>
                             <div class="input-group" v-show="!passwordLess.generatedPassword">
-                                <input id="editAccount_input_passwordless_masterPassword" class="form-control" type="password" aria-describedby="editAccount_input_passwordlessHelp_masterPassword" v-model="passwordLess.masterPassword" />
+                                <input id="editAccount_input_passwordless_masterPassword" class="form-control" type="password" autocomplete="current-password" aria-describedby="editAccount_input_passwordlessHelp_masterPassword" v-model="passwordLess.masterPassword" />
                                 <button class="btn btn-outline-light" type="button" @click="generatePasswordLess()"><i class="fa fa-cogs"></i> Generate</button>
                             </div>
                             <small id="editAccount_input_passwordlessHelp_masterPassword" class="form-text text-muted" v-show="!passwordLess.generatedPassword">Type your master password to generate the password less.</small>
@@ -365,7 +365,10 @@
 <script>
     import '../assets/right_sidebar.css'
 
-    import { storeToRefs } from 'pinia'
+    import { 
+        mapState,
+        mapActions
+    } from 'pinia'
     import {
         useUiStore,
         useAlertStore,
@@ -437,25 +440,38 @@
                 }
             }
         },
-        setup() {
-            const accountsStore = useAccountsStore()
+        computed: {
+            ...mapState(useUiStore, {
+                account: 'currentEditingAccount'
+            }),
+    
+            createdDate: function () {
+                return this.formatDate(new Date(this.account.created_date));
+            },
 
-            const uiStore = useUiStore()
-            const { closeEditAccountModal } = uiStore
-            const { currentEditingAccount } = storeToRefs(uiStore)
-            const account = currentEditingAccount
+            lastModifiedDate: function () {
+                return this.formatDate(new Date(this.account.last_modified_date));
+            },
+            
+            lastOpenedDate: function () {
+                return this.formatDate(new Date(this.account.last_opened_date));
+            },
 
-            const { openAlert } = useAlertStore()
+            totpToken: function () {
+                if (this.account.type == '2fa' && this.account.totp_secret) {
+                     // Remove all spaces because spaces are forbidden for TOTP generation
+                     // And some websites give the secret with spaces for better human readability
+                    return totpGenerator(this.account.totp_secret.replace(/ /g,''));
+                }
 
-            return {
-                account,
-                accountsStore,
-                closeEditAccountModal,
-
-                openAlert
+                return 'Please fill the secret key';
             }
         },
         methods: {
+            ...mapActions(useAccountsStore, ['updateAccount', 'removeAccount']),
+            ...mapActions(useUiStore, ['closeEditAccountModal']),
+            ...mapActions(useAlertStore, ['openAlert']),
+    
             save: async function() {
                 if (!this.account.isValid()) {
                     this.showAlert('Error', 'Please fill all fields !', 'danger');
@@ -465,7 +481,7 @@
                 this.isSaving = true;
 
                 try {
-                    await this.accountsStore.updateAccount(this.account);
+                    await this.updateAccount(this.account);
 
                     this.openAlert(new Alert(this.account.displayPlatform, 'Updated !', 'success', this.account.icon));
                     this.updateUI();
@@ -482,24 +498,6 @@
                 this.isDeleting = false;
 
                 this.closeAccount();
-            },
-            
-            // TODO: to be moved because now there is no more modal open event
-            toggleModalContent: async function() {
-                this.showModalContent = !this.showModalContent;
-
-                // Update the last opened date of this account each time the modal is opened
-                if(this.showModalContent) {
-                    // Leave this console log here for debugging purpose
-                    console.log('debug', this.account);
-
-                    try {
-                        await this.accountsStore.updateAccount(this.account);
-                    }
-                    catch (error) {
-                        this.showAlert('Error', error.toString(), 'danger');
-                    }
-                }
             },
 
             generatePasswordLess: function () {
@@ -518,7 +516,7 @@
                     this.isDeleting = true;
 
                     try {
-                        await this.accountsStore.removeAccount(this.account);
+                        await this.removeAccount(this.account);
 
                         this.showAlert(this.account.displayPlatform, 'Removed !', 'success');
                         this.updateUI();
@@ -569,29 +567,6 @@
             
             formatDate: function (date) {
                 return date.getDate() + '/' + (date.getMonth()+1)  + '/' + date.getFullYear();
-            }
-        },
-        computed: {
-            createdDate: function () {
-                return this.formatDate(new Date(this.account.created_date));
-            },
-
-            lastModifiedDate: function () {
-                return this.formatDate(new Date(this.account.last_modified_date));
-            },
-            
-            lastOpenedDate: function () {
-                return this.formatDate(new Date(this.account.last_opened_date));
-            },
-
-            totpToken: function () {
-                if (this.account.type == '2fa' && this.account.totp_secret) {
-                     // Remove all spaces because spaces are forbidden for TOTP generation
-                     // And some websites give the secret with spaces for better human readability
-                    return totpGenerator(this.account.totp_secret.replace(/ /g,''));
-                }
-
-                return 'Please fill the secret key';
             }
         }
     } 

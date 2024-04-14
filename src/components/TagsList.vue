@@ -18,7 +18,7 @@
             <div class="sidebar-body">
                 <div class="row">
                     <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                        <label class="form-label" for="inputAvatar"><i class="fa fa-tag" aria-hidden="true"></i> New tag</label>
+                        <label class="form-label"><i class="fa fa-tag" aria-hidden="true"></i> New tag</label>
                             <div class="input-group">
                             <input class="form-control" type="text" placeholder="Add a new tag" />
                             <button class="btn btn-outline-secondary" type="button">Add</button>
@@ -27,7 +27,7 @@
 
                     <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="inputAvatar"><i class="fa fa-tags" aria-hidden="true"></i> Existing tags</label>
+                            <label class="form-label"><i class="fa fa-tags" aria-hidden="true"></i> Existing tags</label>
                         </div>
                         <ul class="list-group">
                             <li
@@ -56,29 +56,28 @@
 <script>
     import '../assets/right_sidebar.css'
 
-    import { onBeforeMount } from 'vue'
+    import {
+        mapActions,
+    } from 'pinia'
     import {
         useUiStore,
         useAccountsStore,
      } from '@/store'
 
     export default {
-        setup() {
-            const accountsStore = useAccountsStore()
-            const { loadCache, getUniqueTags } = accountsStore
-            const { closeTags } = useUiStore()
-
-            onBeforeMount(async () => {
-                await loadCache()
-            })
-
-            return {
-                getUniqueTags,
-
-                closeTags
-            }
+        async created() {
+            await this.loadCache();
         },
         methods: {
+            ...mapActions(useAccountsStore, [
+                'loadCache',
+                'getUniqueTags'
+            ]),
+
+            ...mapActions(useUiStore, [
+                'closeTags'
+            ]),
+
             selectTag: function (tag) {
                 const tags = this.updateTags(tag);
 

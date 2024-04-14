@@ -154,6 +154,10 @@
     import '../assets/right_sidebar.css'
 
     import {
+        mapWritableState,
+        mapActions
+    } from 'pinia'
+    import {
         useUiStore,
         useAlertStore,
         useAccountsStore
@@ -162,31 +166,24 @@
     import Account from '../models/Account'
 
     export default {
-        data()
-        {
+        data() {
             return {
-                account: new Account(),
+                //account: new Account(),
                 isCreating: false,
                 newTag: ''
             }
         },
-        setup() {
-            const accountsStore = useAccountsStore()
-            const { closeAddAccountModal } = useUiStore()
-
-            const { openAlert } = useAlertStore()
-
-            return {
-                accountsStore,
-                closeAddAccountModal,
-
-                openAlert
-
-            }
+        computed: {
+            ...mapWritableState(useUiStore, {
+                account: 'currentEditingAccount'
+            })
         },
         methods: {
-            add: async function ()
-            {
+            ...mapActions(useAlertStore, ['openAlert']),
+            ...mapActions(useUiStore, ['closeAddAccountModal']),
+            ...mapActions(useAccountsStore, ['addAccount']),
+
+            add: async function () {
                 if (!this.account.isValid()) {
                     this.showAlert('Error', 'Please fill all fields !', 'danger');
                     return;
@@ -195,7 +192,7 @@
                 this.isCreating = true;
 
                 try {
-                    await this.accountsStore.addAccount(this.account);
+                    await this.addAccount(this.account);
                     
                     this.updateUI();
                 }
@@ -226,18 +223,15 @@
                 this.account.tags = newTags.join(',');
             },
             
-            cleanForm: function ()
-            {
+            cleanForm: function () {
                 this.account = new Account();
             },
 
-            showAlert: function (title, message, type)
-            {
+            showAlert: function (title, message, type) {
                 this.openAlert(new Alert(title, message, type));
             },
 
-            updateUI: function ()
-            {
+            updateUI: function () {
                 this.isCreating = false;
 
                 this.closeAccount();
@@ -247,8 +241,7 @@
                 this.cleanForm();
             },
             
-            closeAccount: function ()
-            {
+            closeAccount: function () {
                 this.closeAddAccountModal();
             }
         }

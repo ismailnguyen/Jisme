@@ -8,42 +8,38 @@
 
 <script>
     import '@fortawesome/fontawesome-free/css/all.css';
-    import 'bootstrap/dist/css/bootstrap.css';
-
     import './assets/base.css';
 
     import { useAlertStore } from '@/store';
-    import { storeToRefs } from 'pinia';
+    import { 
+        mapState,
+        mapActions,
+        mapStores
+    } from 'pinia'
     import AlertBox from './components/AlertBox.vue';
 
     export default {
-        data () {
-            return {
-            }
-        },
-        setup() {
-            const alertStore = useAlertStore()
-            const { hasAlert } = storeToRefs(alertStore)
-            const { openAlert, clearAlert } = alertStore
-
-            return {
-                alertStore,
-                hasAlert,
-                openAlert,
-                clearAlert
-            }
-        },
         components: {
             AlertBox
         },
         created() {
+            // alertStore is accessible from mapStores(useAlertStore)
             this.alertStore.$subscribe((mutation, state) => {
                 if (this.hasAlert) {
                     this.showAlert();
                 }
             })
         },
+        computed: {
+            ...mapStores(useAlertStore),
+            ...mapState(useAlertStore, ['hasAlert']),
+        },
         methods: {
+            ...mapActions(useAlertStore, [
+                'openAlert',
+                'clearAlert'
+            ]),
+
             showAlert: function () {
                 // After few seconds, clear the alert
                 setTimeout(() => {

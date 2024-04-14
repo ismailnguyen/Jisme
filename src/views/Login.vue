@@ -82,7 +82,10 @@
     import '../assets/auth.css'
 
     import Alert from '../models/Alert'
-    import { storeToRefs } from 'pinia'
+    import { 
+        mapWritableState,
+        mapActions
+    } from 'pinia'
     import {
         useAlertStore,
         useUserStore
@@ -100,27 +103,16 @@
                 isPasswordlessLoginBtnVisible: false
             }
         },
-        setup() {
-            const userStore = useUserStore()
-
-            const { user, isLoggedIn, lastRememberedUsername } = storeToRefs(userStore)
-            const { loginPasswordless, login } = userStore
-
-            const { openAlert } = useAlertStore()
-
-            return {
-                user,
-                isLoggedIn,
-                lastRememberedUsername,
-                login,
-                loginPasswordless,
-
-                openAlert
-            }
-        },
         components: {
             Loader,
             LoginHero
+        },
+        computed: {
+            ...mapWritableState(useUserStore, [
+                'user',
+                'isLoggedIn',
+                'lastRememberedUsername'
+            ]),
         },
         async mounted() {
             this.username = await this.lastRememberedUsername;
@@ -138,6 +130,15 @@
             }
         },
         methods: {
+            ...mapActions(useAlertStore, [
+                'openAlert'
+            ]),
+
+            ...mapActions(useUserStore, [
+                'loginPasswordless',
+                'login'
+            ]),
+
             submitUsername: function () {
                 if (!this.username) {
                     this.openAlert(new Alert('Error', 'Please fill username!', 'danger'))

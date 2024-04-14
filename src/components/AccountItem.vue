@@ -53,9 +53,13 @@
 <script>
     import '../assets/card.css'
     
-    import { storeToRefs } from 'pinia'
+    import { 
+        mapState,
+        mapActions
+    } from 'pinia'
     import {
         useUiStore,
+        useAccountsStore
     } from '@/store'
     import Account from '../models/Account'
 
@@ -63,19 +67,9 @@
         props: {
             account: Account,
         },
-        setup() {
-            const uiStore = useUiStore()
-            const { openEditAccountModal } = uiStore
-            const { isMenuOpened, isAccountOpened, isSettingsOpened } = storeToRefs(uiStore)
-
-            return {
-                isMenuOpened,
-                isAccountOpened,
-                isSettingsOpened,
-                openEditAccountModal
-            }
-        },
         computed: {
+            ...mapState(useUiStore, ['isMenuOpened', 'isAccountOpened', 'isSettingsOpened']),
+
             layoutAdjustmentCss: function () {
                 let cssClass = 'col-md-4 col-lg-3'
 
@@ -102,7 +96,22 @@
             }
         },
         methods: {
-            edit() {
+            ...mapActions(useUiStore, [
+                'openEditAccountModal'
+            ]),
+
+            ...mapActions(useAccountsStore, [
+                'updateAccount'
+            ]),
+
+            edit: async function() {
+                try {
+                    await this.updateAccount(this.account);
+                }
+                catch (error) {
+                    this.showAlert('Error', error.toString(), 'danger');
+                }                
+
                 this.openEditAccountModal(this.account)
             },
 
@@ -180,6 +189,3 @@
         }
     }
 </script>
-
-<style scoped>
-</style>

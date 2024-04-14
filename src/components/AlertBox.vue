@@ -22,26 +22,18 @@
 </template>
 
 <script>
+    import {
+        mapState,
+        mapActions
+    } from 'pinia'
     import { useAlertStore } from '@/store'
-    import { storeToRefs } from 'pinia'
 
     export default {
-        setup() {
-            const alertStore = useAlertStore()
-            const { currentAlert } = storeToRefs(alertStore)
-            const { clearAlert } = alertStore
-
-            return {
-                currentAlert,
-                clearAlert
-            }
-        },
-        methods: {
-            close: function () {
-                this.clearAlert();
-            }
-        },
         computed: {
+            ...mapState(useAlertStore, [
+                'currentAlert'
+            ]),
+
             title: function () {
                 return this.currentAlert.title;
             },
@@ -56,6 +48,15 @@
 
             type: function () {
                 return  'alert-' + this.currentAlert.type;
+            }
+        },
+        methods: {
+            ...mapActions(useAlertStore, [
+                'clearAlert'
+            ]),
+
+            close: function () {
+                this.clearAlert();
             }
         }
     } 

@@ -4,15 +4,15 @@
             <img :src="user.avatarUrl" class="rounded-circle mb-3" style="width: 150px;" alt="Avatar" />
             <p class="text-muted">{{ user.email }}</p>
             <li class="menu-actions">
-                <a class="menu-actions-settings" @click="openSettings()">
+                <a class="menu-actions-settings" @click="onOpenSettings()">
                     <i class="fa fa-gear"></i>
                 </a>
 
-                <a class="menu-actions-tags" @click="openTags()">
+                <a class="menu-actions-tags" @click="onOpenTags()">
                     <i class="fa fa-tags"></i>
                 </a>
 
-                <a class="menu-actions-add" @click="addAccount()">
+                <a class="menu-actions-add" @click="onAddAccount()">
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
@@ -23,42 +23,40 @@
 <script>
     import '../assets/menubar.css'
 
-    import { storeToRefs } from 'pinia'
+    import {
+        mapState,
+        mapActions
+    } from 'pinia'
     import {
         useUiStore,
         useUserStore
     } from '@/store'
 
     export default {
-        setup() {
-            const {
-                openAddAccountModal,
-                toggleMenu,
-                openSettings,
-                openTags
-            } = useUiStore()
-            const { user } = storeToRefs(useUserStore())
-
-            return {
-                user,
-                openAddAccountModal,
-                toggleMenu,
-                openSettings,
-                openTags
-            }
+        computed: {
+            ...mapState(useUserStore, [
+                'user'
+            ])
         },
         methods: {
-            addAccount: function () {
+            ...mapActions(useUiStore, [
+                'openAddAccountModal',
+                'toggleMenu',
+                'openSettings',
+                'openTags'
+            ]),
+
+            onAddAccount: function () {
                 this.openAddAccountModal()
                 this.toggleMenu()
             },
 
-            openSettings: function () {
+            onOpenSettings: function () {
                 this.toggleMenu()
                 this.openSettings();
             },
 
-            openTags: function () {
+            onOpenTags: function () {
                 this.openTags();
                 this.toggleMenu()
             }
