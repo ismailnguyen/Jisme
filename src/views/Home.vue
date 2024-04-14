@@ -84,19 +84,11 @@
                 let cssClass = '';
 
                 if (this.isMenuOpened) {
-                    cssClass += ' menuDisplayed';
+                    cssClass += ' left-sidebar-opened';
                 }
                 
-                if (this.isAccountOpened) {
-                    cssClass += ' accountOpened';
-                }
-
-                if (this.isSettingsOpened) {
-                    cssClass += ' settingsOpened';
-                }
-
-                if (this.isTagsOpened) {
-                    cssClass += ' tagsOpened';
+                if (this.isAccountOpened || this.isSettingsOpened || this.isTagsOpened) {
+                    cssClass += ' right-sidebar-opened';
                 }
 
                 return cssClass;

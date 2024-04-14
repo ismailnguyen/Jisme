@@ -1,5 +1,5 @@
 /* Sidebar */
-#menu-sidebar-wrapper {
+.left-sidebar-wrapper {
     position: absolute;
     width: 0;
     left: 0;

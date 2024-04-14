@@ -171,20 +171,16 @@
 
 <style>
     /* Reduce search bar size when right sidebar is opened */
-    .accountOpened .header-search,
-    .tagsOpened .header-search,
-    .settingsOpened .header-search {
+    .right-sidebar-opened .header-search {
         padding-right: 50%;
     }
 
     /* Reduce search bar size when left sidebar menu is opened */
-    .menuDisplayed .header-search {
+    .left-sidebar-opened .header-search {
         padding-left: 250px;
     }
 
-    .menuDisplayed.accountOpened .header-search,
-    .menuDisplayed.tagsOpened .header-search,
-    .menuDisplayed.settingsOpened .header-search{
+    .left-sidebar-opened.right-sidebar-opened .header-search{
         padding-right: 70%;
         padding-left: 10%;
     }

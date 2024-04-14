@@ -130,11 +130,11 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         account.last_opened_date = new Date();
         account.opened_count = account.opened_count ? account.opened_count + 1 : 1;
 
-        await accountsService.save(account);
+        const updatedAccount = await accountsService.save(account);
 
-        let index = accounts.value.findIndex(a => a._id === account._id);
+        let index = accounts.value.findIndex(a => a._id === updatedAccount._id);
 
-        accounts.value[index] = account;
+        accounts.value[index] = updatedAccount;
 
         updateLocalAccounts();
     }

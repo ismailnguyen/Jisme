@@ -59,49 +59,41 @@ a {
   }
 
   /* Change the width of the sidebar to display it*/
-  .menuDisplayed #menu-sidebar-wrapper {
+  .left-sidebar-opened .left-sidebar-wrapper {
       position: fixed !important;
       width: 250px !important;
   }
 
-    .accountOpened .right-sidebar-wrapper,
-    .settingsOpened .right-sidebar-wrapper,
-    .tagsOpened .right-sidebar-wrapper {
+    .right-sidebar-opened .right-sidebar-wrapper {
         position: fixed !important;
         width: 50% !important;
     }
 
-    .accountOpened #page-content-wrapper,
-    .settingsOpened #page-content-wrapper,
-    .tagsOpened #page-content-wrapper {
+    .right-sidebar-opened #page-content-wrapper {
         padding-right: 0;
     }
 
   @media (min-width: 767.98px) { 
-      .menuDisplayed #menu-toggle {
+      .left-sidebar-opened #menu-toggle {
           top: 20px;
           left: 265px;
       }
   }   
 
   @media (max-width: 767.98px) { 
-      .menuDisplayed #menu-sidebar-wrapper,
-      .accountOpened .right-sidebar-wrapper,
-      .settingsOpened .right-sidebar-wrapper,
-      .tagsOpened .right-sidebar-wrapper {
+      .left-sidebar-opened .left-sidebar-wrapper,
+      .right-sidebar-opened .right-sidebar-wrapper {
           width: 100% !important;
           height: 100% !important;
       }
   }
 
   @media (min-width: 767.98px) { 
-    .accountOpened #page-content-wrapper,
-    .settingsOpened #page-content-wrapper,
-    .tagsOpened #page-content-wrapper {
+    .right-sidebar-opened #page-content-wrapper {
         width: 50% !important;
     }   
 
-    .menuDisplayed #page-content-wrapper {
+    .left-sidebar-opened #page-content-wrapper {
         padding-left: 250px;
     }
   }

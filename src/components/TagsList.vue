@@ -1,5 +1,5 @@
 <template>
-    <div id="tags-sidebar-wrapper" class="right-sidebar-wrapper sidebar-wrapper">
+    <div class="right-sidebar-wrapper sidebar-wrapper">
         <div class="right-sidebar">
              <div class="sidebar-header">
                 <div class="row">
