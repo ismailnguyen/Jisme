@@ -22,16 +22,20 @@ class FilterService {
             }
 
             tags = tags.split(',').map(tag => tag.trim());
+        
+            let _filteredAccounts = [];
 
-            this.accounts.forEach(account => {
+            this.filteredAccounts.forEach(account => {
                 // Don't push duplicates
-                if (filteredAccounts.indexOf(account) === -1) {
+                if (_filteredAccounts.indexOf(account) === -1) {
                     // Check if all tags in the query are present in the account
                     if (account.tags && tags.every(tag => account.tags.includes(tag))) {
-                        this.filteredAccounts.push(account);
+                        _filteredAccounts.push(account);
                     }
                 }
             });
+
+            this.filteredAccounts = _filteredAccounts;
         };
 
         this.filterByQuery = function (query) {
