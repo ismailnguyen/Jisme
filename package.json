@@ -1,7 +1,7 @@
 {
   "name": "jisme",
   "description": "Jisme",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "author": "Ismaïl <nguyen.ismail@gmail.com>",
   "scripts": {
     "dev": "vite",
@@ -13,8 +13,10 @@
     "@github/webauthn-json": "^2.1.1",
     "big-integer": "^1.6.52",
     "bootstrap": "^5.3.3",
+    "js-sha256": "^0.11.0",
     "localforage": "^1.10.0",
     "pinia": "^2.1.7",
+    "sjcl": "^1.0.8",
     "totp-generator": "^0.0.14",
     "vue": "^3.3.4",
     "vue-router": "^4.2.4",
