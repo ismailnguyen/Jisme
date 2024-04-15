@@ -7,7 +7,7 @@
         width: 100px;
         height: 100px;
         margin: auto;
-        background: url('/images/favicon512.png') center center no-repeat;
+        background: url('/images/icons/icon_512.png') center center no-repeat;
         background-size: 100%;
     }
 
