@@ -374,7 +374,6 @@
         useAlertStore,
         useAccountsStore
     } from '@/store'
-    import Alert from '../models/Alert'
     import totpGenerator from 'totp-generator'
 
     export default {
@@ -474,7 +473,7 @@
     
             save: async function() {
                 if (!this.account.isValid()) {
-                    this.showAlert('Error', 'Please fill all fields !', 'danger');
+                    this.openAlert('Error', 'Please fill all fields !', 'danger');
                     return;
                 }
 
@@ -483,11 +482,11 @@
                 try {
                     await this.updateAccount(this.account);
 
-                    this.openAlert(new Alert(this.account.displayPlatform, 'Updated !', 'success', this.account.icon));
+                    this.openAlert(this.account.displayPlatform, 'Updated !', 'success', this.account.icon);
                     this.updateUI();
                 }
                 catch (error) {
-                    this.showAlert('Error', error.toString(), 'danger');
+                    this.openAlert('Error', error.toString(), 'danger');
                     this.isSaving = false;
                 }
             },
@@ -518,11 +517,11 @@
                     try {
                         await this.removeAccount(this.account);
 
-                        this.showAlert(this.account.displayPlatform, 'Removed !', 'success');
+                        this.openAlert(this.account.displayPlatform, 'Removed !', 'success');
                         this.updateUI();
                     }
                     catch (error) {
-                        this.showAlert('Error', error.toString(), 'danger');
+                        this.openAlert('Error', error.toString(), 'danger');
                         this.isDeleting = false;
                     }
                 }
@@ -543,10 +542,6 @@
                 this.account.tags = newTags.join(',');
             },
 
-            showAlert: function (title, message, type) {
-                this.openAlert(new Alert(title, message, type));
-            },
-
             copyToClipboard: function (input) {
                 let inputToCopy = document.querySelector('#' + input);
                 inputToCopy.setAttribute('type', 'text');
@@ -558,7 +553,7 @@
                 inputToCopy.setAttribute('type', 'hidden');
                 window.getSelection().removeAllRanges();
 
-                this.showAlert(inputToCopy.value, 'Copied to clipboard !', 'info');
+                this.openAlert(inputToCopy.value, 'Copied to clipboard !', 'info');
             },
 
             closeAccount: function () {

@@ -33,11 +33,11 @@
 
                     <div class="checkbox mb-3">
                         <label>
-                            <input type="checkbox" v-model="remember" tabindex="2" @change="focusOtpInput()"> Remember me
+                            <input type="checkbox" v-model="remember" tabindex="2" @change="focusOtpInput"> Remember me
                         </label>
                         </div>
 
-                    <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="verify()">Verify</span>
+                    <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="verify">Verify</span>
 
                     <hr class="my-4">
 
@@ -51,7 +51,6 @@
 <script>
     import '../assets/auth.css'
 
-    import Alert from '../models/Alert'
     import {
         mapState,
         mapActions
@@ -196,7 +195,7 @@
                 }
                 catch(error) {
                     this.isLoading = false;
-                    this.openAlert(new Alert('Error', error.message, 'danger'))
+                    this.openAlert('Error', error.message, 'danger');
                 }
             }
         }

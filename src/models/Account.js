@@ -24,7 +24,8 @@ class Account {
                     card_expiracy = '',
                     card_cryptogram = '',
                     card_pin = '',
-                    totp_secret = ''
+                    totp_secret = '',
+                    isServerEncrypted = false
 				) {
         this._id = _id;
         this.icon = icon;
@@ -49,6 +50,7 @@ class Account {
         this.card_cryptogram = card_cryptogram;
         this.card_pin = card_pin;
         this.totp_secret = totp_secret;
+        this.isServerEncrypted = isServerEncrypted;
     }
 
     get displayPlatform () {

@@ -153,9 +153,9 @@ class AccountsService {
                     })
 
                 if (response.ok) {
-                    const data = await response.json()
+                    const account = await response.json()
 
-                    return parseAccount(getDecryptedAccount(data, this.user.public_encryption_key))
+                    return parseAccount(getDecryptedAccount(account, this.user.public_encryption_key))
                 }
 
                 const { error } = await response.json()
@@ -172,17 +172,17 @@ class AccountsService {
             let encryptedAccount = getEncryptedAccount(accountToSave, this.user.public_encryption_key)
 
             try {
-                const response = await fetch(`${ ACCOUNTS_API_URL }/${ accountToSave._id }`,
-                    {
+                const response = await fetch(`${ ACCOUNTS_API_URL }/${ accountToSave._id }`, {
                         method: 'PUT',
                         headers: this.headers,
                         body: JSON.stringify(encryptedAccount)
-                    })
+                    }
+                );
 
                 if (response.ok) {
-                    const data = await response.json()
+                    const account = await response.json()
 
-                    return parseAccount(getDecryptedAccount(data, this.user.public_encryption_key))
+                    return parseAccount(getDecryptedAccount(account, this.user.public_encryption_key))
                 }
 
                 const { error } = await response.json()
@@ -204,7 +204,7 @@ class AccountsService {
                     })
 
                 if (response.ok) {
-                    return accountToRemove
+                    return accountToRemove;
                 }
 
                 const { error } = await response.json()

@@ -51,12 +51,12 @@
                             <input id="inputEncryptionKey" class="form-control" type="text" laceholder="Encryption key" v-model="user.public_encryption_key" disabled />
                         </div>
 
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                        <!-- <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <button type="button" class="btn btn-outline-light" @click="enableServerEncryption()">
                                 <i class="fa fa-power-off"></i>
                                     Enable encryption of {{ accounts.length }} accounts
                             </button>
-                        </div>
+                        </div> -->
 
                         <hr class="my-4">
 
@@ -131,7 +131,7 @@
             try {
                 await this.getAccountInformation();
             } catch (error) {
-                this.openAlert(new Alert('Error!', error, 'danger'));
+                this.openAlert('Error!', error, 'danger');
             }
         },
         mounted() {
@@ -187,12 +187,12 @@
                     try {
                         await this.generatePasskey(deviceName);
                         
-                        this.openAlert(new Alert('Passkey added!', 'Save to confirm.'));
+                        this.openAlert('Passkey added!', 'Save to confirm.');
 
                     }
                     catch(error) {
                         console.log(error);
-                        this.openAlert(new Alert('Error!', error, 'danger'));
+                        this.openAlert('Error!', error, 'danger');
                     }
                 }
             },
@@ -202,7 +202,7 @@
                 passkeyToDelete = JSON.parse(JSON.stringify(passkeyToDelete));
                 if(confirm("Do you want to delete passkey for " + passkeyToDelete.deviceName + "?")) {
                     this.removePasskey(passkeyToDelete);
-                    this.openAlert(new Alert('Passkey deleted!', 'Save to confirm.'));
+                    this.openAlert('Passkey deleted!', 'Save to confirm.');
                 }
             },
 
@@ -213,7 +213,7 @@
                     await this.update();
 
                     this.isLoading = false;
-                    this.openAlert(new Alert('Saved!', '', 'success'));
+                    this.openAlert('Saved!', '', 'success');
                 }
                 catch(error) {
                     this.isLoading = false;

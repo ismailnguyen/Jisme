@@ -185,7 +185,7 @@
 
             add: async function () {
                 if (!this.account.isValid()) {
-                    this.showAlert('Error', 'Please fill all fields !', 'danger');
+                    this.openAlert('Error', 'Please fill all fields !', 'danger');
                     return;
                 }
 
@@ -197,7 +197,7 @@
                     this.updateUI();
                 }
                 catch (error) {
-                    this.showAlert('Error', error.toString(), 'danger');
+                    this.openAlert('Error', error.toString(), 'danger');
                     this.isCreating = false;
                 }
             },
@@ -227,16 +227,12 @@
                 this.account = new Account();
             },
 
-            showAlert: function (title, message, type) {
-                this.openAlert(new Alert(title, message, type));
-            },
-
             updateUI: function () {
                 this.isCreating = false;
 
                 this.closeAccount();
 
-                this.openAlert(new Alert(this.account.displayPlatform, 'Created !', 'success', this.account.icon));
+                this.openAlert(this.account.displayPlatform, 'Created !', 'success', this.account.icon);
 
                 this.cleanForm();
             },

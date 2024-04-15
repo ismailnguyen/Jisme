@@ -98,12 +98,12 @@ class UserService {
             };
 
             try {
-                const response = await fetch(`${USERS_API_URL}/verify-mfa`,
-                    {
+                const response = await fetch(`${USERS_API_URL}/verify-mfa`, {
                         method: 'POST',
                         headers: getHeadersWithAuth(accessToken),
                         body: JSON.stringify(mfa)
-                    });
+                    }
+                );
 
                 const body = await response.json();
 

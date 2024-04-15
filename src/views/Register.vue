@@ -69,7 +69,7 @@
             ]),
 
             signUp() {
-                this.openAlert(new Alert('Error', 'Registration are closed. Please contact administrator for assistance.', 'danger'))
+                this.openAlert('Error', 'Registration are closed. Please contact administrator for assistance.', 'danger');
             }
         }
     }

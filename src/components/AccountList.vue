@@ -117,13 +117,13 @@
                     await this.fetchRecentAccounts();
                 } catch (error) {
                     if (error instanceof SessionExpiredException) {
-                        this.openAlert(new Alert('Session expired', error.message, 'danger'));
+                        this.openAlert('Session expired', error.message, 'danger');
 
                         this.signOut();
                         this.$router.go('/');
                     }
                     else {
-                        this.openAlert(new Alert(error.name || 'Error while loading accounts', error.message, 'danger'));
+                        this.openAlert(error.name || 'Error while loading accounts', error.message, 'danger');
                     }
                 }
 
@@ -131,13 +131,13 @@
                     await this.fetchAccounts();
                 } catch (error) {
                     if (error instanceof SessionExpiredException) {
-                        this.openAlert(new Alert('Session expired', error.message, 'danger'));
+                        this.openAlert('Session expired', error.message, 'danger');
 
                         this.signOut();
                         this.$router.go('/');
                     }
                     else {
-                        this.openAlert(new Alert(error.name || 'Error while loading accounts', error.message, 'danger'));
+                        this.openAlert(error.name || 'Error while loading accounts', error.message, 'danger');
                     }
                 }
             },

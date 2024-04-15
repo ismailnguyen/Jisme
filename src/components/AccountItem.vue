@@ -59,6 +59,7 @@
     } from 'pinia'
     import {
         useUiStore,
+        useAlertStore,
         useAccountsStore
     } from '@/store'
     import Account from '../models/Account'
@@ -96,20 +97,16 @@
             }
         },
         methods: {
-            ...mapActions(useUiStore, [
-                'openEditAccountModal'
-            ]),
-
-            ...mapActions(useAccountsStore, [
-                'updateAccount'
-            ]),
+            ...mapActions(useUiStore, ['openEditAccountModal']),
+            ...mapActions(useAccountsStore, ['updateAccount']),
+            ...mapActions(useAlertStore, ['openAlert']),
 
             edit: async function() {
                 try {
                     await this.updateAccount(this.account);
                 }
                 catch (error) {
-                    this.showAlert('Error', error.toString(), 'danger');
+                    this.openAlert('Error', error.toString(), 'danger');
                 }                
 
                 this.openEditAccountModal(this.account)

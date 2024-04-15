@@ -23,7 +23,8 @@ export function parseAccount(account) {
         account.card_expiracy,
         account.card_cryptogram,
         account.card_pin,
-        account.totp_secret
+        account.totp_secret,
+        account.isServerEncrypted
     );
 }
 

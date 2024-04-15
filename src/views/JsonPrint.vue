@@ -18,7 +18,7 @@
             try {
                 await this.fetchAccounts()
             } catch (error) {
-                this.openAlert(new Alert('Error while loading accounts', error.message, 'danger'));
+                this.openAlert('Error while loading accounts', error.message, 'danger');
             }
         },
         computed: {

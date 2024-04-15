@@ -160,7 +160,7 @@
 
             submitUsername: function () {
                 if (!this.username) {
-                    this.openAlert(new Alert('Error', 'Please fill username!', 'danger'))
+                    this.openAlert('Error', 'Please fill username!', 'danger');
 
                     return;
                 }
@@ -192,7 +192,7 @@
                 }
                 catch (error) {
                     this.isLoading = false;
-                    this.openAlert(new Alert('Error', error.message, 'danger'))
+                    this.openAlert('Error', error.message, 'danger');
                 }
             },
 
@@ -204,7 +204,7 @@
                 }
                 catch (error) {
                     this.isLoading = false;
-                    this.openAlert(new Alert('Error', error, 'danger'))
+                    this.openAlert('Error', error, 'danger');
                 }
             }
         }
