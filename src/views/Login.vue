@@ -3,14 +3,23 @@
         <div class="row align-items-center g-lg-5 py-5">
             <LoginHero :isLoading="isLoading" />
 
-            <div class="col-md-10 mx-auto col-lg-5">
+            <div class="col-xs-12 col-md-10 mx-auto col-lg-5">
                 <form class="p-4 p-md-5 rounded-3 form-signin" v-show="!isUsernameFilled" @submit.prevent="submitUsername()">
                     <div class="d-block d-lg-none">
                         <img class="img-fluid rounded mb-4" loading="lazy" src="../assets/logo_medium.png" alt="Jisme" v-show="!isLoading">
                         <Loader v-show="isLoading" />
                     </div>
 
-                    <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
+                    <h1 class="h3 mb-3 font-weight-normal">Log in to your account</h1>
+
+                    <button class="w-100 btn btn-lg" type="submit" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="handlePasswordlessLogin()" v-if="isPasswordlessLoginBtnVisible" tabindex="4">
+                        <i class="fa fa-user-lock" aria-hidden="true"></i>
+                        Passkey
+                    </button>
+
+                    <div class="separator">
+                        <small>Or with email and password</small>
+                    </div>
 
                     <div class="form-floating mb-3">
                             <input
@@ -26,24 +35,24 @@
                                 autofocus
                                 tabindex="1"
                                 required>
-                        <label for="inputUsername">Email address</label>
+                        <label for="inputUsername">Email Address</label>
                     </div>
                     
-                    <button type="submit" class="w-100 btn btn-lg" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="submitUsername" @click="submitUsername" tabindex="3">
+                    <button
+                        type="submit"
+                        class="btn btn-lg"
+                        :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'"
+                        @keyup.enter="submitUsername"
+                        @click="submitUsername"
+                        :disabled="!username"
+                        tabindex="3">
                         <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
                         Next
                     </button>
 
-                    <div class="separator">Or</div>
-
-                    <button class="w-100 btn btn-lg btn-primary" type="submit" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="handlePasswordlessLogin()" v-if="isPasswordlessLoginBtnVisible" tabindex="4">
-                        <i class="fa fa-fingerprint" aria-hidden="true"></i>
-                        One button sign-in
-                    </button>
-
                     <hr class="my-4">
 
-                    <p class="mt-5 mb-3 text-muted" tabindex="5">Don't have account? <router-link to="/register">Sign up</router-link></p>
+                    <p class="mt-5 mb-3 text-muted" tabindex="5">Don't have an account? <router-link to="/register">Sign up</router-link></p>
                 </form>
 
                 <form class="p-4 p-md-5 rounded-3 form-signin" v-show="isUsernameFilled" @submit.prevent="handleLogin()">
@@ -72,7 +81,14 @@
                         <input type="password" ref="inputPassword" id="inputPassword" class="form-control" placeholder="Password" v-model="password" tabindex="6" autocomplete="current-password" required>
                     </div>
                     
-                    <button type="submit" class="w-100 btn btn-lg" :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'" @keyup.enter="handleLogin" @click="handleLogin" tabindex="7">
+                    <button 
+                        type="submit"
+                        class="btn btn-lg"
+                        :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'"
+                        :disabled="!password"
+                        @keyup.enter="handleLogin"
+                        @click="handleLogin"
+                        tabindex="7">
                         <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
                         Sign in
                     </button>

@@ -4,7 +4,7 @@
             <LoginHero :isLoading="isLoading" />
 
             <div class="col-md-10 mx-auto col-lg-5">
-                <form class="p-4 p-md-5 rounded-3 form-signin">
+                <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="verify()">
                     <img class="rounded-circle mb-3" :src="user && user.avatarUrl ? user.avatarUrl : ''" alt="" width="72" height="72">
 
                     <p class="text-muted" v-if="user">{{ user.email }}</p>
@@ -35,9 +35,18 @@
                         <label>
                             <input type="checkbox" v-model="remember" tabindex="2" @change="focusOtpInput"> Remember me
                         </label>
-                        </div>
+                    </div>
 
-                    <span class="btn btn-lg btn-block" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="verify">Verify</span>
+                    <button 
+                        type="submit"
+                        class="btn btn-lg"
+                        :class="isLoading ? 'btn-secondary' : 'btn-primary'"
+                        :disabled="!isOtpFilled"
+                        @keyup.enter="verify"
+                        @click="verify"
+                        tabindex="7">
+                        Verify
+                    </button>
 
                     <hr class="my-4">
 
@@ -82,7 +91,11 @@
             this.focusOtpInput();
         },
         computed: {
-            ...mapState(useUserStore, ['user'])
+            ...mapState(useUserStore, ['user']),
+
+            isOtpFilled: function () {
+                return this.totpToken.filter(v => v).length == this.totpToken.length;
+            }
         },
         methods: {
             ...mapActions(useAlertStore, [
@@ -128,7 +141,7 @@
                 }
 
                 // If all inputs are filled, verify
-                if (this.totpToken.filter(v => v).length == this.totpToken.length) {
+                if (this.isOtpFilled) {
                     this.verify();
                 }
             },

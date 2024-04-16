@@ -26,6 +26,7 @@
                         class="w-100 btn btn-lg"
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
                         @click="signUp()"
+                        :disabled="!username || !password"
                         tabindex="3">
                         <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
                         Next

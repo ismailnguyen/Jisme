@@ -55,9 +55,16 @@
 }
 
 .form-signin .btn-primary {
-  color: #f8f9fa;
-  background-color: var(--color-text);
+  color: var(--color-text);
+  background-color: var(--color-text-inverted);
   border-color: var(--color-text);
+}
+
+.form-signin .btn-primary:hover,
+.form-signin .btn-primary:active {
+  color: var(--color-text-inverted);
+  background-color: var(--color-text);
+  border-color: var(--color-text-inverted);
 }
 
 .form-signin .btn-outline-primary {
@@ -69,25 +76,6 @@
 .form-signin .btn-outline-primary:active {
   color: #f8f9fa !important;
   background-color: var(--color-background-inverted) !important;
-}
-
-@media(prefers-color-scheme: dark) {
-  .form-signin .btn-outline-primary {
-    color: #e4e6eb;
-    border-color: #e4e6eb !important;
-  }
-
-  .form-signin .btn-primary {
-    color: #f8f9fa;
-    background-color: var(--color-background);
-    border-color: var(--color-text);
-  }
-
-  .form-signin .btn-outline-primary:hover,
-  .form-signin .btn-outline-primary:active {
-    color: var(--color-text) !important;
-    background-color: #f8f9fa !important;
-  }
 }
 
 .text-muted, a {
