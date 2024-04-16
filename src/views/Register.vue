@@ -4,7 +4,7 @@
             <LoginHero :isLoading="isLoading" />
 
             <div class="col-md-10 mx-auto col-lg-5">
-                <form class="p-4 p-md-5 rounded-3 form-signin">
+                <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="signUp()">
                     <div class="d-block d-lg-none">
                         <img class="img-fluid rounded mb-4" loading="lazy" src="../assets/logo_medium.png" alt="Jisme" v-show="!isLoading">
                         <Loader v-show="isLoading" />
@@ -25,7 +25,6 @@
                         type="submit"
                         class="w-100 btn btn-lg"
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
-                        @click="signUp()"
                         :disabled="!username || !password"
                         tabindex="3">
                         <i class="fa fa-right-to-bracket" aria-hidden="true"></i>

@@ -31,9 +31,10 @@
                             v-model="totpToken[index]">
                     </div>
 
-                    <div class="checkbox mb-3">
-                        <label>
-                            <input type="checkbox" v-model="remember" tabindex="2" @change="focusOtpInput"> Remember me
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="rememberMeCheckbox" v-model="remember" tabindex="2" @change="focusOtpInput">
+                        <label class="form-check-label" for="rememberMeCheckbox">
+                            Remember me
                         </label>
                     </div>
 
@@ -43,7 +44,6 @@
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
                         :disabled="!isOtpFilled"
                         @keyup.enter="verify"
-                        @click="verify"
                         tabindex="7">
                         Verify
                     </button>

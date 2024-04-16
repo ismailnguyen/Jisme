@@ -12,10 +12,10 @@
 
                     <h1 class="h3 mb-3 font-weight-normal">Log in to your account</h1>
 
-                    <button class="w-100 btn btn-lg" type="submit" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="handlePasswordlessLogin()" v-if="isPasswordlessLoginBtnVisible" tabindex="4">
+                    <span class="w-100 btn btn-lg" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="handlePasswordlessLogin()" v-if="isPasswordlessLoginBtnVisible" tabindex="4">
                         <i class="fa fa-user-lock" aria-hidden="true"></i>
                         Passkey
-                    </button>
+                    </span>
 
                     <div class="separator">
                         <small>Or with email and password</small>
@@ -64,15 +64,15 @@
                     <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
 
                     <div class="form-floating mb-3">
-                            <input
-                                type="text"
-                                id="readonlyInputUsername"
-                                name="username"
-                                autocomplete="username"
-                                class="form-control-plaintext"
-                                v-model="username"
-                                tabindex="1"
-                                readonly>
+                        <input
+                            type="text"
+                            id="readonlyInputUsername"
+                            name="username"
+                            autocomplete="username"
+                            class="form-control-plaintext"
+                            v-model="username"
+                            tabindex="1"
+                            readonly>
                         <label for="readonlyInputUsername">Email address</label>
                     </div>
 
@@ -87,7 +87,6 @@
                         :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'"
                         :disabled="!password"
                         @keyup.enter="handleLogin"
-                        @click="handleLogin"
                         tabindex="7">
                         <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
                         Sign in
@@ -110,8 +109,6 @@
 <script>
     import '../assets/auth.css'
 
-    import { ref } from 'vue';
-    import Alert from '../models/Alert'
     import { 
         mapWritableState,
         mapActions
@@ -208,7 +205,7 @@
                 }
                 catch (error) {
                     this.isLoading = false;
-                    this.openAlert('Error', error.message, 'danger');
+                    this.openAlert(error.reason ? error.message : 'Error', error.reason || error.message, 'danger');
                 }
             },
 

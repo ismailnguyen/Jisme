@@ -58,6 +58,10 @@ class UserService {
                         throw new LoginException('Username and password are mandatory!');
                     }
 
+                    if (response.status === 401) {
+                        throw new LoginException('Not authorized!', 'Pease try later.');
+                    }
+
                     if (response.status === 404) {
                         throw new LoginException('Invalid username/password !');
                     }

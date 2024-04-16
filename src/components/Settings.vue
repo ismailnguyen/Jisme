@@ -51,7 +51,7 @@
                             <input id="inputEncryptionKey" class="form-control" type="text" laceholder="Encryption key" v-model="user.public_encryption_key" disabled />
                         </div>
 
-                        <!-- <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                         <!-- <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <button type="button" class="btn btn-outline-light" @click="enableServerEncryption()">
                                 <i class="fa fa-power-off"></i>
                                     Enable encryption of {{ accounts.length }} accounts
