@@ -11,11 +11,6 @@ import localforage from 'localforage'
 
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import {
-    get,
-    create,
-    parseRequestOptionsFromJSON
-} from '@github/webauthn-json/browser-ponyfill'
 import { APP_USER_STORE } from '../utils/store'
 import UserService from '../services/UserService'
 
@@ -42,15 +37,15 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function loginPasswordless() { 
-        const options = parseRequestOptionsFromJSON({
+        const options = {
             publicKey: {
                 challenge: PASSKEY_CHALLENGE,
                 allowCredentials: [],
                 userVerification: "preferred",
             }
-        });
+        };
 
-        const passkey = await get(options);
+        const passkey = await navigator.credentials.get(options);
 
         user.value = await userService.loginPasswordless(passkey);
 
@@ -114,7 +109,6 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
                 excludeCredentials: [],
                 authenticatorSelection: {
                     userVerification: "preferred",
-                    //requireResidentKey: true
                 },
                 extensions: {
                     credProps: true,
@@ -122,7 +116,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
             }
         });
 
-        const passkey = await create(options);
+        const passkey = await navigator.credentials.create(options);
         
         user.passkeys = user.passkeys || [];
         user.passkeys.push({
