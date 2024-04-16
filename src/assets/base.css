@@ -79,4 +79,14 @@ body {
 
 .tags .badge {
   margin-right: .3rem;
+  cursor: pointer;
+}
+
+.badge-primary {
+  color: #fff;
+  background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
+}
+
+.badge-primary:hover {
+  color: #162056db;
 }

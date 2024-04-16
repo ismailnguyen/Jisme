@@ -329,16 +329,25 @@
                         <hr class="my-4">
 
                         <div class="mb-3 col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 small">
-                            <label>Created</label>
-                            <input class="form-control" v-model="createdDate" disabled />
+                            <label
+                                class="form-label">
+                                <i class="fa fa-clock" aria-hidden="true"></i> Created
+                                {{ createdDate }}
+                            </label>
                         </div>
                         <div class="mb-3 col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 small">
-                            <label>Modified</label>
-                            <input class="form-control" v-model="lastModifiedDate" disabled />
+                            <label
+                                class="form-label">
+                                <i class="fa fa-clock" aria-hidden="true"></i> Modified
+                                {{ lastModifiedDate }}
+                            </label>
                         </div>
                         <div class="mb-3 col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 small">
-                            <label>Opened</label>
-                            <input class="form-control" v-model="lastOpenedDate" disabled />
+                            <label
+                                class="form-label">
+                                <i class="fa fa-clock" aria-hidden="true"></i> Opened
+                                {{ lastOpenedDate }}
+                            </label>
                         </div>
 
                         <hr class="my-4">

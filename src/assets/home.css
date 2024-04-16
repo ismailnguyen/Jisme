@@ -73,13 +73,6 @@ a {
         padding-right: 0;
     }
 
-  @media (min-width: 767.98px) { 
-      .left-sidebar-opened #menu-toggle {
-          top: 20px;
-          left: 265px;
-      }
-  }   
-
   @media (max-width: 767.98px) { 
       .left-sidebar-opened .left-sidebar-wrapper,
       .right-sidebar-opened .right-sidebar-wrapper {
@@ -89,6 +82,11 @@ a {
   }
 
   @media (min-width: 767.98px) { 
+    .left-sidebar-opened #menu-toggle {
+        top: 20px;
+        left: 265px;
+    }
+
     .right-sidebar-opened #page-content-wrapper {
         width: 50% !important;
     }   
@@ -96,15 +94,6 @@ a {
     .left-sidebar-opened #page-content-wrapper {
         padding-left: 250px;
     }
-  }
-
-  .badge-primary {
-      color: #fff;
-      background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
-  }
-
-  .badge-primary:hover {
-      color: #162056db;
   }
 
   .floating-button.floating-button--menu {
@@ -157,9 +146,4 @@ a {
       .floating-button {
           box-shadow: none;
       }
-  }
-
-  .badge-pill {
-      margin-right: 5px;
-      cursor: pointer;
   }

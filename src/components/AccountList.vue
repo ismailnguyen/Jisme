@@ -11,17 +11,24 @@
         </div>
 
         <div class="main-container container-fluid" v-show="isSearching && !isLoading">
-            <span class="category-title" >{{ accountsFilteredByQuery.length }} results out of {{ accounts.length }}</span>
-            <br><br>
-            <span
-                class="badge badge-pill badge-primary"
-                v-for="(tag, tagIndex) in selectedTags"
-                v-bind:key="tagIndex"
-                @click="removeTag(tag)">
-                {{ tag }}
-                <i class="fa fa-close"></i>
-            </span>
-            <br><br>
+            <div class="row">
+                <div class="mb-3 col-12 col-xs-12 col-sm-12">
+                    <span class="category-title" >{{ accountsFilteredByQuery.length }} results out of {{ accounts.length }}</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="mb-3 col-12 col-xs-12 col-sm-12 tags">
+                    <span
+                        class="badge rounded-pill badge-primary"
+                        v-for="(tag, tagIndex) in selectedTags"
+                        v-bind:key="tagIndex"
+                        @click="removeTag(tag)">
+                        {{ tag }}
+                        <i class="fa fa-close"></i>
+                    </span>
+                </div>
+            </div>
+
             <div class="row">
                 <AccountItem 
                     v-for="(account, accountIndex) in accountsFilteredByQuery"
@@ -30,8 +37,12 @@
             </div>
         </div>
         <div class="main-container container-fluid" v-show="!isSearching && !isLoading">
-            <span class="category-title">Recently viewed ({{ recentAccounts.length }} of {{ accounts.length }})</span>
-            <br><br>
+            <div class="row">
+                <div class="mb-3 col-12 col-xs-12 col-sm-12">
+                    <span class="category-title">Recently viewed ({{ recentAccounts.length }} of {{ accounts.length }})</span>
+                </div>
+            </div>
+
             <StackedAccountList :accounts="recentAccounts" />
         </div>
     </div>
