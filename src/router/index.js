@@ -16,6 +16,34 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
+      name: 'Settings',
+      path: '/settings',
+      component: () => import('../views/Home.vue'),
+      meta: { requiresAuth: true },
+      props: { isSidebarOpen: true }
+    },
+    {
+      name: 'Tags',
+      path: '/tags',
+      component: () => import('../views/Home.vue'),
+      meta: { requiresAuth: true },
+      props: { isSidebarOpen: true }
+    },
+    {
+      name: 'AddAccount',
+      path: '/add-account',
+      component: () => import('../views/Home.vue'),
+      meta: { requiresAuth: true },
+      props: { isSidebarOpen: true }
+    },
+    {
+      name: 'Menu',
+      path: '/menu',
+      component: () => import('../views/Home.vue'),
+      meta: { requiresAuth: true },
+      props: { isSidebarOpen: true }
+    },
+    {
       name: 'Login',
       path: '/login', 
       component: () => import('../views/Login.vue'),

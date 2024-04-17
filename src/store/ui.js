@@ -19,6 +19,10 @@ const store = defineStore('ui', () => {
         isMenuOpened.value = !isMenuOpened.value;
     }
 
+    const openMenu = () => {
+        isMenuOpened.value = true;
+    }
+
     const openSettings = () => {
         isSettingsOpened.value = true;
     }
@@ -53,8 +57,23 @@ const store = defineStore('ui', () => {
         currentEditingAccount.value = new Account();
     }
 
-    return {    
+    const openSidebar = (name) => {
+        // Map of each sidebar name and its action to open them
+        const sidebarMap = {
+            'Settings': openSettings,
+            'Tags': openTags,
+            'AddAccount': openAddAccountModal,
+            'Menu': openMenu
+        }
+
+        if (sidebarMap[name]) {
+            sidebarMap[name]();
+        }
+    }
+
+    return {
         isMenuOpened,
+        openMenu,
         toggleMenu,
 
         isAccountOpened,
@@ -74,7 +93,9 @@ const store = defineStore('ui', () => {
 
         isTagsOpened,
         openTags,
-        closeTags
+        closeTags,
+
+        openSidebar
     };
 })
 

@@ -60,6 +60,17 @@
             Settings,
             TagsList
         },
+        props: {
+            isSidebarOpen: {
+                type: Boolean,
+                default: false
+            }
+        },
+        mounted() {
+            if(this.isSidebarOpen) {
+                this.openSidebar(this.$route.name);
+            }
+        },
         computed: {
             ...mapState(useUserStore, ['user', 'isLoggedIn']),
             ...mapState(useUiStore, [
@@ -97,7 +108,8 @@
         methods: {
             ...mapActions(useUiStore, [
                 'toggleMenu',
-                'openAddAccountModal'
+                'openAddAccountModal',
+                'openSidebar'
             ])
         }
     }
