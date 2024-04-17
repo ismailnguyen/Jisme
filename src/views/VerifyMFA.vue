@@ -202,7 +202,7 @@
                         accessToken: this.$route.query.token, 
                         totpToken: this.totpToken.join(''),
                         extendSession: this.remember
-                    })
+                    });
 
                     this.$router.push({ name: 'Home' });
                 }

@@ -167,6 +167,7 @@
             ]),
 
             ...mapActions(useUserStore, [
+                'requestPasswordlessLogin',
                 'loginPasswordless',
                 'login'
             ]),
@@ -213,11 +214,14 @@
                 this.isLoading = true;
 
                 try {
+                    // First request challenge to the server
+                    await this.requestPasswordlessLogin();
+                    // Then sign the challenge to be allowed to login without password
                     await this.loginPasswordless();
                 }
                 catch (error) {
                     this.isLoading = false;
-                    this.openAlert('Error', error, 'danger');
+                    this.openAlert(error.reason ? error.message : 'Error', error.reason || error.message, 'danger');
                 }
             }
         }

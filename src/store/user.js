@@ -22,6 +22,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     const user = ref(null)
     const isLoggedIn = ref(false)
     const userService = new UserService()
+    const passkeyOptions = ref(null)
 
     const lastRememberedUsername = computed(async () => {
         return await localforage.getItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY)
@@ -36,18 +37,30 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         }
     }
 
-    async function loginPasswordless() { 
-        const options = {
-            publicKey: {
-                challenge: PASSKEY_CHALLENGE,
-                allowCredentials: [],
-                userVerification: "preferred",
-            }
-        };
+    async function requestPasswordlessLogin () { 
+        passkeyOptions.value = await userService.requestPasswordlessLogin();
+    }
 
-        const passkey = await navigator.credentials.get(options);
+    async function loginPasswordless() {
+        const storedOptions = passkeyOptions.value;
+        if (!storedOptions) {
+            return;
+        }
 
-        user.value = await userService.loginPasswordless(passkey);
+        var options = { 
+            challenge: (new TextEncoder()).encode(storedOptions.challenge),
+            allowCredentials: [],
+            userVerification: 'preferred'
+        }
+
+        // Reset passkeyOptions as soon as they are used
+        passkeyOptions.value = null;
+
+        const passkey = await navigator.credentials.get({
+            publicKey: options
+        });
+
+        user.value = await userService.loginPasswordless(passkey, storedOptions.challenge);
 
         createSession(user);
     }
@@ -94,29 +107,42 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function generatePasskey(deviceName) {
-        const options = parseCreationOptionsFromJSON({
-            publicKey: {
-                challenge: user.uuid,
-                rp: {  
-                    name: PASSKEY_RP_NAME
-                },  
-                user: {  
-                    id: user.uuid,
-                    name: user.email,  
-                    displayName: user.email,  
-                }, 
-                pubKeyCredParams: [],
-                excludeCredentials: [],
-                authenticatorSelection: {
-                    userVerification: "preferred",
-                },
-                extensions: {
-                    credProps: true,
-                }
+        const options = {
+            challenge: PASSKEY_CHALLENGE, // No need challenge for registration
+            rp: {  
+                name: PASSKEY_RP_NAME
+            },
+            user: {  
+                id: new TextEncoder().encode(user.uuid),
+                name: user.email,
+                displayName: user.email
+            }, 
+            pubKeyCredParams: [{
+                type: 'public-key',
+                alg: -7, // ES256
+            },
+            {
+                type: 'public-key',
+                alg: -256, // RS256
+            },
+            {
+                type: 'public-key',
+                alg: -37, // PS256
+            }],
+            excludeCredentials: [],
+            authenticatorSelection: {
+                userVerification: 'preferred', // Do you want to use biometrics or a pin?
+                residentKey: 'required' // Create a resident key e.g. passkey
+            },
+            attestation: 'indirect',
+            extensions: {
+                credProps: true
             }
-        });
+        };
 
-        const passkey = await navigator.credentials.create(options);
+        const passkey = await navigator.credentials.create({
+            publicKey: options
+        });
         
         user.passkeys = user.passkeys || [];
         user.passkeys.push({
@@ -148,6 +174,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         init,
         login,
+        requestPasswordlessLogin,
         loginPasswordless,
         getAccountInformation,
         verifyMFA,
