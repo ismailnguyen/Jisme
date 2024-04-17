@@ -144,7 +144,7 @@
         async mounted() {
             this.username = await this.lastRememberedUsername;
 
-            // Availability of `window.PublicKeyCredential` means WebAuthn is usable.  
+            // Availability of `window.PublicKeyCredential` means WebAuthn is usable.
             if (window.PublicKeyCredential &&  
                 PublicKeyCredential.isConditionalMediationAvailable) {  
                 // Check if conditional mediation is available.  
@@ -152,6 +152,9 @@
                     if (isCMA) {  
                         // Call WebAuthn authentication  
                         this.isPasswordlessLoginBtnVisible = true;
+
+                        // Init challenge to act as a CSRF token
+                        this.initPasswordlessLogin();
                     }  
                 })
             }
@@ -210,12 +213,15 @@
                 }
             },
 
+            initPasswordlessLogin: async function () {
+                // First request challenge to the server, so that we keep the challenge active until the user signs it
+                await this.requestPasswordlessLogin();
+            },
+
             handlePasswordlessLogin: async function () {
                 this.isLoading = true;
 
                 try {
-                    // First request challenge to the server
-                    await this.requestPasswordlessLogin();
                     // Then sign the challenge to be allowed to login without password
                     await this.loginPasswordless();
 

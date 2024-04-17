@@ -115,7 +115,7 @@ class UserService {
                     }
 
                     if (response.status === 404) {
-                        throw new LoginException('Invalid passkey !', error.reason || error.message);
+                        throw new LoginException(error.message || 'Invalid passkey !', error.reason || error.message);
                     }
 
                     throw new LoginException(error.reason || error.message || body.message);

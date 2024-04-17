@@ -148,7 +148,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         var options = parseRequestOptionsFromJSON({
             publicKey: { 
-                challenge: storedOptions.challenge,
+                challenge: btoa(storedOptions.challenge),
                 allowCredentials: [],
                 userVerification: 'preferred'
             }
