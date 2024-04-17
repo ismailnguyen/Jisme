@@ -60,7 +60,7 @@ class AccountsService {
 
         this.getRecents = async function () {
             try {
-                const response = await fetch(`${ ACCOUNTS_API_URL }/recents`,
+                const response = await fetch(`${ ACCOUNTS_API_URL }/recents/`,
                     {
                         method: 'GET',
                         headers: this.headers
@@ -226,7 +226,7 @@ class AccountsService {
                 console.log('Sending accounts', chunk);
 
                 try {
-                    const response = await fetch(`${ ACCOUNTS_API_URL }/encryption/enable`, {
+                    const response = await fetch(`${ ACCOUNTS_API_URL }/encryption/enable/`, {
                             method: 'POST',
                             headers: this.headers,
                             body: JSON.stringify({
