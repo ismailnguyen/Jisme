@@ -20,6 +20,7 @@
 
 <style>
     .stacked-cards {
+        padding-top: 1rem;
         height: 80vh;
         max-height: 100%;
         flex-flow: column wrap;

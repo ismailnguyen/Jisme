@@ -218,6 +218,8 @@
                     await this.requestPasswordlessLogin();
                     // Then sign the challenge to be allowed to login without password
                     await this.loginPasswordless();
+
+                    this.$router.push({ name: 'Home' });
                 }
                 catch (error) {
                     this.isLoading = false;

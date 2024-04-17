@@ -65,8 +65,8 @@
                             <div class="input-group"
                                 v-for="passkey in user.passkeys"
                                 :key="passkey.passkey.id">
-                                <input class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="passkey.deviceName" readonly />
-                                <button class="btn btn-outline-secondary" type="button" @click="onRemovePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
+                                <input class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="passkey.deviceName" disabled />
+                                <button class="btn btn-outline-secondary hover-danger" type="button" @click="onRemovePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
                             </div>
                             <button class="btn btn-danger btn-block" @click.prevent="onGeneratePasskey()" v-if="isGeneratePasskeyBtnVisible">
                                 <i class="fa fa-plus"></i> Add a passkey
@@ -160,6 +160,7 @@
             ...mapActions(useUserStore, [
                 'getAccountInformation',
                 'signOut',
+                'requestPasswordlessLogin',
                 'generatePasskey',
                 'removePasskey',
                 'update'
@@ -185,10 +186,12 @@
                 const deviceName = prompt('Enter a device name', 'Device #1');
                 if (deviceName) {
                     try {
+                        // First request challenge to the server
+                        await this.requestPasswordlessLogin();
+
                         await this.generatePasskey(deviceName);
                         
                         this.openAlert('Passkey added!', 'Save to confirm.');
-
                     }
                     catch(error) {
                         console.log(error);

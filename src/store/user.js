@@ -7,6 +7,12 @@ import {
     PASSKEY_RP_NAME,
     PASSKEY_CHALLENGE
 } from '../utils/auth'
+import {
+    create as createWebAuthn,
+    get as getWebAuthn,
+    parseCreationOptionsFromJSON,
+    parseRequestOptionsFromJSON
+  } from '@github/webauthn-json/browser-ponyfill';
 import localforage from 'localforage'
 
 import { ref, computed } from 'vue'
@@ -37,34 +43,6 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         }
     }
 
-    async function requestPasswordlessLogin () { 
-        passkeyOptions.value = await userService.requestPasswordlessLogin();
-    }
-
-    async function loginPasswordless() {
-        const storedOptions = passkeyOptions.value;
-        if (!storedOptions) {
-            return;
-        }
-
-        var options = { 
-            challenge: (new TextEncoder()).encode(storedOptions.challenge),
-            allowCredentials: [],
-            userVerification: 'preferred'
-        }
-
-        // Reset passkeyOptions as soon as they are used
-        passkeyOptions.value = null;
-
-        const passkey = await navigator.credentials.get({
-            publicKey: options
-        });
-
-        user.value = await userService.loginPasswordless(passkey, storedOptions.challenge);
-
-        createSession(user);
-    }
-
     async function verifyMFA({ accessToken, totpToken, extendedSession }) {
         user.value = await userService.verifyMFA({ accessToken, totpToken, extendedSession });
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
@@ -92,67 +70,96 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
     }
 
-    async function createSession({ value }) {
-        if (!value) {
+    async function createSession({ value: user }) {
+        if (!user) {
             return;
         }
 
         localforage.setItem(LOCAL_STORAGE_USER_KEY, {
-            uuid: value.uuid,
-            avatarUrl: value.avatarUrl,
-            email: value.email,
-            token: value.token,
-            public_encryption_key: value.public_encryption_key
+            uuid: user.uuid,
+            avatarUrl: user.avatarUrl,
+            email: user.email,
+            token: user.token,
+            public_encryption_key: user.public_encryption_key
         });
     }
 
     async function generatePasskey(deviceName) {
-        const options = {
-            challenge: PASSKEY_CHALLENGE, // No need challenge for registration
-            rp: {  
-                name: PASSKEY_RP_NAME
-            },
-            user: {  
-                id: new TextEncoder().encode(user.uuid),
-                name: user.email,
-                displayName: user.email
-            }, 
-            pubKeyCredParams: [{
-                type: 'public-key',
-                alg: -7, // ES256
-            },
-            {
-                type: 'public-key',
-                alg: -256, // RS256
-            },
-            {
-                type: 'public-key',
-                alg: -37, // PS256
-            }],
-            excludeCredentials: [],
-            authenticatorSelection: {
-                userVerification: 'preferred', // Do you want to use biometrics or a pin?
-                residentKey: 'required' // Create a resident key e.g. passkey
-            },
-            attestation: 'indirect',
-            extensions: {
-                credProps: true
+        const options = parseCreationOptionsFromJSON({
+            publicKey: {
+                challenge: PASSKEY_CHALLENGE, // No need challenge for registration
+                rp: {  
+                    name: PASSKEY_RP_NAME
+                },
+                user: {  
+                    id: user.value.uuid,
+                    name: user.value.email,
+                    displayName: user.value.email
+                }, 
+                pubKeyCredParams: [{
+                    type: 'public-key',
+                    alg: -7, // ES256
+                },
+                {
+                    type: 'public-key',
+                    alg: -256, // RS256
+                },
+                {
+                    type: 'public-key',
+                    alg: -37, // PS256
+                }],
+                excludeCredentials: [],
+                authenticatorSelection: {
+                    userVerification: 'preferred', // Do you want to use biometrics or a pin?
+                    residentKey: 'required' // Create a resident key e.g. passkey
+                },
+                attestation: 'indirect',
+                extensions: {
+                    credProps: true
+                }
             }
-        };
-
-        const passkey = await navigator.credentials.create({
-            publicKey: options
         });
+
+        const passkey = await createWebAuthn(options);
         
-        user.passkeys = user.passkeys || [];
-        user.passkeys.push({
+        user.value.passkeys = user.value.passkeys || [];
+        user.value.passkeys.push({
             deviceName: deviceName,
             passkey: passkey
         });
     }
 
     function removePasskey (passkeyToDelete) {
-        user.passkeys = user.passkeys.filter(passkey => passkey.passkey.id !== passkeyToDelete.passkey.id);
+        user.value.passkeys = user.value.passkeys.filter(passkey => passkey.passkey.id !== passkeyToDelete.passkey.id);
+    }
+
+    async function requestPasswordlessLogin () { 
+        passkeyOptions.value = await userService.requestPasswordlessLogin();
+    }
+
+    async function loginPasswordless() {
+        const storedOptions = passkeyOptions.value;
+        if (!storedOptions) {
+            return;
+        }
+
+        // Reset passkeyOptions as soon as they are used
+        passkeyOptions.value = null;
+
+        var options = parseRequestOptionsFromJSON({
+            publicKey: { 
+                challenge: storedOptions.challenge,
+                allowCredentials: [],
+                userVerification: 'preferred'
+            }
+        });
+
+        const passkey = await getWebAuthn(options);
+
+        user.value = await userService.loginPasswordless(passkey, storedOptions.challenge);
+        isLoggedIn.value = user.value && user.value.uuid ? true : false;
+
+        createSession(user);
     }
 
     async function signOut() {

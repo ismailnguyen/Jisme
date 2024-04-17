@@ -199,6 +199,12 @@
     border-bottom-right-radius: 15px !important;;
 }
 
+.hover-danger:hover,
+.hover-danger:active {
+    background-color: #dc3545;
+    color: #fff;
+}
+
 .sidebar-footer {
     padding: 1rem;
 }
