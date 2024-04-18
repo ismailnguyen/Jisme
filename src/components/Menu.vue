@@ -4,15 +4,15 @@
             <img :src="user.avatarUrl" class="rounded-circle mb-3" style="width: 150px;" alt="Avatar" />
             <p class="text-muted">{{ user.email }}</p>
             <li class="menu-actions">
-                <a class="menu-actions-settings" @click="onOpenSettings()">
+                <a class="menu-actions-settings" @click="onOpenSettings()" alt="Settings" title="Settings">
                     <i class="fa fa-gear"></i>
                 </a>
 
-                <a class="menu-actions-tags" @click="onOpenTags()">
+                <a class="menu-actions-tags" @click="onOpenTags()" alt="Tags" title="Tags">
                     <i class="fa fa-tags"></i>
                 </a>
 
-                <a class="menu-actions-add" @click="onAddAccount()">
+                <a class="menu-actions-add" @click="onAddAccount()" alt="Add account" title="Add account">
                     <i class="fa fa-plus"></i>
                 </a>
             </li>
