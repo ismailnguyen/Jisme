@@ -43,7 +43,7 @@
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <label class="form-label" for="inputTotpSecret"><i class="fa fa-user-secret" aria-hidden="true"></i> TOTP Secret</label>
-                            <input id="inputTotpSecret" class="form-control" type="text" laceholder="MFA TOTP secret" v-model="user.totp_secret" disabled />
+                            <input id="inputTotpSecret" class="form-control" type="text" placeholder="Loading" laceholder="MFA TOTP secret" v-model="user.totp_secret" disabled />
                         </div>
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
@@ -60,12 +60,12 @@
 
                         <hr class="my-4">
 
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12 input-group-list" v-if="user.passkeys">
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12 input-group-list">
                             <label class="form-label" for="passwordlesslogin_btn"><i class="fa fa-fingerprint" aria-hidden="true"></i> Password-less login</label>
                             <div class="input-group"
                                 v-for="passkey in user.passkeys"
                                 :key="passkey.passkey.id">
-                                <input class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="passkey.deviceName" disabled />
+                                <input class="form-control" type="text" aria-describedby="addAccount_passwordHelp" placeholder="Loading" v-model="passkey.deviceName" disabled />
                                 <button class="btn btn-outline-secondary hover-danger" type="button" @click="onRemovePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
                             </div>
                             <button class="btn btn-danger btn-block" @click.prevent="onGeneratePasskey()" v-if="isGeneratePasskeyBtnVisible">
