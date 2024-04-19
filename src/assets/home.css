@@ -47,25 +47,11 @@ header {
     transition: all .3s;
     font-size: 2em;
 }
-/* Change the width of the sidebar to display it*/
-.left-sidebar-opened .left-sidebar-wrapper {
-    position: fixed !important;
-    width: 250px !important;
-}
-.sidebar-wrapper-open {
-    position: fixed !important;
-    width: 50% !important;
-}
+
 .right-sidebar-opened #page-content-wrapper {
     padding-right: 0;
 }
-@media (max-width: 767.98px) {
-    .sidebar-wrapper-open,
-    .left-sidebar-opened .left-sidebar-wrapper {
-        width: 100% !important;
-        height: 100% !important;
-   }
-}
+
 @media (min-width: 767.98px) {
     .left-sidebar-opened #menu-toggle {
         top: 20px;

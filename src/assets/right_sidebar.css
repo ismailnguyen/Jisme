@@ -4,6 +4,10 @@
 .right-sidebar {
     background: var(--color-background-mute);
 }
+.right-sidebar-wrapper.sidebar-wrapper-open {
+    position: fixed !important;
+    width: 50% !important;
+}
 @media (max-width: 767.98px) {
     .right-sidebar {
         background: var(--color-background-soft);

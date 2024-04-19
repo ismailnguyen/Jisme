@@ -4,6 +4,9 @@
 .left-sidebar {
     background: var(--color-text);
 }
+.left-sidebar-wrapper.sidebar-wrapper-open {
+    width: 20% !important;
+}
 .left-sidebar .sidebar-body {
     padding-top: 3rem;
 }
