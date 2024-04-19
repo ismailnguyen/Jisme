@@ -1,91 +1,72 @@
 @import "bootstrap/dist/css/bootstrap";
-
-:root {
-  --color-background: #f0f2f5;
-  --color-background-inverted: #000;
-  --color-background-soft: rgb(228, 228, 228);
-  --color-background-mute: #fff;
-
-  --color-border: var(--vt-c-divider-light-2);
-  --color-border-hover: var(--vt-c-divider-light-1);
-
-  --color-heading: var(--vt-c-text-light-1);
-  --color-text: #162056;
-  --color-text-inverted: #eee;
-
+ :root {
+     --color-background: #f0f2f5;
+     --color-background-inverted: #000;
+     --color-background-soft: rgb(228, 228, 228);
+     --color-background-mute: #fff;
+     --color-border: var(--vt-c-divider-light-2);
+     --color-border-hover: var(--vt-c-divider-light-1);
+     --color-heading: var(--vt-c-text-light-1);
+     --color-text: #162056;
+     --color-text-inverted: #eee;
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #000;
-    --color-background-inverted: #f0f2f5;
-    --color-background-soft: #1c1c1d;
-    --color-background-mute: #242526db;
-
-    --color-border: var(--vt-c-divider-dark-2);
-    --color-border-hover: var(--vt-c-divider-dark-1);
-
-    --color-heading: var(--vt-c-text-dark-1);
-    --color-text: #eee;
-    --color-text-inverted: #162056;
-  }
+ @media (prefers-color-scheme: dark) {
+     :root {
+         --color-background: #000;
+         --color-background-inverted: #f0f2f5;
+         --color-background-soft: #1c1c1d;
+         --color-background-mute: #242526db;
+         --color-border: var(--vt-c-divider-dark-2);
+         --color-border-hover: var(--vt-c-divider-dark-1);
+         --color-heading: var(--vt-c-text-dark-1);
+         --color-text: #eee;
+         --color-text-inverted: #162056;
+    }
 }
-
-* {
-  margin: 0;
-  position: relative;
+ * {
+     margin: 0;
+     position: relative;
 }
-
-html, body {
-  height: 100%;
+ html, body {
+     height: 100%;
 }
-
-#app {
-  height: 100%;
+ #app {
+     height: 100%;
 }
-
-body {
-  color: var(--color-text);
-  background: var(--color-background);
+ body {
+     color: var(--color-text);
+     background: var(--color-background);
 }
-
-.btn {
-  border-radius: 15px;
+ .btn {
+     border-radius: 15px;
 }
-
-.separator {
-  display: flex;
-  align-items: center;
-  text-align: center;
-  padding-top: 1em;
-  padding-bottom: 1em;
+ .separator {
+     display: flex;
+     align-items: center;
+     text-align: center;
+     padding-top: 1em;
+     padding-bottom: 1em;
 }
-
-.separator::before,
-.separator::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1px solid var(--color-background-inverted);
+ .separator::before, .separator::after {
+     content: '';
+     flex: 1;
+     border-bottom: 1px solid var(--color-background-inverted);
 }
-
-.separator:not(:empty)::before {
-  margin-right: .25em;
+ .separator:not(:empty)::before {
+     margin-right: .25em;
 }
-
-.separator:not(:empty)::after {
-  margin-left: .25em;
+ .separator:not(:empty)::after {
+     margin-left: .25em;
 }
-
-.tags .badge {
-  margin-right: .3rem;
-  cursor: pointer;
+ .tags .badge {
+     margin-right: .3rem;
+     cursor: pointer;
 }
-
-.badge-primary {
-  color: #fff;
-  background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
+ .badge-primary {
+     color: #fff;
+     background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
 }
-
-.badge-primary:hover {
-  color: #162056db;
+ .badge-primary:hover {
+     color: #162056db;
 }
+ 
