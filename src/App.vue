@@ -6,6 +6,7 @@
 
 <script>
     import '@fortawesome/fontawesome-free/css/all.css';
+    // import './assets/dotted_white_theme.css'; // Optional theme (Work in progress)
     import './assets/base.css';
     import './assets/sidebar.css';
 
