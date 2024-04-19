@@ -50,6 +50,11 @@
     }
 }
 
+.bg-gradient-blue .button--close i {
+    color: var(--color-text-inverted);
+}
+  
+
 .bg-gradient-blue .btn-group label.btn.btn-outline-primary:hover {
     background: #fff;
     color: #000;
@@ -66,7 +71,8 @@
     border-color: #fff;
 }
 
-.bg-gradient-blue .form-control {
+.bg-gradient-blue .form-control,
+.bg-gradient-blue .form-control-plaintext {
     color: #f8f9fa;
 }
 
@@ -100,17 +106,6 @@
     border-color: #fff;
 }
 
-.button--close {
-    cursor: pointer;
-    width: 48px;
-    height: 48px;
-    border-radius: 15px;
-    text-align: center;
-    background-color: #fff;
-    border: none;
-    transition: all .3s;
-    font-size: 2em;
-}
 
 .sidebar-header .justify-content-end {
     display: flex;

@@ -98,18 +98,10 @@
         },
         methods: {
             ...mapActions(useUiStore, ['openEditAccountModal']),
-            ...mapActions(useAccountsStore, ['updateAccount']),
             ...mapActions(useAlertStore, ['openAlert']),
 
             edit: async function() {
-                try {
-                    await this.updateAccount(this.account);
-                }
-                catch (error) {
-                    this.openAlert('Error', error.toString(), 'danger');
-                }                
-
-                this.openEditAccountModal(this.account)
+                await this.openEditAccountModal(this.account);
             },
 
             selectTag: function (tag) {

@@ -18,18 +18,22 @@
             <div class="sidebar-body">
                 <div class="row">
                     <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                        <label class="form-label"><i class="fa fa-tag" aria-hidden="true"></i> New tag</label>
+                        <label class="form-label" for="new_tag">
+                            <i class="fa fa-tag" aria-hidden="true"></i> New tag
+                        </label>
                             <div class="input-group">
-                            <input class="form-control" type="text" placeholder="Add a new tag" />
+                            <input id="new_tag" class="form-control" type="text" placeholder="Add a new tag" />
                             <button class="btn btn-outline-secondary" type="button">Add</button>
                         </div>
                     </div>
 
                     <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label"><i class="fa fa-tags" aria-hidden="true"></i> Existing tags</label>
+                            <label class="form-label" for="existing_tags">
+                                <i class="fa fa-tags" aria-hidden="true"></i> Existing tags
+                            </label>
                         </div>
-                        <ul class="list-group">
+                        <ul class="list-group" id="existing_tags">
                             <li
                                 class="list-group-item"
                                 v-for="(tag, index) in getUniqueTags()"

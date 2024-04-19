@@ -228,11 +228,17 @@
                         </div>
 
                         <div v-show="fieldAttrs.password.isExpanded" class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="editAccount_input_passwordless"><i class="fa fa-bolt" aria-hidden="true"></i> Password less</label>
+                            <label class="form-label" for="editAccount_input_passwordless_generatedPassword" v-show="passwordLess.generatedPassword">
+                                <i class="fa fa-bolt" aria-hidden="true"></i> Password less
+                            </label>
                             <div class="input-group" v-show="passwordLess.generatedPassword">
                                 <input id="editAccount_input_passwordless_generatedPassword" class="form-control" type="text" v-model="passwordLess.generatedPassword" readonly />
                                 <button class="btn btn-outline-light" type="button" @click="resetPasswordLess()"><i class="fa fa-undo"></i> Reset</button>
                             </div>
+
+                            <label class="form-label" for="editAccount_input_passwordless_masterPassword" v-show="!passwordLess.generatedPassword">
+                                <i class="fa fa-bolt" aria-hidden="true"></i> Password less
+                            </label>
                             <div class="input-group" v-show="!passwordLess.generatedPassword">
                                 <input id="editAccount_input_passwordless_masterPassword" class="form-control" type="password" autocomplete="current-password" aria-describedby="editAccount_input_passwordlessHelp_masterPassword" v-model="passwordLess.masterPassword" />
                                 <button class="btn btn-outline-light" type="button" @click="generatePasswordLess()"><i class="fa fa-cogs"></i> Generate</button>
@@ -329,25 +335,22 @@
                         <hr class="my-4">
 
                         <div class="mb-3 col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 small">
-                            <label
-                                class="form-label">
+                            <label class="form-label" for="createdDate">
                                 <i class="fa fa-clock" aria-hidden="true"></i> Created
-                                {{ createdDate }}
                             </label>
+                            <input type="text" readonly class="form-control-plaintext" id="createdDate" :value="createdDate">
                         </div>
                         <div class="mb-3 col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 small">
-                            <label
-                                class="form-label">
+                            <label class="form-label" for="lastModifiedDate">
                                 <i class="fa fa-clock" aria-hidden="true"></i> Modified
-                                {{ lastModifiedDate }}
                             </label>
+                            <input type="text" readonly class="form-control-plaintext" id="lastModifiedDate" :value="lastModifiedDate">
                         </div>
                         <div class="mb-3 col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 small">
-                            <label
-                                class="form-label">
+                            <label class="form-label" for="lastOpenedDate">
                                 <i class="fa fa-clock" aria-hidden="true"></i> Opened
-                                {{ lastOpenedDate }}
                             </label>
+                            <input type="text" readonly class="form-control-plaintext" id="lastOpenedDate" :value="lastOpenedDate">
                         </div>
 
                         <hr class="my-4">
