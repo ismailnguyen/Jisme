@@ -8,7 +8,7 @@
                     </div>
 
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
-                        <button type="button" class="button--close" @click="closeTagsList()">
+                        <button type="button" class="button--close" @click="closeTags()">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
                     </div>
@@ -21,7 +21,7 @@
                         <label class="form-label" for="new_tag">
                             <i class="fa fa-tag" aria-hidden="true"></i> New tag
                         </label>
-                        <div class="input-group">
+                            <div class="input-group">
                             <input id="new_tag" class="form-control" type="text" placeholder="Add a new tag" />
                             <button class="btn btn-outline-secondary" type="button">Add</button>
                         </div>
@@ -79,7 +79,7 @@
             ]),
 
             ...mapActions(useUiStore, [
-                'closeTagsList'
+                'closeTagsTree'
             ]),
 
             selectTag: function (tag) {

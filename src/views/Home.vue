@@ -1,33 +1,30 @@
 <template>
     <div :class="sidebarAdjustmentClasses">
-        <Menu
-            :user="user"
-            v-if="displayMenus" />
+        <Menu />
  
-        <AddAccountModal v-if="displayMenus && isAddAccountModalOpened" />
+        <AddAccountModal v-if="isAddAccountModalOpened" />
 
         <EditAccountModal 
             :account="currentEditingAccount"
-            v-if="displayMenus && isEditAccountModalOpened" />
+            v-if="isEditAccountModalOpened" />
 
         <Settings v-if="isSettingsOpened" />
-        <TagsList v-if="isTagsOpened" />
+        <TagsList v-if="isTagsListOpened" />
 
         <AccountList />
 
         <a
             id="menu-toggle"
-            class="floating-button"
-            :class="isMenuOpened ? 'floating-button--close' : 'floating-button--menu'"
-            @click="toggleMenu" v-show="displayMenus">
-            <i class="fa fa-solid" :class="isMenuOpened ? 'fa-close' : 'fa-bars-staggered'"></i>
+            class="floating-button floating-button--menu"
+            @click="toggleMenu">
+            <i class="fa fa-solid fa-bars-staggered"></i>
         </a>
 
         <a
             id="menu-toggle"
-            class="floating-button floating-button--add d-none d-lg-block d-xl-block"
-            @click="openAddAccountModal"
-            v-if="!isMenuOpened && displayMenus">
+            class="floating-button floating-button--add d-none"
+            :class="isMenuOpened ? '' : 'd-lg-block d-xl-block'"
+            @click="openAddAccountModal">
             <i class="fa fa-plus"></i>
         </a>
     </div>
@@ -77,7 +74,7 @@
                 'currentEditingAccount',
                 'isMenuOpened',
                 'isSettingsOpened',
-                'isTagsOpened',
+                'isTagsListOpened',
                 'isAddAccountModalOpened',
                 'isEditAccountModalOpened'
             ]),
@@ -87,10 +84,6 @@
                         || this.isEditAccountModalOpened;
             },
 
-            displayMenus: function () {
-                return this.isLoggedIn;
-            },
-
             sidebarAdjustmentClasses: function () {
                 let cssClass = '';
 
@@ -98,7 +91,7 @@
                     cssClass += ' left-sidebar-opened';
                 }
                 
-                if (this.isAccountOpened || this.isSettingsOpened || this.isTagsOpened) {
+                if (this.isAccountOpened || this.isSettingsOpened || this.isTagsListOpened) {
                     cssClass += ' right-sidebar-opened';
                 }
 
@@ -114,7 +107,3 @@
         }
     }
 </script>
-
-<style>
-    
-</style>
