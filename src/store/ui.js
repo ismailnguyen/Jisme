@@ -1,8 +1,12 @@
 import { ref, computed } from 'vue';
 import { defineStore } from 'pinia';
+import { useAccountsStore } from '@/store';
+
 import Account from '../models/Account';
 
 const store = defineStore('ui', () => {
+    const accountsStore = useAccountsStore();
+
     const isMenuOpened = ref(false);
     const isAddAccountModalOpened = ref(false);
     const isEditAccountModalOpened = ref(false);
@@ -47,9 +51,11 @@ const store = defineStore('ui', () => {
         isAddAccountModalOpened.value = false;
     }
 
-    const openEditAccountModal = (account) => {
+    const openEditAccountModal = async (account) => {
         currentEditingAccount.value = account;
         isEditAccountModalOpened.value = true;
+
+        await accountsStore.updateAccount(account);
     }
 
     const closeEditAccountModal = () => {
