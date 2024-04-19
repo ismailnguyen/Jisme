@@ -1,9 +1,7 @@
 <template>
-    <div>
-        <RouterView />
+    <RouterView />
 
-        <AlertBox v-if="hasAlert" />
-    </div>
+    <AlertBox v-if="hasAlert" />
 </template>
 
 <script>
