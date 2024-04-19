@@ -20,6 +20,17 @@ const store = defineStore('ui', () => {
             || isEditAccountModalOpened.value == true;
     })
 
+    const isLeftSidebarOpened = computed(() => {
+        return isMenuOpened.value == true;
+    })
+
+    const isRightSidebarOpened = computed(() => {
+        return isAccountOpened.value == true
+            || isSettingsOpened.value == true
+            || isTagsListOpened.value == true
+            || isTagsTreeOpened.value == true;
+    })
+
     const toggleMenu = () => {
         isMenuOpened.value = !isMenuOpened.value;
     }
@@ -45,11 +56,11 @@ const store = defineStore('ui', () => {
     }
 
     const openTagsTree = () => {
-        isTagsListOpened.value = true;
+        isTagsTreeOpened.value = true;
     }
 
     const closeTagsTree = () => {
-        isTagsListOpened.value = false;
+        isTagsTreeOpened.value = false;
     }
 
     const openAddAccountModal = () => {
@@ -76,7 +87,8 @@ const store = defineStore('ui', () => {
         // Map of each sidebar name and its action to open them
         const sidebarMap = {
             'Settings': openSettings,
-            'Tags': openTagsList,
+            'TagsList': openTagsList,
+            'TagsTree': openTagsTree,
             'AddAccount': openAddAccountModal,
             'Menu': openMenu
         }
@@ -87,6 +99,9 @@ const store = defineStore('ui', () => {
     }
 
     return {
+        isLeftSidebarOpened,
+        isRightSidebarOpened,
+
         isMenuOpened,
         openMenu,
         toggleMenu,
@@ -112,7 +127,7 @@ const store = defineStore('ui', () => {
 
         isTagsTreeOpened,
         openTagsTree,
-        openTagsList,
+        closeTagsTree,
 
         openSidebar
     };
