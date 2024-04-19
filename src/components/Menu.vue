@@ -1,40 +1,62 @@
 <template>
-    <div class="left-sidebar-wrapper">
-        <ul class="sidebar-nav">
-            <img :src="user.avatarUrl" class="rounded-circle mb-3" style="width: 150px;" alt="Avatar" />
-            <p class="text-muted">{{ user.email }}</p>
+    <div class="sidebar-wrapper left-sidebar-wrapper">
+        <div class="sidebar left-sidebar">
+            <div class="sidebar-header">
+                <div class="row">
+                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4">
+                        <button type="button" class="button--close" @click="toggleMenu()">
+                            <i class="fa fa-solid fa-close"></i>
+                        </button>
+                    </div>
 
-            <div class="d-grid gap-2 d-none d-md-grid">
-                <button class="menu-actions-add btn btn-danger" type="button" @click="onAddAccount()">
+                    <div class="mb-3" :class="user.avatarUrl ? 'col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4' : 'col-xs-8 col-sm-8 col-8 col-md-8 col-lg-8'">
+                    </div>
+                    
+                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4 justify-content-end" v-show="user.avatarUrl">
+                        <img
+                            :src="user.avatarUrl"
+                            loading="lazy"
+                            :alt="user.email"
+                            :title="user.email"
+                            class="sidebar-icon" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-body">
+                <div class="row">
+                    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <button class="menu-actions btn btn-primary w-100" type="button" @click="onOpenTagsList()">
+                                <i class="fa fa-tags"></i>
+                                Tags list
+                            </button>
+                        </div>
+
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <button class="menu-actions btn btn-primary w-100" type="button" @click="onOpenTagsTree()">
+                                <i class="fa fa-chart-gantt"></i>
+                                Tags hierarchy
+                            </button>
+                        </div>
+
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <button class="menu-actions btn btn-primary w-100" type="button" @click="onOpenSettings()">
+                                <i class="fa fa-gear"></i>
+                                Settings
+                            </button>
+                        </div>
+                    </div>
+               </div>
+            </div>
+
+            <div class="row sidebar-footer">
+                <button type="button" class="btn btn-danger" @click="onAddAccount()">
                     <i class="fa fa-plus"></i>
                     Add account
                 </button>
-
-                <button class="menu-actions-tags btn btn-primary" type="button" @click="onOpenTags()">
-                    <i class="fa fa-tags"></i>
-                    Tags
-                </button>
-
-                <button class="menu-actions-settings btn btn-primary" type="button" @click="onOpenSettings()">
-                     <i class="fa fa-gear"></i>
-                     Settings
-                </button>
             </div>
-
-            <li class="menu-actions d-md-none">
-                <a class="menu-actions-settings" @click="onOpenSettings()" alt="Settings" title="Settings">
-                    <i class="fa fa-gear"></i>
-                </a>
-
-                <a class="menu-actions-tags" @click="onOpenTags()" alt="Tags" title="Tags">
-                    <i class="fa fa-tags"></i>
-                </a>
-
-                <a class="menu-actions-add" @click="onAddAccount()" alt="Add account" title="Add account">
-                    <i class="fa fa-plus"></i>
-                </a>
-            </li>
-        </ul>
+        </div>
     </div>
 </template>
 
@@ -61,7 +83,8 @@
                 'openAddAccountModal',
                 'toggleMenu',
                 'openSettings',
-                'openTags'
+                'openTagsList',
+                'openTagsTree'
             ]),
 
             onAddAccount: function () {
@@ -74,8 +97,13 @@
                 this.openSettings();
             },
 
-            onOpenTags: function () {
-                this.openTags();
+            onOpenTagsList: function () {
+                this.openTagsList();
+                this.toggleMenu()
+            },
+
+            onOpenTagsTree: function () {
+                this.openTagsTree();
                 this.toggleMenu()
             }
         }

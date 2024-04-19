@@ -1,6 +1,6 @@
 <template>
-    <div class="right-sidebar-wrapper sidebar-wrapper">
-        <div class="right-sidebar">
+    <div class="sidebar-wrapper right-sidebar-wrapper">
+        <div class="sidebar right-sidebar">
             <div class="sidebar-header">
                 <div class="row">
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3">
@@ -109,7 +109,6 @@
         useUserStore,
         useAccountsStore
     } from '@/store'
-    import Alert from '../models/Alert'
     import Loader from './Loader.vue'
 
     export default {

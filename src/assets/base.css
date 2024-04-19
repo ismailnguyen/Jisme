@@ -53,23 +53,6 @@ body {
   border-radius: 15px;
 }
 
-.button--close {
-  cursor: pointer;
-  width: 48px;
-  height: 48px;
-  border-radius: 15px;
-  text-align: center;
-  background-color: var(--color-text);
-
-  border: none;
-  transition: all .3s;
-  font-size: 2em;
-}
-
-.button--close i {
-  color: var(--color-text-inverted);
-}
-
 .separator {
   display: flex;
   align-items: center;
