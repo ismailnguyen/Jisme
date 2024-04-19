@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar-wrapper right-sidebar-wrapper">
+    <div class="sidebar-wrapper right-sidebar-wrapper" :class="visible ? 'sidebar-wrapper-open' : ''">
         <div class="sidebar right-sidebar">
              <div class="sidebar-header">
                 <div class="row">
@@ -69,6 +69,12 @@
      } from '@/store'
 
     export default {
+        props: {
+            visible: {
+                type: Boolean,
+                default: false
+            }
+        },
         async created() {
             await this.loadCache();
         },

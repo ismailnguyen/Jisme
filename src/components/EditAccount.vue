@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar-wrapper right-sidebar-wrapper">
+    <div class="sidebar-wrapper right-sidebar-wrapper" :class="visible ? 'sidebar-wrapper-open' : ''">
         <div class="sidebar right-sidebar bg-gradient-blue">
             <div class="sidebar-header">
                 <div class="row">
@@ -389,6 +389,12 @@
     import totpGenerator from 'totp-generator'
 
     export default {
+        props: {
+            visible: {
+                type: Boolean,
+                default: false
+            }
+        },
         data() {
             return {
                 showModalContent: false,

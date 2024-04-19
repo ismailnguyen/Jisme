@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar-wrapper left-sidebar-wrapper">
+    <div class="sidebar-wrapper left-sidebar-wrapper" :class="visible ? 'sidebar-wrapper-open' : ''">
         <div class="sidebar left-sidebar">
             <div class="sidebar-header">
                 <div class="row">
@@ -73,6 +73,12 @@
     } from '@/store'
 
     export default {
+        props: {
+            visible: {
+                type: Boolean,
+                default: false
+            }
+        },
         computed: {
             ...mapState(useUserStore, [
                 'user'

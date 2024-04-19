@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar-wrapper right-sidebar-wrapper">
+    <div class="sidebar-wrapper right-sidebar-wrapper" :class="visible ? 'sidebar-wrapper-open' : ''">
         <div class="sidebar right-sidebar">
             <div class="sidebar-header">
                 <div class="row">
@@ -162,13 +162,17 @@
         useAlertStore,
         useAccountsStore
     } from '@/store'
-    import Alert from '../models/Alert'
     import Account from '../models/Account'
 
     export default {
+        props: {
+            visible: {
+                type: Boolean,
+                default: false
+            }
+        },
         data() {
             return {
-                //account: new Account(),
                 isCreating: false,
                 newTag: ''
             }

@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar-wrapper right-sidebar-wrapper">
+    <div class="sidebar-wrapper right-sidebar-wrapper" :class="visible ? 'sidebar-wrapper-open' : ''">
         <div class="sidebar right-sidebar">
             <div class="sidebar-header">
                 <div class="row">
@@ -112,6 +112,12 @@
     import Loader from './Loader.vue'
 
     export default {
+        props: {
+            visible: {
+                type: Boolean,
+                default: false
+            }
+        },
         components: {
             Loader
         },

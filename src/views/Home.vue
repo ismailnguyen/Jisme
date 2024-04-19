@@ -1,15 +1,16 @@
 <template>
     <div :class="sidebarAdjustmentClasses">
-        <Menu />
+        <Menu :visible="isMenuOpened" />
  
-        <AddAccountModal v-if="isAddAccountModalOpened" />
+        <AddAccountModal :visible="isAddAccountModalOpened" />
 
         <EditAccountModal 
             :account="currentEditingAccount"
-            v-if="isEditAccountModalOpened" />
+            :visible="isEditAccountModalOpened" />
 
-        <Settings v-if="isSettingsOpened" />
-        <TagsList v-if="isTagsListOpened" />
+        <Settings :visible="isSettingsOpened" />
+        <TagsList :visible="isTagsListOpened" />
+        <TagsTree :visible="isTagsTreeOpened" />
 
         <AccountList />
 
@@ -47,6 +48,7 @@
     import AccountList from '../components/AccountList.vue'
     import Settings from '../components/Settings.vue'
     import TagsList from '../components/TagsList.vue'
+    import TagsTree from '../components/TagsTree.vue'
 
     export default {
         components: {
@@ -55,16 +57,17 @@
             EditAccountModal,
             AccountList,
             Settings,
-            TagsList
+            TagsList,
+            TagsTree
         },
         props: {
-            isSidebarOpen: {
+            isAnySidebarOpen: {
                 type: Boolean,
                 default: false
             }
         },
         mounted() {
-            if(this.isSidebarOpen) {
+            if(this.isAnySidebarOpen) {
                 this.openSidebar(this.$route.name);
             }
         },
@@ -72,9 +75,12 @@
             ...mapState(useUserStore, ['user', 'isLoggedIn']),
             ...mapState(useUiStore, [
                 'currentEditingAccount',
+                'isLeftSidebarOpened',
+                'isRightSidebarOpened',
                 'isMenuOpened',
                 'isSettingsOpened',
                 'isTagsListOpened',
+                'isTagsTreeOpened',
                 'isAddAccountModalOpened',
                 'isEditAccountModalOpened'
             ]),
@@ -87,11 +93,11 @@
             sidebarAdjustmentClasses: function () {
                 let cssClass = '';
 
-                if (this.isMenuOpened) {
+                if (this.isLeftSidebarOpened) {
                     cssClass += ' left-sidebar-opened';
                 }
                 
-                if (this.isAccountOpened || this.isSettingsOpened || this.isTagsListOpened) {
+                if (this.isRightSidebarOpened) {
                     cssClass += ' right-sidebar-opened';
                 }
 

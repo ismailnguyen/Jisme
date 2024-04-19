@@ -1,5 +1,5 @@
 <template>
-    <div class="sidebar-wrapper right-sidebar-wrapper">
+    <div class="sidebar-wrapper right-sidebar-wrapper" :class="visible ? 'sidebar-wrapper-open' : ''">
         <div class="sidebar right-sidebar">
              <div class="sidebar-header">
                 <div class="row">
@@ -8,7 +8,7 @@
                     </div>
 
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
-                        <button type="button" class="button--close" @click="closeTags()">
+                        <button type="button" class="button--close" @click="closeTagsTree()">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
                     </div>
@@ -18,38 +18,9 @@
             <div class="sidebar-body">
                 <div class="row">
                     <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                        <label class="form-label" for="new_tag">
-                            <i class="fa fa-tag" aria-hidden="true"></i> New tag
-                        </label>
-                            <div class="input-group">
-                            <input id="new_tag" class="form-control" type="text" placeholder="Add a new tag" />
-                            <button class="btn btn-outline-secondary" type="button">Add</button>
-                        </div>
-                    </div>
-
-                    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="existing_tags">
-                                <i class="fa fa-tags" aria-hidden="true"></i> Existing tags
-                            </label>
-                        </div>
-                        <ul class="list-group" id="existing_tags">
-                            <li
-                                class="list-group-item"
-                                v-for="(tag, index) in getUniqueTags()"
-                                v-bind:key="index"
-                                @click="selectTag(tag)">
-                                <span class="text-end">
-                                    <span class="btn btn-xs btn-default" @click="selectTag(tag)">
-                                        <i class="fa-regular " :class="isCurrentTag(tag) ? 'fa-square-check' : 'fa-square'"></i>
-                                    </span>
-                                </span>
-                                
-                                {{  tag.name || 'None' }} ({{ tag.count }})
-
-                                
-                            </li>
-                        </ul>
+                        <pre>
+                            {{ tree }}
+                        </pre>
                     </div>
                 </div>
             </div>
@@ -69,8 +40,22 @@
      } from '@/store'
 
     export default {
+        props: {
+            visible: {
+                type: Boolean,
+                default: false
+            }
+        },
+        data() {
+            return {
+                tree: {}
+            }
+        },
         async created() {
             await this.loadCache();
+        },
+        mounted() {
+            this.tree = this.buildTree();
         },
         methods: {
             ...mapActions(useAccountsStore, [
@@ -82,37 +67,29 @@
                 'closeTagsTree'
             ]),
 
-            selectTag: function (tag) {
-                const tags = this.updateTags(tag);
+            buildTree: function () {
+                let tags = this.getUniqueTags();
+                let tree = [];
+                let map = {};
+                let node;
+                let i;
 
-                this.$router.push({name: 'Home', query: { tags: tags }});
-            },
-
-            updateTags: function (tag) {
-                if (this.isCurrentTag(tag)) {
-                    return this.removeTag(tag);
+                for (i = 0; i < tags.length; i += 1) {
+                    map[tags[i].id] = i;
+                    tags[i].children = [];
                 }
 
-                return this.addTag(tag);
-            },
+                for (i = 0; i < tags.length; i += 1) {
+                    node = tags[i];
+                    if (node.parent_id !== null) {
+                        tags[map[node.parent_id]].children.push(node);
+                    } else {
+                        tree.push(node);
+                    }
+                }
 
-            addTag: function ({ name }) {
-                let newTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
-                newTags.push(name);
-
-                return newTags.join(',');
-            },
-
-            removeTag: function ({ name }) {
-                let newTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
-                newTags.splice(newTags.indexOf(name), 1);
-                
-                return newTags.join(',');
-            },
-
-            isCurrentTag: function ({ name}) {
-                return this.$route.query.tags && this.$route.query.tags.split(',').includes(name);
-            },
+                return tree;
+            }
 		}
     }
 </script>

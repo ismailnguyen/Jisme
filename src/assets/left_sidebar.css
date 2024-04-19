@@ -1,38 +1,30 @@
 .left-sidebar-wrapper {
     left: 0;
 }
-
 .left-sidebar {
     background: var(--color-text);
 }
-
 .left-sidebar .sidebar-body {
     padding-top: 3rem;
 }
-
 @media only screen and (min-width: 500px) {
     .left-sidebar {
         border-top-right-radius: 15px;
         border-top-left-radius: 0;
         border-bottom-right-radius: 15px;
         border-bottom-left-radius: 0;
-    }
+   }
 }
-
 .left-sidebar .button--close {
     background-color: var(--color-text-inverted);
 }
-
 .left-sidebar .button--close i {
     color: var(--color-text);
 }
-
 .menu-actions {
     background-color: #313a6c;
 }
-
-.menu-actions a:active,
-.menu-actions a:hover {
+.menu-actions a:active, .menu-actions a:hover {
     box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
     transform: scale3d(1.01,1.01,1.01);
 }
