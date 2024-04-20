@@ -10,8 +10,7 @@
     import {
         useAccountsStore,
         useAlertStore,
-     } from '@/store'
-    import Alert from '../models/Alert'
+    } from '@/store'
 
     export default {
         async created() {

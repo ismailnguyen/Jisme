@@ -42,7 +42,6 @@
 
 <script>
     import '../assets/auth.css'
-    import Alert from '../models/Alert'
 
     import {
         mapActions

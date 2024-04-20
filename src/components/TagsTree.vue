@@ -32,12 +32,13 @@
     import '../assets/right_sidebar.css'
 
     import {
+        mapState,
         mapActions,
     } from 'pinia'
     import {
         useUiStore,
         useAccountsStore,
-     } from '@/store'
+    } from '@/store'
 
     export default {
         props: {
@@ -57,6 +58,9 @@
         mounted() {
             this.tree = this.buildTree();
         },
+        computed: {
+            ...mapState(useAccountsStore, ['accounts']),
+        },
         methods: {
             ...mapActions(useAccountsStore, [
                 'loadCache',
@@ -68,27 +72,25 @@
             ]),
 
             buildTree: function () {
-                let tags = this.getUniqueTags();
-                let tree = [];
+                let tags = this.getUniqueTags().map(t => t.name);
+
                 let map = {};
-                let node;
-                let i;
 
-                for (i = 0; i < tags.length; i += 1) {
-                    map[tags[i].id] = i;
-                    tags[i].children = [];
+                for (let i = 0; i < tags.length; i++) {
+                    let currentTag = tags[i];
+                    map[currentTag] = map[currentTag] || { children: [] };
+                    // for (let j = 0; i < this.accounts.length; j += 1) {
+                    //     let currentAccount = this.accounts[j];
+                    //     let currentAccountTags = currentAccount.tags.split(',');
+
+                    //     if (currentAccountTags.includes(currentTag)) {
+                    //         map[currentTag] = map[currentTag] || { children: [] };
+                    //         map[currentTag].children = [...map[currentTag].children, currentAccountTags];
+                    //     }
+                    // }
                 }
 
-                for (i = 0; i < tags.length; i += 1) {
-                    node = tags[i];
-                    if (node.parent_id !== null) {
-                        tags[map[node.parent_id]].children.push(node);
-                    } else {
-                        tree.push(node);
-                    }
-                }
-
-                return tree;
+                return map;
             }
 		}
     }

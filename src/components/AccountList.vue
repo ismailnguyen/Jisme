@@ -1,6 +1,6 @@
 <template>
     <div id="page-content-wrapper" class="container-fluid">
-        <header class="row header-search justify-content-center" v-if="!isLoading">
+        <header class="row header-search justify-content-center" v-show="!isLoading">
             <div class="col-xs-12 col-md-8 col-lg-6">
                 <input class="form-control searchBar" v-model="searchQuery" name="search" type="search" placeholder="Search" autofocus>
             </div>
@@ -59,17 +59,13 @@
         useAlertStore,
         useUserStore
      } from '@/store'
-    import Account from '../models/Account'
-    import Alert from '../models/Alert'
     import { SessionExpiredException } from '../utils/errors'
-    import EditAccountModal from '../components/EditAccount.vue'
     import AccountItem from '../components/AccountItem.vue'
     import StackedAccountList from '../components/StackedAccountList.vue'
     import Loader from '../components/Loader.vue'
     
     export default {
         components: {
-            EditAccountModal,
             AccountItem,
             StackedAccountList,
             Loader,
@@ -77,8 +73,7 @@
         data() {
             return {
                 searchQuery: this.$route.query.search || '', // Default search query is looked up from query string
-                isLoading: true,
-                editAccount: new Account(),
+                isLoading: true
             }
         },
         async created() {
@@ -90,6 +85,12 @@
         },
         async mounted() {
             await this.fetchLatestAccounts();
+        },
+        watch: {
+            searchQuery (newSearchQuery, oldSearchQuery) {
+                this.searchQuery = newSearchQuery; // This line helps to speed the query update on the input field
+                this.$router.push({name: 'Home', query: { search: newSearchQuery }});
+            }
         },
         computed: {
             ...mapStores(useAccountsStore),
@@ -175,7 +176,6 @@
 
                 return duplicateAccounts;
             },
-			
         } 
     }
 </script>
