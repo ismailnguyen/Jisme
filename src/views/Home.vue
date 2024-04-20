@@ -68,7 +68,7 @@
         },
         mounted() {
             if(this.isAnySidebarOpen) {
-                this.openSidebar(this.$route.name);
+                this.openSidebar(this.$route);
             }
         },
         computed: {

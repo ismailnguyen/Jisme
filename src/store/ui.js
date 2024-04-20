@@ -83,7 +83,7 @@ const store = defineStore('ui', () => {
         currentEditingAccount.value = new Account();
     }
 
-    const openSidebar = (name) => {
+    const openSidebar = ({ name }) => {
         // Map of each sidebar name and its action to open them
         const sidebarMap = {
             'Settings': openSettings,
