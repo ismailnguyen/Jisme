@@ -13,7 +13,7 @@
         <div class="main-container container-fluid" v-show="isSearching && !isLoading">
             <div class="row">
                 <div class="mb-3 col-12 col-xs-12 col-sm-12">
-                    <span class="category-title" >{{ accountsFilteredByQuery.length }} results out of {{ accounts.length }}</span>
+                    <span class="category-title" >{{ filteredAccounts.length }} results out of {{ accounts.length }}</span>
                 </div>
             </div>
             <div class="row">
@@ -31,7 +31,7 @@
 
             <div class="row">
                 <AccountItem 
-                    v-for="(account, accountIndex) in accountsFilteredByQuery"
+                    v-for="(account, accountIndex) in filteredAccounts"
                     v-bind:key="accountIndex"
                     :account="account" />
             </div>
@@ -63,6 +63,8 @@
     import AccountItem from '../components/AccountItem.vue'
     import StackedAccountList from '../components/StackedAccountList.vue'
     import Loader from '../components/Loader.vue'
+
+    const MIN_SEARCH_QUERY_LENGTH = 3;
     
     export default {
         components: {
@@ -73,7 +75,8 @@
         data() {
             return {
                 searchQuery: this.$route.query.search || '', // Default search query is looked up from query string
-                isLoading: true
+                isLoading: true,
+                filteredAccounts: []
             }
         },
         async created() {
@@ -90,22 +93,25 @@
             searchQuery (newSearchQuery, oldSearchQuery) {
                 this.searchQuery = newSearchQuery; // This line helps to speed the query update on the input field
                 this.$router.push({name: 'Home', query: { search: newSearchQuery }});
+
+                if (newSearchQuery.length >= MIN_SEARCH_QUERY_LENGTH) {
+                    this.updateFilteredAccounts();
+                }
+                else {
+                    this.filteredAccounts = [];
+                }
             }
         },
         computed: {
             ...mapStores(useAccountsStore),
             ...mapState(useAccountsStore, ['recentAccounts', 'accounts']),
 
-            accountsFilteredByQuery: function () {
-                return this.getAccountsFilteredByQuery(this.searchQuery, this.$route.query.tags, true);
-            },
-
             selectedTags: function () {
                 return this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
             },
 
             isSearching: function () {
-                return (this.searchQuery && this.searchQuery.length >= 3) || this.$route.query.tags;
+                return (this.searchQuery && this.searchQuery.length >= MIN_SEARCH_QUERY_LENGTH) || this.$route.query.tags;
             }
         },
         methods: {
@@ -123,6 +129,10 @@
             ...mapActions(useAlertStore, [
                 'openAlert'
             ]),
+
+            updateFilteredAccounts: function () {
+                this.filteredAccounts = this.getAccountsFilteredByQuery(this.searchQuery, this.$route.query.tags, true);
+            },
 
             fetchLatestAccounts: async function () {
                 try {
