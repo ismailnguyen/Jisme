@@ -46,8 +46,6 @@
                                 </span>
                                 
                                 {{  tag.name || 'None' }} ({{ tag.count }})
-
-                                
                             </li>
                         </ul>
                     </div>

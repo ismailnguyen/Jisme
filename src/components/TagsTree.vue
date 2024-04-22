@@ -74,23 +74,35 @@
             buildTree: function () {
                 let tags = this.getUniqueTags().map(t => t.name);
 
-                let map = {};
-
                 for (let i = 0; i < tags.length; i++) {
-                    let currentTag = tags[i];
-                    map[currentTag] = map[currentTag] || { children: [] };
-                    // for (let j = 0; i < this.accounts.length; j += 1) {
-                    //     let currentAccount = this.accounts[j];
-                    //     let currentAccountTags = currentAccount.tags.split(',');
+                    let tag = tags[i];
+                    let children = [];
 
-                    //     if (currentAccountTags.includes(currentTag)) {
-                    //         map[currentTag] = map[currentTag] || { children: [] };
-                    //         map[currentTag].children = [...map[currentTag].children, currentAccountTags];
-                    //     }
-                    // }
+                    let accountsWithCurrentTag = this.accounts.filter(a => a.tags.split(',').includes(tag));
+
+                    for (let j = 0; i < accountsWithCurrentTag.length; j += 1) {
+                        let currentAccount = accountsWithCurrentTag[j];
+                        let currentAccountTags = currentAccount.tags.split(',');
+
+                        for (let k = 0; k < currentAccountTags.length; k += 1) {
+                            let currentTag = currentAccountTags[k];
+                            console.log(currentTag)
+
+                            if (!children.includes(currentTag)) {
+                                children.push(currentTag);
+                            }
+                        }
+                    }
+
+                    console.log(children);
+
+                    tags[i] = {
+                        name: tag,
+                        children: children
+                    };
                 }
 
-                return map;
+                return tags;
             }
 		}
     }
