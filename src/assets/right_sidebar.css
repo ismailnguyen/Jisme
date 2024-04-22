@@ -5,13 +5,14 @@
     background: var(--color-background-mute);
 }
 .right-sidebar-wrapper.sidebar-wrapper-open {
-    position: fixed !important;
     width: 50% !important;
 }
 @media (max-width: 767.98px) {
-    .right-sidebar {
+    .right-sidebar-wrapper.sidebar-wrapper-open {
+        width: 100% !important;
         background: var(--color-background-soft);
         color: var(--color-text);
+        border-radius: none;
    }
 }
 @media only screen and (min-width: 500px) {
@@ -116,14 +117,11 @@
 }
 .btn-group label.btn:first-of-type{
     border-top-left-radius: 15px !important;
-   ;
     border-bottom-left-radius: 15px !important;
-   ;
 }
 .btn-group label.btn:last-of-type{
     border-top-right-radius: 15px !important;
     border-bottom-right-radius: 15px !important;
-   ;
 }
 .hover-danger:hover, .hover-danger:active {
     background-color: #dc3545;

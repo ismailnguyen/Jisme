@@ -18,13 +18,11 @@
 /* Change the width of the sidebar to display it*/
 .sidebar-wrapper-open {
     position: fixed !important;
-    width: 50% !important;
 }
 @media (max-width: 767.98px) {
     .sidebar-wrapper-open {
-        width: 100% !important;
         height: 100% !important;
-   }
+    }
 }
 .sidebar-icon {
     border-radius: 15px;
