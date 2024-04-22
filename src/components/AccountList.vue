@@ -154,7 +154,7 @@
                 let newTags = this.$route.query.tags.split(',').map(x => x.trim());
                 newTags.splice(newTags.indexOf(tag), 1);
                 
-                this.$router.push({name: 'Home', query: { tags: newTags.join(',') }});
+                this.$router.push({ name: 'Home', query: { tags: newTags.join(',') } });
             },
 
             // Function for testing purpose

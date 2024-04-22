@@ -35,10 +35,9 @@ class UserService {
             }
         };
 
-        this.login = async function ({ username, password }) {
+        this.requestLogin = async function ({ username }) {
             let credentials = {
-                email: username,
-                password: password
+                email: username
             };
 
             try {
@@ -52,7 +51,47 @@ class UserService {
 
                 if (!response.ok) {
                     if (response.status === 400) {
-                        throw new LoginException('Username and password are mandatory!');
+                        throw new LoginException('Username is mandatory!');
+                    }
+
+                    if (response.status === 401) {
+                        throw new LoginException('Not authorized!', 'Pease try later.');
+                    }
+
+                    if (response.status === 404) {
+                        throw new LoginException('Invalid username/password !');
+                    }
+
+                    throw new LoginException(body.message);
+                }
+
+                return body;
+            } catch (error) {
+                if (error instanceof LoginException) {
+                    throw error;
+                }
+
+                throw new Error('Server unavailable!');
+            }
+        };
+
+        this.verifyPassword = async function ({ accessToken, password }) {
+            let credentials = {
+                password: password
+            };
+
+            try {
+                const response = await fetch(`${USERS_API_URL}/login/password`, {
+                    method: 'POST',
+                    headers: getHeadersWithAuth(accessToken),
+                    body: JSON.stringify(credentials)
+                });
+
+                const body = await response.json();
+
+                if (!response.ok) {
+                    if (response.status === 400) {
+                        throw new LoginException('Password is mandatory!');
                     }
 
                     if (response.status === 401) {
@@ -78,7 +117,7 @@ class UserService {
 
         this.requestPasswordlessLogin = async function () {
             try {
-                const response = await fetch(`${USERS_API_URL}/login-passkey`, {
+                const response = await fetch(`${USERS_API_URL}/login/passkey`, {
                     method: 'GET',
                     headers: getHeaders()
                 });
@@ -90,9 +129,9 @@ class UserService {
             }
         };
 
-        this.loginPasswordless = async function (passkey, challenge) {
+        this.verifyPasskey = async function ({ accessToken, passkey, challenge }) {
             try {
-                const response = await fetch(`${USERS_API_URL}/login-passkey`, {
+                const response = await fetch(`${USERS_API_URL}/login/passkey`, {
                     method: 'POST',
                     headers: getHeaders(),
                     body: JSON.stringify({
@@ -139,7 +178,7 @@ class UserService {
             };
 
             try {
-                const response = await fetch(`${USERS_API_URL}/verify-mfa`, {
+                const response = await fetch(`${USERS_API_URL}/login/otp`, {
                     method: 'POST',
                     headers: getHeadersWithAuth(accessToken),
                     body: JSON.stringify(mfa)

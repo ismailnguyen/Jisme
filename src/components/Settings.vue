@@ -60,7 +60,7 @@
                             <div class="input-group"
                                 v-for="passkey in user.passkeys"
                                 :key="passkey.passkey.id">
-                                <input class="form-control" type="text" aria-describedby="addAccount_passwordHelp" placeholder="Loading" v-model="passkey.deviceName" disabled />
+                                <input :id="'passkey_' + passkey.passkey.id" name="passkey_device" class="form-control" type="text" placeholder="Loading" v-model="passkey.deviceName" disabled />
                                 <button class="btn btn-outline-secondary hover-danger" type="button" @click="onRemovePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
                             </div>
                             <button id="passwordlesslogin_btn" class="btn btn-danger btn-block" @click.prevent="onGeneratePasskey()" v-if="isGeneratePasskeyBtnVisible">

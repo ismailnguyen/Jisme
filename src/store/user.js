@@ -25,7 +25,7 @@ localforage.config({
 });
 
 const useUserStore = defineStore(APP_USER_STORE, () => {
-    const user = ref(null)
+    const user = ref({})
     const isLoggedIn = ref(false)
     const userService = new UserService()
     const passkeyOptions = ref(null)
@@ -34,17 +34,32 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         return await localforage.getItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY)
     })
 
-    async function login({ username, password }) {
-        user.value = await userService.login({ username, password });
+    async function requestLogin({ username }) {
+        user.value = await userService.requestLogin({ username });
 
         return {
-            token: user.value.token,
-            isMFARequired: user.value.isMFARequired
+            next: user.value.next
         }
     }
 
-    async function verifyMFA({ accessToken, totpToken, extendedSession }) {
-        user.value = await userService.verifyMFA({ accessToken, totpToken, extendedSession });
+    async function verifyPassword({ password }) {
+        user.value = await userService.verifyPassword({ 
+            accessToken: user.value.token,
+            password: password
+        });
+
+        return {
+            next: user.value.next
+        }
+    }
+
+    async function verifyMFA({ totpToken, extendedSession }) {
+        user.value = await userService.verifyMFA({
+            accessToken: user.value.token,
+            totpToken: totpToken,
+            extendedSession: extendedSession
+        });
+
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
         if (isLoggedIn.value && extendedSession) {
@@ -137,7 +152,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         passkeyOptions.value = await userService.requestPasswordlessLogin();
     }
 
-    async function loginPasswordless() {
+    async function verifyPasskey() {
         const storedOptions = passkeyOptions.value;
         if (!storedOptions) {
             return;
@@ -156,7 +171,12 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         const passkey = await getWebAuthn(options);
 
-        user.value = await userService.loginPasswordless(passkey, storedOptions.challenge);
+        user.value = await userService.verifyPasskey({
+            accessToken: user.value.token,
+            passkey: passkey,
+            challenge: storedOptions.challenge
+        });
+
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
         createSession(user);
@@ -181,11 +201,13 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         lastRememberedUsername,
 
         init,
-        login,
-        requestPasswordlessLogin,
-        loginPasswordless,
-        getAccountInformation,
+        requestLogin,
+        verifyPassword,
         verifyMFA,
+
+        requestPasswordlessLogin,
+        verifyPasskey,
+        getAccountInformation,
         update,
         createSession,
         generatePasskey,

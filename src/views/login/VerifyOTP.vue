@@ -4,7 +4,7 @@
             <LoginHero :isLoading="isLoading" />
 
             <div class="col-md-10 mx-auto col-lg-5">
-                <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="verify()">
+                <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="onVerifyOtp()">
                     <img class="rounded-circle mb-3" :src="user && user.avatarUrl ? user.avatarUrl : ''" alt="" width="72" height="72">
 
                     <p class="text-muted" v-if="user">{{ user.email }}</p>
@@ -43,7 +43,7 @@
                         class="btn btn-lg"
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
                         :disabled="!isOtpFilled"
-                        @keyup.enter="verify"
+                        @keyup.enter="onVerifyOtp"
                         tabindex="7">
                         Verify
                     </button>
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-    import '../assets/auth.css'
+    import '../../assets/auth.css'
 
     import {
         mapState,
@@ -68,8 +68,8 @@
         useAlertStore,
         useUserStore
      } from '@/store'
-    import Loader from '../components/Loader.vue'
-    import LoginHero from '../components/LoginHero.vue'
+    import Loader from '../../components/Loader.vue'
+    import LoginHero from '../../components/LoginHero.vue'
 
     export default {
         data() {
@@ -86,7 +86,12 @@
             Loader,
             LoginHero
         },
-        mounted() {
+        created () {
+            if (!this.user || !this.user.email || !this.user.token) {
+                this.$router.push({ name: 'Login' });
+            }
+        },
+        mounted () {
             // Put focus on first input
             this.focusOtpInput();
         },
@@ -142,7 +147,7 @@
 
                 // If all inputs are filled, verify
                 if (this.isOtpFilled) {
-                    this.verify();
+                    this.onVerifyOtp();
                 }
             },
             onOtpKeydown: function (index, event) {
@@ -194,12 +199,11 @@
                     return;
                 }
             },
-            verify: async function () {
+            onVerifyOtp: async function () {
                 this.isLoading = true;
 
                 try {
                     await this.verifyMFA({
-                        accessToken: this.$route.query.token, 
                         totpToken: this.totpToken.join(''),
                         extendSession: this.remember
                     });
