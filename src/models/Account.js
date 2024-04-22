@@ -78,6 +78,24 @@ class Account {
     isValid () {
         return this.platform !== '';
     }
+
+    contains (word) {
+        return this.platform.toLowerCase().includes(word) ||
+            this.displayPlatform.toLowerCase().includes(word) ||
+            this.login.toLowerCase().includes(word) ||
+            this.social_login.toLowerCase().includes(word) ||
+            this.password.toLowerCase().includes(word) ||
+            this.password_clue.toLowerCase().includes(word) ||
+            this.tags.toLowerCase().includes(word) ||
+            this.icon.toLowerCase().includes(word) ||
+            this.card_number.toLowerCase().includes(word) ||
+            this.card_expiracy.toLowerCase().includes(word) ||
+            this.card_pin.toLowerCase().includes(word) ||
+            this.card_cryptogram.toLowerCase().includes(word) ||
+            this.card_name.toLowerCase().includes(word) ||
+            this.description.toLowerCase().includes(word) ||
+            this.notes.toLowerCase().includes(word);
+    }
 }
 
 export default Account;

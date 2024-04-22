@@ -43,7 +43,12 @@ class FilterService {
                 return;
             }
 
-            this.filteredAccounts = this.filteredAccounts.filter(account => this.containsQuery(account, query));
+            const cleanQuery = query.trim().toLowerCase();
+
+            this.filteredAccounts = this.filteredAccounts.filter(account => 
+                account.contains(cleanQuery)
+                || (account.tags.includes('hidden') && cleanQuery.includes('hidden'))
+            );
         };
 
         this.sortByName = function () {
@@ -56,104 +61,6 @@ class FilterService {
 
         this.sortByOpenedCount = function () {
             this.filteredAccounts = this.filteredAccounts.sort((account1, account2) => sortByInt(account2.opened_count, account1.opened_count));
-        };
-
-        this.containsQuery = function (account, query) {
-            if (!query) {
-                return true;
-            }
-
-            try {
-                query = query.trim().toLowerCase();
-
-                const platform = account.platform.toLowerCase();
-                const displayPlatform = account.displayPlatform.toLowerCase();
-                const login = account.login && account.login.toLowerCase();
-                const social_login = account.social_login && account.social_login.toLowerCase();
-                const password = account.password && account.password.toLowerCase();
-                const password_clue = account.password_clue && account.password_clue.toLowerCase();
-                const tags = account.tags.toLowerCase();
-                const icon = account.icon && account.icon.toLowerCase();
-                const card_number = account.card_number && account.card_number.toLowerCase();
-                const card_expiracy = account.card_expiracy && account.card_expiracy.toLowerCase();
-                const card_pin = account.card_pin && account.card_pin.toLowerCase();
-                const card_cryptogram = account.card_cryptogram && account.card_cryptogram.toLowerCase();
-                const card_name = account.card_name && account.card_name.toLowerCase();
-                const description = account.description && account.description.toLowerCase();
-                const notes = account.notes && account.notes.toLowerCase();
-
-                if (tags.includes('hidden')) {
-                    return query.includes('hidden');
-                }
-
-                if (platform.includes(query)) {
-                    return true;
-                }
-
-                if (displayPlatform.includes(query)) {
-                    return true;
-                }
-
-                if (login.includes(query)) {
-                    return true;
-                }
-
-                if (social_login.includes(query)) {
-                    return true;
-                }
-
-                if (password.includes(query)) {
-                    return true;
-                }
-
-                if (password_clue.includes(query)) {
-                    return true;
-                }
-
-                if (tags.includes(query)) {
-                    return true;
-                }
-
-                if (icon.includes(query)) {
-                    return true;
-                }
-
-                if (card_number.includes(query)) {
-                    return true;
-                }
-
-                if (card_expiracy.includes(query)) {
-                    return true;
-                }
-
-                if (card_pin.includes(query)) {
-                    return true;
-                }
-
-                if (card_cryptogram.includes(query)) {
-                    return true;
-                }
-
-                if (card_name.includes(query)) {
-                    return true;
-                }
-
-                if (description.includes(query)) {
-                    return true;
-                }
-
-                if (notes.includes(query)) {
-                    return true;
-                }
-
-                return false;
-            }
-            catch (error) {
-                console.error(account);
-                console.error(error);
-
-                return false;
-            }
         };
     }
 };
