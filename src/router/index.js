@@ -53,25 +53,25 @@ const router = createRouter({
     {
       name: 'Login',
       path: '/login', 
-      component: () => import('../views/Login/RequestLogin.vue'),
+      component: () => import('../views/login/RequestLogin.vue'),
       meta: { requiresAuth: false }
     },
     {
       name: 'VerifyPasskey',
       path: '/login/passkey', 
-      component: () => import('../views/Login/VerifyPasskey.vue'),
+      component: () => import('../views/login/VerifyPasskey.vue'),
       meta: { requiresAuth: false }
     },
     {
       name: 'VerifyPassword',
       path: '/login/password',
-      component: () => import('../views/Login/VerifyPassword.vue'),
+      component: () => import('../views/login/VerifyPassword.vue'),
       meta: { requiresAuth: false }
     },
     {
       name: 'VerifyOTP',
       path: '/login/otp',
-      component: () => import('../views/Login/VerifyOTP.vue'),
+      component: () => import('../views/login/VerifyOTP.vue'),
       meta: { requiresAuth: false }
     },
     {
