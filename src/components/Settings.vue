@@ -42,13 +42,8 @@
                         <hr class="my-4">
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="inputTotpSecret"><i class="fa fa-user-secret" aria-hidden="true"></i> TOTP Secret</label>
+                            <label class="form-label" for="inputTotpSecret"><i class="fa fa-qrcode" aria-hidden="true"></i> TOTP Secret</label>
                             <input id="inputTotpSecret" class="form-control" type="text" placeholder="Loading" laceholder="MFA TOTP secret" v-model="user.totp_secret" disabled />
-                        </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="inputEncryptionKey"><i class="fa fa-key" aria-hidden="true"></i> Public encryption key</label>
-                            <input id="inputEncryptionKey" class="form-control" type="text" laceholder="Encryption key" v-model="user.public_encryption_key" disabled />
                         </div>
 
                          <!-- <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
