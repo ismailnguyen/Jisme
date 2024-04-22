@@ -28,6 +28,13 @@
                                 required>
                         <label for="inputUsername">Email Address</label>
                     </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="rememberMeCheckbox" v-model="remember" tabindex="2" @change="focusOtpInput">
+                        <label class="form-check-label" for="rememberMeCheckbox">
+                            Remember me
+                        </label>
+                    </div>
                     
                     <button
                         type="button"
@@ -68,6 +75,7 @@
         data() {
             return {
                 username: '',
+                remember: false,
                 isLoading: false
             }
         },
@@ -79,11 +87,16 @@
             ...mapWritableState(useUserStore, [
                 'user',
                 'isLoggedIn',
-                'lastRememberedUsername'
+                'lastRememberedUsername',
+                'isAutoLoginEnabled'
             ]),
         },
-        async mounted() {
+        async created() {
             this.username = await this.lastRememberedUsername;
+            this.remember = this.username ? true : false;
+        },
+        async mounted() {
+            await this.isAutoLoginEnabled && this.username && await this.onRequestLogin();
         },
         methods: {
             ...mapActions(useAlertStore, [
@@ -105,7 +118,8 @@
 
                 try {
                     const { next } = await this.requestLogin({
-                        username: this.username
+                        username: this.username,
+                        extendSession: this.remember
                     });
 
                     if (next.step === 'verify_passkey') {

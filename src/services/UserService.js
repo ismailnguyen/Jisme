@@ -156,10 +156,9 @@ class UserService {
             }
         };
 
-        this.verifyMFA = async function ({ accessToken, totpToken, extendSession }) {
+        this.verifyMFA = async function ({ accessToken, totpToken }) {
             let mfa = {
-                totpToken: totpToken,
-                extendSession: extendSession
+                totpToken: totpToken
             };
 
             try {

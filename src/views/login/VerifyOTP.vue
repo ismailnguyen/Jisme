@@ -31,13 +31,6 @@
                             v-model="totpToken[index]">
                     </div>
 
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="rememberMeCheckbox" v-model="remember" tabindex="2" @change="focusOtpInput">
-                        <label class="form-check-label" for="rememberMeCheckbox">
-                            Remember me
-                        </label>
-                    </div>
-
                     <button 
                         type="submit"
                         class="btn btn-lg"
@@ -78,7 +71,6 @@
                 error: {
                     message: ''
                 },
-                remember: false,
                 isLoading: false
             }
         },
@@ -204,8 +196,7 @@
 
                 try {
                     await this.verifyMFA({
-                        totpToken: this.totpToken.join(''),
-                        extendSession: this.remember
+                        totpToken: this.totpToken.join('')
                     });
 
                     this.$router.push({ name: 'Home' });

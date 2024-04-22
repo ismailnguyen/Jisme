@@ -82,7 +82,7 @@
 
                     for (let j = 0; i < accountsWithCurrentTag.length; j += 1) {
                         let currentAccount = accountsWithCurrentTag[j];
-                        let currentAccountTags = currentAccount.tags.split(',');
+                        let currentAccountTags = currentAccount && currentAccount.tags.split(',');
 
                         for (let k = 0; k < currentAccountTags.length; k += 1) {
                             let currentTag = currentAccountTags[k];

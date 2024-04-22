@@ -92,8 +92,7 @@
         },
         computed: {
             ...mapWritableState(useUserStore, [
-                'user',
-                'lastRememberedUsername'
+                'user'
             ]),
         },
         created () {

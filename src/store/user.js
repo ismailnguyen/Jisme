@@ -2,6 +2,7 @@ import {
     LOCAL_STORAGE_DB_NAME,
     LOCAL_STORAGE_USER_KEY,
     LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY,
+    LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY
  } from '../utils/storage'
 import { 
     PASSKEY_RP_NAME,
@@ -28,14 +29,26 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     const user = ref({})
     const isLoggedIn = ref(false)
     const userService = new UserService()
-    const passkeyOptions = ref(null)
+    const isExtendedSession = ref(false)
 
     const lastRememberedUsername = computed(async () => {
         return await localforage.getItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY)
     })
 
-    async function requestLogin({ username }) {
+    const isAutoLoginEnabled = computed(async () => {
+        return await localforage.getItem(LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY)
+    })
+
+    async function setAutoLogin (enabled) {
+        await localforage.setItem(LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY, enabled);
+    }
+
+    async function requestLogin({ username, extendSession }) {
         user.value = await userService.requestLogin({ username });
+
+        // Temporarily store this value to reuse it once user logged in,
+        // And store it in browser storage for next logins
+        isExtendedSession.value = extendSession;
 
         return {
             next: user.value.next
@@ -53,20 +66,36 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         }
     }
 
-    async function verifyMFA({ totpToken, extendedSession }) {
+    async function verifyMFA({ totpToken }) {
         user.value = await userService.verifyMFA({
             accessToken: user.value.token,
-            totpToken: totpToken,
-            extendedSession: extendedSession
+            totpToken: totpToken
         });
 
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
-        if (isLoggedIn.value && extendedSession) {
-            setLastRememberedUsername(user.value.email);
-        }
+        await createSession(user);
+    }
 
-        createSession(user);
+    async function verifyPasskey() {
+        var options = parseRequestOptionsFromJSON({
+            publicKey: { 
+                challenge: btoa(user.value.token),
+                allowCredentials: [],
+                userVerification: 'preferred'
+            }
+        });
+
+        const passkey = await getWebAuthn(options);
+
+        user.value = await userService.verifyPasskey({
+            accessToken: user.value.token,
+            passkey: passkey,
+        });
+
+        isLoggedIn.value = user.value && user.value.uuid ? true : false;
+
+        await createSession(user);
     }
 
     async function getAccountInformation() { 
@@ -76,7 +105,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     async function update() {
         user.value = await userService.update(user.value);
 
-        createSession(user);
+        await createSession(user);
     }
 
     const init = async () => {
@@ -90,13 +119,17 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
             return;
         }
 
-        localforage.setItem(LOCAL_STORAGE_USER_KEY, {
+        await localforage.setItem(LOCAL_STORAGE_USER_KEY, {
             uuid: user.uuid,
             avatarUrl: user.avatarUrl,
             email: user.email,
             token: user.token,
             public_encryption_key: user.public_encryption_key
         });
+
+        if (isExtendedSession.value) {
+            await setLastRememberedUsername(user.email);
+        }
     }
 
     async function generatePasskey(deviceName) {
@@ -148,38 +181,21 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value.passkeys = user.value.passkeys.filter(passkey => passkey.passkey.id !== passkeyToDelete.passkey.id);
     }
 
-
-    async function verifyPasskey() {
-        var options = parseRequestOptionsFromJSON({
-            publicKey: { 
-                challenge: btoa(user.value.token),
-                allowCredentials: [],
-                userVerification: 'preferred'
-            }
-        });
-
-        const passkey = await getWebAuthn(options);
-
-        user.value = await userService.verifyPasskey({
-            accessToken: user.value.token,
-            passkey: passkey,
-        });
-
-        isLoggedIn.value = user.value && user.value.uuid ? true : false;
-
-        createSession(user);
-    }
-
-    async function signOut() {
+    function signOut(forceClear = false) {
         isLoggedIn.value = false;
         user.value = null;
 
         localforage.removeItem(LOCAL_STORAGE_USER_KEY);
-        localforage.clear();
+        
+        // This will also remove the last remembered username
+        // Clean this only user explicity wants to log out, and not when session expired
+        if (forceClear) {
+            localforage.clear();
+        }  
     }
 
     async function setLastRememberedUsername (username) {
-        localforage.setItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY, username);
+        await localforage.setItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY, username);
     }
     
     return {
@@ -187,6 +203,9 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         isLoggedIn,
         lastRememberedUsername,
+
+        isAutoLoginEnabled,
+        setAutoLogin,
 
         init,
         requestLogin,
@@ -196,7 +215,6 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         verifyPasskey,
         getAccountInformation,
         update,
-        createSession,
         generatePasskey,
         removePasskey,
         signOut,

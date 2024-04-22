@@ -69,6 +69,15 @@
                         </div>
 
                         <hr class="my-4" v-if="user.passkeys">
+
+                        <div class="form-check mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <input class="form-check-input" type="checkbox" id="autoLoginCheckbox" v-model="autoLoginEnabled">
+                            <label class="form-check-label" for="autoLoginCheckbox">
+                                Enable auto login
+                            </label>
+                        </div>
+
+                        <hr class="my-4">
                     </div>
                 </form>
             </div>
@@ -119,10 +128,10 @@
         data() {
             return {
                 totpToken: '',
+                autoLoginEnabled: false,
                 error: {
                     message: ''
                 },
-                remember: false,
                 isLoading: false,
                 isGeneratePasskeyBtnVisible: false
             }
@@ -134,7 +143,7 @@
                 this.openAlert('Error!', error, 'danger');
             }
         },
-        mounted() {
+        async mounted() {
             // Availability of `window.PublicKeyCredential` means WebAuthn is usable.  
             // `isUserVerifyingPlatformAuthenticatorAvailable` means the feature detection is usable.  
             // `​​isConditionalMediationAvailable` means the feature detection is usable.  
@@ -150,10 +159,15 @@
                         this.isGeneratePasskeyBtnVisible = true;
                     }  
                 });  
-            }  
+            }
+
+            this.autoLoginEnabled = await this.isAutoLoginEnabled;
         },
         computed: {
-            ...mapState(useUserStore, ['user']),
+            ...mapState(useUserStore, [
+                'user',
+                'isAutoLoginEnabled'
+            ]),
             ...mapState(useAccountsStore, ['accounts'])
         },
         methods: {
@@ -162,7 +176,8 @@
                 'signOut',
                 'generatePasskey',
                 'removePasskey',
-                'update'
+                'update',
+                'setAutoLogin'
             ]),
 
             ...mapActions(useAlertStore, [
@@ -178,7 +193,8 @@
             ]),
 
             onSignOut: async function () {
-                await this.signOut();
+                // force clear everything on session when user explicitly logs out
+                await this.signOut(true);
 
                 this.$router.go('/');
             },
@@ -211,6 +227,7 @@
                 this.isLoading = true;
 
                 try {
+                    await this.setAutoLogin(this.autoLoginEnabled);
                     await this.update();
 
                     this.isLoading = false;
