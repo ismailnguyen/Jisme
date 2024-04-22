@@ -49,8 +49,9 @@
     color: #000;
     border-color: #fff;
 }
-.bg-gradient-blue .form-control, .bg-gradient-blue .form-control-plaintext {
-    color: #f8f9fa;
+.bg-gradient-blue .form-control,
+.bg-gradient-blue .form-control-plaintext {
+  color: #eee;
 }
 .bg-gradient-blue .form-control:focus {
     color: #000;
