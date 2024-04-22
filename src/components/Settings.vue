@@ -56,7 +56,10 @@
                         <hr class="my-4">
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12 input-group-list">
-                            <label class="form-label" for="passwordlesslogin_btn"><i class="fa fa-fingerprint" aria-hidden="true"></i> Password-less login</label>
+                            <label class="form-label" for="passwordlesslogin_btn">
+                                <i class="fa fa-fingerprint" aria-hidden="true"></i> Password-less login
+                            </label>
+
                             <div class="input-group"
                                 v-for="passkey in user.passkeys"
                                 :key="passkey.passkey.id">
@@ -68,7 +71,7 @@
                             </button>
                         </div>
 
-                        <hr class="my-4" v-if="user.passkeys">
+                        <hr class="my-4" v-show="user.passkeys">
 
                         <div class="form-check mb-3 col-xs-12 col-md-12 col-lg-12">
                             <input class="form-check-input" type="checkbox" id="autoLoginCheckbox" v-model="autoLoginEnabled">
@@ -78,6 +81,34 @@
                         </div>
 
                         <hr class="my-4">
+
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-sow="user.activities">
+                            <table class="table table-striped table-hover">
+                                 <thead>
+                                    <tr>
+                                        <th scope="col">Date</th>
+                                        <th scope="col">Event</th>
+                                        <th scope="col">Details</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(activity, i) in user.activities" :key="i">
+                                        <td scope="row">{{ new Date(activity.activity_date).toString() }}</td>
+                                        <td>{{ activity.action.toUpperCase() }}</td>
+                                        <td>
+                                            <div class="card card-body">
+                                                <small><b>User agent:</b> {{ activity.agent }}</small><br>
+                                                <small><b>Referer:</b> {{ activity.referer }}</small><br>
+                                                <small><b>IP:</b> {{ activity.ip }}</small>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <hr class="my-4" v-sow="user.activities">
+                        
                     </div>
                 </form>
             </div>
