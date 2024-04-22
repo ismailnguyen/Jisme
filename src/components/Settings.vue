@@ -68,7 +68,7 @@
                                 <input class="form-control" type="text" aria-describedby="addAccount_passwordHelp" placeholder="Loading" v-model="passkey.deviceName" disabled />
                                 <button class="btn btn-outline-secondary hover-danger" type="button" @click="onRemovePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
                             </div>
-                            <button class="btn btn-danger btn-block" @click.prevent="onGeneratePasskey()" v-if="isGeneratePasskeyBtnVisible">
+                            <button id="passwordlesslogin_btn" class="btn btn-danger btn-block" @click.prevent="onGeneratePasskey()" v-if="isGeneratePasskeyBtnVisible">
                                 <i class="fa fa-plus"></i> Add a passkey
                             </button>
                         </div>

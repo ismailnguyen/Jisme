@@ -130,8 +130,6 @@
                 } catch (error) {
                     if (error instanceof SessionExpiredException) {
                         this.openAlert('Session expired', error.message, 'danger');
-
-                        this.signOut();
                         this.$router.go('/');
                     }
                     else {
@@ -144,8 +142,6 @@
                 } catch (error) {
                     if (error instanceof SessionExpiredException) {
                         this.openAlert('Session expired', error.message, 'danger');
-
-                        this.signOut();
                         this.$router.go('/');
                     }
                     else {

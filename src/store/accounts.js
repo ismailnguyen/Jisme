@@ -79,37 +79,55 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     }
 
     async function fetchRecentAccounts() {
-        recentAccounts.value = await accountsService.getRecents() || [];
+        try {
+            recentAccounts.value = await accountsService.getRecents() || [];
 
-        await accountsService.updateLocalRecentAccounts(recentAccounts.value);
+            await accountsService.updateLocalRecentAccounts(recentAccounts.value);
+        }
+        catch (error) {
+            if (error instanceof SessionExpiredException) {
+                userStore.signOut();
+            }
+
+            throw error;
+        }
     }
 
     async function fetchAccounts () {
-        // Update account while getting page by page from server
-        await accountsService.getAll(
-            (fetchedAccounts) => {
-                // If fetchedAccounts exist in accounts, update them, otherwise add them
-                fetchedAccounts.forEach(account => {
-                    let index = accounts.value.findIndex(a => a._id === account._id);
+        try {
+            // Update account while getting page by page from server
+            await accountsService.getAll(
+                (fetchedAccounts) => {
+                    // If fetchedAccounts exist in accounts, update them, otherwise add them
+                    fetchedAccounts.forEach(account => {
+                        let index = accounts.value.findIndex(a => a._id === account._id);
 
-                    if (index !== -1) {
-                        // Update only accounts where last_modified_date is greater than the one in the store
-                        if (new Date(account.last_modified_date) > new Date(accounts.value[index].last_modified_date)) {
-                            accounts.value[index] = account;
-                            console.log('Updated account retrieved')//, account);
+                        if (index !== -1) {
+                            // Update only accounts where last_modified_date is greater than the one in the store
+                            if (new Date(account.last_modified_date) > new Date(accounts.value[index].last_modified_date)) {
+                                accounts.value[index] = account;
+                                console.log('Updated account retrieved')//, account);
+                            }
                         }
-                    }
-                    else {
-                        accounts.value.push(account);
-                        console.log('New account retrieved')//, account);
-                    }
-                });
-            },
-            // Update cached accounts only when all accounts are fetched
-            (totalAccounts) => {
-                updateLocalAccounts();
+                        else {
+                            accounts.value.push(account);
+                            console.log('New account retrieved')//, account);
+                        }
+                    });
+                },
+                // Update cached accounts only when all accounts are fetched
+                (totalAccounts) => {
+                    updateLocalAccounts();
+                }
+            );
+        }
+        catch (error) {
+            if (error instanceof SessionExpiredException) {
+                userStore.signOut();
             }
-        );
+
+            throw error;
+        }
     }
 
     async function updateLocalAccounts() {

@@ -114,7 +114,7 @@
                         </div>
                         
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="addAccount_password_clue_input"><i class="fa fa-eye" aria-hidden="true"></i> Password clue</label>
+                            <label class="form-label" for="password_clue_input"><i class="fa fa-eye" aria-hidden="true"></i> Password clue</label>
                             <input id="password_clue_input" class="form-control" type="text" v-model="account.password_clue" @keyup.enter="add()" />
                         </div>
 

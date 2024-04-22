@@ -164,6 +164,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
     async function signOut() {
         isLoggedIn.value = false;
+        user.value = null;
 
         localforage.removeItem(LOCAL_STORAGE_USER_KEY);
         localforage.clear();
