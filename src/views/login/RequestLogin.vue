@@ -30,11 +30,11 @@
                     </div>
                     
                     <button
-                        type="submit"
+                        type="button"
                         class="btn btn-lg"
                         :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'"
-                        @keyup.enter="onRequestLogin"
-                        @click="onRequestLogin"
+                        @keyup.enter="onRequestLogin()"
+                        @click="onRequestLogin()"
                         :disabled="!username"
                         tabindex="2">
                         <i class="fa fa-right-to-bracket" aria-hidden="true"></i>

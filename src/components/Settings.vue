@@ -160,7 +160,6 @@
             ...mapActions(useUserStore, [
                 'getAccountInformation',
                 'signOut',
-                'requestPasswordlessLogin',
                 'generatePasskey',
                 'removePasskey',
                 'update'
@@ -174,7 +173,9 @@
                 'closeSettings'
             ]),
 
-            ...mapActions(useAccountsStore, ['enableServerEncryption']),
+            ...mapActions(useAccountsStore, [
+                'enableServerEncryption'
+            ]),
 
             onSignOut: async function () {
                 await this.signOut();
@@ -186,9 +187,6 @@
                 const deviceName = prompt('Enter a device name', 'Device #1');
                 if (deviceName) {
                     try {
-                        // First request challenge to the server
-                        await this.requestPasswordlessLogin();
-
                         await this.generatePasskey(deviceName);
                         
                         this.openAlert('Passkey added!', 'Save to confirm.');

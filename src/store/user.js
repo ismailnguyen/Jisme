@@ -148,22 +148,11 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value.passkeys = user.value.passkeys.filter(passkey => passkey.passkey.id !== passkeyToDelete.passkey.id);
     }
 
-    async function requestPasswordlessLogin () { 
-        passkeyOptions.value = await userService.requestPasswordlessLogin();
-    }
 
     async function verifyPasskey() {
-        const storedOptions = passkeyOptions.value;
-        if (!storedOptions) {
-            return;
-        }
-
-        // Reset passkeyOptions as soon as they are used
-        passkeyOptions.value = null;
-
         var options = parseRequestOptionsFromJSON({
             publicKey: { 
-                challenge: btoa(storedOptions.challenge),
+                challenge: btoa(user.value.token),
                 allowCredentials: [],
                 userVerification: 'preferred'
             }
@@ -174,7 +163,6 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value = await userService.verifyPasskey({
             accessToken: user.value.token,
             passkey: passkey,
-            challenge: storedOptions.challenge
         });
 
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
@@ -205,7 +193,6 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         verifyPassword,
         verifyMFA,
 
-        requestPasswordlessLogin,
         verifyPasskey,
         getAccountInformation,
         update,

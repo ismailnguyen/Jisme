@@ -115,28 +115,13 @@ class UserService {
             }
         };
 
-        this.requestPasswordlessLogin = async function () {
-            try {
-                const response = await fetch(`${USERS_API_URL}/login/passkey`, {
-                    method: 'GET',
-                    headers: getHeaders()
-                });
-
-                return await response.json();
-            }
-            catch (error) {
-                throw new Error('Server unavailable!');
-            }
-        };
-
-        this.verifyPasskey = async function ({ accessToken, passkey, challenge }) {
+        this.verifyPasskey = async function ({ accessToken, passkey }) {
             try {
                 const response = await fetch(`${USERS_API_URL}/login/passkey`, {
                     method: 'POST',
-                    headers: getHeaders(),
+                    headers: getHeadersWithAuth(accessToken),
                     body: JSON.stringify({
-                        passkey: passkey,
-                        challenge: challenge
+                        passkey: passkey
                     })
                 });
 

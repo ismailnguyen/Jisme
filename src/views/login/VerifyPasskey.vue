@@ -4,7 +4,7 @@
             <LoginHero :isLoading="isLoading" />
 
             <div class="col-xs-12 col-md-10 mx-auto col-lg-5">
-                <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="submitUsername()">
+                <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="onVerifyPasskey()">
                     <div class="d-block d-lg-none">
                         <img class="img-fluid rounded mb-4" loading="lazy" src="../../assets/logo_medium.png" alt="Jisme" v-show="!isLoading">
                         <Loader v-show="isLoading" />
@@ -24,6 +24,11 @@
                             readonly>
                         <label for="readonlyInputUsername">Email address</label>
                     </div>
+
+                    <span class="w-100 btn btn-lg" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="onVerifyPasskey()" v-if="isPasswordlessLoginBtnVisible" tabindex="4">
+                        <i class="fa fa-user-lock" aria-hidden="true"></i>
+                        Passkey
+                    </span>
 
                     <hr class="my-4">
 
@@ -51,6 +56,7 @@
     export default {
         data() {
             return {
+                isPasswordlessLoginBtnVisible: false,
                 isLoading: false
             }
         },
@@ -74,12 +80,11 @@
                 PublicKeyCredential.isConditionalMediationAvailable) {  
                 // Check if conditional mediation is available.  
                 PublicKeyCredential.isConditionalMediationAvailable().then(isCMA => {
-                    if (isCMA) {  
-                        // Init challenge to act as a CSRF token
-                        this.initPasswordlessLogin();
+                    if (isCMA) {
+                        this.isPasswordlessLoginBtnVisible = true;
 
                         // Call WebAuthn authentication  
-                        this.handlePasswordlessLogin();
+                        this.onVerifyPasskey();
                     }  
                 })
             }
@@ -90,16 +95,10 @@
             ]),
 
             ...mapActions(useUserStore, [
-                'requestPasswordlessLogin',
-                'verifyPasskey',
+                'verifyPasskey'
             ]),
 
-            initPasswordlessLogin: async function () {
-                // First request challenge to the server, so that we keep the challenge active until the user signs it
-                await this.requestPasswordlessLogin();
-            },
-
-            handlePasswordlessLogin: async function () {
+            onVerifyPasskey: async function () {
                 this.isLoading = true;
 
                 try {
