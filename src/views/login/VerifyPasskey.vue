@@ -111,11 +111,6 @@
                 catch (error) {
                     this.isLoading = false;
                     this.openAlert(error.reason ? error.message : 'Error', error.reason || error.message, 'danger');
-
-                    setTimeout(() => {
-                        this.$router.push({ name: 'Login' });
-                    }
-                    , 2000);
                 }
             }
         }
