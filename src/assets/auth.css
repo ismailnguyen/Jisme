@@ -54,10 +54,24 @@
   box-shadow: 0 10px 20px 0 rgba(208,214,222,.5);
 }
 
+@media (max-width: 767.98px) {
+  .form-signin {
+    box-shadow: none;
+    background: var(--color-background);
+  }
+}
+
 @media(prefers-color-scheme: dark) {
   .form-signin {
     background: var(--color-background-soft);
     box-shadow: none;
+  }
+
+  @media (max-width: 767.98px) {
+    .form-signin {
+      box-shadow: none;
+      background: var(--color-background);
+    }
   }
 }
 
