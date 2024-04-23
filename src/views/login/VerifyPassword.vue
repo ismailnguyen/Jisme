@@ -12,7 +12,7 @@
 
                     <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
 
-                    <div class="form-floating mb-3">
+                    <div class="form-floating mb-3" v-show="user">
                         <input
                             type="text"
                             id="readonlyInputUsername"
@@ -25,19 +25,25 @@
                         <label for="readonlyInputUsername">Email address</label>
                     </div>
 
-                    <div class="mb-3">
-                         <label for="inputPassword" class="sr-only">Password</label>
+                    <div class="input-group mb-3">
                         <input
-                            type="password"
+                            :type="passwordInputType"
                             ref="inputPassword"
                             id="inputPassword"
-                            class="form-control"
+                            class="input form-control"
                             placeholder="Password"
                             v-model="password"
                             autofocus
                             tabindex="2"
                             autocomplete="current-password"
                             required>
+
+                        <div class="input-group-append">
+                            <span class="input-group-text" @click="togglePasswordInput()">
+                                <i class="fas fa-eye" id="show_eye"></i>
+                                <i class="fas fa-eye-slash d-none" id="hide_eye"></i>
+                            </span>
+                        </div>
                     </div>
                     
                     <button 
@@ -83,6 +89,7 @@
         data() {
             return {
                 password: '',
+                passwordInputType: 'password',
                 isLoading: false
             }
         },
@@ -114,6 +121,10 @@
 
             goBack: function () {
                 this.$router.push({ name: 'Login' });
+            },
+
+            togglePasswordInput: function () {
+                this.passwordInputType = this.passwordInputType === 'password' ? 'text' : 'password';
             },
 
             onVerifyPassword: async function () {

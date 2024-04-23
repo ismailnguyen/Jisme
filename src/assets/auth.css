@@ -5,6 +5,34 @@
   background-color: var(--color-background-mute);
 }
 
+.input-group-append .input-group-text {
+  color: var(--color-text);
+  opacity: 0.9;
+  border-left: none;
+  height: 100%;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background-color: var(--color-background-mute);
+}
+
+.input-group .input {
+  border-right: 0;
+}
+
+.form-signin .form-control:focus {
+  z-index: 2;
+  box-shadow: none;
+}
+
+.form-control:focus + .input-group-append .input-group-text  {
+  color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: #86b7fe;
+    outline: 0;
+}
+
 .form-control::placeholder {
   color: var(--color-text);
   opacity: 1;
@@ -48,10 +76,6 @@
 
 .form-signin a {
   cursor: pointer;
-}
-
-.form-signin .form-control:focus {
-  z-index: 2;
 }
 
 .form-signin .btn-primary {
