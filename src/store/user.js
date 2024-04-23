@@ -181,17 +181,11 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value.passkeys = user.value.passkeys.filter(passkey => passkey.passkey.id !== passkeyToDelete.passkey.id);
     }
 
-    function signOut(forceClear = false) {
+    function signOut() {
         isLoggedIn.value = false;
         user.value = null;
 
         localforage.removeItem(LOCAL_STORAGE_USER_KEY);
-        
-        // This will also remove the last remembered username
-        // Clean this only user explicity wants to log out, and not when session expired
-        if (forceClear) {
-            localforage.clear();
-        }  
     }
 
     async function setLastRememberedUsername (username) {
