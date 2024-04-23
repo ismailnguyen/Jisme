@@ -74,7 +74,7 @@
 
 .form-signin .btn-outline-primary:hover,
 .form-signin .btn-outline-primary:active {
-  color: #f8f9fa !important;
+  color: var(--color-background) !important;
   background-color: var(--color-background-inverted) !important;
 }
 
