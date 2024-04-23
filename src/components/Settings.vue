@@ -41,19 +41,21 @@
 
                         <hr class="my-4">
 
+                        <h2>Security</h2>
+
+                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <span class="form-label">Auto login</span>
+
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="autoLoginCheckbox" v-model="autoLoginEnabled">
+                                <label class="form-check-label" for="autoLoginCheckbox">{{ autoLoginEnabled ? 'Enabled' : 'Disabled' }}</label>
+                            </div>
+                        </div>
+
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <label class="form-label" for="inputTotpSecret"><i class="fa fa-qrcode" aria-hidden="true"></i> TOTP Secret</label>
                             <input id="inputTotpSecret" class="form-control" type="text" placeholder="Loading" laceholder="MFA TOTP secret" v-model="user.totp_secret" disabled />
                         </div>
-
-                         <!-- <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <button type="button" class="btn btn-outline-light" @click="enableServerEncryption()">
-                                <i class="fa fa-power-off"></i>
-                                    Enable encryption of {{ accounts.length }} accounts
-                            </button>
-                        </div> -->
-
-                        <hr class="my-4">
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12 input-group-list">
                             <label class="form-label" for="passwordlesslogin_btn">
@@ -73,42 +75,40 @@
 
                         <hr class="my-4" v-show="user.passkeys">
 
-                        <div class="form-check mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <input class="form-check-input" type="checkbox" id="autoLoginCheckbox" v-model="autoLoginEnabled">
-                            <label class="form-check-label" for="autoLoginCheckbox">
-                                Enable auto login
-                            </label>
+                        <div class="table-responsive mb-3 col-xs-12 col-md-12 col-lg-12" v-show="user.activities">
+                            <h2>Recent activities</h2>
+
+                            <div class="list-group">
+                                <a
+                                    href="#"
+                                    class="list-group-item list-group-item-action"
+                                    aria-current="true"
+                                    v-for="(activity, i) in user.activities" :key="i"
+                                    @click="activity.isExpanded = !activity.isExpanded">
+                                    
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ capitalizeFirstLetter(activity.action) }}</h5>
+                                        <span class="badge text-bg-primary rounded-pill">{{ toDaysAgo(activity.activity_date) }}</span>
+                                    </div>
+                                    <small v-show="activity.isExpanded">
+                                        <b>User agent:</b> {{ activity.agent }}<br>
+                                        <b>Referer:</b> {{ activity.referer }}<br>
+                                        <b>IP:</b> {{ activity.ip }}<br>
+                                        <b>Date:</b> {{ new Date(activity.activity_date) }}
+                                    </small>
+                                </a>
+                            </div>
                         </div>
 
-                        <hr class="my-4">
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-sow="user.activities">
-                            <table class="table table-striped table-hover">
-                                 <thead>
-                                    <tr>
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Event</th>
-                                        <th scope="col">Details</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(activity, i) in user.activities" :key="i">
-                                        <td scope="row">{{ new Date(activity.activity_date).toString() }}</td>
-                                        <td>{{ activity.action.toUpperCase() }}</td>
-                                        <td>
-                                            <div class="card card-body">
-                                                <small><b>User agent:</b> {{ activity.agent }}</small><br>
-                                                <small><b>Referer:</b> {{ activity.referer }}</small><br>
-                                                <small><b>IP:</b> {{ activity.ip }}</small>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <hr class="my-4" v-sow="user.activities">
+                        <hr class="my-4" v-show="user.activities">
                         
+
+                        <!-- <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                            <button type="button" class="btn btn-outline-light" @click="enableServerEncryption()">
+                                <i class="fa fa-power-off"></i>
+                                    Enable encryption of {{ accounts.length }} accounts
+                            </button>
+                        </div> -->
                     </div>
                 </form>
             </div>
@@ -224,10 +224,30 @@
             ]),
 
             onSignOut: async function () {
-                // force clear everything on session when user explicitly logs out
-                await this.signOut(true);
+                await this.signOut();
 
                 this.$router.go('/');
+            },
+
+            capitalizeFirstLetter (word) {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            },
+
+            toDaysAgo: function (dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diff = now - date;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+                if (days === 0) {
+                    return 'Today';
+                }
+
+                if (days === 1) {
+                    return 'Yesterday';
+                }
+
+                return days + ' days ago';
             },
 
             onGeneratePasskey: async function () {
