@@ -75,19 +75,7 @@
             }
         },
         async mounted () {
-            // Availability of `window.PublicKeyCredential` means WebAuthn is usable.
-            if (window.PublicKeyCredential &&  
-                PublicKeyCredential.isConditionalMediationAvailable) {  
-                // Check if conditional mediation is available.  
-                PublicKeyCredential.isConditionalMediationAvailable().then(isCMA => {
-                    if (isCMA) {
-                        this.isPasswordlessLoginBtnVisible = true;
-
-                        // Call WebAuthn authentication  
-                        this.onVerifyPasskey();
-                    }  
-                })
-            }
+            this.isPasskeyLoginSupported(this.onPasskeySupported, this.onPasskeyUnsupported);
         },
         methods: {
             ...mapActions(useAlertStore, [
@@ -95,8 +83,21 @@
             ]),
 
             ...mapActions(useUserStore, [
-                'verifyPasskey'
+                'verifyPasskey',
+                'isPasskeyLoginSupported'
             ]),
+
+            onPasskeySupported: function () {
+                // Display button
+                this.isPasswordlessLoginBtnVisible = true;
+
+                // Call WebAuthn authentication  
+                this.onVerifyPasskey();
+            },
+
+            onPasskeyUnsupported: function () {
+                this.openAlert('Error', 'Passkey login is not supported on this device.', 'danger');
+            },
 
             onVerifyPasskey: async function () {
                 this.isLoading = true;

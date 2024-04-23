@@ -78,24 +78,29 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function verifyPasskey() {
-        var options = parseRequestOptionsFromJSON({
-            publicKey: { 
-                challenge: btoa(user.value.token),
-                allowCredentials: [],
-                userVerification: 'preferred'
-            }
-        });
+        try {
+            var options = parseRequestOptionsFromJSON({
+                publicKey: { 
+                    challenge: btoa(user.value.token),
+                    allowCredentials: [],
+                    userVerification: 'preferred'
+                }
+            });
 
-        const passkey = await getWebAuthn(options);
+            const passkey = await getWebAuthn(options);
 
-        user.value = await userService.verifyPasskey({
-            accessToken: user.value.token,
-            passkey: passkey,
-        });
+            user.value = await userService.verifyPasskey({
+                accessToken: user.value.token,
+                passkey: passkey,
+            });
 
-        isLoggedIn.value = user.value && user.value.uuid ? true : false;
+            isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
-        await createSession(user);
+            await createSession(user);
+        }
+        catch (error) {
+            console.error(error);
+        }
     }
 
     async function getAccountInformation() { 
@@ -129,6 +134,50 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         if (isExtendedSession.value) {
             await setLastRememberedUsername(user.email);
+        }
+    }
+
+    function isPasskeyLoginSupported (callback, failure) {
+        // Availability of `window.PublicKeyCredential` means WebAuthn is usable.
+        if (window.PublicKeyCredential &&  
+            PublicKeyCredential.isConditionalMediationAvailable) { 
+            // Check if conditional mediation is available.  
+            PublicKeyCredential.isConditionalMediationAvailable().then(isCMA => {
+                if (isCMA) {
+                    callback();
+                } else {
+                    failure();
+                }
+            }).catch(() => {
+                failure();
+            });
+        } else {
+            failure();
+        }
+    }
+
+    function isPasskeyCreationSupported (callback, failure) {
+        // Availability of `window.PublicKeyCredential` means WebAuthn is usable.  
+        // `isUserVerifyingPlatformAuthenticatorAvailable` means the feature detection is usable.  
+        // `​​isConditionalMediationAvailable` means the feature detection is usable.  
+        if (window.PublicKeyCredential &&
+            PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable &&
+            PublicKeyCredential.isConditionalMediationAvailable) {
+            // Check if user verifying platform authenticator is available.
+            Promise.all([
+                PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(),
+                PublicKeyCredential.isConditionalMediationAvailable(),
+            ]).then(results => {
+                if (results.every(r => r === true)) {
+                    callback();
+                } else {
+                    failure();
+                }
+            }).catch(() => {
+                failure();
+            });
+        } else {
+            failure();
         }
     }
 
@@ -205,8 +254,11 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         requestLogin,
         verifyPassword,
         verifyMFA,
-
         verifyPasskey,
+
+        isPasskeyLoginSupported,
+        isPasskeyCreationSupported,
+
         getAccountInformation,
         update,
         generatePasskey,

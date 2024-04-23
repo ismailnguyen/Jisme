@@ -71,6 +71,10 @@
                             <button id="passwordlesslogin_btn" class="btn btn-danger btn-block" @click.prevent="onGeneratePasskey()" v-if="isGeneratePasskeyBtnVisible">
                                 <i class="fa fa-plus"></i> Add a passkey
                             </button>
+
+                            <button id="passwordlesslogin_unsupported_btn" class="btn btn-danger btn-block" v-if="!isGeneratePasskeyBtnVisible" disabled>
+                                <i class="fa fa-ban"></i> Passkey not supported in this device
+                            </button>
                         </div>
 
                         <hr class="my-4" v-show="user.passkeys">
@@ -175,29 +179,15 @@
             }
         },
         async mounted() {
-            // Availability of `window.PublicKeyCredential` means WebAuthn is usable.  
-            // `isUserVerifyingPlatformAuthenticatorAvailable` means the feature detection is usable.  
-            // `​​isConditionalMediationAvailable` means the feature detection is usable.  
-            if (window.PublicKeyCredential &&  
-                PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable &&  
-                PublicKeyCredential.isConditionalMediationAvailable) {  
-                // Check if user verifying platform authenticator is available.  
-                Promise.all([  
-                    PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(),  
-                    PublicKeyCredential.isConditionalMediationAvailable(),  
-                ]).then(results => {  
-                    if (results.every(r => r === true)) {  
-                        this.isGeneratePasskeyBtnVisible = true;
-                    }  
-                });  
-            }
+            this.isPasskeyCreationSupported(this.onPasskeySupported, this.onPasskeyUnsupported);
 
             this.autoLoginEnabled = await this.isAutoLoginEnabled;
         },
         computed: {
             ...mapState(useUserStore, [
                 'user',
-                'isAutoLoginEnabled'
+                'isAutoLoginEnabled',
+                'isPasskeyCreationSupported'
             ]),
             ...mapState(useAccountsStore, ['accounts'])
         },
@@ -227,6 +217,15 @@
                 await this.signOut();
 
                 this.$router.go('/');
+            },
+
+            onPasskeySupported: function () {
+                // Display button
+                this.isGeneratePasskeyBtnVisible = true;
+            },
+
+            onPasskeyUnsupported: function () {
+                this.isGeneratePasskeyBtnVisible = false;
             },
 
             capitalizeFirstLetter (word) {
