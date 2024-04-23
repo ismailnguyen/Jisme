@@ -4,9 +4,6 @@
      --color-background-inverted: #000;
      --color-background-soft: rgb(228, 228, 228);
      --color-background-mute: #fff;
-     --color-border: var(--vt-c-divider-light-2);
-     --color-border-hover: var(--vt-c-divider-light-1);
-     --color-heading: var(--vt-c-text-light-1);
      --color-text: #162056;
      --color-text-inverted: #eee;
 }
@@ -16,9 +13,6 @@
          --color-background-inverted: #f0f2f5;
          --color-background-soft: #1c1c1d;
          --color-background-mute: #242526db;
-         --color-border: var(--vt-c-divider-dark-2);
-         --color-border-hover: var(--vt-c-divider-dark-1);
-         --color-heading: var(--vt-c-text-dark-1);
          --color-text: #eee;
          --color-text-inverted: #162056;
     }

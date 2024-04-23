@@ -39,6 +39,7 @@
                         @keyup.enter="onVerifyOtp"
                         tabindex="7">
                         Verify
+                        <i class="fa fa-arrow-right"></i>
                     </button>
 
                     <hr class="my-4">

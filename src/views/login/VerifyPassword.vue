@@ -53,8 +53,8 @@
                         :disabled="!password"
                         @keyup.enter="onVerifyPassword"
                         tabindex="3">
-                        <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
                         Sign in
+                        <i class="fa fa-arrow-right"></i>
                     </button>
 
                     <hr class="my-4">

@@ -44,8 +44,8 @@
                         @click="onRequestLogin()"
                         :disabled="!username"
                         tabindex="2">
-                        <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
                         Next
+                        <i class="fa fa-arrow-right"></i>
                     </button>
 
                     <hr class="my-4">
