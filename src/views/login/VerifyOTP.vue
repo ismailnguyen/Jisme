@@ -32,11 +32,11 @@
                     </div>
 
                     <button 
-                        type="submit"
+                        type="button"
                         class="btn btn-lg"
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
                         :disabled="!isOtpFilled"
-                        @keyup.enter="onVerifyOtp"
+                        @click="onVerifyOtp"
                         tabindex="7">
                         Verify
                         <i class="fa fa-arrow-right"></i>

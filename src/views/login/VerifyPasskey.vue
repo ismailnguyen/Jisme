@@ -10,7 +10,7 @@
                         <Loader v-show="isLoading" />
                     </div>
 
-                    <h1 class="h3 mb-3 font-weight-normal">Authenticating</h1>
+                    <h1 class="h3 mb-3 font-weight-normal">Sign in with a passkey</h1>
 
                      <div class="form-floating mb-3">
                         <input
@@ -25,10 +25,17 @@
                         <label for="readonlyInputUsername">Email address</label>
                     </div>
 
-                    <span class="w-100 btn btn-lg" :class="isLoading ? 'btn-secondary' : 'btn-primary'" @click="onVerifyPasskey()" v-if="isPasswordlessLoginBtnVisible" tabindex="4">
+                    <button 
+                        type="button"
+                        class="w-100 btn btn-lg"
+                        :class="isLoading ? 'btn-secondary' : 'btn-primary'"
+                        :disabled="!isOtpFilled"
+                        @click="onVerifyPasskey"
+                        tabindex="2"
+                        v-show="isPasswordlessLoginBtnVisible">
                         <i class="fa fa-user-lock" aria-hidden="true"></i>
-                        Passkey
-                    </span>
+                        Choose a passkey
+                    </button>
 
                     <hr class="my-4">
 
@@ -89,7 +96,7 @@
 
             onPasskeySupported: function () {
                 // Display button
-                this.isPasswordlessLoginBtnVisible = true;
+                //this.isPasswordlessLoginBtnVisible = true;
 
                 // Call WebAuthn authentication  
                 this.onVerifyPasskey();

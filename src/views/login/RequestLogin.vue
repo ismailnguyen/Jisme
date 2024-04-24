@@ -13,19 +13,19 @@
                     <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
 
                     <div class="form-floating mb-3">
-                            <input
-                                type="text"
-                                id="inputUsername"
-                                name="username"
-                                autocomplete="username webauthn"
-                                class="form-control"
-                                placeholder="Email address, or phone number"
-                                aria-describedby="emailHelp"
-                                v-model="username"
-                                @keyup.enter="onRequestLogin"
-                                autofocus
-                                tabindex="1"
-                                required>
+                        <input
+                            type="text"
+                            id="inputUsername"
+                            name="username"
+                            autocomplete="username webauthn"
+                            class="form-control"
+                            placeholder="Email address, or phone number"
+                            aria-describedby="emailHelp"
+                            v-model="username"
+                            @keyup.enter="onRequestLogin"
+                            autofocus
+                            tabindex="1"
+                            required>
                         <label for="inputUsername">Email Address</label>
                     </div>
 
@@ -40,7 +40,6 @@
                         type="button"
                         class="btn btn-lg"
                         :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'"
-                        @keyup.enter="onRequestLogin()"
                         @click="onRequestLogin()"
                         :disabled="!username"
                         tabindex="2">

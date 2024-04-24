@@ -10,7 +10,7 @@
                         <Loader v-show="isLoading" />
                     </div>
 
-                    <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
+                    <h1 class="h3 mb-3 font-weight-normal">Sign in with password</h1>
 
                     <div class="form-floating mb-3" v-show="user">
                         <input
@@ -47,11 +47,11 @@
                     </div>
                     
                     <button 
-                        type="submit"
+                        type="button"
                         class="btn btn-lg"
                         :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'"
                         :disabled="!password"
-                        @keyup.enter="onVerifyPassword"
+                        @click="onVerifyPassword"
                         tabindex="3">
                         Sign in
                         <i class="fa fa-arrow-right"></i>
