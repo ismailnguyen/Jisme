@@ -124,7 +124,14 @@
                 }
                 catch (error) {
                     this.isLoading = false;
-                    this.openAlert(error.reason ? error.message : 'Error', error.reason || error.message, 'danger');
+                    
+                    // NotAllowedError is thrown when user's request to cancel the passkey authentication
+                    if (error.name === 'NotAllowedError') {
+                        this.openAlert('Error', 'You have denied the request to sign in with a passkey', 'danger');
+                    }
+                    else {
+                        this.openAlert(error.reason ? error.message : 'Error', error.reason || error.message, 'danger');
+                    }
                 }
             }
         }
