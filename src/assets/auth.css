@@ -5,6 +5,10 @@
   background-color: var(--color-background-mute);
 }
 
+.input-group.readonly .input-group-text {
+  border: none;
+}
+
 .input-group-append .input-group-text {
   color: var(--color-text);
   opacity: 0.9;

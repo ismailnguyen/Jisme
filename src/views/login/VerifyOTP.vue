@@ -5,13 +5,29 @@
 
             <div class="col-md-10 mx-auto col-lg-5">
                 <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="onVerifyOtp()">
-                    <img class="rounded-circle mb-3" :src="user && user.avatarUrl ? user.avatarUrl : ''" alt="" width="72" height="72">
+                    <img
+                        v-show="user && user.avatarUrl"
+                        class="rounded-circle mb-3"
+                        loading="lazy"
+                        :src="user.avatarUrl"
+                        :alt="user.email"
+                        :title="user.email"
+                        width="72" height="72">
+                    <img
+                        v-show="!user || !user.avatarUrl"
+                        class="img-fluid rounded mb-4"
+                        loading="lazy"
+                        src="../../assets/logo_medium.png"
+                        alt="Jisme"
+                        title="Jisme">
 
-                    <p class="text-muted" v-if="user">{{ user.email }}</p>
+                    <h1 class="h3 mb-3 font-weight-normal">Sign in with OTP</h1>
+                    
+                    <LoginReadonlyEmailInput
+                        :user="user"
+                        @usernameChanged="onChangeUsername" />
 
-                    <h1 class="h3 mb-3 font-weight-normal">Enter code</h1>
-
-                    <label for="inputOtp" class="">Enter the code displayed in the authenticator app on your mobile device​​</label>
+                    <label for="inputOtp">Enter the code displayed in the authenticator app on your mobile device​​</label>
                     <div class="otp-input-container">
                         <input
                             v-for="(v, index) in totpToken"
@@ -33,7 +49,7 @@
 
                     <button 
                         type="button"
-                        class="btn btn-lg"
+                        class="w-100 btn btn-lg"
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
                         :disabled="!isOtpFilled"
                         @click="onVerifyOtp"
@@ -44,7 +60,9 @@
 
                     <hr class="my-4">
 
-                    <p class="mt-5 mb-3 text-muted">Having trouble? <router-link to="/login">Sign in another way</router-link></p>
+                    
+
+                    <p class="mt-5 mb-3 text-muted">Having trouble? <a class="link" @click="goBack()">Sign in another way</a></p>
                 </form>
             </div>
         </div>
@@ -64,6 +82,7 @@
      } from '@/store'
     import Loader from '../../components/Loader.vue'
     import LoginHero from '../../components/LoginHero.vue'
+    import LoginReadonlyEmailInput from '../../components/LoginReadonlyEmailInput.vue'
 
     export default {
         data() {
@@ -77,7 +96,8 @@
         },
         components: {
             Loader,
-            LoginHero
+            LoginHero,
+            LoginReadonlyEmailInput
         },
         created () {
             if (!this.user || !this.user.email || !this.user.token) {
@@ -101,11 +121,26 @@
             ]),
 
             ...mapActions(useUserStore, [
-                'verifyMFA'
+                'verifyMFA',
+                'setAutoLogin',
+                'setLastRememberedUsername'
             ]),
+
+            goBack: function () {
+                // Save the current username so that going on previous page user doesn't need to fill it again
+                this.setLastRememberedUsername(this.user.email);
+                this.$router.push({ name: 'Login' });
+            },
 
             focusOtpInput: function () {
                 this.$refs['otpInput_0'][0].focus();
+            },
+
+            onChangeUsername: async function () {
+                // Disable auto login to allow user to change username from login page
+                await this.setAutoLogin(false);
+                
+                this.$router.push({ name: 'Login' });
             },
 
             onOtpInput: function (index) {
@@ -143,6 +178,7 @@
                     this.onVerifyOtp();
                 }
             },
+
             onOtpKeydown: function (index, event) {
                 // backspace button
                 if (event.keyCode == 8 && this.totpToken[index] == '' && index != 0) {
@@ -192,6 +228,7 @@
                     return;
                 }
             },
+
             onVerifyOtp: async function () {
                 this.isLoading = true;
 

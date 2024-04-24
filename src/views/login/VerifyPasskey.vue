@@ -12,29 +12,26 @@
 
                     <h1 class="h3 mb-3 font-weight-normal">Sign in with a passkey</h1>
 
-                     <div class="form-floating mb-3">
-                        <input
-                            type="text"
-                            id="readonlyInputUsername"
-                            name="username"
-                            autocomplete="username"
-                            class="form-control-plaintext"
-                            v-model="user.email"
-                            tabindex="1"
-                            readonly>
-                        <label for="readonlyInputUsername">Email address</label>
-                    </div>
+                    <LoginReadonlyEmailInput
+                        :user="user"
+                        @usernameChanged="onChangeUsername" />
 
                     <button 
                         type="button"
                         class="w-100 btn btn-lg"
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
-                        :disabled="!isOtpFilled"
                         @click="onVerifyPasskey"
                         tabindex="2"
                         v-show="isPasswordlessLoginBtnVisible">
                         <i class="fa fa-user-lock" aria-hidden="true"></i>
                         Choose a passkey
+                    </button>
+
+                    <button
+                        class="btn btn-danger btn-block"
+                        v-show="!isPasswordlessLoginBtnVisible"
+                        disabled>
+                        <i class="fa fa-ban"></i> Passkey not supported in this device
                     </button>
 
                     <hr class="my-4">
@@ -59,6 +56,7 @@
     } from '@/store'
     import Loader from '../../components/Loader.vue'
     import LoginHero from '../../components/LoginHero.vue'
+    import LoginReadonlyEmailInput from '../../components/LoginReadonlyEmailInput.vue'
 
     export default {
         data() {
@@ -69,7 +67,8 @@
         },
         components: {
             Loader,
-            LoginHero
+            LoginHero,
+            LoginReadonlyEmailInput
         },
         computed: {
             ...mapWritableState(useUserStore, [
@@ -91,19 +90,27 @@
 
             ...mapActions(useUserStore, [
                 'verifyPasskey',
-                'isPasskeyLoginSupported'
+                'isPasskeyLoginSupported',
+                'setAutoLogin'
             ]),
 
             onPasskeySupported: function () {
                 // Display button
-                //this.isPasswordlessLoginBtnVisible = true;
+                this.isPasswordlessLoginBtnVisible = true;
 
                 // Call WebAuthn authentication  
                 this.onVerifyPasskey();
             },
 
             onPasskeyUnsupported: function () {
-                this.openAlert('Error', 'Passkey login is not supported on this device.', 'danger');
+                this.isPasswordlessLoginBtnVisible = false;
+            },
+            
+            onChangeUsername: async function () {
+                // Disable auto login to allow user to change username from login page
+                await this.setAutoLogin(false);
+                
+                this.$router.push({ name: 'Login' });
             },
 
             onVerifyPasskey: async function () {

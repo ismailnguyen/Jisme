@@ -12,7 +12,12 @@
 
                     <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
 
-                    <div class="form-floating mb-3">
+                    <LoginReadonlyEmailInput
+                        v-if="rememberedUser"
+                        :user="rememberedUser"
+                        @usernameChanged="onChangeUsername" />
+
+                    <div class="form-floating mb-3" v-else>
                         <input
                             type="text"
                             id="inputUsername"
@@ -69,18 +74,22 @@
     } from '@/store'
     import Loader from '../../components/Loader.vue'
     import LoginHero from '../../components/LoginHero.vue'
+    import LoginReadonlyEmailInput from '../../components/LoginReadonlyEmailInput.vue'
 
     export default {
         data() {
             return {
                 username: '',
+                rememberedUser: null,
                 remember: false,
+                isAutoLogin: false,
                 isLoading: false
             }
         },
         components: {
             Loader,
-            LoginHero
+            LoginHero,
+            LoginReadonlyEmailInput
         },
         computed: {
             ...mapWritableState(useUserStore, [
@@ -90,12 +99,22 @@
                 'isAutoLoginEnabled'
             ]),
         },
-        async created() {
-            this.username = await this.lastRememberedUsername;
-            this.remember = this.username ? true : false;
-        },
         async mounted() {
-            await this.isAutoLoginEnabled && this.username && await this.onRequestLogin();
+            this.username = await this.lastRememberedUsername;
+
+            // If user was remembered, use the readonly username field to display username
+            if (this.username) {
+                this.remember = true;
+
+                this.rememberedUser = {
+                    email: this.username
+                }
+            }
+
+            this.isAutoLogin = await this.isAutoLoginEnabled && this.username;
+            if (this.isAutoLogin) {
+                this.onRequestLogin();
+            }
         },
         methods: {
             ...mapActions(useAlertStore, [
@@ -103,8 +122,16 @@
             ]),
 
             ...mapActions(useUserStore, [
-                'requestLogin'
+                'requestLogin',
+                'setAutoLogin'
             ]),
+
+            onChangeUsername: async function () {
+                // Disable auto login to allow user to change username from login page
+                await this.setAutoLogin(false);
+                
+                this.rememberedUser = null;
+            },
 
             onRequestLogin: async function () {
                 if (!this.username) {

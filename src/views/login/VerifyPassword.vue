@@ -12,18 +12,9 @@
 
                     <h1 class="h3 mb-3 font-weight-normal">Sign in with password</h1>
 
-                    <div class="form-floating mb-3" v-show="user">
-                        <input
-                            type="text"
-                            id="readonlyInputUsername"
-                            name="username"
-                            autocomplete="username"
-                            class="form-control-plaintext"
-                            v-model="user.email"
-                            tabindex="1"
-                            readonly>
-                        <label for="readonlyInputUsername">Email address</label>
-                    </div>
+                    <LoginReadonlyEmailInput
+                        :user="user"
+                        @usernameChanged="onChangeUsername" />
 
                     <div class="input-group mb-3">
                         <input
@@ -33,6 +24,7 @@
                             class="input form-control"
                             placeholder="Password"
                             v-model="password"
+                            @keyup.enter="onVerifyPassword"
                             autofocus
                             tabindex="2"
                             autocomplete="current-password"
@@ -59,7 +51,7 @@
                     <hr class="my-4">
 
                     <p class="mt-5 mb-3 text-muted" tabindex="3">
-                        <a @click="goBack()">
+                        <a class="link" @click="goBack()">
                             <i class="fa-solid fa-arrow-left"></i>
                             Go back
                         </a>
@@ -83,6 +75,7 @@
     } from '@/store'
     import Loader from '../../components/Loader.vue'
     import LoginHero from '../../components/LoginHero.vue'
+    import LoginReadonlyEmailInput from '../../components/LoginReadonlyEmailInput.vue'
 
     export default {
         data() {
@@ -94,7 +87,8 @@
         },
         components: {
             Loader,
-            LoginHero
+            LoginHero,
+            LoginReadonlyEmailInput
         },
         computed: {
             ...mapWritableState(useUserStore, [
@@ -115,7 +109,8 @@
             ]),
 
             ...mapActions(useUserStore, [
-                'verifyPassword'
+                'verifyPassword',
+                'setAutoLogin'
             ]),
 
             goBack: function () {
@@ -132,6 +127,13 @@
                         this.isPasswordRevealed = false;
                     }, 2000);
                 }
+            },
+
+            onChangeUsername: async function () {
+                // Disable auto login to allow user to change username from login page
+                await this.setAutoLogin(false);
+                
+                this.$router.push({ name: 'Login' });
             },
 
             onVerifyPassword: async function () {

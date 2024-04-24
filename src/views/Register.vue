@@ -35,12 +35,14 @@
                     -->
 
                     <div class="mb-3">
-                        <p class="mt-5 mb-3">
+                        <label for="signUpButton">
                             If you want an account, please create an issue in our repository at <a href="https://github.com/ismailnguyen/jisme/issues" class="external-link" target="_blank">github/jisme/issues</a>.
-                        </p>
+                        </label>
+
                     </div>
 
                     <button
+                        id="signUpButton"
                         type="button"
                         @click="signUp"
                         class="w-100 btn btn-lg btn-primary"
