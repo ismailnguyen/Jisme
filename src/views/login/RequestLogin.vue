@@ -24,14 +24,14 @@
                             name="username"
                             autocomplete="username webauthn"
                             class="form-control"
-                            placeholder="Email address, or phone number"
+                            placeholder="Username, email, or phone number"
                             aria-describedby="emailHelp"
                             v-model="username"
                             @keyup.enter="onRequestLogin"
                             autofocus
                             tabindex="1"
                             required>
-                        <label for="inputUsername">Email Address</label>
+                        <label for="inputUsername">Usernames</label>
                     </div>
 
                     <div class="form-check mb-3">

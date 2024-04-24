@@ -10,7 +10,7 @@
             @click="onChangeUsername"
             tabindex="1"
             readonly>
-        <label for="readonlyInputUsername">Email address</label>
+        <label for="readonlyInputUsername">Username</label>
 
         <div class="input-group-append">
             <span class="input-group-text clickable" @click="onChangeUsername">
