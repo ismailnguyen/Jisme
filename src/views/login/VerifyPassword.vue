@@ -27,7 +27,7 @@
 
                     <div class="input-group mb-3">
                         <input
-                            :type="passwordInputType"
+                            :type="isPasswordRevealed ? 'text' : 'password'"
                             ref="inputPassword"
                             id="inputPassword"
                             class="input form-control"
@@ -40,8 +40,7 @@
 
                         <div class="input-group-append">
                             <span class="input-group-text" @click="togglePasswordInput()">
-                                <i class="fas fa-eye" id="show_eye"></i>
-                                <i class="fas fa-eye-slash d-none" id="hide_eye"></i>
+                                <i class="fas" :class="isPasswordRevealed ? 'fa-eye-slash': 'fa-eye'"></i>
                             </span>
                         </div>
                     </div>
@@ -89,7 +88,7 @@
         data() {
             return {
                 password: '',
-                passwordInputType: 'password',
+                isPasswordRevealed: false,
                 isLoading: false
             }
         },
@@ -124,7 +123,15 @@
             },
 
             togglePasswordInput: function () {
-                this.passwordInputType = this.passwordInputType === 'password' ? 'text' : 'password';
+                this.isPasswordRevealed = !this.isPasswordRevealed;
+                this.$refs.inputPassword.focus(); // After reveal, unreveal, focus back to input
+
+                // if password was revelead, hide it after 2 seconds
+                if (this.isPasswordRevealed) {
+                    setTimeout(() => {
+                        this.isPasswordRevealed = false;
+                    }, 2000);
+                }
             },
 
             onVerifyPassword: async function () {
