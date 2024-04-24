@@ -78,29 +78,24 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function verifyPasskey() {
-        try {
-            var options = parseRequestOptionsFromJSON({
-                publicKey: { 
-                    challenge: btoa(user.value.token),
-                    allowCredentials: [],
-                    userVerification: 'preferred'
-                }
-            });
+        var options = parseRequestOptionsFromJSON({
+            publicKey: { 
+                challenge: btoa(user.value.token),
+                allowCredentials: [],
+                userVerification: 'preferred'
+            }
+        });
 
-            const passkey = await getWebAuthn(options);
+        const passkey = await getWebAuthn(options);
 
-            user.value = await userService.verifyPasskey({
-                accessToken: user.value.token,
-                passkey: passkey,
-            });
+        user.value = await userService.verifyPasskey({
+            accessToken: user.value.token,
+            passkey: passkey,
+        });
 
-            isLoggedIn.value = user.value && user.value.uuid ? true : false;
+        isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
-            await createSession(user);
-        }
-        catch (error) {
-            console.error(error);
-        }
+        await createSession(user);
     }
 
     async function getAccountInformation() { 
