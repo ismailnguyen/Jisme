@@ -6,7 +6,7 @@
 
         <h1 class="display-4 fw-bold lh-1 mb-3">We protect your integrity.</h1>
         <p class="col-lg-10 fs-4">
-            An open source password manager, check it out at <a href="https://github.com/ismailnguyen/jisme" class="external-link" target="_blank">github.com/ismailnguyen/jisme</a>.
+            An open source password manager, check it out at <a href="https://github.com/ismailnguyen/jisme" class="external-link" target="_blank">github.com/jisme</a>.
         </p>
         <div class="text-endx">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">

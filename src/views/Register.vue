@@ -12,7 +12,8 @@
 
                     <h1 class="h3 mb-3 font-weight-normal">Sign Up</h1>
 
-                   <div class="form-floating mb-3">
+                    <!--
+                    <div class="form-floating mb-3">
                         <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" @keyup.enter="signUp" required>
                         <label for="floatingInput">Email address</label>
                     </div>
@@ -20,15 +21,32 @@
                         <input type="password" class="form-control" id="floatingPassword" placeholder="Password" @keyup.enter="signUp" required>
                         <label for="floatingPassword">Password</label>
                     </div>
-
+                    
                     <button
-                        type="submit"
+                        type="button"
                         class="w-100 btn btn-lg"
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
                         :disabled="!username || !password"
+                        @click="signUp()"
                         tabindex="3">
-                        <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
                         Next
+                        <i class="fa fa-arrow-right"></i>
+                    </button>
+                    -->
+
+                    <div class="mb-3">
+                        <p class="mt-5 mb-3">
+                            If you want an account, please create an issue in our repository at <a href="https://github.com/ismailnguyen/jisme/issues" class="external-link" target="_blank">github/jisme/issues</a>.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        @click="signUp"
+                        class="w-100 btn btn-lg btn-primary"
+                        tabindex="3">
+                        Create an issue
+                        <i class="fa fa-arrow-right"></i>
                     </button>
 
                     <hr class="my-4">
@@ -68,16 +86,16 @@
             ]),
 
             signUp() {
-                this.openAlert('Error', 'Registration are closed. Please contact administrator for assistance.', 'danger');
+                // open https://github.com/ismailnguyen/Jisme/issues/new in a new tab
+                window.open('https://github.com/ismailnguyen/Jisme/issues/new');
+
+
+
+
+
+
+                //this.openAlert('Error', 'Registration are closed. Please contact administrator for assistance.', 'danger');
             }
         }
     }
 </script>
-
-<style scoped>
-    .form-signin .btn-primary {
-        color: #f8f9fa;
-        background-color: #162056;
-        border-color: var(--color-text);
-    }
-</style>
