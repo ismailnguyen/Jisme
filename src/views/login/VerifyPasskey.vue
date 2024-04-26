@@ -13,6 +13,7 @@
                     <h1 class="h3 mb-3 font-weight-normal">Sign in with a passkey</h1>
 
                     <LoginReadonlyEmailInput
+                        v-if="user"
                         :user="user"
                         @usernameChanged="onChangeUsername" />
 
@@ -75,12 +76,13 @@
                 'user',
             ]),
         },
-        created () {
-            if (!this.user || !this.user.email || !this.user.token) {
-                this.$router.push({ name: 'Login' });
-            }
-        },
         async mounted () {
+            if (!this.user || !this.user.email) {// || !this.user.token) {
+                this.$router.push({ name: 'Login' });
+
+                return;
+            }
+        
             this.isPasskeyLoginSupported(this.onPasskeySupported, this.onPasskeyUnsupported);
         },
         methods: {

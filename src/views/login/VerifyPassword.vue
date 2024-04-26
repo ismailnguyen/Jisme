@@ -95,12 +95,13 @@
                 'user'
             ]),
         },
-        created () {
+        mounted () {
             if (!this.user || !this.user.email || !this.user.token) {
                 this.$router.push({ name: 'Login' });
+
+                return;
             }
-        },
-        mounted () {
+        
             this.$refs.inputPassword.focus();
         },
         methods: {

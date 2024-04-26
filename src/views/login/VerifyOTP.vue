@@ -99,12 +99,13 @@
             LoginHero,
             LoginReadonlyEmailInput
         },
-        created () {
+        mounted () {
             if (!this.user || !this.user.email || !this.user.token) {
                 this.$router.push({ name: 'Login' });
+
+                return;
             }
-        },
-        mounted () {
+
             // Put focus on first input
             this.focusOtpInput();
         },
