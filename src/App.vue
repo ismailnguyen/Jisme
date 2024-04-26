@@ -10,7 +10,10 @@
     import './assets/base.css';
     import './assets/sidebar.css';
 
-    import { useAlertStore } from '@/store';
+    import {
+        useAlertStore,
+        useUserStore
+    } from '@/store';
     import { 
         mapState,
         mapActions,
@@ -29,11 +32,20 @@
                     this.showAlert();
                 }
             })
+
+            // If anytime user logs out, redirect to login page
+            this.userStore.$subscribe((mutation, state) => {
+                if (!this.isLoggedIn) {
+                    this.$router.push({ name: 'Login' });
+                }
+            })
         },
         computed: {
-            ...mapStores(useAlertStore),
+            ...mapStores(useAlertStore, useUserStore),
             ...mapState(useAlertStore, ['hasAlert']),
+            ...mapState(useUserStore, ['isLoggedIn']),
         },
+        
         methods: {
             ...mapActions(useAlertStore, [
                 'openAlert',
