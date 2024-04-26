@@ -136,40 +136,76 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     }
 
     async function addAccount (account) {
-        // Wait for account to come with newly created _id
-        const addedAccount = await accountsService.add(account);
+        try {
+           // Wait for account to come with newly created _id
+            const addedAccount = await accountsService.add(account);
 
-        accounts.value.push(addedAccount);
+            accounts.value.push(addedAccount);
 
-        updateLocalAccounts();
+            updateLocalAccounts(); 
+        }
+        catch (error) {
+            if (error instanceof SessionExpiredException) {
+                userStore.signOut();
+            }
+
+            throw error;
+        }
     }
 
     async function updateAccount (account) {
-        account.last_modified_date = new Date();
-        account.last_opened_date = new Date();
-        account.opened_count = account.opened_count ? account.opened_count + 1 : 1;
+        try {
+            account.last_modified_date = new Date();
+            account.last_opened_date = new Date();
+            account.opened_count = account.opened_count ? account.opened_count + 1 : 1;
 
-        const updatedAccount = await accountsService.save(account);
+            const updatedAccount = await accountsService.save(account);
 
-        let index = accounts.value.findIndex(a => a._id === updatedAccount._id);
+            let index = accounts.value.findIndex(a => a._id === updatedAccount._id);
 
-        accounts.value[index] = updatedAccount;
+            accounts.value[index] = updatedAccount;
 
-        updateLocalAccounts();
+            updateLocalAccounts();
+        }
+        catch (error) {
+            if (error instanceof SessionExpiredException) {
+                userStore.signOut();
+            }
+
+            throw error;
+        }
     }
 
     async function removeAccount(account) {
-        await accountsService.remove(account);
+        try {
+            await accountsService.remove(account);
 
-        let indexToRemove = accounts.value.findIndex(a => a._id === account._id);
+            let indexToRemove = accounts.value.findIndex(a => a._id === account._id);
 
-        accounts.value.splice(indexToRemove, 1);
+            accounts.value.splice(indexToRemove, 1);
 
-        updateLocalAccounts();
+            updateLocalAccounts();
+        }
+        catch (error) {
+            if (error instanceof SessionExpiredException) {
+                userStore.signOut();
+            }
+
+            throw error;
+        }
     }
 
     async function enableServerEncryption() {
-        await accountsService.enableServerEncryption(accounts.value);
+        try {
+            await accountsService.enableServerEncryption(accounts.value);
+        }
+        catch (error) {
+            if (error instanceof SessionExpiredException) {
+                userStore.signOut();
+            }
+
+            throw error;
+        }
     }
 
     return {
