@@ -2,6 +2,7 @@ import { ref, computed, toRaw } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import { useUserStore } from '@/store';
 import { APP_ACCOUNTS_STORE } from '../utils/store';
+import { SessionExpiredException } from '../utils/errors'
 
 import AccountsService from '../services/AccountsService';
 import FilterService from '../services/FilterService';
