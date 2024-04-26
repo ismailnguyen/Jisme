@@ -1,5 +1,5 @@
 <template>
-    <div :class="sidebarAdjustmentClasses">
+    <div :class="sidebarAdjustmentClasses" v-if="user">
         <Menu :visible="isMenuOpened" />
  
         <AddAccountModal :visible="isAddAccountModalOpened" />
