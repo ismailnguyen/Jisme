@@ -64,11 +64,15 @@
             isAnySidebarOpen: {
                 type: Boolean,
                 default: false
+            },
+            sidebarName: {
+                type: String,
+                default: ''
             }
         },
         mounted() {
-            if(this.isAnySidebarOpen) {
-                this.openSidebar(this.$route);
+            if(this.isAnySidebarOpen && this.sidebarName) {
+                this.openSidebar(this.sidebarName);
             }
         },
         computed: {

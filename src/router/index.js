@@ -20,35 +20,42 @@ const router = createRouter({
       path: '/settings',
       component: () => import('../views/Home.vue'),
       meta: { requiresAuth: true },
-      props: { isAnySidebarOpen: true }
+      props: { isAnySidebarOpen: true, sidebarName: 'settings' }
+    },
+    {
+      name: 'SettingsProfile',
+      path: '/settings/profile',
+      component: () => import('../views/Home.vue'),
+      meta: { requiresAuth: true },
+      props: { isAnySidebarOpen: true, sidebarName: 'settings', sidebarPanel: 'profile' }
     },
     {
       name: 'TagsList',
       path: '/tags',
       component: () => import('../views/Home.vue'),
       meta: { requiresAuth: true },
-      props: { isAnySidebarOpen: true }
+      props: { isAnySidebarOpen: true, sidebarName: 'tags-list', sidebarPanel: 'list' }
     },
     {
       name: 'TagsTree',
       path: '/tagsTree',
       component: () => import('../views/Home.vue'),
       meta: { requiresAuth: true },
-      props: { isAnySidebarOpen: true }
+      props: { isAnySidebarOpen: true, sidebarName: 'tags-tree', sidebarPanel: 'tree' }
     },
     {
       name: 'AddAccount',
       path: '/add-account',
       component: () => import('../views/Home.vue'),
       meta: { requiresAuth: true },
-      props: { isAnySidebarOpen: true }
+      props: { isAnySidebarOpen: true, sidebarName: 'add-account' }
     },
     {
       name: 'Menu',
       path: '/menu',
       component: () => import('../views/Home.vue'),
       meta: { requiresAuth: true },
-      props: { isAnySidebarOpen: true }
+      props: { isAnySidebarOpen: true, sidebarName: 'menu' }
     },
     {
       name: 'Login',
