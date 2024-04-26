@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
-                        <button type="button" class="button--close" @click="closeSettings()">
+                        <button type="button" class="button--close" @click="closeSidebar(SIDEBAR.SETTINGS)">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
                     </div>
@@ -80,7 +80,8 @@
                         <hr class="my-4" v-show="user.passkeys">
 
                         <div class="table-responsive mb-3 col-xs-12 col-md-12 col-lg-12" v-show="user.activities">
-                            <h2>Recent activities</h2>
+                            <h2 >Recent activities</h2>
+                            <button class="w-100 btn btn-light" type="button">Button</button>
 
                             <div class="list-group">
                                 <a
@@ -189,7 +190,11 @@
                 'isAutoLoginEnabled',
                 'isPasskeyCreationSupported'
             ]),
-            ...mapState(useAccountsStore, ['accounts'])
+            ...mapState(useAccountsStore, ['accounts']),
+            ...mapState(useUiStore, [
+                'activeSidebarPanel',
+                'SIDEBAR'
+            ])
         },
         methods: {
             ...mapActions(useUserStore, [
@@ -206,7 +211,7 @@
             ]),
 
             ...mapActions(useUiStore, [
-                'closeSettings'
+                'closeSidebar'
             ]),
 
             ...mapActions(useAccountsStore, [

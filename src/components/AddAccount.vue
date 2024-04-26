@@ -17,7 +17,7 @@
                     </div>
                         
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
-                        <button type="button" class="button--close" @click="closeAccount()">
+                        <button type="button" class="button--close" @click="closeSidebar(SIDEBAR.ADD_ACCOUNT)">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
                     </div>
@@ -155,14 +155,14 @@
 
     import {
         mapWritableState,
-        mapActions
+        mapActions,
+        mapState
     } from 'pinia'
     import {
         useUiStore,
         useAlertStore,
         useAccountsStore
     } from '@/store'
-    import Account from '../models/Account'
 
     export default {
         props: {
@@ -179,12 +179,19 @@
         },
         computed: {
             ...mapWritableState(useUiStore, {
-                account: 'currentEditingAccount'
-            })
+                account: 'currentEditingAccount',
+            }),
+
+            ...mapState(useUiStore, [
+                'SIDEBAR'
+            ])
         },
         methods: {
             ...mapActions(useAlertStore, ['openAlert']),
-            ...mapActions(useUiStore, ['closeAddAccountModal']),
+            ...mapActions(useUiStore, [
+                'closeSidebar',
+                'resetCurrentEditingAccount'
+            ]),
             ...mapActions(useAccountsStore, ['addAccount']),
 
             add: async function () {
@@ -227,23 +234,15 @@
                 this.account.tags = newTags.join(',');
             },
             
-            cleanForm: function () {
-                this.account = new Account();
-            },
-
             updateUI: function () {
                 this.isCreating = false;
 
-                this.closeAccount();
+                this.closeSidebar(this.SIDEBAR.ADD_ACCOUNT);
 
                 this.openAlert(this.account.displayPlatform, 'Created !', 'success', this.account.icon);
 
-                this.cleanForm();
+                this.resetCurrentEditingAccount();
             },
-            
-            closeAccount: function () {
-                this.closeAddAccountModal();
-            }
         }
     } 
 </script>

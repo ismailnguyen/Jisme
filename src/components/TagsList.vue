@@ -8,7 +8,7 @@
                     </div>
 
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
-                        <button type="button" class="button--close" @click="closeTagsList()">
+                        <button type="button" class="button--close" @click="closeSidebar(SIDEBAR.TAGS_LIST)">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
                     </div>
@@ -59,6 +59,7 @@
     import '../assets/right_sidebar.css'
 
     import {
+        mapState,
         mapActions,
     } from 'pinia'
     import {
@@ -76,6 +77,11 @@
         async created() {
             await this.loadCache();
         },
+        computed: {
+            ...mapState(useUiStore, [
+                'SIDEBAR'
+            ])
+        },
         methods: {
             ...mapActions(useAccountsStore, [
                 'loadCache',
@@ -83,7 +89,7 @@
             ]),
 
             ...mapActions(useUiStore, [
-                'closeTagsList'
+                'closeSidebar'
             ]),
 
             selectTag: function (tag) {

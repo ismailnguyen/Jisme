@@ -4,7 +4,7 @@
             <div class="sidebar-header">
                 <div class="row">
                     <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4">
-                        <button type="button" class="button--close" @click="toggleMenu()">
+                        <button type="button" class="button--close" @click="closeSidebar(SIDEBAR.MENU)">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
                     </div>
@@ -82,35 +82,36 @@
         computed: {
             ...mapState(useUserStore, [
                 'user'
+            ]),
+
+            ...mapState(useUiStore, [
+                'SIDEBAR'
             ])
         },
         methods: {
             ...mapActions(useUiStore, [
-                'openAddAccountModal',
-                'toggleMenu',
-                'openSettings',
-                'openTagsList',
-                'openTagsTree'
+                'openSidebar',
+                'closeSidebar',
             ]),
 
             onAddAccount: function () {
-                this.openAddAccountModal()
-                this.toggleMenu()
+                this.openSidebar(this.SIDEBAR.ADD_ACCOUNT);
+                this.closeSidebar(this.SIDEBAR.MENU);
             },
 
             onOpenSettings: function () {
-                this.toggleMenu()
-                this.openSettings();
+                this.openSidebar(this.SIDEBAR.SETTINGS);
+                this.closeSidebar(this.SIDEBAR.MENU);
             },
 
             onOpenTagsList: function () {
-                this.openTagsList();
-                this.toggleMenu()
+                this.openSidebar(this.SIDEBAR.TAGS_LIST);
+                this.closeSidebar(this.SIDEBAR.MENU);
             },
 
             onOpenTagsTree: function () {
-                this.openTagsTree();
-                this.toggleMenu()
+                this.openSidebar(this.SIDEBAR.TAGS_TREE);
+                this.closeSidebar(this.SIDEBAR.MENU);
             }
         }
     }

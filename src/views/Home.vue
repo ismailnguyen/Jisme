@@ -1,31 +1,31 @@
 <template>
     <div :class="sidebarAdjustmentClasses" v-if="user">
-        <Menu :visible="isMenuOpened" />
+        <Menu :visible="isSidebarOpen(SIDEBAR.MENU)" />
  
-        <AddAccountModal :visible="isAddAccountModalOpened" />
+        <AddAccountModal :visible="isSidebarOpen(SIDEBAR.ADD_ACCOUNT)" />
 
         <EditAccountModal 
             :account="currentEditingAccount"
-            :visible="isEditAccountModalOpened" />
+            :visible="isSidebarOpen(SIDEBAR.EDIT_ACCOUNT)" />
 
-        <Settings :visible="isSettingsOpened" />
-        <TagsList :visible="isTagsListOpened" />
-        <TagsTree :visible="isTagsTreeOpened" />
+        <Settings :visible="isSidebarOpen(SIDEBAR.SETTINGS)" />
+        <TagsList :visible="isSidebarOpen(SIDEBAR.TAGS_LIST)" />
+        <TagsTree :visible="isSidebarOpen(SIDEBAR.TAGS_TREE)" />
 
         <AccountList />
 
         <a
             id="menu-toggle"
             class="floating-button floating-button--menu"
-            @click="toggleMenu">
+            @click="toggleSidebar(SIDEBAR.MENU)">
             <i class="fa fa-solid fa-bars-staggered"></i>
         </a>
 
         <a
             id="menu-toggle"
             class="floating-button floating-button--add d-none"
-            :class="isMenuOpened ? '' : 'd-lg-block d-xl-block'"
-            @click="openAddAccountModal">
+            :class="isSidebarOpen(SIDEBAR.MENU) ? '' : 'd-lg-block d-xl-block'"
+            @click="openSidebar(SIDEBAR.ADD_ACCOUNT)">
             <i class="fa fa-plus"></i>
         </a>
     </div>
@@ -68,11 +68,19 @@
             sidebarName: {
                 type: String,
                 default: ''
+            },
+            sidebarPanel: {
+                type: String,
+                default: ''
             }
         },
         mounted() {
             if(this.isAnySidebarOpen && this.sidebarName) {
                 this.openSidebar(this.sidebarName);
+
+                if (this.sidebarPanel) {
+                    this.setActiveSidebarPanel(this.sidebarPanel);
+                }
             }
         },
         computed: {
@@ -81,18 +89,9 @@
                 'currentEditingAccount',
                 'isLeftSidebarOpened',
                 'isRightSidebarOpened',
-                'isMenuOpened',
-                'isSettingsOpened',
-                'isTagsListOpened',
-                'isTagsTreeOpened',
-                'isAddAccountModalOpened',
-                'isEditAccountModalOpened'
+                'isSidebarOpen',
+                'SIDEBAR'
             ]),
-
-            isAccountOpened: function () {
-                return this.isAddAccountModalOpened
-                        || this.isEditAccountModalOpened;
-            },
 
             sidebarAdjustmentClasses: function () {
                 let cssClass = '';
@@ -110,9 +109,10 @@
         },
         methods: {
             ...mapActions(useUiStore, [
-                'toggleMenu',
-                'openAddAccountModal',
-                'openSidebar'
+                'toggleSidebar',
+                'openSidebar',
+                'openSidebar',
+                'setActiveSidebarPanel'
             ])
         }
     }

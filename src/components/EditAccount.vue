@@ -17,7 +17,7 @@
                     </div>
                         
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
-                        <button type="button" class="button--close" @click="closeAccount()">
+                        <button type="button" class="button--close" @click="closeAccountEditing()">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
                     </div>
@@ -459,7 +459,8 @@
         },
         computed: {
             ...mapState(useUiStore, {
-                account: 'currentEditingAccount'
+                account: 'currentEditingAccount',
+                SIDEBAR: 'SIDEBAR'
             }),
     
             createdDate: function () {
@@ -485,8 +486,14 @@
             }
         },
         methods: {
-            ...mapActions(useAccountsStore, ['updateAccount', 'removeAccount']),
-            ...mapActions(useUiStore, ['closeEditAccountModal']),
+            ...mapActions(useAccountsStore, [
+                'updateAccount',
+                'removeAccount'
+            ]),
+            ...mapActions(useUiStore, [
+                'closeSidebar',
+                'resetCurrentEditingAccount'
+            ]),
             ...mapActions(useAlertStore, ['openAlert']),
     
             save: async function() {
@@ -501,20 +508,16 @@
                     await this.updateAccount(this.account);
 
                     this.openAlert(this.account.displayPlatform, 'Updated !', 'success', this.account.icon);
-                    this.updateUI();
+                    
+                    this.isSaving = false;
+                    this.isDeleting = false;
+
+                    this.closeAccountEditing();
                 }
                 catch (error) {
                     this.openAlert('Error', error.toString(), 'danger');
                     this.isSaving = false;
                 }
-            },
-
-            updateUI: function ()
-            {
-                this.isSaving = false;
-                this.isDeleting = false;
-
-                this.closeAccount();
             },
 
             generatePasswordLess: function () {
@@ -536,7 +539,11 @@
                         await this.removeAccount(this.account);
 
                         this.openAlert(this.account.displayPlatform, 'Removed !', 'success');
-                        this.updateUI();
+
+                        this.isSaving = false;
+                        this.isDeleting = false;
+
+                        this.closeAccountEditing();
                     }
                     catch (error) {
                         this.openAlert('Error', error.toString(), 'danger');
@@ -574,12 +581,13 @@
                 this.openAlert(inputToCopy.value, 'Copied to clipboard !', 'info');
             },
 
-            closeAccount: function () {
-                this.closeEditAccountModal();
-            },
-            
             formatDate: function (date) {
                 return date.getDate() + '/' + (date.getMonth()+1)  + '/' + date.getFullYear();
+            },
+
+            closeAccountEditing: function () {
+                this.closeSidebar(this.SIDEBAR.EDIT_ACCOUNT);
+                this.resetCurrentEditingAccount();
             }
         }
     } 

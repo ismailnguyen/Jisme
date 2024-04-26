@@ -60,7 +60,6 @@
     import {
         useUiStore,
         useAlertStore,
-        useAccountsStore
     } from '@/store'
     import Account from '../models/Account'
 
@@ -69,23 +68,26 @@
             account: Account,
         },
         computed: {
-            ...mapState(useUiStore, ['isMenuOpened', 'isAccountOpened', 'isSettingsOpened']),
+            ...mapState(useUiStore, [
+                'isLeftSidebarOpened',
+                'isRightSidebarOpened',
+                'SIDEBAR'
+            ]),
 
             layoutAdjustmentCss: function () {
-                let cssClass = 'col-md-4 col-lg-3'
+                let cssClass = 'col-md-4 col-lg-3';
 
-                if (this.isMenuOpened) {
-                    cssClass = 'col-lg-4 col-xl-4'
-
-                    if (this.isAccountOpened || this.isSettingsOpened) {
-                        cssClass = 'col-lg-12 col-xl-12'
-                    }
+                if (this.isLeftSidebarOpened && this.isRightSidebarOpened) {
+                    cssClass = 'col-lg-12 col-xl-12';
                 }
-                else if (this.isAccountOpened || this.isSettingsOpened) {
-                    cssClass = 'col-md-6 col-lg-6 col-xl-6'
+                else if (this.isLeftSidebarOpened) {
+                    cssClass = 'col-lg-4 col-xl-4';
+                }
+                else if (this.isRightSidebarOpened) {
+                    cssClass = 'col-md-6 col-lg-6 col-xl-6';
                 }
 
-                return cssClass
+                return cssClass;
             },
 
             getIcon: function () {
@@ -97,11 +99,15 @@
             }
         },
         methods: {
-            ...mapActions(useUiStore, ['openEditAccountModal']),
+            ...mapActions(useUiStore, [
+                'openSidebar',
+                'setCurrentEditingAccount'
+            ]),
             ...mapActions(useAlertStore, ['openAlert']),
 
             edit: async function() {
-                await this.openEditAccountModal(this.account);
+                this.openSidebar(this.SIDEBAR.EDIT_ACCOUNT);
+                await this.setCurrentEditingAccount(this.account);
             },
 
             selectTag: function (tag) {

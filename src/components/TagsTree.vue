@@ -8,7 +8,7 @@
                     </div>
 
                     <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
-                        <button type="button" class="button--close" @click="closeTagsTree()">
+                        <button type="button" class="button--close" @click="closeSidebar(SIDEBAR.TAGS_TREE)">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
                     </div>
@@ -60,6 +60,10 @@
         },
         computed: {
             ...mapState(useAccountsStore, ['accounts']),
+
+            ...mapState(useUiStore, [
+                'SIDEBAR'
+            ]),
         },
         methods: {
             ...mapActions(useAccountsStore, [
@@ -68,7 +72,7 @@
             ]),
 
             ...mapActions(useUiStore, [
-                'closeTagsTree'
+                'closeSidebar'
             ]),
 
             buildTree: function () {
