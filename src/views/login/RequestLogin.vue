@@ -65,7 +65,7 @@
     import '../../assets/auth.css'
 
     import { 
-        mapWritableState,
+        mapState,
         mapActions
     } from 'pinia'
     import {
@@ -92,9 +92,7 @@
             LoginReadonlyEmailInput
         },
         computed: {
-            ...mapWritableState(useUserStore, [
-                'user',
-                'isLoggedIn',
+            ...mapState(useUserStore, [
                 'lastRememberedUsername',
                 'isAutoLoginEnabled'
             ]),
