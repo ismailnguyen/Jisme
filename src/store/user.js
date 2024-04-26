@@ -18,6 +18,7 @@ import localforage from 'localforage'
 
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { useAlertStore } from '@/store';
 import { APP_USER_STORE } from '../utils/store'
 import UserService from '../services/UserService'
 
@@ -30,6 +31,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     const isLoggedIn = ref(false)
     const userService = new UserService()
     const isExtendedSession = ref(false)
+    const alertStore = useAlertStore()
 
     const lastRememberedUsername = computed(async () => {
         return await localforage.getItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY)
@@ -230,6 +232,8 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value = null;
 
         localforage.removeItem(LOCAL_STORAGE_USER_KEY);
+
+        alertStore.openAlert('Logged out', 'You have been successfully logged out.', 'info');
     }
 
     async function setLastRememberedUsername (username) {
