@@ -9,12 +9,12 @@
                         </button>
                     </div>
 
-                    <div class="mb-3" :class="user.avatarUrl ? 'col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4' : 'col-xs-8 col-sm-8 col-8 col-md-8 col-lg-8'">
+                    <div class="mb-3" :class="user && user.avatarUrl ? 'col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4' : 'col-xs-8 col-sm-8 col-8 col-md-8 col-lg-8'">
                     </div>
                     
-                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4 justify-content-end" v-show="user.avatarUrl">
+                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4 justify-content-end" v-if="user && user.avatarUrl">
                         <img
-                            :src="user.avatarUrl"
+                            :src="user && user.avatarUrl"
                             loading="lazy"
                             :alt="user.email"
                             :title="user.email"
