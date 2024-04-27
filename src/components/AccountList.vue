@@ -13,7 +13,8 @@
         <div class="main-container container-fluid" v-show="isSearching && !isLoading">
             <div class="row">
                 <div class="mb-3 col-12 col-xs-12 col-sm-12">
-                    <span class="category-title" >{{ filteredAccounts.length }} results out of {{ accounts.length }}</span>
+                    <h5 class="font-size-16 me-3 mb-0">Results for "{{ searchQuery }}"</h5>
+                    <span class="category-title" >{{ filteredAccounts.length }} out of {{ accounts.length }}</span>
                 </div>
             </div>
             <div class="row">
@@ -39,7 +40,8 @@
         <div class="main-container container-fluid" v-show="!isSearching && !isLoading">
             <div class="row">
                 <div class="mb-3 col-12 col-xs-12 col-sm-12">
-                    <span class="category-title">Recently viewed ({{ recentAccounts.length }} of {{ accounts.length }})</span>
+                    <h5 class="font-size-16 me-3 mb-0">Recently viewed</h5>
+                    <span class="category-title" >{{ recentAccounts.length }} out of {{ accounts.length }}</span>
                 </div>
             </div>
 
