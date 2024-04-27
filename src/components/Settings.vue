@@ -29,6 +29,8 @@
 
                 <form class="card-text lead">
                     <div class="row">
+                        <h2>Profile</h2>
+
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <label class="form-label" for="inputEmail"><i class="fa fa-id-badge" aria-hidden="true"></i> Username</label>
                             <input id="inputEmail" class="form-control" placeholder="Username, email address, phone number" type="email" v-model="user.email" disabled />
