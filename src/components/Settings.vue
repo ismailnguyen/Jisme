@@ -27,97 +27,74 @@
             <div class="sidebar-body">
                 <Loader v-show="isLoading" />
 
-                <form class="card-text lead">
-                    <div class="row">
-                        <h2>Profile</h2>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="inputEmail"><i class="fa fa-id-badge" aria-hidden="true"></i> Username</label>
-                            <input id="inputEmail" class="form-control" placeholder="Username, email address, phone number" type="email" v-model="user.email" disabled />
-                        </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="inputAvatar"><i class="fa fa-circle-user" aria-hidden="true"></i> Avatar</label>
-                            <input id="inputAvatar" class="form-control" type="text" laceholder="Avatar image URL" v-model="user.avatarUrl" />
-                        </div>
-
-                        <hr class="my-4">
-
-                        <h2>Security</h2>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <span class="form-label">Auto login</span>
-
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="autoLoginCheckbox" v-model="autoLoginEnabled">
-                                <label class="form-check-label" for="autoLoginCheckbox">{{ autoLoginEnabled ? 'Enabled' : 'Disabled' }}</label>
+                <div class="list-group">
+                    <div class="list-group-item" v-if="!activeSidebarPanel || activeSidebarPanel == 'profile'">
+                        <div class="row align-items-center">
+                            <div class="col-auto" v-if="activeSidebarPanel">
+                                <button class="btn btn-light" @click="resetActiveSidebarPanel()">
+                                    <i class="fa fa-chevron-left"></i>
+                                </button>
+                            </div>
+                            <div class="col">
+                                <strong class="mb-2">Profile</strong>
+                                <!-- <p class="text-muted mb-0"></p> -->
+                            </div>
+                            <div class="col-auto" v-if="!activeSidebarPanel">
+                                <button class="btn btn-light" @click="setActiveSidebarPanel('profile')">
+                                    <i class="fa fa-chevron-right"></i>
+                                </button>
                             </div>
                         </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="inputTotpSecret"><i class="fa fa-qrcode" aria-hidden="true"></i> TOTP Secret</label>
-                            <input id="inputTotpSecret" class="form-control" type="text" placeholder="Loading" laceholder="MFA TOTP secret" v-model="user.totp_secret" disabled />
-                        </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12 input-group-list">
-                            <label class="form-label" for="passwordlesslogin_btn">
-                                <i class="fa fa-fingerprint" aria-hidden="true"></i> Password-less login
-                            </label>
-
-                            <div class="input-group"
-                                v-for="passkey in user.passkeys"
-                                :key="passkey.passkey.id">
-                                <input :id="'passkey_' + passkey.passkey.id" name="passkey_device" class="form-control" type="text" placeholder="Loading" v-model="passkey.deviceName" disabled />
-                                <button class="btn btn-outline-secondary hover-danger" type="button" @click="onRemovePasskey(passkey)"><i class="fa fa-trash"></i> Remove</button>
-                            </div>
-                            <button id="passwordlesslogin_btn" class="btn btn-danger btn-block" @click.prevent="onGeneratePasskey()" v-if="isGeneratePasskeyBtnVisible">
-                                <i class="fa fa-plus"></i> Add a passkey
-                            </button>
-
-                            <button id="passwordlesslogin_unsupported_btn" class="btn btn-danger btn-block" v-if="!isGeneratePasskeyBtnVisible" disabled>
-                                <i class="fa fa-ban"></i> Passkey not supported in this device
-                            </button>
-                        </div>
-
-                        <hr class="my-4" v-show="user.passkeys">
-
-                        <div class="table-responsive mb-3 col-xs-12 col-md-12 col-lg-12" v-show="user.activities">
-                            <h2 >Recent activities</h2>
-                            <button class="w-100 btn btn-light" type="button">Button</button>
-
-                            <div class="list-group">
-                                <a
-                                    href="#"
-                                    class="list-group-item list-group-item-action"
-                                    aria-current="true"
-                                    v-for="(activity, i) in user.activities" :key="i"
-                                    @click="activity.isExpanded = !activity.isExpanded">
-                                    
-                                    <div class="d-flex w-100 justify-content-between">
-                                        <h5 class="mb-1">{{ capitalizeFirstLetter(activity.action) }}</h5>
-                                        <span class="badge text-bg-primary rounded-pill">{{ toDaysAgo(activity.activity_date) }}</span>
-                                    </div>
-                                    <small v-show="activity.isExpanded">
-                                        <b>User agent:</b> {{ activity.agent }}<br>
-                                        <b>Referer:</b> {{ activity.referer }}<br>
-                                        <b>IP:</b> {{ activity.ip }}<br>
-                                        <b>Date:</b> {{ new Date(activity.activity_date) }}
-                                    </small>
-                                </a>
-                            </div>
-                        </div>
-
-                        <hr class="my-4" v-show="user.activities">
-                        
-
-                        <!-- <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <button type="button" class="btn btn-outline-light" @click="enableServerEncryption()">
-                                <i class="fa fa-power-off"></i>
-                                    Enable encryption of {{ accounts.length }} accounts
-                            </button>
-                        </div> -->
                     </div>
-                </form>
+                    <div class="list-group-item" v-if="activeSidebarPanel == 'profile'">
+                        <Profile />
+                    </div>
+
+                    <div class="list-group-item" v-if="!activeSidebarPanel || activeSidebarPanel == 'security'">
+                        <div class="row align-items-center">
+                            <div class="col-auto" v-if="activeSidebarPanel">
+                                <button class="btn btn-light" @click="resetActiveSidebarPanel()">
+                                    <i class="fa fa-chevron-left"></i>
+                                </button>
+                            </div>
+                            <div class="col">
+                                <strong class="mb-2">Security Settings</strong>
+                                <span class="badge badge-pill badge-success">Enabled</span>
+                                <p class="text-muted mb-0">These settings are helps you keep your account secure.</p>
+                            </div>
+                            <div class="col-auto" v-if="!activeSidebarPanel">
+                                <button class="btn btn-light" @click="setActiveSidebarPanel('security')">
+                                    <i class="fa fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item" v-if="activeSidebarPanel == 'security'">
+                        <Security />
+                    </div>
+
+                    <div class="list-group-item" v-if="!activeSidebarPanel || activeSidebarPanel == 'recent-activities'">
+                        <div class="row align-items-center">
+                            <div class="col-auto" v-if="activeSidebarPanel">
+                                <button class="btn btn-light" @click="resetActiveSidebarPanel()">
+                                    <i class="fa fa-chevron-left"></i>
+                                </button>
+                            </div>
+                            <div class="col">
+                                <strong class="mb-2">Recent Activities</strong>
+                                <p class="text-muted mb-0">Last activities with your account.</p>
+                            </div>
+                            <div class="col-auto" v-if="!activeSidebarPanel">
+                                <button class="btn btn-light" @click="setActiveSidebarPanel('recent-activities')">
+                                    <i class="fa fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-group-item" v-if="activeSidebarPanel == 'recent-activities'">
+                        <RecentActivities />
+                    </div>
+                </div>
             </div>
 
             <div class="row sidebar-footer">
@@ -152,6 +129,9 @@
         useAccountsStore
     } from '@/store'
     import Loader from './Loader.vue'
+    import Profile from './settings/Profile.vue'
+    import Security from './settings/Security.vue'
+    import RecentActivities from './settings/RecentActivities.vue'
 
     export default {
         props: {
@@ -161,15 +141,15 @@
             }
         },
         components: {
-            Loader
+            Loader,
+            Profile,
+            Security,
+            RecentActivities
         },
         data() {
             return {
                 totpToken: '',
                 autoLoginEnabled: false,
-                error: {
-                    message: ''
-                },
                 isLoading: false,
                 isGeneratePasskeyBtnVisible: false
             }
@@ -213,7 +193,9 @@
             ]),
 
             ...mapActions(useUiStore, [
-                'closeSidebar'
+                'closeSidebar',
+                'setActiveSidebarPanel',
+                'resetActiveSidebarPanel'
             ]),
 
             ...mapActions(useAccountsStore, [
@@ -263,7 +245,6 @@
                         this.openAlert('Passkey added!', 'Save to confirm.');
                     }
                     catch(error) {
-                        console.log(error);
                         this.openAlert('Error!', error, 'danger');
                     }
                 }
@@ -290,7 +271,6 @@
                 }
                 catch(error) {
                     this.isLoading = false;
-                    this.error = error;
                 }
             }
         }
