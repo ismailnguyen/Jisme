@@ -31,7 +31,7 @@
                             autofocus
                             tabindex="1"
                             required>
-                        <label for="inputUsername">Usernames</label>
+                        <label for="inputUsername">Username</label>
                     </div>
 
                     <div class="form-check mb-3">
