@@ -16,8 +16,8 @@ a {
     .main-container:last-child {
         padding-bottom: 100px;
    }
-    .category-title {
-        padding-left: 50px;
+    .search-title {
+        padding-left: 4rem;
    }
 }
 header {

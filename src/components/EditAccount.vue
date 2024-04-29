@@ -352,13 +352,13 @@
                             </label>
                             <input type="text" readonly class="form-control-plaintext" id="lastOpenedDate" :value="lastOpenedDate">
                         </div>
-
-                        <hr class="my-4">
                     </div>
                 </form>
             </div>
 
             <div class="sidebar-footer row">
+                <hr class="my-4">
+
                 <div class="col-6 col-xs-6 col-md-6 col-lg-6">
                     <button type="button" class="btn" :class="isDeleting ? 'btn-dark': 'btn-outline-danger'" @click="remove()">
                         <i class="fa fa-trash"></i> {{ isDeleting ? 'Deleting ...' : 'Delete' }}

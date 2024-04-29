@@ -9,6 +9,9 @@
             :visible="isSidebarOpen(SIDEBAR.EDIT_ACCOUNT)" />
 
         <Settings :visible="isSidebarOpen(SIDEBAR.SETTINGS)" />
+        <SettingsProfile :visible="isSidebarOpen(SIDEBAR.SETTINGS_PROFILE)" />
+        <SettingsSecurity :visible="isSidebarOpen(SIDEBAR.SETTINGS_SECURITY)" />
+        <SettingsRecentActivities :visible="isSidebarOpen(SIDEBAR.SETTINGS_RECENT_ACTIVITIES)" />
         <TagsList :visible="isSidebarOpen(SIDEBAR.TAGS_LIST)" />
         <TagsTree :visible="isSidebarOpen(SIDEBAR.TAGS_TREE)" />
 
@@ -47,6 +50,9 @@
     import EditAccountModal from '../components/EditAccount.vue'
     import AccountList from '../components/AccountList.vue'
     import Settings from '../components/Settings.vue'
+    import SettingsProfile from '../components/settings/Profile.vue'
+    import SettingsSecurity from '../components/settings/Security.vue'
+    import SettingsRecentActivities from '../components/settings/RecentActivities.vue'
     import TagsList from '../components/TagsList.vue'
     import TagsTree from '../components/TagsTree.vue'
 
@@ -57,6 +63,9 @@
             EditAccountModal,
             AccountList,
             Settings,
+            SettingsProfile,
+            SettingsSecurity,
+            SettingsRecentActivities,
             TagsList,
             TagsTree
         },
@@ -69,18 +78,10 @@
                 type: String,
                 default: ''
             },
-            sidebarPanel: {
-                type: String,
-                default: ''
-            }
         },
         mounted() {
             if(this.isAnySidebarOpen && this.sidebarName) {
                 this.openSidebar(this.sidebarName);
-
-                if (this.sidebarPanel) {
-                    this.setActiveSidebarPanel(this.sidebarPanel);
-                }
             }
         },
         computed: {
@@ -112,7 +113,6 @@
                 'toggleSidebar',
                 'openSidebar',
                 'openSidebar',
-                'setActiveSidebarPanel'
             ])
         }
     }

@@ -27,21 +27,35 @@ const router = createRouter({
       path: '/settings/profile',
       component: () => import('../views/Home.vue'),
       meta: { requiresAuth: true },
-      props: { isAnySidebarOpen: true, sidebarName: 'settings', sidebarPanel: 'profile' }
+      props: { isAnySidebarOpen: true, sidebarName: 'settings_profile' }
+    },
+    {
+      name: 'SettingsSecurity',
+      path: '/settings/security',
+      component: () => import('../views/Home.vue'),
+      meta: { requiresAuth: true },
+      props: { isAnySidebarOpen: true, sidebarName: 'settings_security' }
+    },
+    {
+      name: 'SettingsRecentActivities',
+      path: '/settings/recent-activities',
+      component: () => import('../views/Home.vue'),
+      meta: { requiresAuth: true },
+      props: { isAnySidebarOpen: true, sidebarName: 'settings_recent-activities' }
     },
     {
       name: 'TagsList',
       path: '/tags',
       component: () => import('../views/Home.vue'),
       meta: { requiresAuth: true },
-      props: { isAnySidebarOpen: true, sidebarName: 'tags-list', sidebarPanel: 'list' }
+      props: { isAnySidebarOpen: true, sidebarName: 'tags-list' }
     },
     {
       name: 'TagsTree',
       path: '/tagsTree',
       component: () => import('../views/Home.vue'),
       meta: { requiresAuth: true },
-      props: { isAnySidebarOpen: true, sidebarName: 'tags-tree', sidebarPanel: 'tree' }
+      props: { isAnySidebarOpen: true, sidebarName: 'tags-tree' }
     },
     {
       name: 'AddAccount',

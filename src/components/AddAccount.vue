@@ -134,13 +134,13 @@
                             <label class="form-label" for="addAccount_notes_input"><i class="fa fa-marker" aria-hidden="true"></i> Notes</label>
                             <textarea id="addAccount_notes_input" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
                         </div>
-
-                        <hr class="my-4">
                     </div>
                 </form>
             </div>
 
-            <div class="row sidebar-footer">
+            <div class="sidebar-footer">
+                <hr class="my-4">
+
                 <button type="button" class="btn btn-primary" @click="add()" :disabled="isCreating">
                     <span v-if="isCreating" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     <span v-else><i class="fa fa-save"></i> Add</span>

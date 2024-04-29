@@ -30,9 +30,6 @@
 .card a {
     text-decoration: none;
 }
-.clickable {
-    cursor: pointer;
-}
 .description {
     color: #818182;
 }

@@ -8,29 +8,29 @@ const store = defineStore('ui', () => {
     const accountsStore = useAccountsStore();
 
     const currentEditingAccount = ref(new Account());
-    const activeSidebarPanel = ref('');
     const openedSidebarList = ref([]);
 
     const SIDEBAR = {
         MENU: 'menu',
         SETTINGS: 'settings',
+        SETTINGS_PROFILE: 'settings_profile',
+        SETTINGS_SECURITY: 'settings_security',
+        SETTINGS_RECENT_ACTIVITIES: 'settings_recent-activities',
         TAGS_LIST: 'tags-list',
         TAGS_TREE: 'tags-tree',
         ADD_ACCOUNT: 'add-account',
         EDIT_ACCOUNT: 'edit-account'
     };
 
-    const setActiveSidebarPanel = (panel) => {
-        activeSidebarPanel.value = panel;
-    }
-
     const isLeftSidebarOpened = computed(() => {
         return isSidebarOpen(SIDEBAR.MENU);
     })
 
     const isRightSidebarOpened = computed(() => {
-        return isSidebarOpen(SIDEBAR.MENU)
-            || isSidebarOpen(SIDEBAR.SETTINGS)
+        return isSidebarOpen(SIDEBAR.SETTINGS)
+            || isSidebarOpen(SIDEBAR.SETTINGS_PROFILE)
+            || isSidebarOpen(SIDEBAR.SETTINGS_SECURITY)
+            || isSidebarOpen(SIDEBAR.SETTINGS_RECENT_ACTIVITIES)
             || isSidebarOpen(SIDEBAR.TAGS_LIST)
             || isSidebarOpen(SIDEBAR.TAGS_TREE)
             || isSidebarOpen(SIDEBAR.EDIT_ACCOUNT)
@@ -82,9 +82,6 @@ const store = defineStore('ui', () => {
         isSidebarOpen,
         isLeftSidebarOpened,
         isRightSidebarOpened,
-
-        activeSidebarPanel,
-        setActiveSidebarPanel,
     };
 })
 
