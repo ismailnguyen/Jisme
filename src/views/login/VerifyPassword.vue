@@ -22,6 +22,7 @@
                             ref="inputPassword"
                             id="inputPassword"
                             class="input form-control"
+                            :class="hasError ? 'shake' : ''"
                             placeholder="Password"
                             v-model="password"
                             @keyup.enter="onVerifyPassword"
@@ -82,7 +83,8 @@
             return {
                 password: '',
                 isPasswordRevealed: false,
-                isLoading: false
+                isLoading: false,
+                hasError: false
             }
         },
         components: {
@@ -154,6 +156,12 @@
                 }
                 catch (error) {
                     this.isLoading = false;
+                    this.hasError = true;
+                    setTimeout(() => {
+                        this.hasError = false;
+                    }
+                    , 500);
+
                     this.openAlert(error.reason ? error.message : 'Error', error.reason || error.message, 'danger');
                 }
             }

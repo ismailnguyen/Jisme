@@ -24,6 +24,7 @@
                             name="username"
                             autocomplete="username webauthn"
                             class="form-control"
+                            :class="hasError ? 'shake' : ''"
                             placeholder="Username, email, or phone number"
                             aria-describedby="emailHelp"
                             v-model="username"
@@ -83,7 +84,8 @@
                 rememberedUser: null,
                 remember: false,
                 isAutoLogin: false,
-                isLoading: false
+                isLoading: false,
+                hasError: false
             }
         },
         components: {
@@ -133,6 +135,12 @@
 
             onRequestLogin: async function () {
                 if (!this.username) {
+                    this.hasError = true;
+                    setTimeout(() => {
+                        this.hasError = false;
+                    }
+                    , 500);
+                    
                     this.openAlert('Error', 'Please fill username!', 'danger');
 
                     return;

@@ -44,6 +44,7 @@
                             pattern="\d*"
                             type="text"
                             class="otp-input"
+                            :class="hasError ? 'shake' : ''"
                             v-model="totpToken[index]">
                     </div>
 
@@ -91,7 +92,8 @@
                 error: {
                     message: ''
                 },
-                isLoading: false
+                isLoading: false,
+                hasError: false
             }
         },
         components: {
@@ -242,6 +244,12 @@
                 }
                 catch(error) {
                     this.isLoading = false;
+                    this.hasError = true;
+                    setTimeout(() => {
+                        this.hasError = false;
+                    }
+                    , 500);
+
                     this.openAlert('Error', error.message, 'danger');
                 }
             }
