@@ -175,10 +175,6 @@
                 'enableServerEncryption'
             ]),
 
-            onSignOut: async function () {
-                await this.signOut();
-            },
-
             onPasskeySupported: function () {
                 // Display button
                 this.isGeneratePasskeyBtnVisible = true;

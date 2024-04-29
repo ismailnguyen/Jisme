@@ -124,6 +124,10 @@
                 'openSidebar',
                 'closeSidebar',
             ]),
+
+            onSignOut: async function () {
+                await this.signOut();
+            },
         }
     }
 </script>
