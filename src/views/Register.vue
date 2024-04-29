@@ -6,7 +6,7 @@
             <div class="col-md-10 mx-auto col-lg-5">
                 <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="signUp()">
                     <div class="d-block d-lg-none">
-                        <img class="img-fluid rounded mb-4" loading="lazy" src="../../assets/logo_medium.png" alt="Jisme" v-show="!isLoading">
+                        <img class="img-fluid rounded mb-4" loading="lazy" src="../assets/logo_medium.png" alt="Jisme" v-show="!isLoading">
                         <Loader v-show="isLoading" />
                     </div>
 
