@@ -43,7 +43,7 @@ class FilterService {
                 return;
             }
 
-            const cleanQuery = query.trim().toLowerCase();
+            const cleanQuery = query ? query.trim().toLowerCase() : '';
 
             this.filteredAccounts = this.filteredAccounts.filter(account => 
                 account.contains(cleanQuery)

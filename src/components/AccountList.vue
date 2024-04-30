@@ -87,22 +87,29 @@
             this.accountsStore.$subscribe((mutation, state) => {
                 this.isLoading = false;
             })
+
+            this.$watch(
+                'searchQuery',
+                (newSearchQuery, oldSearchQuery) => {
+                    this.searchQuery = newSearchQuery; // This line helps to speed the query update on the input field
+
+                    if (this.$route.query.search =! newSearchQuery) {
+                        this.$router.push({name: 'Home', query: { search: newSearchQuery }});
+                    }
+                    
+                    if (newSearchQuery.length >= MIN_SEARCH_QUERY_LENGTH) {
+                        this.updateFilteredAccounts();
+                    }
+                    else {
+                        this.filteredAccounts = [];
+                    }
+                },
+                {
+                    immediate: true
+                });
         },
         async mounted() {
             await this.fetchLatestAccounts();
-        },
-        watch: {
-            searchQuery (newSearchQuery, oldSearchQuery) {
-                this.searchQuery = newSearchQuery; // This line helps to speed the query update on the input field
-                this.$router.push({name: 'Home', query: { search: newSearchQuery }});
-
-                if (newSearchQuery.length >= MIN_SEARCH_QUERY_LENGTH) {
-                    this.updateFilteredAccounts();
-                }
-                else {
-                    this.filteredAccounts = [];
-                }
-            }
         },
         computed: {
             ...mapStores(useAccountsStore),
