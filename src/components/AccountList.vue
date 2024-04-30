@@ -54,35 +54,10 @@
             </div>
         </div>
 
-        <div class="main-container container-fluid" v-show="!isSearching">
-            <div class="row">
-                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title placeholder-glow" v-show="isLoading">
-                    <span class="placeholder col-2 me-3 mb-0"></span><br>
-                </div>
-                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title tags" v-show="!isLoading">
-                    <h5 class="font-size-16 me-3 mb-0">Recently viewed</h5>
-                </div>
-
-                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title placeholder-glow" v-if="isLoading">
-                    <span class="placeholder col-4 float-end"></span>
-                </div>
-                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title" v-else>
-                    <span class="category-title float-end">{{ recentAccounts.length }} out of {{ accounts.length }}</span>
-                </div>
-            </div>
-            <div class="row stacked-cards" v-if="isLoading">
-                <LoadingAccountItem
-                    :size="accountsCardSize"
-                    v-for="index in 3"
-                    v-bind:key="index" />
-            </div>
-            <div class="row stacked-cards" v-else>
-                <AccountItem
-                    v-for="(account, index) in recentAccounts"
-                    v-bind:key="index"
-                    :account="account" />
-            </div>
-        </div>
+        <RecentAccountList
+            :isLoading="isLoading"
+            :accountsCardSize="accountsCardSize"
+            v-show="!isSearching" />
     </div>
 </template>
 
@@ -102,6 +77,7 @@
     import { SessionExpiredException } from '../utils/errors'
     import LoadingAccountItem from '../components/LoadingAccountItem.vue'
     import AccountItem from '../components/AccountItem.vue'
+    import RecentAccountList from '../components/RecentAccountList.vue'
 
     const MIN_SEARCH_QUERY_LENGTH = 3;
     
@@ -109,6 +85,7 @@
         components: {
             LoadingAccountItem,
             AccountItem,
+            RecentAccountList
         },
         data() {
             return {
@@ -198,7 +175,6 @@
         methods: {
             ...mapActions(useAccountsStore, [
                 'loadCache',
-                'fetchRecentAccounts',
                 'fetchAccounts',
                 'getAccountsFilteredByQuery',
                 'applyFilters'
@@ -221,18 +197,6 @@
             },
 
             fetchLatestAccounts: async function () {
-                try {
-                    await this.fetchRecentAccounts();
-                } catch (error) {
-                    if (error instanceof SessionExpiredException) {
-                        this.openAlert('Session expired', error.message, 'danger');
-                        this.$router.go('/');
-                    }
-                    else {
-                        this.openAlert(error.name || 'Error while loading accounts', error.message, 'danger');
-                    }
-                }
-
                 try {
                     await this.fetchAccounts();
                 } catch (error) {
