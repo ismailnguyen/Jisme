@@ -2,33 +2,23 @@
     <div id="page-content-wrapper" class="container-fluid">
         <header class="row header-search justify-content-center">
             <div class="col-xs-12 col-md-8 col-lg-6">
-                <input class="form-control searchBar" v-model="searchQuery" name="search" type="search" placeholder="Search" autofocus :disabled="isLoading">
+                <input class="form-control searchBar" v-model="searchQuery" ref="searchInput" name="search" type="search" placeholder="Search" autofocus :disabled="isLoading">
             </div>
         </header>
 
-        <div class="main-container container-fluid" v-show="isSearching && isLoading">
+        <div class="main-container container-fluid" v-show="isSearching">
             <div class="row">
-                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title placeholder-glow">
+                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title placeholder-glow" v-if="isLoading">
                     <span class="placeholder col-2 me-3 mb-0"></span><br>
                     <span class="placeholder col-4"></span>
                 </div>
-            </div>
-            <div class="row">
-                <LoadingAccountItem
-                :size="accountsCardSize"
-                v-for="index in 7"
-                v-bind:key="index" />
-            </div>
-        </div>
-
-        <div class="main-container container-fluid" v-show="isSearching && !isLoading">
-            <div class="row">
-                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title">
+                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title" v-else>
                     <h5 class="font-size-16 me-3 mb-0">Results for "{{ searchQuery }}"</h5>
                     <span class="category-title" >{{ filteredAccounts.length }} out of {{ accounts.length }}</span>
                 </div>
             </div>
-            <div class="row">
+
+            <div class="row" v-show="selectedTags">
                 <div class="mb-3 col-12 col-xs-12 col-sm-12 tags">
                     <span
                         class="badge rounded-pill badge-primary"
@@ -41,7 +31,13 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" v-if="isLoading">
+                <LoadingAccountItem
+                :size="accountsCardSize"
+                v-for="index in 7"
+                v-bind:key="index" />
+            </div>
+            <div class="row" v-else>
                 <AccountItem
                     :size="accountsCardSize"
                     v-for="(account, accountIndex) in filteredAccounts"
@@ -50,29 +46,24 @@
             </div>
         </div>
 
-        <div class="main-container container-fluid" v-show="!isSearching && isLoading">
+        <div class="main-container container-fluid" v-show="!isSearching">
             <div class="row">
-                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title placeholder-glow">
+                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title placeholder-glow" v-if="isLoading">
                     <span class="placeholder col-2 me-3 mb-0"></span><br>
                     <span class="placeholder col-4"></span>
                 </div>
+                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title" v-else>
+                    <h5 class="font-size-16 me-3 mb-0">Recently viewed</h5>
+                    <span class="category-title" >{{ recentAccounts.length }} out of {{ accounts.length }}</span>
+                </div>
             </div>
-            <div class="row stacked-cards">
+            <div class="row stacked-cards" v-if="isLoading">
                 <LoadingAccountItem
                     :size="accountsCardSize"
                     v-for="index in 7"
                     v-bind:key="index" />
             </div>
-        </div>
-        <div class="main-container container-fluid" v-show="!isSearching && !isLoading">
-            <div class="row">
-                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title">
-                    <h5 class="font-size-16 me-3 mb-0">Recently viewed</h5>
-                    <span class="category-title" >{{ recentAccounts.length }} out of {{ accounts.length }}</span>
-                </div>
-            </div>
-
-            <div class="row stacked-cards">
+            <div class="row stacked-cards" v-else>
                 <AccountItem
                     v-for="(account, index) in recentAccounts"
                     v-bind:key="index"
@@ -117,6 +108,8 @@
 
             this.accountsStore.$subscribe((mutation, state) => {
                 this.isLoading = false;
+
+                this.focusSearchInput();
             })
 
             this.$watch(
@@ -124,7 +117,7 @@
                 (newSearchQuery, oldSearchQuery) => {
                     this.searchQuery = newSearchQuery; // This line helps to speed the query update on the input field
 
-                    if (this.$route.query.search =! newSearchQuery) {
+                    if (this.$route.query.search != newSearchQuery) {
                         this.$router.push({name: 'Home', query: { search: newSearchQuery }});
                     }
                     
@@ -187,6 +180,10 @@
             ...mapActions(useAlertStore, [
                 'openAlert'
             ]),
+
+            focusSearchInput: function () {
+                this.$refs.searchInput.focus();
+            },
 
             updateFilteredAccounts: function () {
                 this.filteredAccounts = this.getAccountsFilteredByQuery(this.searchQuery, this.$route.query.tags, true);
