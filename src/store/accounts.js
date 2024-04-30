@@ -13,42 +13,23 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     const recentAccounts = ref([]);
     const accounts = ref([]);
-    const _filteredAccounts = ref([]);
+    const filteredAccounts = ref([]);
 
-    let accountsService = new AccountsService(user.value);
+    const wordFilter = ref('');
+    const selectedTags = ref([]);
 
-    const getAccountsFilteredByQuery = computed(() => {
-        return (searchQuery, tags, sort = false) => {
-            if (!searchQuery && !tags) {
-                _filteredAccounts.value = accounts.value;
-                return accounts.value;
-            }
+    const accountsService = new AccountsService(user.value);
+    const filterService = new FilterService();
 
-            const filterService = new FilterService(toRaw(accounts.value));
 
-            if (tags) {
-                filterService.filterByTags(tags);
-            }
-
-            if (searchQuery) {
-                filterService.filterByQuery(searchQuery);
-            }
-
-            if (sort) {
-                filterService.sortByName();
-            }
-
-            // Store the filtered accounts to be used in other methods (like getUniqueTags)
-            _filteredAccounts.value = filterService.getAccounts();
-
-            return _filteredAccounts.value;
-        }
-    })
+    const hasFilter = computed(() => {
+        return wordFilter.value || selectedTags.value.length > 0;
+    });
 
     const getUniqueTags = () => {
         let uniqueTags = [];
 
-        _filteredAccounts.value.forEach(account => {
+        filteredAccounts.value.forEach(account => {
             account.tags
             .split(',')
             .map(t => t.trim())
@@ -76,7 +57,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         // Pre fill the store with the cached accounts
         recentAccounts.value = await accountsService.getRecentsCached();
         accounts.value = await accountsService.getAllCached();
-        _filteredAccounts.value = accounts.value;
+        filteredAccounts.value = accounts.value;
     }
 
     async function fetchRecentAccounts() {
@@ -208,12 +189,63 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
     }
 
+    function filterAccounts (sort = true) {
+        filteredAccounts.value = accounts.value;
+
+        if (!wordFilter.value && !selectedTags.value.length) {
+            return;
+        }
+
+        if (selectedTags.value.length) {
+            filteredAccounts.value = filterService.filterByTags(filteredAccounts.value, selectedTags.value);
+        }
+
+        if (wordFilter.value) {
+            filteredAccounts.value = filterService.filterByQuery(filteredAccounts.value, wordFilter.value);
+        }
+
+        if (sort) {
+            filteredAccounts.value = filterService.sortByName(filteredAccounts.value);
+        }
+    }
+
+    function updateWordFilter (query) {
+        wordFilter.value = query;
+
+        // Update filtered accounts based on the new query
+        filterAccounts();
+    }
+
+    function selectTag (tag) {
+        selectedTags.value.push(tag);
+
+        // Update filtered accounts based on the new tags
+        filterAccounts();
+    }
+
+    function removeTag (tag) {
+        selectedTags.value.splice(selectedTags.value.indexOf(tag), 1);
+
+        // Update filtered accounts based on the new tags
+        filterAccounts();
+    }
+
     return {
         user,
         recentAccounts,
         accounts,
+        filteredAccounts,
 
-        getAccountsFilteredByQuery,
+        wordFilter,
+        updateWordFilter,
+
+        selectedTags,
+        selectTag,
+        removeTag,
+
+        hasFilter,
+
+        // getAccountsFilteredByQuery,
         getUniqueTags,
 
         loadCache,

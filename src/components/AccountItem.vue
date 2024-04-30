@@ -71,6 +71,10 @@
 
     export default {
         props: {
+            size: {
+                type: String,
+                default: 'small'
+            },
             account: Account,
         },
         computed: {
@@ -81,7 +85,7 @@
             ]),
 
             layoutAdjustmentCss: function () {
-                return cardSizeMapping[this.size] || cardSizeMapping['small'];
+                return cardSizeMapping[this.size] || cardSizeMapping['small'];
             },
 
             getIcon: function () {

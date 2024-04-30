@@ -51,7 +51,7 @@
         },
         computed: {
             layoutAdjustmentCss: function () {
-                return cardSizeMapping[this.size] || cardSizeMapping['small'];
+                return cardSizeMapping[this.size] || cardSizeMapping['small'];
             },
 
             getIcon: function () {
