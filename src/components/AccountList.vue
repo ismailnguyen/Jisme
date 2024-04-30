@@ -204,10 +204,6 @@
                 'applyFilters'
             ]),
 
-            ...mapActions(useUserStore, [
-                'signOut'
-            ]),
-
             ...mapActions(useAlertStore, [
                 'openAlert'
             ]),
