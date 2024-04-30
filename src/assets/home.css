@@ -4,18 +4,10 @@ a {
 .main-container {
     padding-top: 80px;
 }
-@media (min-width: 767.98px) {
-    .main-container:last-child {
-        padding-top: 100px;
-   }
-}
 @media (max-width: 767.98px) {
     .main-container {
         padding-top: 2rem;
-   }
-    .main-container:last-child {
-        padding-bottom: 100px;
-   }
+    }
     .search-title {
         padding-left: 4rem;
    }
