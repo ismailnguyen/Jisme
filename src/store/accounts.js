@@ -15,6 +15,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const accounts = ref([]);
     const _filteredAccounts = ref([]);
 
+    const selectedTags = ref([]);
+
     let accountsService = new AccountsService(user.value);
 
     const getAccountsFilteredByQuery = computed(() => {
@@ -208,10 +210,30 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
     }
 
+    function selectTag (tag) {
+        if (!selectedTags.value.includes(tag)) {
+            selectedTags.value.push(tag);
+        }
+    }
+
+    function removeTag (tag) {
+        selectedTags.value = selectedTags.value.filter(t => t !== tag);
+    }
+
+    function applyFilters(searchQuery, tags, sort) {
+        selectedTags.value = tags;
+    }
+
     return {
         user,
         recentAccounts,
         accounts,
+
+        selectedTags,
+        selectTag,
+        removeTag,
+
+        applyFilters,
 
         getAccountsFilteredByQuery,
         getUniqueTags,

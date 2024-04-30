@@ -2,24 +2,25 @@
     <div id="page-content-wrapper" class="container-fluid">
         <header class="row header-search justify-content-center">
             <div class="col-xs-12 col-md-8 col-lg-6">
-                <input class="form-control searchBar" v-model="searchQuery" ref="searchInput" name="search" type="search" placeholder="Search" autofocus :disabled="isLoading">
+                <input
+                    class="form-control searchBar"
+                    v-model="searchQuery"
+                    ref="searchInput"
+                    name="search"
+                    type="search"
+                    placeholder="Search"
+                    autofocus
+                    :disabled="isLoading">
             </div>
         </header>
 
         <div class="main-container container-fluid" v-show="isSearching">
             <div class="row">
-                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title placeholder-glow" v-if="isLoading">
+                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title placeholder-glow" v-show="isLoading">
                     <span class="placeholder col-2 me-3 mb-0"></span><br>
-                    <span class="placeholder col-4"></span>
                 </div>
-                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title" v-else>
-                    <h5 class="font-size-16 me-3 mb-0">Results for "{{ searchQuery }}"</h5>
-                    <span class="category-title" >{{ filteredAccounts.length }} out of {{ accounts.length }}</span>
-                </div>
-            </div>
-
-            <div class="row" v-show="selectedTags">
-                <div class="mb-3 col-12 col-xs-12 col-sm-12 tags">
+                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title tags" v-show="!isLoading">
+                    <h5 class="font-size-16 me-3 mb-0" v-show="searchQuery">Results for "{{ searchQuery }}"</h5>
                     <span
                         class="badge rounded-pill badge-primary"
                         v-for="(tag, tagIndex) in selectedTags"
@@ -28,6 +29,13 @@
                         {{ tag }}
                         <i class="fa fa-close"></i>
                     </span>
+                </div>
+
+                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title placeholder-glow" v-if="isLoading">
+                    <span class="placeholder col-4 float-end"></span>
+                </div>
+                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title" v-else>
+                    <span class="category-title float-end">{{ filteredAccounts.length }} out of {{ accounts.length }}</span>
                 </div>
             </div>
 
@@ -48,13 +56,18 @@
 
         <div class="main-container container-fluid" v-show="!isSearching">
             <div class="row">
-                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title placeholder-glow" v-if="isLoading">
+                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title placeholder-glow" v-show="isLoading">
                     <span class="placeholder col-2 me-3 mb-0"></span><br>
-                    <span class="placeholder col-4"></span>
                 </div>
-                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title" v-else>
+                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title tags" v-show="!isLoading">
                     <h5 class="font-size-16 me-3 mb-0">Recently viewed</h5>
-                    <span class="category-title" >{{ recentAccounts.length }} out of {{ accounts.length }}</span>
+                </div>
+
+                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title placeholder-glow" v-if="isLoading">
+                    <span class="placeholder col-4 float-end"></span>
+                </div>
+                <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title" v-else>
+                    <span class="category-title float-end">{{ recentAccounts.length }} out of {{ accounts.length }}</span>
                 </div>
             </div>
             <div class="row stacked-cards" v-if="isLoading">
@@ -76,6 +89,7 @@
 <script>
     import {
         mapState,
+        mapWritableState,
         mapActions,
         mapStores
     } from 'pinia'
@@ -98,7 +112,7 @@
         },
         data() {
             return {
-                searchQuery: this.$route.query.search || '', // Default search query is looked up from query string
+                searchQuery: this.$route.query.search || '', // Default search query is looked up from query string,
                 isLoading: true,
                 filteredAccounts: []
             }
@@ -106,11 +120,9 @@
         async created() {
             await this.loadCache();
 
-            this.accountsStore.$subscribe((mutation, state) => {
-                this.isLoading = false;
+            const urlQueryTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
+            this.applyFilters(this.searchQuery, urlQueryTags, true);
 
-                this.focusSearchInput();
-            })
 
             this.$watch(
                 'searchQuery',
@@ -118,10 +130,26 @@
                     this.searchQuery = newSearchQuery; // This line helps to speed the query update on the input field
 
                     if (this.$route.query.search != newSearchQuery) {
-                        this.$router.push({name: 'Home', query: { search: newSearchQuery }});
+                        this.$router.push({name: 'Home', query: { search: newSearchQuery, tags: this.$route.query.tags }});
                     }
                     
-                    if (newSearchQuery.length >= MIN_SEARCH_QUERY_LENGTH) {
+                    if (this.isSearching) {
+                        this.updateFilteredAccounts();
+                    }
+                    else {
+                        this.filteredAccounts = [];
+                    }
+                },
+                {
+                    immediate: true
+                });
+
+                this.$watch(
+                '$route.query.tags',
+                (newTags, oldTags) => {
+                    this.selectedTags = newTags.length ? newTags.split(',').map(x => x.trim()) : [];
+
+                    if (this.isSearching) {
                         this.updateFilteredAccounts();
                     }
                     else {
@@ -133,22 +161,22 @@
                 });
         },
         async mounted() {
+            this.accountsStore.$subscribe(this.onAccountsLoaded);
+
             await this.fetchLatestAccounts();
         },
         computed: {
             ...mapStores(useAccountsStore),
+            ...mapWritableState(useAccountsStore, ['selectedTags']),
             ...mapState(useAccountsStore, ['recentAccounts', 'accounts']),
             ...mapState(useUiStore, [
                 'isLeftSidebarOpened',
                 'isRightSidebarOpened',
             ]),
 
-            selectedTags: function () {
-                return this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
-            },
-
             isSearching: function () {
-                return (this.searchQuery && this.searchQuery.length >= MIN_SEARCH_QUERY_LENGTH) || this.$route.query.tags;
+                return (this.searchQuery && this.searchQuery.length >= MIN_SEARCH_QUERY_LENGTH)
+                            || this.selectedTags.length > 0;
             },
 
             accountsCardSize: function () {
@@ -170,7 +198,8 @@
                 'loadCache',
                 'fetchRecentAccounts',
                 'fetchAccounts',
-                'getAccountsFilteredByQuery'
+                'getAccountsFilteredByQuery',
+                'applyFilters'
             ]),
 
             ...mapActions(useUserStore, [
@@ -180,6 +209,12 @@
             ...mapActions(useAlertStore, [
                 'openAlert'
             ]),
+
+            onAccountsLoaded: function () {
+                this.isLoading = false;
+
+                this.focusSearchInput();
+            },
 
             focusSearchInput: function () {
                 this.$refs.searchInput.focus();

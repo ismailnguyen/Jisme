@@ -2,7 +2,7 @@ a {
     color: var(--color-text);
 }
 .main-container {
-    padding-top: 80px;
+    padding-top: 6rem;
 }
 @media (max-width: 767.98px) {
     .main-container {
