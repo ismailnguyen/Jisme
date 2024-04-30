@@ -72,6 +72,10 @@
     export default {
         props: {
             account: Account,
+            size: {
+                type: String,
+                default: 'small'
+            }
         },
         computed: {
             ...mapState(useUiStore, [
