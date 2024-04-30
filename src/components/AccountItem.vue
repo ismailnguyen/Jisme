@@ -52,6 +52,12 @@
 
 <script>
     import '../assets/card.css'
+
+    const cardSizeMapping= {
+        small: 'col-md-4 col-lg-3',
+        medium: 'col-md-6 col-lg-6 col-xl-6',
+        large: 'col-lg-12 col-xl-12',
+    }
     
     import { 
         mapState,
@@ -75,19 +81,7 @@
             ]),
 
             layoutAdjustmentCss: function () {
-                let cssClass = 'col-md-4 col-lg-3';
-
-                if (this.isLeftSidebarOpened && this.isRightSidebarOpened) {
-                    cssClass = 'col-lg-12 col-xl-12';
-                }
-                else if (this.isLeftSidebarOpened) {
-                    cssClass = 'col-lg-4 col-xl-4';
-                }
-                else if (this.isRightSidebarOpened) {
-                    cssClass = 'col-md-6 col-lg-6 col-xl-6';
-                }
-
-                return cssClass;
+                return cardSizeMapping[this.size] || cardSizeMapping['small'];
             },
 
             getIcon: function () {

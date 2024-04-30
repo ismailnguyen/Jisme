@@ -1,13 +1,24 @@
 <template>
     <div id="page-content-wrapper" class="container-fluid">
-        <header class="row header-search justify-content-center" v-show="!isLoading">
+        <header class="row header-search justify-content-center">
             <div class="col-xs-12 col-md-8 col-lg-6">
-                <input class="form-control searchBar" v-model="searchQuery" name="search" type="search" placeholder="Search" autofocus>
+                <input class="form-control searchBar" v-model="searchQuery" name="search" type="search" placeholder="Search" autofocus :disabled="isLoading">
             </div>
         </header>
 
-        <div class="main-container container-fluid" v-show="isLoading">
-            <Loader />
+        <div class="main-container container-fluid" v-show="isSearching && isLoading">
+            <div class="row">
+                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title placeholder-glow">
+                    <span class="placeholder col-2 me-3 mb-0"></span><br>
+                    <span class="placeholder col-4"></span>
+                </div>
+            </div>
+            <div class="row">
+                <LoadingAccountItem
+                :size="accountsCardSize"
+                v-for="index in 7"
+                v-bind:key="index" />
+            </div>
         </div>
 
         <div class="main-container container-fluid" v-show="isSearching && !isLoading">
@@ -31,10 +42,26 @@
             </div>
 
             <div class="row">
-                <AccountItem 
+                <AccountItem
+                    :size="accountsCardSize"
                     v-for="(account, accountIndex) in filteredAccounts"
                     v-bind:key="accountIndex"
                     :account="account" />
+            </div>
+        </div>
+
+        <div class="main-container container-fluid" v-show="!isSearching && isLoading">
+            <div class="row">
+                <div class="mb-3 col-12 col-xs-12 col-sm-12 search-title placeholder-glow">
+                    <span class="placeholder col-2 me-3 mb-0"></span><br>
+                    <span class="placeholder col-4"></span>
+                </div>
+            </div>
+            <div class="row stacked-cards">
+                <LoadingAccountItem
+                    :size="accountsCardSize"
+                    v-for="index in 7"
+                    v-bind:key="index" />
             </div>
         </div>
         <div class="main-container container-fluid" v-show="!isSearching && !isLoading">
@@ -45,7 +72,12 @@
                 </div>
             </div>
 
-            <StackedAccountList :accounts="recentAccounts" />
+            <div class="row stacked-cards">
+                <AccountItem
+                    v-for="(account, index) in recentAccounts"
+                    v-bind:key="index"
+                    :account="account" />
+            </div>
         </div>
     </div>
 </template>
@@ -59,20 +91,19 @@
     import {
         useAccountsStore,
         useAlertStore,
+        useUiStore,
         useUserStore
      } from '@/store'
     import { SessionExpiredException } from '../utils/errors'
+    import LoadingAccountItem from '../components/LoadingAccountItem.vue'
     import AccountItem from '../components/AccountItem.vue'
-    import StackedAccountList from '../components/StackedAccountList.vue'
-    import Loader from '../components/Loader.vue'
 
     const MIN_SEARCH_QUERY_LENGTH = 3;
     
     export default {
         components: {
+            LoadingAccountItem,
             AccountItem,
-            StackedAccountList,
-            Loader,
         },
         data() {
             return {
@@ -114,6 +145,10 @@
         computed: {
             ...mapStores(useAccountsStore),
             ...mapState(useAccountsStore, ['recentAccounts', 'accounts']),
+            ...mapState(useUiStore, [
+                'isLeftSidebarOpened',
+                'isRightSidebarOpened',
+            ]),
 
             selectedTags: function () {
                 return this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
@@ -121,6 +156,20 @@
 
             isSearching: function () {
                 return (this.searchQuery && this.searchQuery.length >= MIN_SEARCH_QUERY_LENGTH) || this.$route.query.tags;
+            },
+
+            accountsCardSize: function () {
+                if (this.isLeftSidebarOpened && this.isRightSidebarOpened) {
+                    return 'large';
+                }
+                else if (this.isLeftSidebarOpened) {
+                    return 'small';
+                }
+                else if (this.isRightSidebarOpened) {
+                    return 'medium';
+                }
+
+                return 'small';
             }
         },
         methods: {

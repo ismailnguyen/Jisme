@@ -49,3 +49,26 @@
 .card-icon-placeholder {
     background-color: red;
 }
+
+/* Stacked cards design */
+.stacked-cards {
+    padding-top: 1rem;
+    height: 80vh;
+    max-height: 100%;
+    flex-flow: column wrap;
+    overflow: scroll;
+    box-sizing: border-box;
+    display: flex;
+}
+
+.stacked-cards .card-wrapper {
+    width: 80%;
+    height: 100%;
+    margin: 0 auto;
+    display: flex;
+    position: relative;
+}
+
+.stacked-cards .card-wrapper .card {
+    width: 100%;
+}
