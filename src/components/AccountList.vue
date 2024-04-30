@@ -344,31 +344,4 @@
             transform: none;
 		}
 	}
-
-    .load-more-button {
-		width: 35%;
-        border-radius: 15px;
-		border: none;
-        margin-left: auto;
-        margin-right: auto;
-        margin-top: 100px;
-        margin-bottom: 20px;
-        text-align: center;
-        background-color: #f8f9fa;
-        color: var(--color-text);
-        box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px  rgba(255,255,255, 0.5);
-    }
-
-    .load-more-button:hover {
-		box-shadow: inset -4px -4px 10px rgba(255,255,255,0.5), inset 4px 4px 10px rgba(0,0,0,0.1);
-	}
-	
-	@media (prefers-color-scheme: dark) {
-		.load-more-button,
-		.load-more-button:hover {
-			color: #e4e6eb;
-			background: #4b4c4f;
-			box-shadow: none;
-		}
-	}
 </style>
