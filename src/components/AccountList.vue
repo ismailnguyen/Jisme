@@ -73,7 +73,7 @@
             <div class="row stacked-cards" v-if="isLoading">
                 <LoadingAccountItem
                     :size="accountsCardSize"
-                    v-for="index in 7"
+                    v-for="index in 3"
                     v-bind:key="index" />
             </div>
             <div class="row stacked-cards" v-else>
@@ -142,12 +142,13 @@
                 },
                 {
                     immediate: true
-                });
+                }
+            );
 
-                this.$watch(
+            this.$watch(
                 '$route.query.tags',
                 (newTags, oldTags) => {
-                    this.selectedTags = newTags.length ? newTags.split(',').map(x => x.trim()) : [];
+                    this.selectedTags = newTags && newTags.length ? newTags.split(',').map(x => x.trim()) : [];
 
                     if (this.isSearching) {
                         this.updateFilteredAccounts();
@@ -158,7 +159,8 @@
                 },
                 {
                     immediate: true
-                });
+                }
+            );
         },
         async mounted() {
             this.accountsStore.$subscribe(this.onAccountsLoaded);
@@ -255,22 +257,6 @@
                 newTags.splice(newTags.indexOf(tag), 1);
                 
                 this.$router.push({ name: 'Home', query: { tags: newTags.join(',') } });
-            },
-
-            // Function for testing purpose
-            getDuplicatesOnly: function (initalArray) {
-                var sorted_arr = initalArray;
-                var duplicateAccounts = [];
-
-                for (var i = 0; i < sorted_arr.length - 1; i++) {
-                    if (sorted_arr[i + 1].platform == sorted_arr[i].platform && sorted_arr[i + 1].login == sorted_arr[i].login) {
-                        duplicateAccounts.push(sorted_arr[i]);
-                    }
-                }
-
-                console.log('duplicateAccounts', duplicateAccounts.map(account => account.platform));
-
-                return duplicateAccounts;
             },
         } 
     }
