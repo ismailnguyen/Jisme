@@ -119,10 +119,10 @@
         },
         async created() {
             await this.loadCache();
+            this.accountsStore.$subscribe(this.onAccountsLoaded);
 
             const urlQueryTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
             this.applyFilters(this.searchQuery, urlQueryTags, true);
-
 
             this.$watch(
                 'searchQuery',
@@ -163,7 +163,7 @@
             );
         },
         async mounted() {
-            this.accountsStore.$subscribe(this.onAccountsLoaded);
+            this.focusSearchInput();
 
             await this.fetchLatestAccounts();
         },
@@ -214,8 +214,6 @@
 
             onAccountsLoaded: function () {
                 this.isLoading = false;
-
-                this.focusSearchInput();
             },
 
             focusSearchInput: function () {
