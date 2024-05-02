@@ -2,6 +2,8 @@
     <RouterView />
 
     <AlertBox v-if="hasAlert" />
+
+    <Footer v-if="$route.meta.showFooter" />
 </template>
 
 <script>
@@ -20,10 +22,12 @@
         mapStores
     } from 'pinia'
     import AlertBox from './components/AlertBox.vue';
+    import Footer from './components/Footer.vue';
 
     export default {
         components: {
-            AlertBox
+            AlertBox,
+            Footer
         },
         created() {
             // alertStore is accessible from mapStores(useAlertStore)
@@ -45,7 +49,6 @@
             ...mapState(useAlertStore, ['hasAlert']),
             ...mapState(useUserStore, ['isLoggedIn']),
         },
-        
         methods: {
             ...mapActions(useAlertStore, [
                 'openAlert',
