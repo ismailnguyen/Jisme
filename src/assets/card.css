@@ -49,6 +49,10 @@
 .card-icon-placeholder {
     background-color: red;
 }
+.card-footer {
+    border: none;
+    background: transparent;
+}
 
 /* Stacked cards design */
 .stacked-cards {

@@ -8,6 +8,14 @@ export function cleanUrl (url)
 	return url;
 }
 
+export function truncateString(str, length) {
+	if (str.length <= length) {
+		return str;
+	}
+
+	return `${ str.substring(0, length) }...`;
+}
+
 function capitalizeFirstLetter (str)
 {
 	return str.replace(/\w\S*/g, 
