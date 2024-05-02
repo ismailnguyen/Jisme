@@ -36,15 +36,12 @@
 .bg-gradient-blue .button--close i {
     color: var(--color-text-inverted);
 }
-.bg-gradient-blue .btn-group label.btn.btn-outline-primary:hover {
-    background: #fff;
-    color: #000;
-}
 .bg-gradient-blue .btn-group label.btn {
     color: #fff;
     border-color: #fff;
 }
-.bg-gradient-blue .btn-group label.btn.active {
+.bg-gradient-blue .btn-group label.btn.active,
+.bg-gradient-blue .btn-group label.btn:hover {
     background: #fff;
     color: #000;
     border-color: #fff;
@@ -60,7 +57,8 @@
     color: #2870ea;
     border-color: #2870ea;
 }
-.btn-group label.btn.active {
+.btn-group label.btn.active,
+.btn-group label.btn:hover {
     background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
     color: #fff;
     border-color: #2870ea;
@@ -72,10 +70,6 @@
     .btn-group label.btn.active {
         color: #fff;
    }
-}
-.bg-gradient-blue .btn-group label.btn {
-    color: #fff;
-    border-color: #fff;
 }
 .right-sidebar .button--close {
     background-color: var(--color-text);

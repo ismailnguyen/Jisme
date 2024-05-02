@@ -127,7 +127,7 @@
                                 @click="fieldAttrs.card_cryptogram.isExpanded=!fieldAttrs.card_cryptogram.isExpanded"
                                 class="form-label"
                                 for="editAccount_input_card_cryptogram">
-                                <i class="fa fa-lock" aria-hidden="true"></i> {{ account.card_cryptogram || 'Cryptogram' }}
+                                <i class="fa fa-lock" aria-hidden="true"></i> {{ account.card_cryptogram || 'Cryptogram (CVV/CVC)' }}
                                 <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
                             </label>
                             <label
@@ -135,7 +135,7 @@
                                 @click="fieldAttrs.card_cryptogram.isExpanded=!fieldAttrs.card_cryptogram.isExpanded"
                                 class="form-label"
                                 for="editAccount_input_card_cryptogram">
-                                <i class="fa fa-lock" aria-hidden="true"></i> Cryptogram
+                                <i class="fa fa-lock" aria-hidden="true"></i> Cryptogram (CVV/CVC)
                                 <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
                             </label>
                             <input v-show="fieldAttrs.card_cryptogram.isExpanded" id="editAccount_input_card_cryptogram" class="form-control" placeholder="CVC/CVV" type="text" v-model="account.card_cryptogram" @keyup.enter="add()" />
@@ -172,7 +172,8 @@
                                 @click="fieldAttrs.totpToken.isExpanded=!fieldAttrs.totpToken.isExpanded"
                                 class="form-label"
                                 for="editAccount_input_totp_token">
-                                <i class="fa fa-qrcode" aria-hidden="true"></i> {{ totpToken }}
+                                <i class="fa fa-qrcode" aria-hidden="true"></i>
+                                {{ totpToken }}
                                 <i class="fa fa-chevron-down float-end" aria-hidden="true"></i>
                             </label>
                             <label
@@ -197,7 +198,9 @@
                                 @click="fieldAttrs.password.isExpanded=!fieldAttrs.password.isExpanded"
                                 class="form-label tags"
                                 for="editAccount_input_password">
-                                <i class="fa fa-lock" aria-hidden="true"></i> {{ account.password || account.password_clue || (account.social_login? '' : 'Password') }} <div
+                                <i class="fa fa-lock" aria-hidden="true"></i>
+                                {{ account.password || account.password_clue || (account.social_login? '' : 'Password') }}
+                                <div
                                     class="badge rounded-pill text-bg-danger"
                                     v-for="socialLogin in account.social_login.split(',')"
                                     v-show="account.social_login"
@@ -211,7 +214,8 @@
                                 @click="fieldAttrs.password.isExpanded=!fieldAttrs.password.isExpanded"
                                 class="form-label"
                                 for="editAccount_input_password">
-                                <i class="fa fa-lock" aria-hidden="true"></i> Password
+                                <i class="fa fa-lock" aria-hidden="true"></i>
+                                Password
                                 <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
                             </label>
                             <div class="input-group" v-show="fieldAttrs.password.isExpanded">
@@ -323,7 +327,7 @@
                         <hr class="my-4">
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="editAccount_input_description"><i class="fa fa-quote-left" aria-hidden="true"></i> Description</label>
+                            <label class="form-label" for="editAccount_input_description"><i class="fa fa-message" aria-hidden="true"></i> Description</label>
                             <textarea id="editAccount_input_description" class="form-control" type="text" v-model="account.description" rows="3"></textarea>
                         </div>
 
@@ -476,7 +480,7 @@
             },
 
             totpToken: function () {
-                if (this.account.type == '2fa' && this.account.totp_secret) {
+                if (this.account.totp_secret) {
                      // Remove all spaces because spaces are forbidden for TOTP generation
                      // And some websites give the secret with spaces for better human readability
                     return totpGenerator(this.account.totp_secret.replace(/ /g,''));

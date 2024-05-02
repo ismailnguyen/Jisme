@@ -84,7 +84,7 @@
                         </div>
                         
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="addAccount_card_cryptogram_input"><i class="fa fa-lock" aria-hidden="true"></i> Cryptogram</label>
+                            <label class="form-label" for="addAccount_card_cryptogram_input"><i class="fa fa-lock" aria-hidden="true"></i> Cryptogram (CVV/CVC)</label>
                             <input id="addAccount_card_cryptogram_input" class="form-control" placeholder="CVC/CVV" type="text" v-model="account.card_cryptogram" @keyup.enter="add()" />
                         </div>
 
@@ -119,14 +119,14 @@
                         </div>
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="addAccount_social_login_input"><i class="fa fa-users" aria-hidden="true"></i> Social login</label>
+                            <label class="form-label" for="addAccount_social_login_input"><i class="fa fa-mobile-screen" aria-hidden="true"></i> Social login</label>
                             <input id="addAccount_social_login_input" class="form-control" placeholder="Google, Facebook, LinkedIn, ..." type="text" v-model="account.social_login" @keyup.enter="add()" />
                         </div>
 
                         <hr class="my-4">
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="addAccount_description_input"><i class="fa fa-quote-left" aria-hidden="true"></i> Description</label>
+                            <label class="form-label" for="addAccount_description_input"><i class="fa fa-message" aria-hidden="true"></i> Description</label>
                             <textarea id="addAccount_description_input" class="form-control" type="text" v-model="account.description" rows="3"></textarea>
                         </div>
                         
