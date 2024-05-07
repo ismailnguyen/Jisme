@@ -17,7 +17,7 @@ class FilterService {
         };
 
         this.filterByTypes = function (types) {
-            if (!types) {
+            if (!types || types.length === 0) {
                 return;
             }
 
@@ -25,7 +25,7 @@ class FilterService {
         }
 
         this.filterByTags = function (tags) {
-            if (!tags) {
+            if (!tags || tags.length === 0) {
                 return;
             }
 
