@@ -16,13 +16,19 @@ class FilterService {
             return this.filteredAccounts.map(account => account.tags).reduce((acc, curr) => acc.concat(curr), []).filter((value, index, self) => self.indexOf(value) === index);
         };
 
+        this.filterByTypes = function (types) {
+            if (!types) {
+                return;
+            }
+
+            this.filteredAccounts = this.filteredAccounts.filter(account => types.includes(account.type));
+        }
+
         this.filterByTags = function (tags) {
             if (!tags) {
                 return;
             }
 
-            tags = tags.split(',').map(tag => tag.trim());
-        
             let _filteredAccounts = [];
 
             this.filteredAccounts.forEach(account => {

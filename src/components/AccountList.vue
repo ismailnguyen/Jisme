@@ -14,17 +14,21 @@
             </div>
         </header>
 
+        <AccountTypesList
+            v-show="!isSearching" />
+
+        <RecentAccountList
+            :accountsCardSize="accountsCardSize"
+            :isLoading="isLoading"
+            v-show="!isSearching" />
+
         <FilteredAccountList
             :searchQuery="searchQuery"
             :filteredAccounts="filteredAccounts"
             :accountsCardSize="accountsCardSize"
             :isLoading="isLoading"
             v-show="isSearching" />
-
-        <RecentAccountList
-            :accountsCardSize="accountsCardSize"
-            :isLoading="isLoading"
-            v-show="!isSearching" />
+        
     </div>
 </template>
 
@@ -44,6 +48,7 @@
     import AccountItem from '../components/AccountItem.vue'
     import RecentAccountList from '../components/RecentAccountList.vue'
     import FilteredAccountList from '../components/FilteredAccountList.vue'
+    import AccountTypesList from '../components/AccountTypesList.vue'
 
     const MIN_SEARCH_QUERY_LENGTH = 3;
     
@@ -52,7 +57,8 @@
             LoadingAccountItem,
             AccountItem,
             RecentAccountList,
-            FilteredAccountList
+            FilteredAccountList,
+            AccountTypesList
         },
         data() {
             return {
@@ -75,7 +81,11 @@
                     this.searchQuery = newSearchQuery; // This line helps to speed the query update on the input field
 
                     if (this.$route.query.search != newSearchQuery) {
-                        this.$router.push({name: 'Home', query: { search: newSearchQuery, tags: this.$route.query.tags }});
+                        this.$router.push({name: 'Home', query: { 
+                            search: newSearchQuery,
+                            tags: this.$route.query.tags,
+                            type: this.$route.query.type
+                        }});
                     }
                     
                     this.updateFilteredAccounts(this.isSearching);
@@ -96,13 +106,25 @@
                     immediate: true
                 }
             );
+
+            this.$watch(
+                '$route.query.type',
+                (newTypes, oldTypes) => {
+                    this.selectedTypes = newTypes && newTypes.length ? newTypes.split(',').map(x => x.trim()) : [];
+
+                    this.updateFilteredAccounts(this.isSearching);
+                },
+                {
+                    immediate: true
+                }
+            );
         },
         async mounted() {
             this.focusSearchInput();
         },
         computed: {
             ...mapStores(useAccountsStore),
-            ...mapWritableState(useAccountsStore, ['selectedTags']),
+            ...mapWritableState(useAccountsStore, ['selectedTags', 'selectedTypes']),
             ...mapState(useUiStore, [
                 'isLeftSidebarOpened',
                 'isRightSidebarOpened',
@@ -111,7 +133,8 @@
             isSearching: function () {
                 return (this.searchQuery 
                         && this.searchQuery.length >= MIN_SEARCH_QUERY_LENGTH)
-                            || this.selectedTags.length > 0;
+                            || this.selectedTags.length > 0
+                            || this.selectedTypes.length > 0;
             },
 
             accountsCardSize: function () {
@@ -149,7 +172,12 @@
 
             updateFilteredAccounts: function (applyFilters = true) {
                 this.filteredAccounts = applyFilters
-                                        ? this.getAccountsFilteredByQuery(this.searchQuery, this.$route.query.tags, true)
+                                        ? this.getAccountsFilteredByQuery(
+                                            this.searchQuery,
+                                            this.selectedTags,
+                                            this.selectedTypes,
+                                            true
+                                        )
                                         : [];
             }
         } 

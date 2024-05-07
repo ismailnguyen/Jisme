@@ -212,7 +212,11 @@
 
                 const tags = this.addTag(tag);
 
-                this.$router.push({name: 'Home', query: { tags: tags }});
+                this.$router.push({name: 'Home', query: {
+                    tags: tags,
+                    search: this.$route.query.search,
+                    type: this.$route.query.type
+                }});
             },
 
             addTag: function (tag) {
