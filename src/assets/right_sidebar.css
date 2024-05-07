@@ -53,6 +53,12 @@
 .bg-gradient-blue .form-control:focus {
     color: #000;
 }
+.bg-gradient-blue .btn-link-danger {
+    color: #fff;
+}
+.bg-gradient-blue .btn-link-danger:hover {
+    color: #dc3545;
+}
 .btn-group label.btn {
     color: #2870ea;
     border-color: #2870ea;

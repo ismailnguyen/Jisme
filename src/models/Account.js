@@ -8,7 +8,8 @@ class Account {
 					platform = '',
                     icon = '',
 					login = '', 
-					password = '', 
+					password = '',
+                    is_password_less = false,
 					password_clue = '', 
 					tags = '', 
 					created_date = new Date(), 
@@ -32,6 +33,7 @@ class Account {
         this.platform = platform;
         this.login = login;
         this.password = password;
+        this.is_password_less = Boolean(is_password_less);
 		this.password_clue = password_clue;
         this.tags = tags;
         this.created_date = new Date(created_date).toUTCString();

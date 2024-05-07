@@ -30,13 +30,22 @@
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <div class="btn-group" role="group" aria-label="Account type">
                                 <input type="radio" class="btn-check" name="account-type" id="addAccount_radiobutton_accounttype_account" v-model="account.type" value="account">
-                                <label class="btn" for="addAccount_radiobutton_accounttype_account" :class="account.type == 'account' ? 'active' : ''">Account</label>
+                                <label class="btn" for="addAccount_radiobutton_accounttype_account" :class="account.type == 'account' ? 'active' : ''">
+                                    <i class="fa fa-globe" aria-hidden="true"></i>
+                                    Login
+                                </label>
 
                                 <input type="radio" class="btn-check" name="account-type" id="addAccount_radiobutton_accounttype_card" v-model="account.type" value="card">
-                                <label class="btn" for="addAccount_radiobutton_accounttype_card" :class="account.type == 'card' ? 'active' : ''">Card</label>
+                                <label class="btn" for="addAccount_radiobutton_accounttype_card" :class="account.type == 'card' ? 'active' : ''">
+                                    <i class="fa fa-credit-card" aria-hidden="true"></i>
+                                    Card
+                                </label>
 
                                 <input type="radio" class="btn-check" name="account-type" id="addAccount_radiobutton_accounttype_2fa" v-model="account.type" value="2fa">
-                                <label class="btn" for="addAccount_radiobutton_accounttype_2fa" :class="account.type == '2fa' ? 'active' : ''">2FA</label>
+                                <label class="btn" for="addAccount_radiobutton_accounttype_2fa" :class="account.type == '2fa' ? 'active' : ''">
+                                    <i class="fa fa-qrcode" aria-hidden="true"></i>
+                                    OTP
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -105,16 +114,34 @@
                         </div>
 
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="addAccount_password_input"><i class="fa fa-lock" aria-hidden="true"></i> Password</label>
-                            <div class="input-group">
+                            <label class="form-label" for="addAccount_password_input">
+                                <div class="btn-group" role="group" aria-label="Password type">
+                                    <input type="radio" class="btn-check" name="password-type" id="addAccount_radiobutton_passwordtype_password" v-model="account.is_password_less" v-bind:value="false">
+                                    <label class="btn" for="addAccount_radiobutton_passwordtype_password" :class="!account.is_password_less ? 'active' : ''">
+                                        <i class="fa fa-lock" aria-hidden="true"></i>
+                                        Password
+                                    </label>
+
+                                    <input type="radio" class="btn-check" name="password-type" id="addAccount_radiobutton_passwordtype_passwordless" v-model="account.is_password_less" v-bind:value="true">
+                                    <label class="btn" for="addAccount_radiobutton_passwordtype_passwordless" :class="account.is_password_less ? 'active' : ''">
+                                        <i class="fa fa-bolt" aria-hidden="true"></i>
+                                        Password less
+                                    </label>
+                                </div>
+                            </label>
+                            <div class="input-group" v-show="!account.is_password_less">
                                 <input id="addAccount_password_input" class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="account.password" placeholder="Password" @keyup.enter="add()" />
                                 <button class="btn btn-outline-secondary" type="button" @click="account.generatePassword()"><i class="fa fa-cogs"></i> Generate</button>
                             </div>
-                            <small id="addAccount_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
+                            <small id="addAccount_passwordHelp" class="form-text text-muted" v-show="!account.is_password_less">Click button to generate password.</small>
+                            <small id="addAccount_passwordLessHelp" class="form-text text-muted" v-show="account.is_password_less">Password less generator will be available once the account will be created.</small>
                         </div>
                         
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="password_clue_input"><i class="fa fa-eye" aria-hidden="true"></i> Password clue</label>
+                            <label class="form-label" for="password_clue_input">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                {{ account.is_password_less ? "Master password clue" : 'Password clue' }}
+                            </label>
                             <input id="password_clue_input" class="form-control" type="text" v-model="account.password_clue" @keyup.enter="add()" />
                         </div>
 

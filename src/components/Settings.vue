@@ -65,7 +65,7 @@
 
             <div class="row sidebar-footer">
                 <div class="col-xs-12 col-sm-12 col-12 col-md-12 col-lg-12">
-                    <button type="button" class="btn btn-outline-danger" @click="onSignOut()">
+                    <button type="button" class="btn btn-link-danger" @click="onSignOut()">
                         <i class="fa fa-power-off"></i>
                             Logout
                     </button>

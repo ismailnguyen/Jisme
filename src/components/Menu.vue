@@ -40,6 +40,8 @@
                             </button>
                         </div>
 
+                        <hr class="my-4">
+
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
                             <button class="menu-actions btn btn-primary w-100" type="button" @click="onOpenSettings()">
                                 <i class="fa fa-gear"></i>

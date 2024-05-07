@@ -56,3 +56,7 @@ body {
 .left-sidebar {
     border-radius: 0 !important;
 }
+
+.form-control {
+    border: 2px solid black !important;
+}

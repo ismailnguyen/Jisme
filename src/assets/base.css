@@ -35,6 +35,9 @@ body {
 .btn {
     border-radius: 15px;
 }
+.btn-link-danger:hover {
+    color: #dc3545;
+}
 .clickable {
     cursor: pointer
 }

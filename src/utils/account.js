@@ -8,6 +8,7 @@ export function parseAccount(account) {
         account.icon,
         account.login,
         account.password,
+        account.is_password_less,
         account.password_clue,
         account.tags,
         account.created_date,

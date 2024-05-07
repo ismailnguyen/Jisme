@@ -8,33 +8,45 @@
 
         <div class="row">
             <div class="col-sm-4 mb-3 mb-sm-0">
-                <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Login</h5>
-                    <a class="btn btn-outline-primary float-end" @click.prevent="openAccountType('account')">
-                        <i class="fa fa-arrow-right"></i>
-                    </a>
-                </div>
-                </div>
-            </div>
-            <div class="col-sm-4 mb-3 mb-sm-0">
-                <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">OTP</h5>
-                    <a class="btn btn-outline-primary float-end" @click.prevent="openAccountType('2fa')">
-                        <i class="fa fa-arrow-right"></i>
-                    </a>
-                </div>
+                <div class="card clickable" @click.prevent="openAccountType('account')">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fa fa-globe" aria-hidden="true"></i>
+                            Login
+                        </h5>
+                        <a class="btn btn-outline-primary float-end">
+                            View
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-4 mb-3 mb-sm-0">
-                <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Card</h5>
-                    <a class="btn btn-outline-primary float-end" @click.prevent="openAccountType('card')">
-                        <i class="fa fa-arrow-right"></i>
-                    </a>
+                <div class="card clickable" @click.prevent="openAccountType('2fa')">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fa fa-qrcode" aria-hidden="true"></i>
+                            OTP
+                        </h5>
+                        <a class="btn btn-outline-primary float-end">
+                            View
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
+            </div>
+            <div class="col-sm-4 mb-3 mb-sm-0">
+                <div class="card clickable" @click.prevent="openAccountType('card')">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fa fa-credit-card" aria-hidden="true"></i>
+                            Card
+                        </h5>
+                        <a class="btn btn-outline-primary float-end">
+                            View
+                            <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -211,43 +211,42 @@
                             </label>
                             <label
                                 v-show="fieldAttrs.password.isExpanded"
-                                @click="fieldAttrs.password.isExpanded=!fieldAttrs.password.isExpanded"
                                 class="form-label"
                                 for="editAccount_input_password">
                                 <i class="fa fa-lock" aria-hidden="true"></i>
-                                Password
-                                <i class="fa fa-chevron-up float-end" aria-hidden="true"></i>
+                                    Password
+                                <i class="fa fa-chevron-up float-end" aria-hidden="true" @click="fieldAttrs.password.isExpanded=!fieldAttrs.password.isExpanded"></i>
                             </label>
-                            <div class="input-group" v-show="fieldAttrs.password.isExpanded">
-                                <input id="editAccount_input_password" class="form-control" type="text" autocomplete="new-password" aria-describedby="editAccount_input_passwordHelp" v-model="account.password" @keyup.enter="save()" />
-                                <input id="editAccount_input_password_hidden" type="hidden" :value="account.password" />
-                                <button class="btn btn-outline-light" type="button" @click="account.generatePassword()"><i class="fa fa-cogs"></i> Generate</button>
+
+                            <div class="input-group mb-3" v-if="fieldAttrs.password.isExpanded">
+                                <button class="btn btn-outline-light dropdown-toggle" type="button" @click.prevent="showPasswordTypeOptions = !showPasswordTypeOptions">
+                                    {{ account.is_password_less ? 'Password less' : 'Password' }}
+                                </button>
+                                <ul class="dropdown-menu" :class="showPasswordTypeOptions ? 'show' : ''">
+                                    <li><a class="dropdown-item" @click.prevent="selectPasswordType('password')">Password</a></li>
+                                    <li><a class="dropdown-item" @click.prevent="selectPasswordType('passwordLess')">Password less</a></li>
+                                </ul>
+
+                                <input id="editAccount_input_password" class="form-control" type="text" autocomplete="new-password" aria-describedby="editAccount_input_passwordHelp" v-model="account.password" @keyup.enter="save()" v-if="!account.is_password_less" />
+                                <button class="btn btn-outline-light" type="button" @click="account.generatePassword()" v-if="!account.is_password_less && !account.password"><i class="fa fa-cogs"></i> Generate</button>
+
+                                <input id="editAccount_input_passwordless_masterPassword" class="form-control" type="password" placeholder="Master password" autocomplete="current-password" aria-describedby="editAccount_input_passwordlessHelp_masterPassword" v-model="passwordLess.masterPassword" v-if="account.is_password_less && !passwordLess.generatedPassword" />
+                                <button class="btn btn-outline-light" type="button" @click="generatePasswordLess()" v-if="account.is_password_less && !passwordLess.generatedPassword"><i class="fa fa-cogs"></i> Generate</button>
+
+                                <input id="editAccount_input_passwordless_generatedPassword" class="form-control" type="text" v-model="passwordLess.generatedPassword" v-if="account.is_password_less && passwordLess.generatedPassword" readonly />
+                                <button class="btn btn-outline-light" type="button" @click="resetPasswordLess()" v-if="account.is_password_less && passwordLess.generatedPassword"><i class="fa fa-undo"></i> Reset</button>
                             </div>
-                            <small v-show="fieldAttrs.password.isExpanded" id="editAccount_input_passwordHelp" class="form-text text-muted">Click button to generate password.</small>
+
+                            <small id="editAccount_input_passwordHelp" class="form-text text-muted" v-show="fieldAttrs.password.isExpanded && !account.is_password_less && !account.password">Click button to generate password.</small>
+                            <small id="editAccount_input_passwordlessHelp_masterPassword" class="form-text text-muted" v-show="fieldAttrs.password.isExpanded && account.is_password_less && !passwordLess.generatedPassword">Type your master password to generate the password less.</small>
                         </div>
 
                         <div v-show="fieldAttrs.password.isExpanded" class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="editAccount_input_password_clue"><i class="fa fa-eye" aria-hidden="true"></i> Password clue</label>
+                            <label class="form-label" for="editAccount_input_password_clue">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                {{ account.is_password_less ? "Master password clue" : 'Password clue' }}
+                            </label>
                             <input id="editAccount_input_password_clue" class="form-control" type="text" v-model="account.password_clue" @keyup.enter="save()" />
-                        </div>
-
-                        <div v-show="fieldAttrs.password.isExpanded" class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="editAccount_input_passwordless_generatedPassword" v-show="passwordLess.generatedPassword">
-                                <i class="fa fa-bolt" aria-hidden="true"></i> Password less
-                            </label>
-                            <div class="input-group" v-show="passwordLess.generatedPassword">
-                                <input id="editAccount_input_passwordless_generatedPassword" class="form-control" type="text" v-model="passwordLess.generatedPassword" readonly />
-                                <button class="btn btn-outline-light" type="button" @click="resetPasswordLess()"><i class="fa fa-undo"></i> Reset</button>
-                            </div>
-
-                            <label class="form-label" for="editAccount_input_passwordless_masterPassword" v-show="!passwordLess.generatedPassword">
-                                <i class="fa fa-bolt" aria-hidden="true"></i> Password less
-                            </label>
-                            <div class="input-group" v-show="!passwordLess.generatedPassword">
-                                <input id="editAccount_input_passwordless_masterPassword" class="form-control" type="password" autocomplete="current-password" aria-describedby="editAccount_input_passwordlessHelp_masterPassword" v-model="passwordLess.masterPassword" />
-                                <button class="btn btn-outline-light" type="button" @click="generatePasswordLess()"><i class="fa fa-cogs"></i> Generate</button>
-                            </div>
-                            <small id="editAccount_input_passwordlessHelp_masterPassword" class="form-text text-muted" v-show="!passwordLess.generatedPassword">Type your master password to generate the password less.</small>
                         </div>
                         
                         <div v-show="fieldAttrs.password.isExpanded" class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
@@ -364,7 +363,7 @@
                 <hr class="my-4">
 
                 <div class="col-6 col-xs-6 col-md-6 col-lg-6">
-                    <button type="button" class="btn" :class="isDeleting ? 'btn-dark': 'btn-outline-danger'" @click="remove()">
+                    <button type="button" class="btn" :class="isDeleting ? 'btn-dark': 'btn-link-danger'" @click="remove()">
                         <i class="fa fa-trash"></i> {{ isDeleting ? 'Deleting ...' : 'Delete' }}
                     </button>
                 </div>
@@ -405,6 +404,7 @@
                 isSaving: false,
                 isDeleting: false,
                 newTag: '',
+                showPasswordTypeOptions: false,
                 passwordLess: {
                     masterPassword: '',
                     generatedPassword: ''
@@ -499,6 +499,11 @@
                 'resetCurrentEditingAccount'
             ]),
             ...mapActions(useAlertStore, ['openAlert']),
+
+            selectPasswordType: function (passwordType) {
+                this.account.is_password_less = passwordType === 'passwordLess';
+                this.showPasswordTypeOptions = false;
+            },
     
             save: async function() {
                 if (!this.account.isValid()) {
