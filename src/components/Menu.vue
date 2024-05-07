@@ -97,21 +97,28 @@
             ]),
 
             onAddAccount: function () {
+                this.$router.push({ name: 'AddAccount' });
+
                 this.openSidebar(this.SIDEBAR.ADD_ACCOUNT);
                 this.closeSidebar(this.SIDEBAR.MENU);
             },
 
             onOpenSettings: function () {
+                this.$router.push({ name: 'Settings' });
+
                 this.openSidebar(this.SIDEBAR.SETTINGS);
                 this.closeSidebar(this.SIDEBAR.MENU);
             },
 
             onOpenTagsList: function () {
+                this.$router.push({ name: 'TagsList' });
+
                 this.openSidebar(this.SIDEBAR.TAGS_LIST);
                 this.closeSidebar(this.SIDEBAR.MENU);
             },
 
             onOpenTagsTree: function () {
+                this.$router.push({ name: 'TagsTree' });
                 this.openSidebar(this.SIDEBAR.TAGS_TREE);
                 this.closeSidebar(this.SIDEBAR.MENU);
             }
