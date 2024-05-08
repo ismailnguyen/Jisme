@@ -47,9 +47,17 @@
 
                 <div class="row" v-show="isExpanded" v-if="(account.type == 'account' || account.type == '2fa') && (account.password || account.password_clue)">
                     <div class="col-sm-12">
-                        <span class="small">
-                            <i class="fa fa-lock" aria-hidden="true"></i>
-                            {{ account.password || account.password_clue }}
+                        <span class="small" v-if="account.password">
+                            <i class="fa fa-unlock" aria-hidden="true"></i>
+                            {{ account.password }}
+                        </span>
+                        <span class="small" v-if="account.password_clue && !account.is_password_less">
+                            <i class="fa fa-eye" aria-hidden="true"></i>
+                            {{ account.password_clue }}
+                        </span>
+                        <span class="small" v-if="account.is_password_less">
+                            <i class="fa fa-bolt" aria-hidden="true"></i>
+                            Password less
                         </span>
                     </div>
                 </div>
