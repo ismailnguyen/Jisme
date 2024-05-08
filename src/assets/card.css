@@ -60,12 +60,18 @@
 
 /* Stacked cards design */
 .stacked-cards {
-    height: 80vh;
+    height: 30vh;
     max-height: 100%;
     flex-flow: column wrap;
     overflow: scroll;
     box-sizing: border-box;
     display: flex;
+}
+
+@media (min-width: 576px) {
+    .stacked-cards {
+        height: 50vh;
+    }
 }
 
 .stacked-cards .card-wrapper {

@@ -15,19 +15,19 @@
         </header>
 
         <AccountTypesList
-            v-show="!isSearching" />
+            v-if="!isSearching" />
 
         <RecentAccountList
             :accountsCardSize="accountsCardSize"
             :isLoading="isLoading"
-            v-show="!isSearching" />
+            v-if="!isSearching" />
 
         <FilteredAccountList
             :searchQuery="searchQuery"
             :filteredAccounts="filteredAccounts"
             :accountsCardSize="accountsCardSize"
             :isLoading="isLoading"
-            v-show="isSearching" />
+            v-if="isSearching" />
         
     </div>
 </template>

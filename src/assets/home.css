@@ -2,15 +2,12 @@ a {
     color: var(--color-text);
 }
 .main-container {
-    padding-top: 6rem;
+    padding-top: 4rem;
 }
 @media (max-width: 767.98px) {
     .main-container {
         padding-top: 2rem;
     }
-    .search-title {
-        padding-left: 4rem;
-   }
 }
 header {
     width: 100%;
@@ -35,6 +32,11 @@ header {
     position: absolute;
     transition: all .5s;
 }
+
+#page-content-wrapper .main-container:first-of-type {
+    padding-top: 6rem;
+}
+
 #menu-toggle {
     transition: all .3s;
     font-size: 2em;

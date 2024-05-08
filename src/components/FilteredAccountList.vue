@@ -1,11 +1,11 @@
 <template>
     <div class="main-container container-fluid">
         <div class="row">
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title placeholder-glow" v-show="isLoading">
+            <div class="mb-3 col-6 col-xs-6 col-sm-6 placeholder-glow" v-show="isLoading">
                 <span class="placeholder col-2 me-3 mb-0"></span><br>
             </div>
 
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title tags" v-show="!isLoading">
+            <div class="mb-3 col-6 col-xs-6 col-sm-6 tags" v-show="!isLoading">
                 <h5 class="font-size-16 me-3 mb-0" v-show="searchQuery">Results for "{{ searchQuery }}"</h5>
 
                 <span
@@ -32,10 +32,10 @@
                 </span>
             </div>
 
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title placeholder-glow" v-if="isLoading">
+            <div class="mb-3 col-6 col-xs-6 col-sm-6 placeholder-glow" v-if="isLoading">
                 <span class="placeholder col-4 float-end"></span>
             </div>
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title" v-else>
+            <div class="mb-3 col-6 col-xs-6 col-sm-6" v-else>
                 <span class="category-title float-end">{{ filteredAccounts.length }} out of {{ accounts.length }}</span>
             </div>
         </div>

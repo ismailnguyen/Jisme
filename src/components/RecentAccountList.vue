@@ -1,17 +1,17 @@
 <template>
     <div class="main-container container-fluid">
         <div class="row">
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title placeholder-glow" v-show="isLoading">
+            <div class="mb-3 col-12 col-xs-12 col-sm-6 placeholder-glow" v-show="isLoading">
                 <span class="placeholder col-4 me-3 mb-0"></span><br>
             </div>
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title tags" v-show="!isLoading">
+            <div class="mb-3 col-12 col-xs-12 col-sm-6" v-show="!isLoading">
                 <h5 class="font-size-16 me-3 mb-0">Recently viewed</h5>
             </div>
 
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title placeholder-glow" v-if="isLoading">
+            <div class="mb-3 col-6 col-xs-6 col-sm-6 d-none d-sm-block placeholder-glow" v-if="isLoading">
                 <span class="placeholder col-4 float-end"></span>
             </div>
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 search-title" v-else>
+            <div class="mb-3 col-6 col-xs-6 col-sm-6 d-none d-sm-block" v-else>
                 <span class="category-title float-end">{{ recentAccounts.length }} out of {{ accounts.length }}</span>
             </div>
         </div>
@@ -23,6 +23,7 @@
         </div>
         <div class="row stacked-cards" v-else>
             <AccountItem
+                :size="accountsCardSize"
                 v-for="(account, index) in recentAccounts"
                 v-bind:key="index"
                 :account="account" />
