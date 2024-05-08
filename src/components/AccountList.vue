@@ -124,9 +124,6 @@
                 }
             );
         },
-        async mounted() {
-            this.focusSearchInput();
-        },
         computed: {
             ...mapStores(useAccountsStore),
             ...mapWritableState(useAccountsStore, ['selectedTags', 'selectedTypes']),
@@ -169,6 +166,8 @@
 
             onAccountsLoaded: function () {
                 this.isLoading = false;
+
+                this.focusSearchInput();
             },
 
             focusSearchInput: function () {
