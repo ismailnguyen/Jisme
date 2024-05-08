@@ -79,6 +79,12 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         return uniqueTags.sort((a, b) => (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0);
     }
 
+    const getMostUsedTags = () => {
+        let uniqueTags = getUniqueTags();
+
+        return uniqueTags.sort((a, b) => b.count - a.count);
+    }
+
     async function loadCache () {
         // Pre fill the store with the cached accounts
         recentAccounts.value = await accountsService.getRecentsCached();
@@ -231,6 +237,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
         getAccountsFilteredByQuery,
         getUniqueTags,
+        getMostUsedTags,
 
         loadCache,
         fetchRecentAccounts,

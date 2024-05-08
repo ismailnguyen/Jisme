@@ -6,7 +6,9 @@
             </div>
 
             <div class="mb-3 col-6 col-xs-6 col-sm-6 tags" v-show="!isLoading">
-                <h5 class="font-size-16 me-3 mb-0" v-show="searchQuery">Results for "{{ searchQuery }}"</h5>
+                <h5 class="font-size-16 me-3 mb-0 " v-show="searchQuery">
+                    Results for <span class="fw-bold">{{ searchQuery }}</span>
+                </h5>
 
                 <span
                     class="badge rounded-pill badge-primary"

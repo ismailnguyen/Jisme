@@ -74,6 +74,20 @@
     }
 }
 
+.stacked-cards-small {
+    height: 20vh;
+}
+
+@media (min-width: 576px) {
+    .stacked-cards-small .card-wrapper {
+        width: 30% !important;
+    }
+}
+
+.stacked-cards-small .card-wrapper:hover .btn {
+    display: block !important;
+}
+
 .stacked-cards .card-wrapper {
     width: 80%;
     height: 100%;

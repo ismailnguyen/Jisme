@@ -37,6 +37,14 @@ header {
     padding-top: 6rem;
 }
 
+/* For small devices, when the searchbar moves on bottom,
+give some space in the page so that the searbar doesn't overlap content */
+@media (max-width: 767.98px) {
+    #page-content-wrapper .main-container:last-of-type {
+        padding-bottom: 6rem;
+    }
+}
+
 #menu-toggle {
     transition: all .3s;
     font-size: 2em;

@@ -17,6 +17,9 @@
         <AccountTypesList
             v-if="!isSearching" />
 
+        <MostUsedTags
+            v-if="!isSearching" />
+
         <RecentAccountList
             :accountsCardSize="accountsCardSize"
             :isLoading="isLoading"
@@ -49,6 +52,7 @@
     import RecentAccountList from '../components/RecentAccountList.vue'
     import FilteredAccountList from '../components/FilteredAccountList.vue'
     import AccountTypesList from '../components/AccountTypesList.vue'
+    import MostUsedTags from '../components/MostUsedTags.vue'
 
     const MIN_SEARCH_QUERY_LENGTH = 3;
     
@@ -58,7 +62,8 @@
             AccountItem,
             RecentAccountList,
             FilteredAccountList,
-            AccountTypesList
+            AccountTypesList,
+            MostUsedTags
         },
         data() {
             return {
