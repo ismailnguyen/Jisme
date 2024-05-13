@@ -1,7 +1,7 @@
 {
   "name": "jisme",
   "description": "Jisme",
-  "version": "3.7.0",
+  "version": "3.7.1",
   "author": "Ismaïl <dev@ismailnguyen.com>",
   "scripts": {
     "dev": "vite",
