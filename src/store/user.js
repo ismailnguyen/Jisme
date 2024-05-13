@@ -1,10 +1,4 @@
 import { 
-    LOCAL_STORAGE_DB_NAME,
-    LOCAL_STORAGE_USER_KEY,
-    LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY,
-    LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY
- } from '../utils/storage'
-import { 
     PASSKEY_RP_NAME,
     PASSKEY_CHALLENGE
 } from '../utils/auth'
@@ -14,17 +8,12 @@ import {
     parseCreationOptionsFromJSON,
     parseRequestOptionsFromJSON
   } from '@github/webauthn-json/browser-ponyfill';
-import localforage from 'localforage'
 
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useAlertStore } from '@/store';
 import { APP_USER_STORE } from '../utils/store'
 import UserService from '../services/UserService'
-
-localforage.config({
-    name: LOCAL_STORAGE_DB_NAME
-});
 
 const useUserStore = defineStore(APP_USER_STORE, () => {
     const user = ref({})
@@ -34,15 +23,19 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     const alertStore = useAlertStore()
 
     const lastRememberedUsername = computed(async () => {
-        return await localforage.getItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY)
+        return await userService.lastRememberedUsername();
     })
 
+    async function setLastRememberedUsername (username) {
+        await userService.setLastRememberedUsername(username);
+    }
+
     const isAutoLoginEnabled = computed(async () => {
-        return await localforage.getItem(LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY)
+        return await userService.isAutoLoginEnabled();
     })
 
     async function setAutoLogin (enabled) {
-        await localforage.setItem(LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY, enabled);
+        await userService.enableAutoLogin(enabled);
     }
 
     async function requestLogin({ username, extendSession }) {
@@ -111,7 +104,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     const init = async () => {
-        user.value = await localforage.getItem(LOCAL_STORAGE_USER_KEY);
+        user.value = await userService.getCachedUser();
         // User's uuid is only filled when logged in successfully
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
     }
@@ -121,13 +114,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
             return;
         }
 
-        await localforage.setItem(LOCAL_STORAGE_USER_KEY, {
-            uuid: user.uuid,
-            avatarUrl: user.avatarUrl,
-            email: user.email,
-            token: user.token,
-            public_encryption_key: user.public_encryption_key
-        });
+        await userService.updateCachedUser(user);
 
         if (isExtendedSession.value) {
             await setLastRememberedUsername(user.email);
@@ -227,17 +214,13 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value.passkeys = user.value.passkeys.filter(passkey => passkey.passkey.id !== passkeyToDelete.passkey.id);
     }
 
-    function signOut() {
-        isLoggedIn.value = false;
-        user.value = null;
-
-        localforage.removeItem(LOCAL_STORAGE_USER_KEY);
+    async function signOut() {
+        await userService.signOut();
 
         alertStore.openAlert('Logged out', 'You have been successfully logged out.', 'info');
-    }
 
-    async function setLastRememberedUsername (username) {
-        await localforage.setItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY, username);
+        isLoggedIn.value = false;
+        user.value = null;
     }
     
     return {

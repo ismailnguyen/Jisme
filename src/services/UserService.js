@@ -1,10 +1,54 @@
+import { 
+    LOCAL_STORAGE_DB_NAME,
+    LOCAL_STORAGE_USER_KEY,
+    LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY,
+    LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY,
+    LOCAL_STORAGE_ACCOUNTS_KEY,
+    LOCAL_STORAGE_RECENT_ACCOUNTS_KEY
+ } from '../utils/storage'
+import localforage from 'localforage'
+
 import { BASE_API_URL } from '../utils/api'
 import { getHeaders, getHeadersWithAuth } from '../utils/requestHeader'
 import { LoginException } from '../utils/errors'
 
+localforage.config({
+    name: LOCAL_STORAGE_DB_NAME
+});
+
 class UserService {
     constructor() {
         const USERS_API_URL = BASE_API_URL + 'users';
+
+        this.getCachedUser = async function () {
+            return await localforage.getItem(LOCAL_STORAGE_USER_KEY);
+        }
+
+        this.updateCachedUser = async function (user) {
+            await localforage.setItem(LOCAL_STORAGE_USER_KEY, {
+                uuid: user.uuid,
+                avatarUrl: user.avatarUrl,
+                email: user.email,
+                token: user.token,
+                public_encryption_key: user.public_encryption_key
+            });
+        }
+
+        this.lastRememberedUsername = async function () {
+            return await localforage.getItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY);
+        }
+
+        this.setLastRememberedUsername = async function (username) {
+            await localforage.setItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY, username);
+        }
+
+        this.isAutoLoginEnabled = async function () {
+            return await localforage.getItem(LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY);
+        }
+
+        this.setAutoLogin = async function (enabled) {
+            await localforage.setItem(LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY, enabled);
+        }
 
         this.getAccountInformation = async function (accessToken) {
             try {
@@ -34,6 +78,15 @@ class UserService {
                 throw new Error('Server unavailable!');
             }
         };
+
+        this.signOut = async function () {
+            // Remove all user related data from local storage
+            await localforage.removeItem(LOCAL_STORAGE_USER_KEY);
+
+            // Remove all user's accounts from local storage
+            await localforage.removeItem(LOCAL_STORAGE_RECENT_ACCOUNTS_KEY);
+            await localforage.removeItem(LOCAL_STORAGE_ACCOUNTS_KEY);
+        }
 
         this.requestLogin = async function ({ username }) {
             let credentials = {
