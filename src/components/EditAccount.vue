@@ -237,8 +237,55 @@
                                 <button class="btn btn-outline-light" type="button" @click="resetPasswordLess()" v-if="account.is_password_less && passwordLess.generatedPassword"><i class="fa fa-undo"></i> Reset</button>
                             </div>
 
-                            <small id="editAccount_input_passwordHelp" class="form-text text-muted" v-show="fieldAttrs.password.isExpanded && !account.is_password_less && !account.password">Click button to generate password.</small>
-                            <small id="editAccount_input_passwordlessHelp_masterPassword" class="form-text text-muted" v-show="fieldAttrs.password.isExpanded && account.is_password_less && !passwordLess.generatedPassword">Type your master password to generate the password less.</small>
+                            <small id="editAccount_input_passwordHelp" class="form-text text-muted" v-show="fieldAttrs.password.isExpanded && !account.is_password_less && !account.password">
+                                Click button to generate password.
+                            </small>
+                            <small id="editAccount_input_passwordlessHelp_masterPassword" class="form-text text-muted" v-show="fieldAttrs.password.isExpanded && account.is_password_less && !passwordLess.generatedPassword">
+                                Type your master password to generate the password less.
+                            </small>
+
+                            <!-- <div class="row" v-show="fieldAttrs.password.isExpanded && account.is_password_less && !passwordLess.generatedPassword">
+                                <div class="col">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">a-z</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">A-Z</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">0-9</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" v-show="fieldAttrs.password.isExpanded && account.is_password_less && !passwordLess.generatedPassword">
+                                <div class="col">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                        <label class="form-check-label" for="flexSwitchCheckDefault">%!@</label>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon1">-</button>
+                                        <input id="tatata" type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon1">+</button>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon1">-</button>
+                                        <input id="tatata" type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+                                        <button class="btn btn-outline-secondary" type="button" id="button-addon1">+</button>
+                                    </div>
+                                </div>
+                            </div> -->
                         </div>
 
                         <div v-show="fieldAttrs.password.isExpanded" class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
