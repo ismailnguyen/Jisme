@@ -67,7 +67,7 @@ class Account {
         const passwordProfile = {
             lowercase: true,
             uppercase: true,
-            numbers: true,
+            digits: true,
             symbols: true,
             length: 16,
             counter: 1,
