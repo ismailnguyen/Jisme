@@ -136,6 +136,7 @@
     import {
         useUiStore,
         useAlertStore,
+        useAccountsStore
     } from '@/store'
     import Account from '../models/Account'
     import { truncateString } from '../utils/textFormat'
@@ -188,10 +189,18 @@
                 'setCurrentEditingAccount'
             ]),
             ...mapActions(useAlertStore, ['openAlert']),
+            ...mapActions(useAccountsStore, ['findAccountById']),
 
             edit: async function() {
+                const accountToEdit = this.findAccountById(this.account._id);
+
+                if (accountToEdit) {
+                    this.setCurrentEditingAccount(accountToEdit);
+                } else {
+                    this.openAlert('Account no more available', 'danger');
+                }
+
                 this.openSidebar(this.SIDEBAR.EDIT_ACCOUNT);
-                await this.setCurrentEditingAccount(this.account);
             },
 
             onCardClick: function() {

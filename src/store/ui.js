@@ -40,7 +40,8 @@ const store = defineStore('ui', () => {
     const setCurrentEditingAccount = async (account) => {
         currentEditingAccount.value = account;
 
-        await accountsStore.updateAccount(account);
+        // Do not await for this task because it can run on background
+        accountsStore.updateAccount(account);
     }
 
     const resetCurrentEditingAccount = () => {

@@ -92,6 +92,10 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         _filteredAccounts.value = accounts.value;
     }
 
+    function findAccountById(accountId) {
+        return accounts.value.find(a => a._id === accountId);
+    }
+
     async function fetchRecentAccounts() {
         try {
             recentAccounts.value = await accountsService.getRecents() || [];
@@ -245,6 +249,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         addAccount,
         updateAccount,
         removeAccount,
+        findAccountById,
 
         enableServerEncryption
     }
