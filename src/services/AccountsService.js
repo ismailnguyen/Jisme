@@ -112,7 +112,8 @@ class AccountsService {
 
                     // Each time we get a page, we add the accounts to the list
                     fetchCallback(
-                        data.map(account => parseAccount(getDecryptedAccount(account, this.user.public_encryption_key)))
+                        data.map(account => parseAccount(getDecryptedAccount(account, this.user.public_encryption_key))),
+                        totalAccounts
                     );
 
                     if (next && next.pageNumber && next.limit) {
@@ -126,7 +127,7 @@ class AccountsService {
                         return;
                     }
 
-                    endCallback(totalAccounts);
+                    endCallback();
 
                     return;
                 }

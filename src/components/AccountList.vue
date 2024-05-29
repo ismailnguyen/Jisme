@@ -1,4 +1,15 @@
 <template>
+    <div
+        class="progress"
+        v-show="accountsFetchingProgression.isFetching"
+        role="progressbar"
+        aria-label="Fetching accounts..."
+        :aria-valuenow="accountsFetchingProgression.totalFetched"
+        aria-valuemin="0"
+        :aria-valuemax="accountsFetchingProgression.total">
+      <div class="progress-bar" :style="'width: ' + accountsFetchingProgression.progressionPercentage + '%'"></div>
+    </div>
+
     <div id="page-content-wrapper" class="container-fluid">
         <header class="row header-search justify-content-center">
             <div class="col-xs-12 col-md-8 col-lg-6">
@@ -69,7 +80,12 @@
             return {
                 searchQuery: this.$route.query.search || '', // Default search query is looked up from query string,
                 isLoading: true,
-                filteredAccounts: []
+                filteredAccounts: [],
+                accountsFetchingProgression: {
+                    isFetching: false,
+                    totalFetched: 0,
+                    total: 0
+                }
             }
         },
         async created() {
@@ -124,9 +140,16 @@
                 }
             );
         },
+        async mounted() {
+            await this.fetchLatestAccounts();
+        },
         computed: {
             ...mapStores(useAccountsStore),
             ...mapWritableState(useAccountsStore, ['selectedTags', 'selectedTypes']),
+            ...mapState(useAccountsStore, [
+                'totalFetchedAccounts',
+                'totalAccounts',
+            ]),
             ...mapState(useUiStore, [
                 'isLeftSidebarOpened',
                 'isRightSidebarOpened',
@@ -157,17 +180,37 @@
             ...mapActions(useAccountsStore, [
                 'loadCache',
                 'getAccountsFilteredByQuery',
-                'applyFilters'
+                'applyFilters',
+                'fetchAccounts'
             ]),
 
             ...mapActions(useAlertStore, [
                 'openAlert'
             ]),
 
-            onAccountsLoaded: function () {
+            onAccountsLoaded: function (mutation, state) {
                 this.isLoading = false;
+                
+                if (state.totalAccounts >= state.totalFetchedAccounts) {
+                    this.displayProgress(state.totalFetchedAccounts, state.totalAccounts);
+
+                    if (state.totalFetchedAccounts == state.totalAccounts) {
+                        setTimeout(() => {
+                            this.accountsFetchingProgression.isFetching = false;
+                        }, 1000);
+                    }
+                }
 
                 this.focusSearchInput();
+            },
+
+            displayProgress: function (current, total) {
+                this.accountsFetchingProgression = {
+                    isFetching: true,
+                    totalFetched: current,
+                    total: total,
+                    progressionPercentage: Math.round((current / total) * 100)
+                };
             },
 
             focusSearchInput: function () {
@@ -183,6 +226,20 @@
                                             true
                                         )
                                         : [];
+            },
+
+            fetchLatestAccounts: async function () {
+                try {
+                    await this.fetchAccounts();
+                } catch (error) {
+                    if (error instanceof SessionExpiredException) {
+                        this.openAlert('Session expired', error.message, 'danger');
+                        this.$router.go('/');
+                    }
+                    else {
+                        this.openAlert(error.name || 'Error while loading accounts', error.message, 'danger');
+                    }
+                }
             }
         } 
     }

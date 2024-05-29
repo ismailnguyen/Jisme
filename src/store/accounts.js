@@ -11,6 +11,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const userStore = useUserStore();
     const { user } = storeToRefs(userStore);
 
+    const totalAccounts = ref(0);
+    const totalFetchedAccounts = ref(0);
     const recentAccounts = ref([]);
     const accounts = ref([]);
     const _filteredAccounts = ref([]);
@@ -115,7 +117,9 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         try {
             // Update account while getting page by page from server
             await accountsService.getAll(
-                (fetchedAccounts) => {
+                (fetchedAccounts, totalAccountsNumber) => {
+                    totalAccounts.value = totalAccountsNumber;
+
                     // If fetchedAccounts exist in accounts, update them, otherwise add them
                     fetchedAccounts.forEach(account => {
                         let index = accounts.value.findIndex(a => a._id === account._id);
@@ -132,9 +136,11 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
                             console.log('New account retrieved')//, account);
                         }
                     });
+
+                    totalFetchedAccounts.value += fetchedAccounts.length;
                 },
                 // Update cached accounts only when all accounts are fetched
-                (totalAccounts) => {
+                () => {
                     updateLocalAccounts();
                 }
             );
@@ -233,6 +239,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         user,
         recentAccounts,
         accounts,
+        totalFetchedAccounts,
+        totalAccounts,
 
         selectedTypes,
         selectedTags,

@@ -68,7 +68,6 @@
         useAccountsStore,
         useAlertStore,
      } from '@/store'
-    import { SessionExpiredException } from '../utils/errors'
     import LoadingAccountItem from '../components/LoadingAccountItem.vue'
     import AccountItem from '../components/AccountItem.vue'
     
@@ -95,35 +94,14 @@
             LoadingAccountItem,
             AccountItem,
         },
-        async mounted() {
-            await this.fetchLatestAccounts();
-        },
         computed: {
             ...mapWritableState(useAccountsStore, ['selectedTags', 'selectedTypes']),
             ...mapState(useAccountsStore, ['accounts']),
         },
         methods: {
-            ...mapActions(useAccountsStore, [
-                'fetchAccounts',
-            ]),
-
             ...mapActions(useAlertStore, [
                 'openAlert'
             ]),
-
-            fetchLatestAccounts: async function () {
-                try {
-                    await this.fetchAccounts();
-                } catch (error) {
-                    if (error instanceof SessionExpiredException) {
-                        this.openAlert('Session expired', error.message, 'danger');
-                        this.$router.go('/');
-                    }
-                    else {
-                        this.openAlert(error.name || 'Error while loading accounts', error.message, 'danger');
-                    }
-                }
-            },
 
             removeTag: function (tag) {
                 let newTags = this.$route.query.tags.split(',').map(x => x.trim());

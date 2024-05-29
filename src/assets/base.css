@@ -94,3 +94,14 @@ body {
         margin-left: 12px;
     }
 }
+
+.progress {
+    height: 0.1rem;
+    border-radius: 0;
+    width: 100%;
+    background: none;
+}
+
+.progress-bar {
+    background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
+}
