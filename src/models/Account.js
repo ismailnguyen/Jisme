@@ -12,7 +12,7 @@ class Account {
                     is_password_less = false,
 					password_clue = '', 
 					tags = '', 
-					created_date = new Date(), 
+					created_date = new Date(),
 					social_login = '', 
 					description = '',
 					notes = '',
