@@ -2,7 +2,8 @@
     left: 0;
 }
 .left-sidebar {
-    background: var(--color-background-mute);
+    /* background: var(--color-background-mute); */
+    background: #252426;
 }
 .left-sidebar-wrapper.sidebar-wrapper-open {
     width: 250px !important;

@@ -30,7 +30,13 @@ header {
 #page-content-wrapper {
     width: 100%;
     position: absolute;
-    transition: all .5s;
+    
+}
+/* Add animation only on large devices */
+@media (min-width: 576px) {
+    #page-content-wrapper {
+        transition: all .5s;
+    }
 }
 
 #page-content-wrapper .main-container:first-of-type {
@@ -46,8 +52,13 @@ give some space in the page so that the searbar doesn't overlap content */
 }
 
 #menu-toggle {
-    transition: all .3s;
     font-size: 2em;
+}
+/* Add animation only on large devices */
+@media (min-width: 576px) {
+    #menu-toggle {
+        transition: all .3s;
+    }
 }
 
 .right-sidebar-opened #page-content-wrapper {

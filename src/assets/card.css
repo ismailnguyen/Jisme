@@ -8,7 +8,7 @@
     margin: 0 10px;
     border-radius: 15px;
     box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
-    transition: all .3s cubic-bezier(0,0,.5,1);
+    
     height: 100%;
 }
 @media (prefers-color-scheme: dark) {
@@ -17,6 +17,12 @@
         background: var(--color-background-soft);
         box-shadow: none;
    }
+}
+/* Add animation only on large devices */
+@media (min-width: 576px) {
+    .card {
+        transition: all .3s cubic-bezier(0,0,.5,1);
+    }
 }
 .card:hover {
     box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
