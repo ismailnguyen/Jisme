@@ -93,6 +93,10 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         await createSession(user);
     }
 
+    async function getLastUpdatedTime() { 
+        return await userService.getAccountInformation(user.value.token);
+    }
+
     async function getAccountInformation() { 
         user.value = await userService.getAccountInformation(user.value.token);
     }
@@ -242,6 +246,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         isPasskeyCreationSupported,
 
         getAccountInformation,
+        getLastUpdatedTime,
         update,
         generatePasskey,
         removePasskey,
