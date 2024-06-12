@@ -166,9 +166,7 @@
             </div>
 
             <div class="sidebar-footer">
-                <hr class="my-4">
-
-                <button type="button" class="btn btn-primary" @click="add()" :disabled="isCreating">
+                <button type="button" class="btn btn-link-primary" @click="add()" :disabled="isCreating">
                     <span v-if="isCreating" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     <span v-else><i class="fa fa-save"></i> Add</span>
                 </button>
