@@ -25,7 +25,7 @@
         </a>
 
         <a
-            id="menu-toggle"
+            id="add-account-toggle"
             class="floating-button floating-button--add d-none"
             :class="isSidebarOpen(SIDEBAR.MENU) ? '' : 'd-lg-block d-xl-block'"
             @click="openSidebar(SIDEBAR.ADD_ACCOUNT)">
@@ -79,10 +79,15 @@
                 default: ''
             },
         },
-        mounted() {
+        async mounted() {
             if(this.isAnySidebarOpen && this.sidebarName) {
                 this.openSidebar(this.sidebarName);
             }
+
+            const lastUserUpdate = await this.getLastUpdatedTime();
+            console.log('Last user update:', lastUserUpdate, new Date());
+
+            document.addEventListener('scroll', this.hideFloatingButtonsonScroll)
         },
         computed: {
             ...mapState(useUserStore, ['user', 'isLoggedIn']),
@@ -113,7 +118,27 @@
                 'toggleSidebar',
                 'openSidebar',
                 'openSidebar',
-            ])
+            ]),
+
+            ...mapActions(useUserStore, [
+                'getLastUpdatedTime'
+            ]),
+
+            hideFloatingButtonsonScroll: function(event) {
+                const scrollingElement = event.target.scrollingElement;
+                var lastScrollTop = 0;
+
+                var st = scrollingElement.scrollTop;
+
+                var isScrollDown = st > lastScrollTop;
+
+                const floatingButtons = document.querySelectorAll('.floating-button');
+                floatingButtons.forEach(button => {
+                    button.style.top = isScrollDown ? '-80rem' : '20px';
+                });
+
+                lastScrollTop = st;
+            }
         }
     }
 </script>
