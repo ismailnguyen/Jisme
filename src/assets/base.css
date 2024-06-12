@@ -81,6 +81,16 @@ body {
 .badge-secondary:hover {
     background-color: #162056db;
 }
+
+.button--close {
+    cursor: pointer;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 2rem;
+    text-align: center;
+    border: none;
+    transition: all .3s;
+}
  
 .shake{
     animation: shake 0.3s ease-in-out;

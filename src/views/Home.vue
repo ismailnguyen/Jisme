@@ -26,8 +26,7 @@
 
         <a
             id="add-account-toggle"
-            class="floating-button floating-button--add d-none"
-            :class="isSidebarOpen(SIDEBAR.MENU) ? '' : 'd-lg-block d-xl-block'"
+            class="floating-button floating-button--add d-none d-lg-block d-xl-block"
             @click="openSidebar(SIDEBAR.ADD_ACCOUNT)">
             <i class="fa fa-plus"></i>
         </a>
@@ -93,7 +92,6 @@
             ...mapState(useUserStore, ['user', 'isLoggedIn']),
             ...mapState(useUiStore, [
                 'currentEditingAccount',
-                'isLeftSidebarOpened',
                 'isRightSidebarOpened',
                 'isSidebarOpen',
                 'SIDEBAR'
@@ -102,10 +100,6 @@
             sidebarAdjustmentClasses: function () {
                 let cssClass = '';
 
-                if (this.isLeftSidebarOpened) {
-                    cssClass += ' left-sidebar-opened';
-                }
-                
                 if (this.isRightSidebarOpened) {
                     cssClass += ' right-sidebar-opened';
                 }

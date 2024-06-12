@@ -1,19 +1,10 @@
 <template>
-    <div class="sidebar-wrapper left-sidebar-wrapper" :class="visible ? 'sidebar-wrapper-open' : ''">
-        <div class="sidebar left-sidebar">
-            <div class="sidebar-header">
+    <div class="tray-wrapper" :class="visible ? 'tray-wrapper-open' : ''">
+        <div class="tray-overlay" @click="closeSidebar(SIDEBAR.MENU)"></div>
+        <div class="tray">
+            <div class="tray-header">
                 <div class="row">
                     <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4">
-                        <button type="button" class="button--close" @click="closeSidebar(SIDEBAR.MENU)">
-                            <i class="fa fa-solid fa-chevron-left d-block d-md-none"></i>
-                            <i class="fa fa-solid fa-close d-none d-md-block"></i>
-                        </button>
-                    </div>
-
-                    <div class="mb-3" :class="user && user.avatarUrl ? 'col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4' : 'col-xs-8 col-sm-8 col-8 col-md-8 col-lg-8'">
-                    </div>
-                    
-                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4 justify-content-end" v-if="user && user.avatarUrl">
                         <img
                             :src="user && user.avatarUrl"
                             loading="lazy"
@@ -21,50 +12,55 @@
                             :title="user.email"
                             class="sidebar-icon" />
                     </div>
+
+                    <div class="mb-3" :class="user && user.avatarUrl ? 'col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4' : 'col-xs-8 col-sm-8 col-8 col-md-8 col-lg-8'">
+                    </div>
+                    
+                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4 justify-content-end" v-if="user && user.avatarUrl">
+                        <button type="button" class="button--close" @click="closeSidebar(SIDEBAR.MENU)">
+                            <i class="fa fa-solid fa-close"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div class="sidebar-body">
+            <div class="tray-body">
                 <div class="row">
                     <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <button class="menu-actions btn btn-primary w-100" type="button" @click="onOpenTagsList()">
-                                <i class="fa fa-tags"></i>
-                                Tags list
-                            </button>
-                        </div>
+                        <button class="btn btn-light w-100" type="button" @click="onOpenTagsList()">
+                            <i class="fa fa-tags"></i>
+                            Tags list
+                        </button>
+                    </div>
 
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <button class="menu-actions btn btn-primary w-100" type="button" @click="onOpenTagsTree()">
-                                <i class="fa fa-chart-gantt"></i>
-                                Tags hierarchy
-                            </button>
-                        </div>
+                    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                        <button class="btn btn-light" type="button" @click="onOpenTagsTree()">
+                            <i class="fa fa-chart-gantt"></i>
+                            Tags hierarchy
+                        </button>
+                    </div>
 
-                        <hr class="my-4">
+                    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                        <button class="btn btn-light" type="button" @click="onOpenSettings()">
+                            <i class="fa fa-gear"></i>
+                            Settings
+                        </button>
+                    </div>
 
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <button class="menu-actions btn btn-primary w-100" type="button" @click="onOpenSettings()">
-                                <i class="fa fa-gear"></i>
-                                Settings
-                            </button>
-                        </div>
+                    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                        <button type="button" class="btn btn-red" @click="onAddAccount()">
+                            <i class="fa fa-plus"></i>
+                            Add account
+                        </button>
                     </div>
                </div>
-            </div>
-
-            <div class="row sidebar-footer">
-                <button type="button" class="btn btn-danger" @click="onAddAccount()">
-                    <i class="fa fa-plus"></i>
-                    Add account
-                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-    import '../assets/left_sidebar.css'
+    import '../assets/tray.css'
 
     import {
         mapState,

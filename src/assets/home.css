@@ -14,7 +14,7 @@ header {
     position: fixed;
     color: var(--color-text);
     padding: 20px 20px 20px 40px;
-    z-index: 99;
+    z-index: 10;
 }
 .form-control {
     color: #f8f9fa;
@@ -66,15 +66,8 @@ give some space in the page so that the searbar doesn't overlap content */
 }
 
 @media (min-width: 767.98px) {
-    .left-sidebar-opened #menu-toggle {
-        top: 20px;
-        left: 265px;
-   }
     .right-sidebar-opened #page-content-wrapper {
         width: 50% !important;
-   }
-    .left-sidebar-opened #page-content-wrapper {
-        padding-left: 250px;
    }
 }
 .floating-button.floating-button--menu {
@@ -98,7 +91,7 @@ give some space in the page so that the searbar doesn't overlap content */
     text-align: center;
     background-color: #fff;
     box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5);
-    z-index: 999;
+    z-index: 10;
     transition: all .5s;
 }
 .floating-button.floating-button--menu:hover,
