@@ -35,6 +35,9 @@ body {
 .btn {
     border-radius: 15px;
 }
+.btn-link-primary:hover {
+    color: RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1));
+}
 .btn-link-danger:hover {
     color: #dc3545;
 }
