@@ -1,30 +1,52 @@
 <template>
-    <div class="sidebar-wrapper right-sidebar-wrapper" :class="visible ? 'sidebar-wrapper-open' : ''">
-        <div class="sidebar right-sidebar bg-gradient-blue">
-            <div class="sidebar-header">
+    <div id="right-sidebar" class="sidebar-wrapper right-sidebar-wrapper" :class="visible ? 'sidebar-wrapper-open' : ''">
+        <div class="sidebar right-sidebar" :class="!isSmallHeader ? 'large-header' : ''">
+            <div class="sidebar-header bg-gradient-blue">
                 <div class="row">
-                    <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3" v-show="account.icon">
+                    <div class="mb-3 col-xs-2 col-sm-2 col-2 col-md-2 col-lg-2" v-show="account.icon">
+                        <button type="button" class="button--close" @click="closeAccountEditing()">
+                            <i class="fa fa-solid fa-chevron-left d-block d-md-none"></i>
+                            <i class="fa fa-solid fa-close d-none d-md-block"></i>
+                        </button>
+                    </div>
+
+                    <div class="mb-3 col-xs-2 col-sm-2 col-2 col-md-2 col-lg-2 justify-content-center">
                         <img
                             :src="account.icon"
                             loading="lazy"
                             :alt="account.displayPlatform"
                             :title="account.displayPlatform"
-                            class="sidebar-icon" />
+                            class="sidebar-icon"
+                            :class="isSmallHeader ? 'd-block' : 'd-none'" />
                     </div>
-
-                    <div class="mb-3" :class="account.icon ? 'col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6' : 'col-xs-9 col-sm-9 col-9 col-md-9 col-lg-9'">
-                        <h2 class="sidebar-title" :title="account._id">{{ account.displayPlatform }}</h2>
+                    <div class="mb-3 col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6 justify-content-center">
+                        <h2 :class="isSmallHeader ? 'd-block' : 'd-none'" class="sidebar-title" :title="account._id">{{ account.displayPlatform }}</h2>
                     </div>
                         
-                    <div class="mb-3 col-xs-3 col-sm-3 col-3 col-md-3 col-lg-3 justify-content-end">
-                        <button type="button" class="button--close" @click="closeAccountEditing()">
-                            <i class="fa fa-solid fa-close"></i>
+                    <div class="mb-3 col-xs-2 col-sm-2 col-2 col-md-2 col-lg-2 justify-content-end">
+                        <button type="button" class="button--close" @click="showOptions()">
+                            <i class="fa fa-solid fa-ellipsis"></i>
                         </button>
+                    </div>
+                </div>
+                <div class="row justify-content-center" :class="!isSmallHeader && account.icon ? 'd-block' : 'd-none'">
+                    <div class="col text-center">
+                        <img
+                            :src="account.icon"
+                            loading="lazy"
+                            :alt="account.displayPlatform"
+                            :title="account.displayPlatform"
+                            class="sidebar-large-icon" />
+                    </div>
+                </div>
+                <div class="row justify-content-center" :class="!isSmallHeader ? 'd-block' : 'd-none'">
+                    <div class="col-12 text-center">
+                        <h2 class="sidebar-title" :title="account._id">{{ account.displayPlatform }}</h2>
                     </div>
                 </div>
             </div>
             
-            <div class="sidebar-body">
+            <div id="right-sidebar-body" class="sidebar-body">
                 <form class="card-text lead">
                     <div class="row">
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12 small">
@@ -407,16 +429,18 @@
             </div>
 
             <div class="sidebar-footer row">
-                <hr class="my-4">
-
                 <div class="col-6 col-xs-6 col-md-6 col-lg-6">
                     <button type="button" class="btn" :class="isDeleting ? 'btn-dark': 'btn-link-danger'" @click="remove()">
-                        <i class="fa fa-trash"></i> {{ isDeleting ? 'Deleting ...' : 'Delete' }}
+                        <i class="fa fa-trash"></i>
+                        &nbsp;
+                        <span class="d-none d-md-block">{{ isDeleting ? 'Deleting ...' : 'Delete' }}</span>
                     </button>
                 </div>
                 <div class="col-6 col-xs-6 col-md-6 col-lg-6">
-                    <button type="button" class="btn" :class="isSaving ? 'btn-dark': 'btn-light'" @click="save()">
-                        <i class="fa fa-save"></i> {{ isSaving ? 'Saving ...' : 'Save' }}
+                    <button type="button" class="btn" :class="isSaving ? 'btn-dark': 'btn-link-primary'" @click="save()">
+                        <i class="fa fa-floppy-disk"></i>
+                        &nbsp;
+                        <span class="d-none d-md-block">{{ isSaving ? 'Saving ...' : 'Save' }}</span>
                     </button>
                 </div>
             </div>
@@ -452,6 +476,7 @@
                 isDeleting: false,
                 newTag: '',
                 showPasswordTypeOptions: false,
+                isSmallHeader: false,
                 passwordLess: {
                     masterPassword: '',
                     generatedPassword: ''
@@ -536,6 +561,13 @@
                 return 'Please fill the secret key';
             }
         },
+        mounted() {
+            document.getElementById('right-sidebar')
+            .addEventListener('scroll', this.scrollFunction);
+
+            document.getElementById('right-sidebar-body')
+            .addEventListener('scroll', this.scrollFunction);
+        },
         methods: {
             ...mapActions(useAccountsStore, [
                 'updateAccount',
@@ -546,6 +578,10 @@
                 'resetCurrentEditingAccount'
             ]),
             ...mapActions(useAlertStore, ['openAlert']),
+
+            scrollFunction: function (e) {
+                this.isSmallHeader = e.target.scrollTop > 20;
+            },
 
             selectPasswordType: function (passwordType) {
                 this.account.is_password_less = passwordType === 'passwordLess';
