@@ -11,7 +11,7 @@
     </div>
 
     <div id="page-content-wrapper" class="container-fluid">
-        <header class="row header-search justify-content-center">
+        <header id="search-container" class="row header-search justify-content-center">
             <div class="col-xs-12 col-md-8 col-lg-6">
                 <input
                     class="form-control searchBar"
@@ -142,6 +142,8 @@
         },
         async mounted() {
             await this.fetchLatestAccounts();
+
+            document.addEventListener('scroll', this.hideSearchBarOnScroll);
         },
         computed: {
             ...mapStores(useAccountsStore),
@@ -187,6 +189,19 @@
             ...mapActions(useAlertStore, [
                 'openAlert'
             ]),
+
+            hideSearchBarOnScroll: function (event) {
+                const scrollingElement = event.target.scrollingElement;
+                var lastScrollTop = 0;
+
+                var st = scrollingElement.scrollTop;
+
+                var isScrollDown = st > lastScrollTop;
+
+                document.querySelector('.header-search').style.bottom = isScrollDown ? '-8rem' : '0.2rem';
+
+                lastScrollTop = st;
+            },
 
             onAccountsLoaded: function (mutation, state) {
                 this.isLoading = false;
@@ -268,9 +283,10 @@
     @media (max-width: 767.98px) { 
         .header-search {
             position: fixed;
-            bottom: 10px;
+            bottom: 0.2rem;
             left: 0;
             right: 0;
+            transition: all .5s;
         }
     }
     
