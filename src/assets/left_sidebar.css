@@ -11,20 +11,10 @@
 @media (max-width: 767.98px) {
     .left-sidebar-wrapper.sidebar-wrapper-open {
         width: 100% !important;
-        border-radius: none;
+        border-radius: 0;
     }
 }
-.left-sidebar .sidebar-body {
-    padding-top: 3rem;
-}
-@media only screen and (min-width: 500px) {
-    .left-sidebar {
-        border-top-right-radius: 15px;
-        border-top-left-radius: 0;
-        border-bottom-right-radius: 15px;
-        border-bottom-left-radius: 0;
-   }
-}
+
 .left-sidebar .button--close {
     background-color: var(--color-text-inverted);
 }
