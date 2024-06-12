@@ -5,7 +5,8 @@
                 <div class="row">
                     <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4">
                         <button type="button" class="button--close" @click="closeSidebar(SIDEBAR.MENU)">
-                            <i class="fa fa-solid fa-close"></i>
+                            <i class="fa fa-solid fa-chevron-left d-block d-md-none"></i>
+                            <i class="fa fa-solid fa-close d-none d-md-block"></i>
                         </button>
                     </div>
 
