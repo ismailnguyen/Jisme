@@ -51,12 +51,12 @@ give some space in the page so that the searbar doesn't overlap content */
     }
 }
 
-#menu-toggle {
+.floating-button {
     font-size: 2em;
 }
 /* Add animation only on large devices */
 @media (min-width: 576px) {
-    #menu-toggle {
+    .floating-button {
         transition: all .3s;
     }
 }
@@ -83,14 +83,6 @@ give some space in the page so that the searbar doesn't overlap content */
     color: #fff;
     background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
 }
-.floating-button.floating-button--close {
-    top: 20px;
-    left: 15px;
-    background: #fff;
-}
-.floating-button.floating-button--close i {
-    color: var(--color-text-inverted);
-}
 .floating-button.floating-button--add {
     top: 20px;
     right: 15px;
@@ -107,8 +99,10 @@ give some space in the page so that the searbar doesn't overlap content */
     background-color: #fff;
     box-shadow: 9px 9px 16px rgb(163,177,198,0.6), -9px -9px 16px rgba(255,255,255, 0.5);
     z-index: 999;
+    transition: all .5s;
 }
-.floating-button.floating-button--menu:hover, .floating-button.floating-button--add:hover {
+.floating-button.floating-button--menu:hover,
+.floating-button.floating-button--add:hover {
     box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
     transform: scale3d(1.01,1.01,1.01);
 }
