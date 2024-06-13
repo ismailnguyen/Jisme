@@ -76,6 +76,19 @@ give some space in the page so that the searbar doesn't overlap content */
     color: #fff;
     background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
 }
+@media (prefers-color-scheme: dark) {
+    .floating-button.floating-button--menu {
+        background: #0b84fe;
+    }
+}
+
+@media (max-width: 767.98px) { 
+    .floating-button.floating-button--menu {
+        bottom: 0.2rem;
+        transition: all .5s;
+    }
+}
+
 .floating-button.floating-button--add {
     top: 20px;
     right: 15px;
