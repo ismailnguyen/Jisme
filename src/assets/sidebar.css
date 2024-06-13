@@ -4,7 +4,7 @@
     height: 100%;
     overflow-y: hidden;
     align-items: center;
-    z-index: 9999;
+    z-index: 999;
 }
 
 /* Add animation only on large devices */
@@ -53,28 +53,14 @@
     background: #f9f9f9;
     padding: 2px;
 }
-.sidebar .button--close {
-    cursor: pointer;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 2rem;
-    text-align: center;
-    border: none;
-    transition: all .3s;
-}
 
 .sidebar-header {
     padding-left: 1rem;
     padding-right: 1rem;
-    padding-top: 1rem;
+    padding-top: 0.5rem;
     border-bottom: 1px solid #f8f9fa;
     background-color: #ffffff6b;
     backdrop-filter: blur(5px);
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
     transition: all .5s;
 }
 
@@ -82,25 +68,17 @@
     display: flex;
 }
 .sidebar-body {
-    height: 100%;
-    overflow-y: auto;
     padding-top: 6rem;
     padding-bottom: 5rem;
     padding-left: 1rem;
     padding-right: 1rem;
 }
 .sidebar-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 0.5rem;
-    border-top: 1px solid #e9ecef;
-    background-color: rgb(248, 249, 250);
+    padding-left: 1rem;
+    padding-right: 1rem;
 }
 .sidebar-footer .btn {
     width: 100%;
-    color: #2870ea;
 }
 .sidebar-footer .btn:hover {
     color: white;

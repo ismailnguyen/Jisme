@@ -153,7 +153,6 @@
                 'totalAccounts',
             ]),
             ...mapState(useUiStore, [
-                'isLeftSidebarOpened',
                 'isRightSidebarOpened',
             ]),
 
@@ -165,13 +164,7 @@
             },
 
             accountsCardSize: function () {
-                if (this.isLeftSidebarOpened && this.isRightSidebarOpened) {
-                    return 'large';
-                }
-                else if (this.isLeftSidebarOpened) {
-                    return 'small';
-                }
-                else if (this.isRightSidebarOpened) {
+                if (this.isRightSidebarOpened) {
                     return 'medium';
                 }
 
@@ -266,20 +259,6 @@
         padding-right: 50%;
     }
 
-    /* Reduce search bar size when left sidebar menu is opened */
-    .left-sidebar-opened .header-search {
-        padding-left: 250px;
-    }
-
-    .left-sidebar-opened.right-sidebar-opened .header-search{
-        padding-right: 70%;
-        padding-left: 10%;
-    }
-
-    .header-search {
-        margin: auto;
-    }
-    
     @media (max-width: 767.98px) { 
         .header-search {
             position: fixed;
@@ -291,11 +270,12 @@
     }
     
     .searchBar {
-        border-radius: 15px;
-        color: #818182;
+        border-radius: 1.1rem;
+        color: #000;
         line-height: 2.5;
-        box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
-        backdrop-filter: blur(4px);
+        background-color:  #ffffffbf;
+        box-shadow: 2px 4px 12px rgb(0 0 0 / 20%);
+        backdrop-filter: blur(18px);
     }
 
 	@media (prefers-color-scheme: dark) {

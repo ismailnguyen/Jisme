@@ -1,35 +1,13 @@
 <template>
-    <div id="right-sidebar" class="sidebar-wrapper right-sidebar-wrapper" :class="visible ? 'sidebar-wrapper-open' : ''">
-        <div class="sidebar right-sidebar" :class="!isSmallHeader ? 'large-header' : ''">
-            <div class="sidebar-header bg-gradient-blue">
-                <div class="row">
-                    <div class="mb-3 col-xs-2 col-sm-2 col-2 col-md-2 col-lg-2" v-show="account.icon">
-                        <button type="button" class="button--close" @click="closeAccountEditing()">
-                            <i class="fa fa-solid fa-chevron-left d-block d-md-none"></i>
-                            <i class="fa fa-solid fa-close d-none d-md-block"></i>
-                        </button>
-                    </div>
-
-                    <div class="mb-3 col-xs-2 col-sm-2 col-2 col-md-2 col-lg-2 justify-content-center">
-                        <img
-                            :src="account.icon"
-                            loading="lazy"
-                            :alt="account.displayPlatform"
-                            :title="account.displayPlatform"
-                            class="sidebar-icon"
-                            :class="isSmallHeader ? 'd-block' : 'd-none'" />
-                    </div>
-                    <div class="mb-3 col-xs-6 col-sm-6 col-6 col-md-6 col-lg-6 justify-content-center">
-                        <h2 :class="isSmallHeader ? 'd-block' : 'd-none'" class="sidebar-title" :title="account._id">{{ account.displayPlatform }}</h2>
-                    </div>
-                        
-                    <div class="mb-3 col-xs-2 col-sm-2 col-2 col-md-2 col-lg-2 justify-content-end">
-                        <button type="button" class="button--close" @click="showOptions()">
-                            <i class="fa fa-solid fa-ellipsis"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="row justify-content-center" :class="!isSmallHeader && account.icon ? 'd-block' : 'd-none'">
+<div id="edit-account-bottom-sheet" class="bottom-sheet" :class="visible ? 'show' : ''">
+      <div class="sheet-overlay" @click="closeAccountEditing()"></div>
+      <div class="content">
+        <div class="header">
+          <div class="drag-icon"><span></span></div>
+        </div>
+        <div class="body">
+          <div class="bottom-sheet-header">
+                <div class="row justify-content-center">
                     <div class="col text-center">
                         <img
                             :src="account.icon"
@@ -39,14 +17,14 @@
                             class="sidebar-large-icon" />
                     </div>
                 </div>
-                <div class="row justify-content-center" :class="!isSmallHeader ? 'd-block' : 'd-none'">
+                <div class="row justify-content-center">
                     <div class="col-12 text-center">
                         <h2 class="sidebar-title" :title="account._id">{{ account.displayPlatform }}</h2>
                     </div>
                 </div>
             </div>
             
-            <div id="right-sidebar-body" class="sidebar-body">
+            <div class="bottom-sheet-body">
                 <form class="card-text lead">
                     <div class="row">
                         <div class="mb-3 col-xs-12 col-md-12 col-lg-12 small">
@@ -428,28 +406,29 @@
                 </form>
             </div>
 
-            <div class="sidebar-footer row">
-                <div class="col-6 col-xs-6 col-md-6 col-lg-6">
-                    <button type="button" class="btn" :class="isDeleting ? 'btn-dark': 'btn-link-danger'" @click="remove()">
-                        <i class="fa fa-trash"></i>
-                        &nbsp;
-                        <span class="d-none d-md-block">{{ isDeleting ? 'Deleting ...' : 'Delete' }}</span>
+            <div class="bottom-sheet-footer row">
+                <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                    <button class="btn btn-light"  :class="isSaving ? 'btn-dark': 'btn-light'" type="button" @click="save()">
+                        <i class="fa fa-floppy-disk"></i>
+                        {{ isSaving ? 'Saving ...' : 'Save' }}
                     </button>
                 </div>
-                <div class="col-6 col-xs-6 col-md-6 col-lg-6">
-                    <button type="button" class="btn" :class="isSaving ? 'btn-dark': 'btn-link-primary'" @click="save()">
-                        <i class="fa fa-floppy-disk"></i>
-                        &nbsp;
-                        <span class="d-none d-md-block">{{ isSaving ? 'Saving ...' : 'Save' }}</span>
+
+                <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+                    <button type="button" class="btn btn-red" :class="isDeleting ? 'btn-dark': 'btn-red'" @click="remove()">
+                        <i class="fa fa-trash"></i>
+                        {{ isDeleting ? 'Deleting ...' : 'Delete' }}
                     </button>
                 </div>
             </div>
         </div>
+      </div>
     </div>
 </template>
 
 <script>
     import '../assets/right_sidebar.css'
+    import '../assets/bottom_sheet.css'
 
     import { 
         mapState,
@@ -462,16 +441,8 @@
     } from '@/store'
     import totpGenerator from 'totp-generator'
 
-    export default {
-        props: {
-            visible: {
-                type: Boolean,
-                default: false
-            }
-        },
-        data() {
-            return {
-                showModalContent: false,
+    function initialState() {
+        return {
                 isSaving: false,
                 isDeleting: false,
                 newTag: '',
@@ -532,6 +503,20 @@
                     }
                 }
             }
+    }
+
+    export default {
+        props: {
+            visible: {
+                type: Boolean,
+                default: false
+            }
+        },
+        data: function () {
+            return initialState();
+        },
+        mounted() {
+            this.initBottomSheet('edit-account-bottom-sheet');
         },
         computed: {
             ...mapState(useUiStore, {
@@ -561,13 +546,6 @@
                 return 'Please fill the secret key';
             }
         },
-        mounted() {
-            document.getElementById('right-sidebar')
-            .addEventListener('scroll', this.scrollFunction);
-
-            document.getElementById('right-sidebar-body')
-            .addEventListener('scroll', this.scrollFunction);
-        },
         methods: {
             ...mapActions(useAccountsStore, [
                 'updateAccount',
@@ -575,7 +553,8 @@
             ]),
             ...mapActions(useUiStore, [
                 'closeSidebar',
-                'resetCurrentEditingAccount'
+                'resetCurrentEditingAccount',
+                'initBottomSheet'
             ]),
             ...mapActions(useAlertStore, ['openAlert']),
 
@@ -680,6 +659,9 @@
             closeAccountEditing: function () {
                 this.closeSidebar(this.SIDEBAR.EDIT_ACCOUNT);
                 this.resetCurrentEditingAccount();
+
+                // reset this component's state
+                Object.assign(this.$data, initialState());
             }
         }
     } 

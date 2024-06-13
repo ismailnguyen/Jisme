@@ -32,9 +32,6 @@
         background: linear-gradient(141.69deg,#3077e2 0%,#1b42ab 100%);
    }
 }
-.bg-gradient-blue .button--close i {
-    color: var(--color-text-inverted);
-}
 .bg-gradient-blue .btn-group label.btn {
     color: #fff;
     border-color: #fff;
@@ -75,6 +72,11 @@
     .btn-group label.btn.active {
         color: #fff;
    }
+
+   .btn-group label.btn.active,
+    .btn-group label.btn:hover {
+        background: #0b84fe;
+    }
 }
 .right-sidebar .button--close {
     background-color: var(--color-text);
