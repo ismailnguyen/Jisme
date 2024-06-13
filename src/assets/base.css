@@ -71,6 +71,11 @@ body {
     color: #fff;
     background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
 }
+@media (prefers-color-scheme: dark) {
+    .badge-primary {
+        background: #0b84fe;
+    }
+}
 .badge-primary:hover {
     color: #162056db;
 }
