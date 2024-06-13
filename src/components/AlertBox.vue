@@ -7,7 +7,7 @@
         :alt="title"
         :title="title"
         class="alert-image" />
-            
+
         <strong>
             {{ title }}
         </strong>
@@ -35,19 +35,19 @@
             ]),
 
             title: function () {
-                return this.currentAlert.title;
+                return this.currentAlert && this.currentAlert.title || 'Title';
             },
 
             message: function () {
-                return this.currentAlert.message;
+                return this.currentAlert && this.currentAlert.message || 'Message';
             },
 
             image: function () {
-                return this.currentAlert.image;
+                return this.currentAlert && this.currentAlert.image || null;
             },
 
             type: function () {
-                return  'alert-' + this.currentAlert.type;
+                return  this.currentAlert && 'alert-' + this.currentAlert.type || 'alert-info';
             }
         },
         methods: {
@@ -68,6 +68,8 @@
         bottom: 20px;
         right: 20px;
         z-index: 99999;
+        border-radius: 1.2rem;
+        border: none;
     }
 
     .alert-image {
@@ -76,5 +78,26 @@
         margin-right: 10px;
         background-color: white;
         border-radius: 15px;
+    }
+
+    .alert-dismissible,
+    .alert-dismissible .btn-close {
+        color: #fefefe;
+    }
+
+    .alert-success {
+        background-color: #32c75a;
+    }
+
+    .alert-danger {
+        background-color: #ff0000;
+    }
+
+    .alert-warning {
+        background-color: #ff8001;
+    }
+
+    .alert-info {
+        background-color: #262626;
     }
 </style>
