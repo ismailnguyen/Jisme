@@ -20,6 +20,7 @@
         <a
             id="menu-toggle"
             class="floating-button floating-button--menu"
+            :class="isSidebarOpen(SIDEBAR.MENU) ? 'd-none' : ''"
             @click="toggleSidebar(SIDEBAR.MENU)">
             <i class="fa fa-solid fa-bars-staggered"></i>
         </a>
