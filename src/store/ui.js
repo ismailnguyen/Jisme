@@ -95,6 +95,7 @@ const store = defineStore('ui', () => {
         const bottomSheet = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet`);
         // Toggles the fullscreen class to bottomSheet if the height is equal to 100
         bottomSheet.classList.toggle("fullscreen", height === 100);
+        document.body.classList.toggle("right-sidebar-opened", height === 100);
     }
 
     const showBottomSheet = (bottomSheetElementId) => {

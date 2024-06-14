@@ -39,7 +39,7 @@
 /* In large screen position bottom sheet at right*/
 @media (min-width: 767.98px) {
   .bottom-sheet {
-    right: 1rem;
+    right: 0;
     width: 50%;
   }
 }
