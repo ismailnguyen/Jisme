@@ -6,7 +6,7 @@
   >
     <div class="sheet-overlay" @click="closeAccountEditing()"></div>
     <div class="content">
-      <div class="header row">
+      <div class="header row" :style="{ 'background-image': 'url(' + account.icon + ')' }">
         <div class="drag-icon row justify-content-center"><span></span></div>
 
         <div class="row justify-content-center">
@@ -877,6 +877,8 @@
 <script>
 import "../assets/right_sidebar.css";
 import "../assets/bottom_sheet.css";
+
+import { generateRandomColor, generateInitialIcon } from "../utils/icon.js";
 
 import { mapState, mapActions } from "pinia";
 import { useUiStore, useAlertStore, useAccountsStore } from "@/store";

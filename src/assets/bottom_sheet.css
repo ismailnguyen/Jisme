@@ -90,9 +90,8 @@
 .bottom-sheet.fullscreen .content {
   border-radius: 0;
   overflow-y: scroll;
-}.bottom-sheet.fullscreen .header {
-    padding-top: 1.5rem;
 }
+
 .bottom-sheet .header {
   display: flex;
   justify-content: center;
@@ -102,10 +101,10 @@
   margin-right: auto;
   margin-left: auto;
   border-bottom: 1px solid #f8f9fa;
-  background-color: #ffffff6b;
-  transition: all 0.5s;
+  background-color: #ffffff;
+  background-size: 0%;
+  transition: height 0.5s;
 }
-
 
 @media (prefers-color-scheme: dark) {
   .bottom-sheet .header {
@@ -131,8 +130,7 @@
   position: fixed;
   width: 100%;
   color: #f8f9fa;
-  background: linear-gradient(141.13deg, #106cded9 26.29%, #36a5efd9 100%);
-  backdrop-filter: blur(10px);
+  background-size: 500%;
   z-index: 30;
 }
 

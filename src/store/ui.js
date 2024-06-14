@@ -104,6 +104,7 @@ const store = defineStore('ui', () => {
     }
 
     const hideBottomSheet = () => {
+        document.body.classList.toggle("right-sidebar-opened", false);
         enableBodyScroll();
     }
 

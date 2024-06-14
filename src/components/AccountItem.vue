@@ -7,7 +7,7 @@
                     loading="lazy"
                     :alt="account.displayPlatform"
                     :title="account.displayPlatform"
-                    @error="onImageLoadingError(account)"
+                    @error="onImageLoadingError()"
                     class="card-icon" />
             </div>
 
@@ -22,7 +22,6 @@
             </div>
 
             <div class="card-body" @click.prevent="onCardClick()">
-                
                 <h2 class="card-title">
                     {{ account.displayPlatform }}
                 </h2>
@@ -57,7 +56,9 @@
 </template>
 
 <script>
-    import '../assets/card.css'
+    import '../assets/card.css';
+  
+    import { generateInitialIcon } from "../utils/icon.js";
 
     const cardSizeMapping= {
         small: 'col-md-4 col-lg-3',
@@ -85,6 +86,12 @@
                 default: 'small'
             }
         },
+        mounted() {
+            if (!this.account.icon) {
+                console.log('Generating icon for account', this.account.displayPlatform);
+                this.account.icon = generateInitialIcon(this.account.displayPlatform);
+            }
+        },
         computed: {
             ...mapState(useUiStore, [
                 'isRightSidebarOpened',
@@ -100,7 +107,7 @@
                     return this.account.icon;
                 }
 
-                return this.generateInitialIcon();
+                //return generateInitialIcon(this.account.displayPlatform);
             },
 
             shortDescription: function () {
@@ -157,58 +164,8 @@
                 return newTags.join(',');
             },
 
-            generateRandomColor: function () {
-                const color = [
-                    "#5050ff",
-                    "#50ff50",
-                    "#ff5050",
-                    "#ff5000",
-                    "#ff0050",
-                    "#0050ff",
-                    "#00ff50",
-                    "#50ff00",
-                    "#5000ff"
-                ];
-
-                let random = Math.floor(Math.random() * color.length);
-
-                return color[random];
-            },
-
-            generateInitialIcon: function () {
-                let avatar, ctx, color;
-
-                //creating canvas
-                avatar = document.createElement("canvas");
-                avatar.width = avatar.height = "48";
-                ctx = avatar.getContext("2d");
-                ctx.font = `${avatar.width / 2}px Arial`;
-                ctx.textAlign = "center";
-
-                var initials = this.account.displayPlatform.split(' ').map(s => s[0].toUpperCase()).join('');
-
-                //generating color
-                color = this.generateRandomColor();
-
-                //function to create avatar
-                //clear canvas
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(0, 0, avatar.width, avatar.height);
-
-                //add background
-                ctx.fillStyle = `${color}60`;
-                ctx.fillRect(0, 0, avatar.width, avatar.height);
-
-                //add text
-                ctx.fillStyle = color;
-                ctx.fillText(initials, avatar.width / 2, (65 / 100) * avatar.height);
-
-                //generate as Image
-                return avatar.toDataURL();
-            },
-
-            onImageLoadingError(account) {
-                account.icon = '';
+            onImageLoadingError() {
+                this.account.icon = '';
             }
         }
     }
