@@ -1,282 +1,531 @@
 <template>
-    <div id="add-account-bottom-sheet" class="bottom-sheet" :class="visible ? 'show' : ''">
-      <div class="sheet-overlay" @click="closeSidebar(SIDEBAR.ADD_ACCOUNT)"></div>
-      <div class="content">
-        <div class="header">
-          <div class="drag-icon"><span></span></div>
+  <div
+    id="add-account-bottom-sheet"
+    class="bottom-sheet"
+    :class="visible ? 'show' : ''"
+  >
+    <div class="sheet-overlay" @click="closeSidebar(SIDEBAR.ADD_ACCOUNT)"></div>
+    <div class="content">
+      <div class="header row">
+        <div class="drag-icon row justify-content-center"><span></span></div>
+
+        <div class="row justify-content-center">
+          <div class="col text-center" v-show="account.icon">
+            <img
+              :src="account.icon"
+              loading="lazy"
+              :alt="account.displayPlatform"
+              :title="account.displayPlatform"
+              class="sidebar-large-icon"
+            />
+          </div>
         </div>
-        <div class="body">
-            <div class="bottom-sheet-header">
-                <div class="row justify-content-center">
-                    <div class="col text-center" v-show="account.icon">
-                        <img
-                            :src="account.icon"
-                            loading="lazy"
-                            :alt="account.displayPlatform"
-                            :title="account.displayPlatform"
-                            class="sidebar-large-icon" />
-                    </div>
-                </div>
-                <div class="row justify-content-center">
-                    <div class="col-12 text-center">
-                        <h2 class="sidebar-title" :title="account._id">{{ account.displayPlatform || 'Add' }}</h2>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bottom-sheet-body">
-                <form class="card-text lead">
-                    <div class="row">
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <div class="btn-group" role="group" aria-label="Account type">
-                                <input type="radio" class="btn-check" name="account-type" id="addAccount_radiobutton_accounttype_account" v-model="account.type" value="account">
-                                <label class="btn" for="addAccount_radiobutton_accounttype_account" :class="account.type == 'account' ? 'active' : ''">
-                                    <i class="fa fa-globe" aria-hidden="true"></i>
-                                    Login
-                                </label>
-
-                                <input type="radio" class="btn-check" name="account-type" id="addAccount_radiobutton_accounttype_card" v-model="account.type" value="card">
-                                <label class="btn" for="addAccount_radiobutton_accounttype_card" :class="account.type == 'card' ? 'active' : ''">
-                                    <i class="fa fa-credit-card" aria-hidden="true"></i>
-                                    Card
-                                </label>
-
-                                <input type="radio" class="btn-check" name="account-type" id="addAccount_radiobutton_accounttype_2fa" v-model="account.type" value="2fa">
-                                <label class="btn" for="addAccount_radiobutton_accounttype_2fa" :class="account.type == '2fa' ? 'active' : ''">
-                                    <i class="fa fa-qrcode" aria-hidden="true"></i>
-                                    OTP
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="addAccount_platform_input"><i class="fa fa-globe" aria-hidden="true"></i> Platform</label>
-                            <input id="addAccount_platform_input" class="form-control" placeholder="Platform" type="text" ref="platform" v-model="account.platform" @keyup.enter="add()" required />
-                        </div>
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="addAccount_input_new_tag"><i class="fa fa-tags" aria-hidden="true"></i> Tags</label>
-                            <div class="form-control tags tags-input" @click="focusTagInput()">
-                                <span
-                                    class="badge rounded-pill badge-primary"
-                                    v-for="(tag, tagIndex) in account.tags.split(',')"
-                                    v-bind:key="tagIndex"
-                                    @click="removeTag(tag)">
-                                    {{ tag }}
-                                    <i class="fa fa-close" v-if="tag"></i>
-                                </span>
-                            </div>
-                            <input ref="tags" id="addAccount_input_new_tag" class="form-control tags-new-input" placeholder="Tag" type="text" v-model="newTag" @keyup.enter="addTag()" required />
-                        </div>
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="addAccount_platform_icon"><i class="fa fa-icons" aria-hidden="true"></i> Icon</label>
-                            <input id="addAccount_platform_icon" class="form-control" placeholder="Icon URL" type="text" v-model="account.icon" @keyup.enter="add()" />
-                        </div>
-
-                        <hr class="my-4">
-
-                        <!-- region_start -- Account type: card -->
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="addAccount_card_number_input"><i class="fa fa-barcode" aria-hidden="true"></i> Number</label>
-                            <input id="addAccount_card_number_input" class="form-control" placeholder="Card number" type="text" v-model="account.card_number" @keyup.enter="add()" />
-                        </div>
-                        
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="addAccount_card_pin_input"><i class="fa fa-key" aria-hidden="true"></i> PIN</label>
-                            <input id="addAccount_card_pin_input" class="form-control" placeholder="PIN" type="text" v-model="account.card_pin" @keyup.enter="add()" />
-                        </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="addAccount_card_expiracy_input"><i class="fa fa-calendar" aria-hidden="true"></i> Expiracy</label>
-                            <input id="addAccount_card_expiracy_input" class="form-control" placeholder="Expiracy" type="text" v-model="account.card_expiracy" @keyup.enter="add()" />
-                        </div>
-                        
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="addAccount_card_cryptogram_input"><i class="fa fa-lock" aria-hidden="true"></i> Cryptogram (CVV/CVC)</label>
-                            <input id="addAccount_card_cryptogram_input" class="form-control" placeholder="CVC/CVV" type="text" v-model="account.card_cryptogram" @keyup.enter="add()" />
-                        </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'card'">
-                            <label class="form-label" for="addAccount_card_name_input"><i class="fa fa-user" aria-hidden="true"></i> Name</label>
-                            <input id="addAccount_card_name_input" class="form-control" placeholder="Name on card" type="text" v-model="account.card_name" @keyup.enter="add()" />
-                        </div>
-                        <!-- region_end -- Account type: card -->
-                        
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account' || account.type == '2fa'" :class="account.type == 'account' ? 'col-lg-3' : 'col-lg-6'">
-                            <label class="form-label" for="addAccount_login_input"><i class="fa fa-id-badge" aria-hidden="true"></i> Login</label>
-                            <input id="addAccount_login_input" class="form-control" placeholder="Login" type="text" v-model="account.login" @keyup.enter="add()" />
-                        </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == '2fa'">
-                            <label class="form-label" for="addAccount_totp_secret_input"><i class="fa fa-key" aria-hidden="true"></i> TOTP Secret</label>
-                            <input id="addAccount_totp_secret_input" class="form-control" placeholder="TOTP Secret" type="text" v-model="account.totp_secret" @keyup.enter="add()" />
-                        </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="addAccount_password_input">
-                                <div class="btn-group" role="group" aria-label="Password type">
-                                    <input type="radio" class="btn-check" name="password-type" id="addAccount_radiobutton_passwordtype_password" v-model="account.is_password_less" v-bind:value="false">
-                                    <label class="btn" for="addAccount_radiobutton_passwordtype_password" :class="!account.is_password_less ? 'active' : ''">
-                                        <i class="fa fa-lock" aria-hidden="true"></i>
-                                        Password
-                                    </label>
-
-                                    <input type="radio" class="btn-check" name="password-type" id="addAccount_radiobutton_passwordtype_passwordless" v-model="account.is_password_less" v-bind:value="true">
-                                    <label class="btn" for="addAccount_radiobutton_passwordtype_passwordless" :class="account.is_password_less ? 'active' : ''">
-                                        <i class="fa fa-bolt" aria-hidden="true"></i>
-                                        Password less
-                                    </label>
-                                </div>
-                            </label>
-                            <div class="input-group" v-show="!account.is_password_less">
-                                <input id="addAccount_password_input" class="form-control" type="text" aria-describedby="addAccount_passwordHelp" v-model="account.password" placeholder="Password" @keyup.enter="add()" />
-                                <button class="btn btn-outline-secondary" type="button" @click="account.generatePassword()"><i class="fa fa-cogs"></i> Generate</button>
-                            </div>
-                            <small id="addAccount_passwordHelp" class="form-text text-muted" v-show="!account.is_password_less">Click button to generate password.</small>
-                            <small id="addAccount_passwordLessHelp" class="form-text text-muted" v-show="account.is_password_less">Password less generator will be available once the account will be created.</small>
-                        </div>
-                        
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="password_clue_input">
-                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                {{ account.is_password_less ? "Master password clue" : 'Password clue' }}
-                            </label>
-                            <input id="password_clue_input" class="form-control" type="text" v-model="account.password_clue" @keyup.enter="add()" />
-                        </div>
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12" v-if="account.type == 'account'">
-                            <label class="form-label" for="addAccount_social_login_input"><i class="fa fa-mobile-screen" aria-hidden="true"></i> Social login</label>
-                            <input id="addAccount_social_login_input" class="form-control" placeholder="Google, Facebook, LinkedIn, ..." type="text" v-model="account.social_login" @keyup.enter="add()" />
-                        </div>
-
-                        <hr class="my-4">
-
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="addAccount_description_input"><i class="fa fa-message" aria-hidden="true"></i> Description</label>
-                            <textarea id="addAccount_description_input" class="form-control" type="text" v-model="account.description" rows="3"></textarea>
-                        </div>
-                        
-                        <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                            <label class="form-label" for="addAccount_notes_input"><i class="fa fa-marker" aria-hidden="true"></i> Notes</label>
-                            <textarea id="addAccount_notes_input" class="form-control" type="text" v-model="account.notes" rows="6"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="bottom-sheet-footer row">
-                <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                    <button class="btn btn-light"  :class="isCreating ? 'btn-dark': 'btn-light'" type="button" @click="add()">
-                        <span v-if="isCreating" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                        <span v-else><i class="fa fa-floppy-disk"></i> {{ isCreating ? 'Adding ...' : 'Add' }}</span>
-                    </button>
-                </div>
-            </div>
+        <div class="row justify-content-center">
+          <div class="col-12 text-center">
+            <h2 class="sidebar-title" :title="account._id">
+              {{ account.displayPlatform || "Add" }}
+            </h2>
+          </div>
         </div>
+      </div>
+      <div class="body">
+        <div class="row">
+          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+            <div class="btn-group" role="group" aria-label="Account type">
+              <input
+                type="radio"
+                class="btn-check"
+                name="account-type"
+                id="addAccount_radiobutton_accounttype_account"
+                v-model="account.type"
+                value="account"
+              />
+              <label
+                class="btn"
+                for="addAccount_radiobutton_accounttype_account"
+                :class="account.type == 'account' ? 'active' : ''"
+              >
+                <i class="fa fa-globe" aria-hidden="true"></i>
+                Login
+              </label>
+
+              <input
+                type="radio"
+                class="btn-check"
+                name="account-type"
+                id="addAccount_radiobutton_accounttype_card"
+                v-model="account.type"
+                value="card"
+              />
+              <label
+                class="btn"
+                for="addAccount_radiobutton_accounttype_card"
+                :class="account.type == 'card' ? 'active' : ''"
+              >
+                <i class="fa fa-credit-card" aria-hidden="true"></i>
+                Card
+              </label>
+
+              <input
+                type="radio"
+                class="btn-check"
+                name="account-type"
+                id="addAccount_radiobutton_accounttype_2fa"
+                v-model="account.type"
+                value="2fa"
+              />
+              <label
+                class="btn"
+                for="addAccount_radiobutton_accounttype_2fa"
+                :class="account.type == '2fa' ? 'active' : ''"
+              >
+                <i class="fa fa-qrcode" aria-hidden="true"></i>
+                OTP
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+            <label class="form-label" for="addAccount_platform_input"
+              ><i class="fa fa-globe" aria-hidden="true"></i> Platform</label
+            >
+            <input
+              id="addAccount_platform_input"
+              class="form-control"
+              placeholder="Platform"
+              type="text"
+              ref="platform"
+              v-model="account.platform"
+              @keyup.enter="add()"
+              required
+            />
+          </div>
+          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+            <label class="form-label" for="addAccount_input_new_tag"
+              ><i class="fa fa-tags" aria-hidden="true"></i> Tags</label
+            >
+            <div class="form-control tags tags-input" @click="focusTagInput()">
+              <span
+                class="badge rounded-pill badge-primary"
+                v-for="(tag, tagIndex) in account.tags.split(',')"
+                v-bind:key="tagIndex"
+                @click="removeTag(tag)"
+              >
+                {{ tag }}
+                <i class="fa fa-close" v-if="tag"></i>
+              </span>
+            </div>
+            <input
+              ref="tags"
+              id="addAccount_input_new_tag"
+              class="form-control tags-new-input"
+              placeholder="Tag"
+              type="text"
+              v-model="newTag"
+              @keyup.enter="addTag()"
+              required
+            />
+          </div>
+          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+            <label class="form-label" for="addAccount_platform_icon"
+              ><i class="fa fa-icons" aria-hidden="true"></i> Icon</label
+            >
+            <input
+              id="addAccount_platform_icon"
+              class="form-control"
+              placeholder="Icon URL"
+              type="text"
+              v-model="account.icon"
+              @keyup.enter="add()"
+            />
+          </div>
+
+          <hr class="my-4" />
+
+          <!-- region_start -- Account type: card -->
+          <div
+            class="mb-3 col-xs-12 col-md-12 col-lg-12"
+            v-if="account.type == 'card'"
+          >
+            <label class="form-label" for="addAccount_card_number_input"
+              ><i class="fa fa-barcode" aria-hidden="true"></i> Number</label
+            >
+            <input
+              id="addAccount_card_number_input"
+              class="form-control"
+              placeholder="Card number"
+              type="text"
+              v-model="account.card_number"
+              @keyup.enter="add()"
+            />
+          </div>
+
+          <div
+            class="mb-3 col-xs-12 col-md-12 col-lg-12"
+            v-if="account.type == 'card'"
+          >
+            <label class="form-label" for="addAccount_card_pin_input"
+              ><i class="fa fa-key" aria-hidden="true"></i> PIN</label
+            >
+            <input
+              id="addAccount_card_pin_input"
+              class="form-control"
+              placeholder="PIN"
+              type="text"
+              v-model="account.card_pin"
+              @keyup.enter="add()"
+            />
+          </div>
+
+          <div
+            class="mb-3 col-xs-12 col-md-12 col-lg-12"
+            v-if="account.type == 'card'"
+          >
+            <label class="form-label" for="addAccount_card_expiracy_input"
+              ><i class="fa fa-calendar" aria-hidden="true"></i> Expiracy</label
+            >
+            <input
+              id="addAccount_card_expiracy_input"
+              class="form-control"
+              placeholder="Expiracy"
+              type="text"
+              v-model="account.card_expiracy"
+              @keyup.enter="add()"
+            />
+          </div>
+
+          <div
+            class="mb-3 col-xs-12 col-md-12 col-lg-12"
+            v-if="account.type == 'card'"
+          >
+            <label class="form-label" for="addAccount_card_cryptogram_input"
+              ><i class="fa fa-lock" aria-hidden="true"></i> Cryptogram
+              (CVV/CVC)</label
+            >
+            <input
+              id="addAccount_card_cryptogram_input"
+              class="form-control"
+              placeholder="CVC/CVV"
+              type="text"
+              v-model="account.card_cryptogram"
+              @keyup.enter="add()"
+            />
+          </div>
+
+          <div
+            class="mb-3 col-xs-12 col-md-12 col-lg-12"
+            v-if="account.type == 'card'"
+          >
+            <label class="form-label" for="addAccount_card_name_input"
+              ><i class="fa fa-user" aria-hidden="true"></i> Name</label
+            >
+            <input
+              id="addAccount_card_name_input"
+              class="form-control"
+              placeholder="Name on card"
+              type="text"
+              v-model="account.card_name"
+              @keyup.enter="add()"
+            />
+          </div>
+          <!-- region_end -- Account type: card -->
+
+          <div
+            class="mb-3 col-xs-12 col-md-12 col-lg-12"
+            v-if="account.type == 'account' || account.type == '2fa'"
+            :class="account.type == 'account' ? 'col-lg-3' : 'col-lg-6'"
+          >
+            <label class="form-label" for="addAccount_login_input"
+              ><i class="fa fa-id-badge" aria-hidden="true"></i> Login</label
+            >
+            <input
+              id="addAccount_login_input"
+              class="form-control"
+              placeholder="Login"
+              type="text"
+              v-model="account.login"
+              @keyup.enter="add()"
+            />
+          </div>
+
+          <div
+            class="mb-3 col-xs-12 col-md-12 col-lg-12"
+            v-if="account.type == '2fa'"
+          >
+            <label class="form-label" for="addAccount_totp_secret_input"
+              ><i class="fa fa-key" aria-hidden="true"></i> TOTP Secret</label
+            >
+            <input
+              id="addAccount_totp_secret_input"
+              class="form-control"
+              placeholder="TOTP Secret"
+              type="text"
+              v-model="account.totp_secret"
+              @keyup.enter="add()"
+            />
+          </div>
+
+          <div
+            class="mb-3 col-xs-12 col-md-12 col-lg-12"
+            v-if="account.type == 'account'"
+          >
+            <label class="form-label" for="addAccount_password_input">
+              <div class="btn-group" role="group" aria-label="Password type">
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="password-type"
+                  id="addAccount_radiobutton_passwordtype_password"
+                  v-model="account.is_password_less"
+                  v-bind:value="false"
+                />
+                <label
+                  class="btn"
+                  for="addAccount_radiobutton_passwordtype_password"
+                  :class="!account.is_password_less ? 'active' : ''"
+                >
+                  <i class="fa fa-lock" aria-hidden="true"></i>
+                  Password
+                </label>
+
+                <input
+                  type="radio"
+                  class="btn-check"
+                  name="password-type"
+                  id="addAccount_radiobutton_passwordtype_passwordless"
+                  v-model="account.is_password_less"
+                  v-bind:value="true"
+                />
+                <label
+                  class="btn"
+                  for="addAccount_radiobutton_passwordtype_passwordless"
+                  :class="account.is_password_less ? 'active' : ''"
+                >
+                  <i class="fa fa-bolt" aria-hidden="true"></i>
+                  Password less
+                </label>
+              </div>
+            </label>
+            <div class="input-group" v-show="!account.is_password_less">
+              <input
+                id="addAccount_password_input"
+                class="form-control"
+                type="text"
+                aria-describedby="addAccount_passwordHelp"
+                v-model="account.password"
+                placeholder="Password"
+                @keyup.enter="add()"
+              />
+              <button
+                class="btn btn-outline-secondary"
+                type="button"
+                @click="account.generatePassword()"
+              >
+                <i class="fa fa-cogs"></i> Generate
+              </button>
+            </div>
+            <small
+              id="addAccount_passwordHelp"
+              class="form-text text-muted"
+              v-show="!account.is_password_less"
+              >Click button to generate password.</small
+            >
+            <small
+              id="addAccount_passwordLessHelp"
+              class="form-text text-muted"
+              v-show="account.is_password_less"
+              >Password less generator will be available once the account will
+              be created.</small
+            >
+          </div>
+
+          <div
+            class="mb-3 col-xs-12 col-md-12 col-lg-12"
+            v-if="account.type == 'account'"
+          >
+            <label class="form-label" for="password_clue_input">
+              <i class="fa fa-eye" aria-hidden="true"></i>
+              {{
+                account.is_password_less
+                  ? "Master password clue"
+                  : "Password clue"
+              }}
+            </label>
+            <input
+              id="password_clue_input"
+              class="form-control"
+              type="text"
+              v-model="account.password_clue"
+              @keyup.enter="add()"
+            />
+          </div>
+
+          <div
+            class="mb-3 col-xs-12 col-md-12 col-lg-12"
+            v-if="account.type == 'account'"
+          >
+            <label class="form-label" for="addAccount_social_login_input"
+              ><i class="fa fa-mobile-screen" aria-hidden="true"></i> Social
+              login</label
+            >
+            <input
+              id="addAccount_social_login_input"
+              class="form-control"
+              placeholder="Google, Facebook, LinkedIn, ..."
+              type="text"
+              v-model="account.social_login"
+              @keyup.enter="add()"
+            />
+          </div>
+
+          <hr class="my-4" />
+
+          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+            <label class="form-label" for="addAccount_description_input"
+              ><i class="fa fa-message" aria-hidden="true"></i>
+              Description</label
+            >
+            <textarea
+              id="addAccount_description_input"
+              class="form-control"
+              type="text"
+              v-model="account.description"
+              rows="3"
+            ></textarea>
+          </div>
+
+          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+            <label class="form-label" for="addAccount_notes_input"
+              ><i class="fa fa-marker" aria-hidden="true"></i> Notes</label
+            >
+            <textarea
+              id="addAccount_notes_input"
+              class="form-control"
+              type="text"
+              v-model="account.notes"
+              rows="6"
+            ></textarea>
+          </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <div class="row footer">
+          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+            <button
+              class="btn btn-light"
+              :class="isCreating ? 'btn-dark' : 'btn-light'"
+              type="button"
+              @click="add()"
+            >
+              <span
+                v-if="isCreating"
+                class="spinner-border spinner-border-sm"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              <span v-else
+                ><i class="fa fa-floppy-disk"></i>
+                {{ isCreating ? "Adding ..." : "Add" }}</span
+              >
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
-    </div>
+  </div>
 </template>
 
 <script>
-    import '../assets/right_sidebar.css'
+import "../assets/right_sidebar.css";
 
-    import {
-        mapWritableState,
-        mapActions,
-        mapState
-    } from 'pinia'
-    import {
-        useUiStore,
-        useAlertStore,
-        useAccountsStore
-    } from '@/store'
+import { mapWritableState, mapActions, mapState } from "pinia";
+import { useUiStore, useAlertStore, useAccountsStore } from "@/store";
 
-    export default {
-        props: {
-            visible: {
-                type: Boolean,
-                default: false
-            }
-        },
-        data() {
-            return {
-                isCreating: false,
-                newTag: ''
-            }
-        },
-        mounted() {
-            this.initBottomSheet('add-account-bottom-sheet');
-        },
-        computed: {
-            ...mapWritableState(useUiStore, {
-                account: 'currentEditingAccount',
-            }),
+export default {
+  props: {
+    visible: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      isCreating: false,
+      newTag: "",
+    };
+  },
+  mounted() {
+    this.initBottomSheet("add-account-bottom-sheet");
+  },
+  computed: {
+    ...mapWritableState(useUiStore, {
+      account: "currentEditingAccount",
+    }),
 
-            ...mapState(useUiStore, [
-                'SIDEBAR'
-            ])
-        },
-        methods: {
-            ...mapActions(useAlertStore, ['openAlert']),
-            ...mapActions(useUiStore, [
-                'closeSidebar',
-                'resetCurrentEditingAccount'
-            ]),
-            ...mapActions(useAccountsStore, ['addAccount']),
-            ...mapActions(useUiStore, [
-                'initBottomSheet'
-            ]),
+    ...mapState(useUiStore, ["SIDEBAR"]),
+  },
+  methods: {
+    ...mapActions(useAlertStore, ["openAlert"]),
+    ...mapActions(useUiStore, ["closeSidebar", "resetCurrentEditingAccount"]),
+    ...mapActions(useAccountsStore, ["addAccount"]),
+    ...mapActions(useUiStore, ["initBottomSheet"]),
 
-            add: async function () {
-                if (!this.account.isValid()) {
-                    this.openAlert('Error', 'Please fill all fields !', 'danger');
-                    return;
-                }
+    add: async function () {
+      if (!this.account.isValid()) {
+        this.openAlert("Error", "Please fill all fields !", "danger");
+        return;
+      }
 
-                this.isCreating = true;
+      this.isCreating = true;
 
-                try {
-                    await this.addAccount(this.account);
-                    
-                    this.updateUI();
-                }
-                catch (error) {
-                    this.openAlert('Error', error.toString(), 'danger');
-                    this.isCreating = false;
-                }
-            },
+      try {
+        await this.addAccount(this.account);
 
-            focusTagInput: function () {
-                this.$refs.tags.focus();
-            },
+        this.updateUI();
+      } catch (error) {
+        this.openAlert("Error", error.toString(), "danger");
+        this.isCreating = false;
+      }
+    },
 
-            addTag: function () {
-                const tags = this.account.tags.split(',').map(t => t.trim());
+    focusTagInput: function () {
+      this.$refs.tags.focus();
+    },
 
-                // add the tag only if it wasn't already existing
-                if (tags.indexOf(this.newTag) == -1) {
-                    this.account.tags += (this.account.tags ? ',' : '') + this.newTag;
-                }
+    addTag: function () {
+      const tags = this.account.tags.split(",").map((t) => t.trim());
 
-                this.newTag = '';
-            },
+      // add the tag only if it wasn't already existing
+      if (tags.indexOf(this.newTag) == -1) {
+        this.account.tags += (this.account.tags ? "," : "") + this.newTag;
+      }
 
-            removeTag: function (tag) {
-                let newTags = this.account.tags.split(',').map(t => t.trim());
-                newTags.splice(newTags.indexOf(tag), 1);
-                this.account.tags = newTags.join(',');
-            },
-            
-            updateUI: function () {
-                this.isCreating = false;
+      this.newTag = "";
+    },
 
-                this.closeSidebar(this.SIDEBAR.ADD_ACCOUNT);
+    removeTag: function (tag) {
+      let newTags = this.account.tags.split(",").map((t) => t.trim());
+      newTags.splice(newTags.indexOf(tag), 1);
+      this.account.tags = newTags.join(",");
+    },
 
-                this.openAlert(this.account.displayPlatform, 'Created !', 'success', this.account.icon);
+    updateUI: function () {
+      this.isCreating = false;
 
-                this.resetCurrentEditingAccount();
-            },
-        }
-    } 
+      this.closeSidebar(this.SIDEBAR.ADD_ACCOUNT);
+
+      this.openAlert(
+        this.account.displayPlatform,
+        "Created !",
+        "success",
+        this.account.icon
+      );
+
+      this.resetCurrentEditingAccount();
+    },
+  },
+};
 </script>

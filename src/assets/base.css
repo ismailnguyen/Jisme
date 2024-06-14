@@ -1,125 +1,130 @@
 @import "bootstrap/dist/css/bootstrap";
 
 :root {
-    --color-background: #f0f2f5;
-    --color-background-inverted: #000;
-    --color-background-soft: rgb(228, 228, 228);
-    --color-background-mute: #fff;
-    --color-text: #162056;
-    --color-text-inverted: #eee;
+  --color-background: #f0f2f5;
+  --color-background-inverted: #000;
+  --color-background-soft: rgb(228, 228, 228);
+  --color-background-mute: #fff;
+  --color-text: #162056;
+  --color-text-inverted: #eee;
 }
 @media (prefers-color-scheme: dark) {
-     :root {
-        --color-background: #000;
-        --color-background-inverted: #f0f2f5;
-        --color-background-soft: #1c1c1d;
-        --color-background-mute: #242526db;
-        --color-text: #eee;
-        --color-text-inverted: #162056;
-    }
+  :root {
+    --color-background: #000;
+    --color-background-inverted: #f0f2f5;
+    --color-background-soft: #1c1c1d;
+    --color-background-mute: #242526db;
+    --color-text: #eee;
+    --color-text-inverted: #162056;
+  }
 }
 * {
-    margin: 0;
-    position: relative;
+  margin: 0;
+  position: relative;
 }
-html, body {
-    height: 100%;
+html,
+body {
+  height: 100%;
 }
 #app {
-    height: 100%;
+  height: 100%;
 }
 body {
-    color: var(--color-text);
-    background: var(--color-background);
+  color: var(--color-text);
+  background: var(--color-background);
 }
 .btn {
-    border-radius: 15px;
+  border-radius: 15px;
 }
 .btn-link-primary:hover {
-    color: RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1));
+  color: RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1));
 }
 .btn-link-danger:hover {
-    color: #dc3545;
+  color: #dc3545;
 }
 .clickable {
-    cursor: pointer
+  cursor: pointer;
 }
 .separator {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    padding-top: 1em;
-    padding-bottom: 1em;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding-top: 1em;
+  padding-bottom: 1em;
 }
-.separator::before, .separator::after {
-    content: '';
-    flex: 1;
-    border-bottom: 1px solid var(--color-background-inverted);
+.separator::before,
+.separator::after {
+  content: "";
+  flex: 1;
+  border-bottom: 1px solid var(--color-background-inverted);
 }
 .separator:not(:empty)::before {
-    margin-right: .25em;
+  margin-right: 0.25em;
 }
 .separator:not(:empty)::after {
-    margin-left: .25em;
+  margin-left: 0.25em;
 }
 .tags .badge {
-    margin-right: .3rem;
-    cursor: pointer;
-    box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
+  margin-right: 0.3rem;
+  cursor: pointer;
+  box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
 }
 .badge-primary {
-    color: #fff;
-    background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
+  color: #fff;
+  background: linear-gradient(81.62deg, #2870ea 8.72%, #1b4aef 85.01%);
 }
 @media (prefers-color-scheme: dark) {
-    .badge-primary {
-        background: #0b84fe;
-    }
+  .badge-primary {
+    background: #0b84fe;
+  }
 }
 .badge-primary:hover {
-    color: #162056db;
+  color: #162056db;
 }
 .badge-secondary {
-    color: #2870ea;
-    background-color: #fff;
+  color: #2870ea;
+  background-color: #fff;
 }
 .badge-secondary:hover {
-    background-color: #162056db;
+  background-color: #162056db;
 }
 
 .button--close {
-    cursor: pointer;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 2rem;
-    text-align: center;
-    border: none;
-    transition: all .3s;
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 2rem;
+  text-align: center;
+  border: none;
+  transition: all 0.3s;
 }
- 
-.shake{
-    animation: shake 0.3s ease-in-out;
+
+.shake {
+  animation: shake 0.3s ease-in-out;
 }
 
 @keyframes shake {
-    0%, 100%{
-        margin-left: 0px;
-    }
-    20%, 80%{
-        margin-left: -12px;
-    }
-    40%, 60%{
-        margin-left: 12px;
-    }
+  0%,
+  100% {
+    margin-left: 0px;
+  }
+  20%,
+  80% {
+    margin-left: -12px;
+  }
+  40%,
+  60% {
+    margin-left: 12px;
+  }
 }
 
 .progress {
-    height: 0.1rem;
-    border-radius: 0;
-    width: 100%;
-    background: none;
+  height: 0.1rem;
+  border-radius: 0;
+  width: 100%;
+  background: none;
 }
 
 .progress-bar {
-    background: linear-gradient(81.62deg,#2870ea 8.72%,#1b4aef 85.01%);
+  background: linear-gradient(81.62deg, #2870ea 8.72%, #1b4aef 85.01%);
 }

@@ -1,62 +1,61 @@
 body {
-    font-family: baskerville, serif !important;
-    background-image: url('https://img.freepik.com/premium-vector/polka-dot-seamless-vector-pattern-white-simple-background_547648-2176.jpg') !important;
-  }
-  
-  .text-bg-primary {
-    background-color: rgb(13, 110, 253) !important;
-  }
-  .rounded-pill {
-    border-radius: var(--bs-border-radius-pill)!important;
-    border: 1px solid black !important;
-  }
-  
-  
-  .floating-button.floating-button--menu,
-  .left-sidebar-wrapper {
-    background: rgb(13, 110, 253) !important;
-  }
-  
+  font-family: baskerville, serif !important;
+  background-image: url("https://img.freepik.com/premium-vector/polka-dot-seamless-vector-pattern-white-simple-background_547648-2176.jpg") !important;
+}
+
+.text-bg-primary {
+  background-color: rgb(13, 110, 253) !important;
+}
 .rounded-pill {
-    border: 1px solid black !important;
-}  
+  border-radius: var(--bs-border-radius-pill) !important;
+  border: 1px solid black !important;
+}
+
+.floating-button.floating-button--menu,
+.left-sidebar-wrapper {
+  background: rgb(13, 110, 253) !important;
+}
+
+.rounded-pill {
+  border: 1px solid black !important;
+}
 
 .card,
 .card-icon {
-    border: 2px solid black !important;
-}  
+  border: 2px solid black !important;
+}
 
 .card {
-    border-radius: .3rem !important;
+  border-radius: 0.3rem !important;
 }
 
 .card-title {
-    font-weight: 600 !important;
+  font-weight: 600 !important;
 }
 
 .searchBar {
-    color: black !important;
-    border: 2px solid black !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
+  color: black !important;
+  border: 2px solid black !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
 }
 .searchBar,
 .category-title {
-    background: #f7f2c7 !important;
-    font-weight: bold !important;
+  background: #f7f2c7 !important;
+  font-weight: bold !important;
 }
 
 .floating-button--menu,
 .floating-button--add {
-    color: white !important;
-    border: 2px solid black !important;
+  color: white !important;
+  border: 2px solid black !important;
 }
 
 .right-sidebar,
 .left-sidebar {
-    border-radius: 0 !important;
+  border-radius: 0 !important;
 }
 
 .form-control {
-    border: 2px solid black !important;
+  border: 2px solid black !important;
 }
