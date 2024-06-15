@@ -63,12 +63,12 @@
 <script>
     import '../assets/tray.css'
 
-    import MainMenuPanel from './MainMenuPanel.vue'
-    import SettingsMenuPanel from './SettingsMenuPanel.vue'
-    import SettingsProfileMenuPanel from './SettingsProfileMenuPanel.vue'
-    import SettingsSecurityMenuPanel from './SettingsSecurityMenuPanel.vue'
-    import SettingsActivitiesMenuPanel from './SettingsActivitiesMenuPanel.vue'
-    import TagsListMenuPanel from './TagsListMenuPanel.vue'
+    import MainMenuPanel from './menu/MainMenuPanel.vue'
+    import SettingsMenuPanel from './menu/SettingsMenuPanel.vue'
+    import SettingsProfileMenuPanel from './menu/SettingsProfileMenuPanel.vue'
+    import SettingsSecurityMenuPanel from './menu/SettingsSecurityMenuPanel.vue'
+    import SettingsActivitiesMenuPanel from './menu/SettingsActivitiesMenuPanel.vue'
+    import TagsListMenuPanel from './menu/TagsListMenuPanel.vue'
 
     import {
         mapState,
