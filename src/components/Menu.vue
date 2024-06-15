@@ -1,10 +1,10 @@
 <template>
     <div class="tray-wrapper" :class="visible ? 'tray-wrapper-open' : ''">
-        <div class="tray-overlay" @click="closeSidebar(SIDEBAR.MENU)"></div>
+        <div class="tray-overlay" @click="closeTray()"></div>
         <div class="tray">
             <div class="tray-header">
                 <div class="row">
-                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4">
+                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4" v-if="currentPanel == 'menu'">
                         <img
                             :src="user && user.avatarUrl"
                             loading="lazy"
@@ -13,11 +13,17 @@
                             class="sidebar-icon" />
                     </div>
 
+                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4" v-else>
+                        <button type="button" class="button--navigation" @click="goToPreviousPanel()">
+                            <i class="fa fa-solid fa-chevron-left"></i>
+                        </button>
+                    </div>
+
                     <div class="mb-3" :class="user && user.avatarUrl ? 'col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4' : 'col-xs-8 col-sm-8 col-8 col-md-8 col-lg-8'">
                     </div>
                     
                     <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4 justify-content-end" v-if="user && user.avatarUrl">
-                        <button type="button" class="button--close" @click="closeSidebar(SIDEBAR.MENU)">
+                        <button type="button" class="button--navigation" @click="closeTray()">
                             <i class="fa fa-solid fa-close"></i>
                         </button>
                     </div>
@@ -25,35 +31,30 @@
             </div>
 
             <div class="tray-body">
-                <div class="row">
-                    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                        <button class="btn btn-light w-100" type="button" @click="onOpenTagsList()">
-                            <i class="fa fa-tags"></i>
-                            Tags list
-                        </button>
-                    </div>
+                <router-view name="menu" />
+                <MainMenuPanel
+                    v-if="currentPanel == 'menu'"
+                    @panelChanged="onPanelChanged" />
 
-                    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                        <button class="btn btn-light" type="button" @click="onOpenTagsTree()">
-                            <i class="fa fa-chart-gantt"></i>
-                            Tags hierarchy
-                        </button>
-                    </div>
+                <TagsListMenuPanel
+                    v-if="currentPanel == 'tags-list'"
+                    @panelChanged="onPanelChanged" />
 
-                    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                        <button class="btn btn-light" type="button" @click="onOpenSettings()">
-                            <i class="fa fa-gear"></i>
-                            Settings
-                        </button>
-                    </div>
+               <SettingsMenuPanel
+                    v-if="currentPanel == 'settings'"
+                    @panelChanged="onPanelChanged" />
 
-                    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-                        <button type="button" class="btn btn-red" @click="onAddAccount()">
-                            <i class="fa fa-plus"></i>
-                            Add account
-                        </button>
-                    </div>
-               </div>
+                <SettingsProfileMenuPanel
+                    v-if="currentPanel == 'settings-profile'"
+                    @panelChanged="onPanelChanged" />
+
+                <SettingsSecurityMenuPanel
+                    v-if="currentPanel == 'settings-security'"
+                    @panelChanged="onPanelChanged" />
+
+                <SettingsActivitiesMenuPanel
+                    v-if="currentPanel == 'settings-activities'"
+                    @panelChanged="onPanelChanged" />
             </div>
         </div>
     </div>
@@ -61,6 +62,13 @@
 
 <script>
     import '../assets/tray.css'
+
+    import MainMenuPanel from './MainMenuPanel.vue'
+    import SettingsMenuPanel from './SettingsMenuPanel.vue'
+    import SettingsProfileMenuPanel from './SettingsProfileMenuPanel.vue'
+    import SettingsSecurityMenuPanel from './SettingsSecurityMenuPanel.vue'
+    import SettingsActivitiesMenuPanel from './SettingsActivitiesMenuPanel.vue'
+    import TagsListMenuPanel from './TagsListMenuPanel.vue'
 
     import {
         mapState,
@@ -78,6 +86,19 @@
                 default: false
             }
         },
+        data() {
+            return {
+                currentPanel: 'menu',
+            }
+        },
+        components: {
+            MainMenuPanel,
+            SettingsMenuPanel,
+            SettingsProfileMenuPanel,
+            SettingsSecurityMenuPanel,
+            SettingsActivitiesMenuPanel,
+            TagsListMenuPanel
+        },
         computed: {
             ...mapState(useUserStore, [
                 'user'
@@ -93,32 +114,28 @@
                 'closeSidebar',
             ]),
 
-            onAddAccount: function () {
-                this.$router.push({ name: 'AddAccount' });
+            goToPreviousPanel: function () {
+                if (this.currentPanel == 'settings') {
+                    this.currentPanel = 'menu';
+                    return;
+                }
 
-                this.openSidebar(this.SIDEBAR.ADD_ACCOUNT);
-                this.closeSidebar(this.SIDEBAR.MENU);
+                if (['settings-profile', 'settings-security', 'settings-activities'].includes(this.currentPanel)) {
+                    this.currentPanel = 'settings';
+                    return;
+                }
             },
 
-            onOpenSettings: function () {
-                this.$router.push({ name: 'Settings' });
-
-                this.openSidebar(this.SIDEBAR.SETTINGS);
+            closeTray: function () {
                 this.closeSidebar(this.SIDEBAR.MENU);
+
+                // Re init the current panel
+                this.currentPanel = 'menu';
             },
 
-            onOpenTagsList: function () {
-                this.$router.push({ name: 'TagsList' });
-
-                this.openSidebar(this.SIDEBAR.TAGS_LIST);
-                this.closeSidebar(this.SIDEBAR.MENU);
+            onPanelChanged: function (newPanelName) {
+                this.currentPanel = newPanelName;
             },
-
-            onOpenTagsTree: function () {
-                this.$router.push({ name: 'TagsTree' });
-                this.openSidebar(this.SIDEBAR.TAGS_TREE);
-                this.closeSidebar(this.SIDEBAR.MENU);
-            }
         }
     }
 </script>
