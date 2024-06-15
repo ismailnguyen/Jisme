@@ -23,7 +23,7 @@
         <div class="row justify-content-center">
           <div class="col-12 text-center">
             <h2 class="sidebar-title" :title="account._id">
-              {{ account.displayPlatform || "Add" }}
+              {{ account.displayPlatform || 'New account' }}
             </h2>
           </div>
         </div>
@@ -415,7 +415,7 @@
         <div class="row footer">
           <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
             <button
-              class="btn btn-light"
+              class="btn btn-action btn-cta"
               :class="isCreating ? 'btn-dark' : 'btn-light'"
               type="button"
               @click="add()"
@@ -428,7 +428,7 @@
               ></span>
               <span v-else
                 ><i class="fa fa-floppy-disk"></i>
-                {{ isCreating ? "Adding ..." : "Add" }}</span
+                {{ isCreating ? 'Storing ...' : 'Store' }}</span
               >
             </button>
           </div>

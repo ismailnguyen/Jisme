@@ -47,7 +47,7 @@
                         @click="signUp"
                         class="w-100 btn btn-lg btn-primary"
                         tabindex="3">
-                        Create an issue
+                        Request an access
                         <i class="fa fa-arrow-right"></i>
                     </button>
 

@@ -311,7 +311,7 @@
               </label>
               <div class="input-group" v-show="fieldAttrs.login.isExpanded">
                 <button
-                  class="btn btn-outline-light"
+                  class="btn btn-outline-secondary"
                   type="button"
                   @click="copyToClipboard('editAccount_input_login_hidden')"
                 >
@@ -444,7 +444,7 @@
                 v-if="fieldAttrs.password.isExpanded"
               >
                 <button
-                  class="btn btn-outline-light dropdown-toggle"
+                  class="btn btn-outline-secondary dropdown-toggle"
                   type="button"
                   @click.prevent="
                     showPasswordTypeOptions = !showPasswordTypeOptions
@@ -483,12 +483,12 @@
                   v-if="!account.is_password_less"
                 />
                 <button
-                  class="btn btn-outline-light"
+                  class="btn btn-outline-secondary"
                   type="button"
                   @click="account.generatePassword()"
                   v-if="!account.is_password_less && !account.password"
                 >
-                  <i class="fa fa-cogs"></i> Generate
+                  <i class="fa fa-cogs"></i> Suggest
                 </button>
 
                 <input
@@ -504,7 +504,7 @@
                   "
                 />
                 <button
-                  class="btn btn-outline-light"
+                  class="btn btn-outline-secondary"
                   type="button"
                   @click="generatePasswordLess()"
                   v-if="
@@ -525,7 +525,7 @@
                   readonly
                 />
                 <button
-                  class="btn btn-outline-light"
+                  class="btn btn-outline-secondary"
                   type="button"
                   @click="resetPasswordLess()"
                   v-if="
@@ -673,7 +673,7 @@
               </label>
               <div v-show="fieldAttrs.platform.isExpanded" class="input-group">
                 <button
-                  class="btn btn-outline-light"
+                  class="btn btn-outline-secondary"
                   type="button"
                   @click="copyToClipboard('editAccount_input_platform_hidden')"
                 >
@@ -847,25 +847,25 @@
           <div class="row footer">
             <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
             <button
-              class="btn btn-light"
+              class="btn btn-action btn-cta"
               :class="isSaving ? 'btn-dark' : 'btn-light'"
               type="button"
               @click="save()"
             >
               <i class="fa fa-floppy-disk"></i>
-              {{ isSaving ? "Saving ..." : "Save" }}
+              {{ isSaving ? 'Updating ...' : 'Update' }}
             </button>
           </div>
 
           <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
             <button
               type="button"
-              class="btn btn-red"
+              class="btn btn-action btn-red"
               :class="isDeleting ? 'btn-dark' : 'btn-red'"
               @click="remove()"
             >
               <i class="fa fa-trash"></i>
-              {{ isDeleting ? "Deleting ..." : "Delete" }}
+              {{ isDeleting ? "Removing ..." : "Don't need it anymore" }}
             </button>
           </div>
             </div>
@@ -877,8 +877,6 @@
 <script>
 import "../assets/right_sidebar.css";
 import "../assets/bottom_sheet.css";
-
-import { generateRandomColor, generateInitialIcon } from "../utils/icon.js";
 
 import { mapState, mapActions } from "pinia";
 import { useUiStore, useAlertStore, useAccountsStore } from "@/store";
