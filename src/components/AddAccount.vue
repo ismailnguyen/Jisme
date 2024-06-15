@@ -439,7 +439,7 @@
 </template>
 
 <script>
-import "../assets/right_sidebar.css";
+import "../assets/bottom_sheet.css";
 
 import { mapWritableState, mapActions, mapState } from "pinia";
 import { useUiStore, useAlertStore, useAccountsStore } from "@/store";

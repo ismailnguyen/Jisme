@@ -875,7 +875,6 @@
 </template>
 
 <script>
-import "../assets/right_sidebar.css";
 import "../assets/bottom_sheet.css";
 
 import { mapState, mapActions } from "pinia";
