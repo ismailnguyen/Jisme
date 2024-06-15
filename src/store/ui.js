@@ -12,24 +12,9 @@ const store = defineStore('ui', () => {
 
     const SIDEBAR = {
         MENU: 'menu',
-        SETTINGS: 'settings',
-        SETTINGS_PROFILE: 'settings_profile',
-        SETTINGS_SECURITY: 'settings_security',
-        SETTINGS_RECENT_ACTIVITIES: 'settings_recent-activities',
-        TAGS_LIST: 'tags-list',
-        TAGS_TREE: 'tags-tree',
         ADD_ACCOUNT: 'add-account',
         EDIT_ACCOUNT: 'edit-account'
     };
-
-    const isRightSidebarOpened = computed(() => {
-        return isSidebarOpen(SIDEBAR.SETTINGS)
-            || isSidebarOpen(SIDEBAR.SETTINGS_PROFILE)
-            || isSidebarOpen(SIDEBAR.SETTINGS_SECURITY)
-            || isSidebarOpen(SIDEBAR.SETTINGS_RECENT_ACTIVITIES)
-            || isSidebarOpen(SIDEBAR.TAGS_LIST)
-            || isSidebarOpen(SIDEBAR.TAGS_TREE);
-    })
 
     const setCurrentEditingAccount = async (account) => {
         currentEditingAccount.value = account;
@@ -44,48 +29,60 @@ const store = defineStore('ui', () => {
 
     const initBottomSheet = (bottomSheetElementId) => {
         const bottomSheet = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet`);
-        const sheetContent = bottomSheet.querySelector(`#${ bottomSheetElementId }.bottom-sheet .content`);
         const dragIcon = bottomSheet.querySelector(`#${ bottomSheetElementId }.bottom-sheet .drag-icon`);
 
         let isDragging = false, startY, startHeight;
 
-        const dragStart = (e) => {
+        const dragStart = (e, bottomSheetElementId) => {
             isDragging = true;
             startY = e.pageY || e.touches?.[0].pageY;
+
+            const bottomSheet = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet`);
+            const sheetContent = bottomSheet.querySelector(`#${ bottomSheetElementId }.bottom-sheet .content`);
+
             startHeight = parseInt(sheetContent.style.height);
             bottomSheet.classList.add("dragging");
         }
 
         const dragging = (e, bottomSheetElementId) => {
             if(!isDragging) return;
+
             const delta = startY - (e.pageY || e.touches?.[0].pageY);
             const newHeight = startHeight + delta / window.innerHeight * 100;
+
             updateSheetHeight(bottomSheetElementId, newHeight);
         }
 
-        const dragStop = () => {
+        const dragStop = (e, bottomSheetElementId) => {
             isDragging = false;
+        
+            const bottomSheet = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet`);
             bottomSheet.classList.remove("dragging");
+
+            const sheetContent = bottomSheet.querySelector(`#${ bottomSheetElementId }.bottom-sheet .content`);
             const sheetHeight = parseInt(sheetContent.style.height);
-            sheetHeight < 25 ? hideBottomSheet() : sheetHeight > 75 ? updateSheetHeight(bottomSheetElementId, 100) : updateSheetHeight(bottomSheetElementId, 50);
+
+            sheetHeight < 25 ? 
+                hideBottomSheet() : sheetHeight > 75 ? 
+                    updateSheetHeight(bottomSheetElementId, 100) : updateSheetHeight(bottomSheetElementId, 50);
         }
 
-        dragIcon.addEventListener("mousedown", dragStart);
+        dragIcon.addEventListener("mousedown", (event) => dragStart(event, bottomSheetElementId));
         document.addEventListener("mousemove", (event) => dragging(event, bottomSheetElementId));
-        document.addEventListener("mouseup", dragStop);
+        document.addEventListener("mouseup", (event) => dragStop(event, bottomSheetElementId));
 
-        dragIcon.addEventListener("touchstart", dragStart);
+        dragIcon.addEventListener("touchstart", (event) => dragStart(event, bottomSheetElementId));
         document.addEventListener("touchmove", (event) => dragging(event, bottomSheetElementId));
-        document.addEventListener("touchend", dragStop);
+        document.addEventListener("touchend", (event) => dragStop(event, bottomSheetElementId));
     }
 
     const openSidebar = (name) => {
         openedSidebarList.value.push(name);
-        document.body.style.overflowY = "hidden";
+        disableBodyScroll();
 
-        if (name === SIDEBAR.EDIT_ACCOUNT || name === SIDEBAR.ADD_ACCOUNT) {
-            showBottomSheet(`${ name }-bottom-sheet`);
-        }
+        // if (name === SIDEBAR.EDIT_ACCOUNT || name === SIDEBAR.ADD_ACCOUNT) {
+        //     showBottomSheet(`${ name }-bottom-sheet`);
+        // }
     }
 
     const updateSheetHeight = (bottomSheetElementId, height) => {
@@ -95,7 +92,6 @@ const store = defineStore('ui', () => {
         const bottomSheet = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet`);
         // Toggles the fullscreen class to bottomSheet if the height is equal to 100
         bottomSheet.classList.toggle("fullscreen", height === 100);
-        document.body.classList.toggle("right-sidebar-opened", height === 100);
     }
 
     const showBottomSheet = (bottomSheetElementId) => {
@@ -104,20 +100,20 @@ const store = defineStore('ui', () => {
     }
 
     const hideBottomSheet = () => {
-        document.body.classList.toggle("right-sidebar-opened", false);
         enableBodyScroll();
     }
 
     const enableBodyScroll = () => {
-        document.body.style.overflowY = "auto";
+        document.body.style.overflowY = 'auto';
     }
 
     const disableBodyScroll = () => {
-        document.body.style.overflowY = "hidden";
+        document.body.style.overflowY = 'hidden';
     }
 
     const closeSidebar = (name) => {
         openedSidebarList.value = openedSidebarList.value.filter(item => item !== name);
+        enableBodyScroll();
 
         if (name === SIDEBAR.EDIT_ACCOUNT || name === SIDEBAR.ADD_ACCOUNT) {
             hideBottomSheet();
@@ -149,7 +145,6 @@ const store = defineStore('ui', () => {
         closeSidebar,
 
         isSidebarOpen,
-        isRightSidebarOpened,
 
         initBottomSheet
     };

@@ -44,13 +44,11 @@
 
         <div class="row" v-if="isLoading">
             <LoadingAccountItem
-            :size="accountsCardSize"
             v-for="index in 7"
             v-bind:key="index" />
         </div>
         <div class="row" v-else>
             <AccountItem
-                :size="accountsCardSize"
                 v-for="(account, accountIndex) in filteredAccounts"
                 v-bind:key="accountIndex"
                 :account="account" />
