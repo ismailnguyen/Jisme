@@ -6,7 +6,7 @@
   >
     <div class="sheet-overlay" @click="closeSidebar(SIDEBAR.ADD_ACCOUNT)"></div>
     <div class="content">
-      <div class="header row">
+      <div class="header row" :class="account.icon ? 'hasIcon' : ''">
         <div class="drag-icon row justify-content-center"><span></span></div>
 
         <div class="row justify-content-center">

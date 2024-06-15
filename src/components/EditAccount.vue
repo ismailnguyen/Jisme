@@ -6,7 +6,7 @@
   >
     <div class="sheet-overlay" @click="closeAccountEditing()"></div>
     <div class="content">
-      <div class="header row" :style="{ 'background-image': 'url(' + account.icon + ')' }">
+      <div class="header row" :class="account.icon ? 'hasIcon' : ''" :style="{ 'background-image': 'url(' + account.icon + ')' }">
         <div class="drag-icon row justify-content-center"><span></span></div>
 
         <div class="row justify-content-center">
