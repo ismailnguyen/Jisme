@@ -15,22 +15,9 @@
         <TagsList :visible="isSidebarOpen(SIDEBAR.TAGS_LIST)" />
         <TagsTree :visible="isSidebarOpen(SIDEBAR.TAGS_TREE)" />
 
-        <AccountList />
-
-        <a
-            id="menu-toggle"
-            class="floating-button floating-button--menu"
-            :class="isSidebarOpen(SIDEBAR.MENU) ? 'd-none' : ''"
-            @click="toggleSidebar(SIDEBAR.MENU)">
-            <i class="fa fa-solid fa-bars-staggered"></i>
-        </a>
-
-        <a
-            id="add-account-toggle"
-            class="floating-button floating-button--add d-none d-lg-block d-xl-block"
-            @click="openSidebar(SIDEBAR.ADD_ACCOUNT)">
-            <i class="fa fa-plus"></i>
-        </a>
+        <AccountList
+            @menuOpened="onMenuOpened"
+         />
     </div>
 </template>
 
@@ -86,8 +73,6 @@
 
             const lastUserUpdate = await this.getLastUpdatedTime();
             console.log('Last user update:', lastUserUpdate, new Date());
-
-            document.addEventListener('scroll', this.hideFloatingButtonsonScroll)
         },
         computed: {
             ...mapState(useUserStore, ['user', 'isLoggedIn']),
@@ -119,20 +104,8 @@
                 'getLastUpdatedTime'
             ]),
 
-            hideFloatingButtonsonScroll: function(event) {
-                const scrollingElement = event.target.scrollingElement;
-                var lastScrollTop = 0;
-
-                var st = scrollingElement.scrollTop;
-
-                var isScrollDown = st > lastScrollTop;
-
-                const floatingButtons = document.querySelectorAll('.floating-button');
-                floatingButtons.forEach(button => {
-                    button.style.top = isScrollDown ? '-80rem' : '20px';
-                });
-
-                lastScrollTop = st;
+            onMenuOpened: function() {
+                this.toggleSidebar(this.SIDEBAR.MENU);
             }
         }
     }

@@ -11,7 +11,6 @@ body {
   border: 1px solid black !important;
 }
 
-.floating-button.floating-button--menu,
 .left-sidebar-wrapper {
   background: rgb(13, 110, 253) !important;
 }
@@ -33,22 +32,16 @@ body {
   font-weight: 600 !important;
 }
 
-.searchBar {
+.search-input {
   color: black !important;
   border: 2px solid black !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
 }
-.searchBar,
+.search-input,
 .category-title {
   background: #f7f2c7 !important;
   font-weight: bold !important;
-}
-
-.floating-button--menu,
-.floating-button--add {
-  color: white !important;
-  border: 2px solid black !important;
 }
 
 .right-sidebar,

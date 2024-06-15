@@ -152,8 +152,12 @@
   scrollbar-width: none;
 }
 
-.bottom-sheet.fullscreen .body {
+.bottom-sheet.fullscreen .header.hasIcon + .body {
   padding-top: 12.5rem;
+}
+
+.bottom-sheet.fullscreen .body {
+  padding-top: 7rem;
   padding-bottom: 0;
 }
 

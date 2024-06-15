@@ -38,25 +38,12 @@ header {
   }
 }
 
-#page-content-wrapper .main-container:first-of-type {
-  padding-top: 6rem;
-}
 
 /* For small devices, when the searchbar moves on bottom,
 give some space in the page so that the searbar doesn't overlap content */
 @media (max-width: 767.98px) {
   #page-content-wrapper .main-container:last-of-type {
     padding-bottom: 6rem;
-  }
-}
-
-.floating-button {
-  font-size: 2em;
-}
-/* Add animation only on large devices */
-@media (min-width: 576px) {
-  .floating-button {
-    transition: all 0.3s;
   }
 }
 
@@ -67,56 +54,5 @@ give some space in the page so that the searbar doesn't overlap content */
 @media (min-width: 767.98px) {
   .right-sidebar-opened #page-content-wrapper {
     width: 50% !important;
-  }
-}
-.floating-button.floating-button--menu {
-  top: 20px;
-  left: 15px;
-  color: #fff;
-  background: linear-gradient(81.62deg, #2870ea 8.72%, #1b4aef 85.01%);
-}
-@media (prefers-color-scheme: dark) {
-  .floating-button.floating-button--menu {
-    background: #0b84fe;
-  }
-}
-
-@media (max-width: 767.98px) {
-  .floating-button.floating-button--menu {
-    bottom: 0.2rem;
-    transition: all 0.5s;
-  }
-}
-
-.floating-button.floating-button--add {
-  top: 20px;
-  right: 15px;
-  color: #fff;
-  background-color: #dc3545;
-}
-.floating-button {
-  position: fixed;
-  cursor: pointer;
-  width: 48px;
-  height: 48px;
-  border-radius: 15px;
-  text-align: center;
-  background-color: #fff;
-  box-shadow: 9px 9px 16px rgb(163, 177, 198, 0.6),
-    -9px -9px 16px rgba(255, 255, 255, 0.5);
-  z-index: 10;
-  transition: all 0.5s;
-}
-.floating-button.floating-button--menu:hover,
-.floating-button.floating-button--add:hover {
-  box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
-  transform: scale3d(1.01, 1.01, 1.01);
-}
-.floating-button i {
-  color: #eee;
-}
-@media (prefers-color-scheme: dark) {
-  .floating-button {
-    box-shadow: none;
   }
 }

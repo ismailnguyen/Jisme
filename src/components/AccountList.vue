@@ -11,17 +11,28 @@
     </div>
 
     <div id="page-content-wrapper" class="container-fluid">
-        <header id="search-container" class="row header-search justify-content-center">
+        <header class="row search-input-container justify-content-center">
             <div class="col-xs-12 col-md-8 col-lg-6">
+                <div
+                class="input-group mb-3"
+              >
+              <button
+                  class="btn search-left-btn"
+                  type="button"
+                  @click="onMenuOpened"
+                >
+                  <i class="fa fa-solid fa-bars-staggered"></i>
+                </button>
                 <input
-                    class="form-control searchBar"
-                    v-model="searchQuery"
-                    ref="searchInput"
-                    name="search"
-                    type="search"
-                    placeholder="Search"
-                    autofocus
-                    :disabled="isLoading">
+                  class="form-control search-input" 
+                  type="search"
+                  ref="searchInput"
+                  v-model="searchQuery"
+                  autofocus
+                  placeholder="Search"
+                  :disabled="isLoading"
+                />
+              </div>
             </div>
         </header>
 
@@ -68,6 +79,7 @@
     const MIN_SEARCH_QUERY_LENGTH = 3;
     
     export default {
+        emits: ['menuOpened'],
         components: {
             LoadingAccountItem,
             AccountItem,
@@ -183,6 +195,10 @@
                 'openAlert'
             ]),
 
+            onMenuOpened: function () {
+                this.$emit('menuOpened');
+            },
+
             hideSearchBarOnScroll: function (event) {
                 const scrollingElement = event.target.scrollingElement;
                 var lastScrollTop = 0;
@@ -191,7 +207,7 @@
 
                 var isScrollDown = st > lastScrollTop;
 
-                document.querySelector('.header-search').style.bottom = isScrollDown ? '-8rem' : '0.2rem';
+                document.querySelector('.search-input-container').style.bottom = isScrollDown ? '-8rem' : '0.2rem';
 
                 lastScrollTop = st;
             },
@@ -255,12 +271,17 @@
 
 <style>
     /* Reduce search bar size when right sidebar is opened */
-    .right-sidebar-opened .header-search {
+    .right-sidebar-opened .search-input-container {
         padding-right: 50%;
     }
 
+    .search-input-container .input-group {
+        box-shadow: 2px 4px 12px rgb(0 0 0 / 20%);
+        border-radius: 1.1rem;
+    }
+
     @media (max-width: 767.98px) { 
-        .header-search {
+        .search-input-container {
             position: fixed;
             bottom: 0.2rem;
             left: 0;
@@ -268,18 +289,33 @@
             transition: all .5s;
         }
     }
+
+    .search-left-btn {
+        color: #FFF;
+        line-height: 2.5;
+        background-color: #ced4da70;
+        background: linear-gradient(81.62deg, #2870ea 8.72%, #1b4aef 85.01%);
+        backdrop-filter: blur(18px);
+    }
+
+    .search-left-btn:hover,
+    .search-left-btn:active,
+    .search-left-btn:focus {
+        color: #FFF;
+		box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
+        transform: scale3d(1.01,1.01,1.01);
+	}
     
-    .searchBar {
+    .search-input {
         border-radius: 1.1rem;
         color: #000;
         line-height: 2.5;
-        background-color:  #ffffffbf;
-        box-shadow: 2px 4px 12px rgb(0 0 0 / 20%);
+        background-color: #ced4da70;
         backdrop-filter: blur(18px);
     }
 
 	@media (prefers-color-scheme: dark) {
-		.searchBar {
+		.search-input {
 			box-shadow: none;
             background-color: #3D3D3D;
             color: rgb(162, 162, 162);
@@ -287,38 +323,38 @@
 		}
 	}
 
-    .searchBar::placeholder {
+    .search-input::placeholder {
         color: #818182;
     }
 	
 	@media (prefers-color-scheme: dark) {	
-		.searchBar::placeholder {
+		.search-input::placeholder {
             color: rgb(162, 162, 162);
 		}
 	}
 
-    .searchBar:hover,
-    .searchBar:active,
-    .searchBar:focus {
+    .search-input:hover,
+    .search-input:active,
+    .search-input:focus {
         background-color: #ced4da70;
 		box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
         transform: scale3d(1.01,1.01,1.01);
 	}
 
     @media (prefers-color-scheme: light) {
-        .searchBar:hover,
-		.searchBar:focus-within,
-        .searchBar:active,
-        .searchBar:focus {
+        .search-input:hover,
+		.search-input:focus-within,
+        .search-input:active,
+        .search-input:focus {
             border: none !important;
         }
     }
 	
 	@media (prefers-color-scheme: dark) {
-		.searchBar:hover,
-		.searchBar:focus-within,
-		.searchBar:active,
-		.searchBar:focus {
+		.search-input:hover,
+		.search-input:focus-within,
+		.search-input:active,
+		.search-input:focus {
             border-color: gray;
             color: rgb(162, 162, 162);
             background: #464646;
