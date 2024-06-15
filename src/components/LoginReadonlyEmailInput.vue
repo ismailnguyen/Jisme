@@ -22,6 +22,7 @@
 
 <script>
     export default {
+        emits: ['usernameChanged'],
         props: {
             user: {
                 type: Object,
