@@ -1,9 +1,9 @@
 <template>
-    <div class="card-wrapper col-12 col-xs-12 col-sm-12" :class="layoutAdjustmentCss">
+    <div class="card-wrapper col-12 col-xs-12 col-sm-12 col-md-4 col-lg-3">
         <div class="card clickable" :id="account._id">
             <div class="card-image-wrapper col-xs-3">
                 <img
-                    :src="getIcon"
+                    :src="account.icon"
                     loading="lazy"
                     :alt="account.displayPlatform"
                     :title="account.displayPlatform"
@@ -60,12 +60,6 @@
   
     import { generateInitialIcon } from "../utils/icon.js";
 
-    const cardSizeMapping= {
-        small: 'col-md-4 col-lg-3',
-        medium: 'col-md-6 col-lg-6 col-xl-6',
-        large: 'col-lg-12 col-xl-12',
-    }
-    
     import { 
         mapState,
         mapActions
@@ -81,34 +75,16 @@
     export default {
         props: {
             account: Account,
-            size: {
-                type: String,
-                default: 'small'
-            }
         },
         mounted() {
             if (!this.account.icon) {
-                console.log('Generating icon for account', this.account.displayPlatform);
                 this.account.icon = generateInitialIcon(this.account.displayPlatform);
             }
         },
         computed: {
             ...mapState(useUiStore, [
-                'isRightSidebarOpened',
                 'SIDEBAR'
             ]),
-
-            layoutAdjustmentCss: function () {
-                return cardSizeMapping[this.size] || cardSizeMapping['small'];
-            },
-
-            getIcon: function () {
-                if (this.account && this.account.icon) {
-                    return this.account.icon;
-                }
-
-                //return generateInitialIcon(this.account.displayPlatform);
-            },
 
             shortDescription: function () {
                 if (this.account.description && this.account.description.length > 30) {

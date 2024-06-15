@@ -1,5 +1,5 @@
 <template>
-    <div class="card-wrapper col-12 col-xs-12 col-sm-12" :class="layoutAdjustmentCss">
+    <div class="card-wrapper col-12 col-xs-12 col-sm-12 col-md-4 col-lg-3">
         <div class="card clickable">
             <div class="card-image-wrapper col-xs-3">
                 <img
@@ -36,54 +36,13 @@
 <script>
     import '../assets/card.css'
 
-    const cardSizeMapping= {
-        small: 'col-md-4 col-lg-3',
-        medium: 'col-md-6 col-lg-6 col-xl-6',
-        large: 'col-lg-12 col-xl-12',
-    }
+    import { generateInitialIcon } from "../utils/icon.js";
 
     export default {
-        props: {
-            size: {
-                type: String,
-                default: 'small'
-            },
-        },
         computed: {
-            layoutAdjustmentCss: function () {
-                return cardSizeMapping[this.size] || cardSizeMapping['small'];
-            },
-
             getIcon: function () {
-                return this.generateInitialIcon();
+                return generateInitialIcon('', '#878f96');
             }
-        },
-        methods: {
-            generateInitialIcon: function () {
-                let avatar, ctx, color;
-
-                //creating canvas
-                avatar = document.createElement("canvas");
-                avatar.width = avatar.height = "48";
-                ctx = avatar.getContext("2d");
-                ctx.font = `${avatar.width / 2}px Arial`;
-                ctx.textAlign = "center";
-
-                //generating color
-                color = '#878f96';
-
-                //function to create avatar
-                //clear canvas
-                ctx.fillStyle = "#ffffff";
-                ctx.fillRect(0, 0, avatar.width, avatar.height);
-
-                //add background
-                ctx.fillStyle = `${color}60`;
-                ctx.fillRect(0, 0, avatar.width, avatar.height);
-
-                //generate as Image
-                return avatar.toDataURL();
-            },
         }
     }
 </script>
