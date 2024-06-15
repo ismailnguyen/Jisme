@@ -6,7 +6,7 @@
   background: var(--color-background-mute);
   border: none;
   margin: 0 10px;
-  border-radius: 15px;
+  border-radius: var(--btn-border-radius);
   box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
 
   height: 100%;
@@ -47,12 +47,12 @@
   position: absolute;
   top: -14px;
   left: -14px;
-  border-radius: 15px;
+  border-radius: var(--btn-border-radius);
   background: #f9f9f9;
   padding: 2px;
 }
 .card-icon {
-  border-radius: 15px;
+  border-radius: var(--btn-border-radius);
   height: 48px;
   width: 48px;
 }

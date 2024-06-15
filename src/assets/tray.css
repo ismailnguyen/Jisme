@@ -36,7 +36,7 @@
 
 .tray {
   border-radius: 36px;
-  background: rgb(254 255 254);
+  background: var(--color-background-mute);
   padding-top: 0.625rem;
   padding-bottom: 1.5rem;
   padding-left: 1.5rem;
@@ -47,7 +47,7 @@
   padding-left: 0.5rem;
   padding-right: 0.5rem;
   padding-top: 0.5rem;
-  border-bottom: 1px solid #f8f9fa;
+  border-bottom: 1px solid var(--btn-color-background);;
   margin-bottom: 1rem;
 }
 
@@ -55,7 +55,7 @@
   display: flex;
 }
 
-.tray .btn {
+.tray .btn.btn-action {
   font-weight: 600;
   font-size: 17px;
   padding-left: 1rem;
@@ -66,22 +66,20 @@
   height: 3rem;
   align-items: center;
   border-radius: 16px;
-  color: rgb(34 34 34);
-}
-
-.tray .btn i {
-  color: #8f8f8f;
-}
-
-.tray .btn.btn-red {
-  color: rgb(255 63 64);
-  background-color: rgb(255 240 240);
-}
-
-.tray .btn.btn-red i {
-  color: rgb(255 63 64);
 }
 
 .tray-wrapper.tray-wrapper-open {
   bottom: 1rem;
+}
+
+.tray {
+  overflow-y: scroll;
+  max-height: 60vh;
+  overflow-x: hidden;
+}
+
+.tray-body {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  padding-bottom: 1rem;
 }

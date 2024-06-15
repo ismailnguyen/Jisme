@@ -4,8 +4,17 @@
   --color-background: #f0f2f5;
   --color-background-inverted: #000;
   --color-background-soft: rgb(228, 228, 228);
-  --color-background-mute: #fff;
+  --color-background-mute: rgb(254 255 254);
+  --btn-color-background: rgb(248, 249, 250);
+
+  --btn-red-color-background: rgb(255 240 240);
+  --btn-red-color-text: rgb(255 63 64);
+  --btn-red-color-icon: rgb(255 63 64);
+  
+  --btn-border-radius: 16px;
+
   --color-text: #162056;
+  --color-text-mute: #16205670;
   --color-text-inverted: #eee;
 }
 @media (prefers-color-scheme: dark) {
@@ -13,11 +22,21 @@
     --color-background: #000;
     --color-background-inverted: #f0f2f5;
     --color-background-soft: #1c1c1d;
-    --color-background-mute: #242526db;
+    --color-background-mute: #242526;
+    --btn-color-background: #1c1c1d;
+
+    --btn-red-color-background: rgb(255 63 64);
+    --btn-red-color-text: rgb(255 240 240);
+    --btn-red-color-icon: rgb(255 240 240);
+
+    --btn-border-radius: 10px;
+
     --color-text: #eee;
+    --color-text-mute: #eeeeee70;
     --color-text-inverted: #162056;
   }
 }
+
 * {
   margin: 0;
   position: relative;
@@ -34,7 +53,7 @@ body {
   background: var(--color-background);
 }
 .btn {
-  border-radius: 15px;
+  border-radius: var(--btn-border-radius);
 }
 .btn-link-primary:hover {
   color: RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1));
@@ -89,7 +108,7 @@ body {
   background-color: #162056db;
 }
 
-.button--close {
+.button--navigation {
   cursor: pointer;
   width: 2rem;
   height: 2rem;
@@ -97,6 +116,8 @@ body {
   text-align: center;
   border: none;
   transition: all 0.3s;
+  background: var(--btn-color-background);
+  color: var(--color-text);
 }
 
 .shake {
@@ -127,4 +148,43 @@ body {
 
 .progress-bar {
   background: linear-gradient(81.62deg, #2870ea 8.72%, #1b4aef 85.01%);
+}
+
+.btn.btn-action {
+  font-weight: 600;
+  font-size: 17px;
+  gap: 15px;
+  border: none;
+  background: var(--btn-color-background);
+  color: var(--color-text);
+  text-align: left;
+  height: 3rem;
+  border-radius: var(--btn-border-radius);
+}
+
+.btn.btn-action:hover {
+  background: var(--color-background-soft);
+}
+
+.btn.btn-action i {
+  color: #8f8f8f;
+}
+
+.btn.btn-action.btn-cta {
+  color: #fefefe;
+  background-color: #0b84fe;
+}
+
+.btn.btn-action.btn-cta i {
+  color: #fefefe;
+}
+
+.btn.btn-action.btn-red {
+  color: var(--btn-red-color-text);
+  background-color: var(--btn-red-color-background);
+}
+
+.btn.btn-action.btn-red,
+.btn.btn-action.btn-red i {
+  color: var(--btn-red-color-icon);
 }

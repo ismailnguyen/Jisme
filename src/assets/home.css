@@ -9,18 +9,11 @@ a {
     padding-top: 2rem;
   }
 }
-header {
-  width: 100%;
-  position: fixed;
-  color: var(--color-text);
-  padding: 20px 20px 20px 40px;
-  z-index: 10;
-}
 .form-control {
   color: #f8f9fa;
   border: none;
-  border-radius: 15px;
-  background-color: #ced4da70;
+  border-radius: var(--btn-border-radius);
+  background-color: var(--btn-color-background);
 }
 .form-control::placeholder {
   color: #f8f9fa;
@@ -38,21 +31,10 @@ header {
   }
 }
 
-
 /* For small devices, when the searchbar moves on bottom,
 give some space in the page so that the searbar doesn't overlap content */
 @media (max-width: 767.98px) {
   #page-content-wrapper .main-container:last-of-type {
     padding-bottom: 6rem;
-  }
-}
-
-.right-sidebar-opened #page-content-wrapper {
-  padding-right: 0;
-}
-
-@media (min-width: 767.98px) {
-  .right-sidebar-opened #page-content-wrapper {
-    width: 50% !important;
   }
 }

@@ -78,7 +78,7 @@
 @media (prefers-color-scheme: dark) {
   .bottom-sheet .content {
     box-shadow: none;
-    background-color: var(--color-background-soft);
+    background-color: var(--color-background-mute);
   }
 }
 .bottom-sheet.show .content {
@@ -100,8 +100,8 @@
   padding-top: 0.5rem;
   margin-right: auto;
   margin-left: auto;
-  border-bottom: 1px solid #f8f9fa;
-  background-color: #ffffff;
+  border-bottom: 1px solid var(--btn-color-background);;
+  background-color: var(--color-background-mute);
   background-size: 0%;
   transition: height 0.5s;
 }
@@ -131,6 +131,7 @@
   width: 100%;
   color: #f8f9fa;
   background-size: 500%;
+  background-position: center;
   z-index: 30;
 }
 
@@ -166,53 +167,29 @@
   padding-right: 1rem;
 }
 
-.bottom-sheet .footer .btn {
+.bottom-sheet .footer .btn.btn-action {
   font-weight: 600;
   font-size: 17px;
   padding-left: 1rem;
   padding-right: 1rem;
-  gap: 15px;
   width: 100%;
   text-align: left;
   height: 3rem;
   align-items: center;
-  border-radius: 16px;
-  color: rgb(34 34 34);
 }
 
 /* In small screen align buttons center */
 @media (max-width: 767.98px) {
-  .bottom-sheet .footer .btn {
+  .bottom-sheet .footer .btn.btn-action {
     text-align: center;
   }
 }
 
-@media (prefers-color-scheme: dark) {
-  .bottom-sheet .footer .btn {
-    color: #fefefe;
-    background-color: #0b84fe;
-    border: none;
-    border-radius: 10px;
-  }
-}
-
-.bottom-sheet .footer .btn i {
-  color: #8f8f8f;
-}
 
 @media (prefers-color-scheme: dark) {
-  .bottom-sheet .footer .btn i {
+  .bottom-sheet .footer .btn.btn-action i {
     color: #fefefe;
   }
-}
-
-.bottom-sheet .footer .btn.btn-red {
-  background-color: rgb(255 240 240);
-}
-
-.bottom-sheet .footer .btn.btn-red,
-.bottom-sheet .footer .btn.btn-red i {
-  color: rgb(255 63 64);
 }
 
 @media (prefers-color-scheme: dark) {

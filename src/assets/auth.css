@@ -1,7 +1,7 @@
 .form-control,
 .form-control-plaintext {
   color: var(--color-text);
-  border-radius: 15px;
+  border-radius: var(--btn-border-radius);
   background-color: var(--color-background-mute);
 }
 
@@ -54,7 +54,7 @@
   color: var(--color-text);
   background: var(--color-background-mute);
   border: none;
-  border-radius: 15px;
+  border-radius: var(--btn-border-radius);
   box-shadow: 0 10px 20px 0 rgba(208, 214, 222, 0.5);
 }
 
