@@ -77,7 +77,7 @@
         height: 40px;
         margin-right: 10px;
         background-color: white;
-        border-radius: 15px;
+        border-radius: var(--btn-border-radius);
     }
 
     .alert-dismissible,
