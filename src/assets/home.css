@@ -24,6 +24,14 @@ a {
   width: 100%;
   position: absolute;
 }
+
+/* On standalone mode on mobile phone, the header is hidden by notch, so lower down content */
+@media screen and (display-mode: standalone) {
+  #page-content-wrapper {
+    padding-top: 2rem;
+  }
+}
+
 /* Add animation only on large devices */
 @media (min-width: 576px) {
   #page-content-wrapper {
