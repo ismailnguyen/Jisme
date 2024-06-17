@@ -11,7 +11,7 @@
                 </h5>
 
                 <span
-                    class="badge rounded-pill badge-primary"
+                    class="badge rounded-pill"
                     v-for="(tag, tagIndex) in selectedTags"
                     v-bind:key="tagIndex"
                     @click="removeTag(tag)">

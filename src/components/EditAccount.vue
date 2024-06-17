@@ -724,7 +724,7 @@
               >
                 <i class="fa fa-tags" aria-hidden="true"></i>
                 <span
-                  class="badge rounded-pill badge-primary"
+                  class="badge rounded-pill"
                   v-for="tag in account.tags.split(',')"
                   v-show="account.tags"
                   v-bind:key="tag"
@@ -750,7 +750,7 @@
                 @click="focusTagInput()"
               >
                 <span
-                  class="badge rounded-pill badge-primary"
+                  class="badge rounded-pill"
                   v-for="(tag, tagIndex) in account.tags.split(',')"
                   v-bind:key="tagIndex"
                   @click="removeTag(tagIndex)"

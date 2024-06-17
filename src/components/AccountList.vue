@@ -279,13 +279,15 @@ export default {
 
 @media (prefers-color-scheme: dark) {
   .search-left-btn {
-    background: RGBA(var(--bs-primary-rgb), var(--bs-bg-opacity, 1));
+    color: #0c8ed1;
+    background: #002e48;
   }
 
   .search-left-btn:hover,
   .search-left-btn:active,
   .search-left-btn:focus {
-    background: linear-gradient(81.62deg, #2870ea 8.72%, #1b4aef 85.01%);
+    color: #fff;
+    background: #002e48;
   }
 }
 

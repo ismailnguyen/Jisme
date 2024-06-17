@@ -108,7 +108,7 @@
             >
             <div class="form-control tags tags-input" @click="focusTagInput()">
               <span
-                class="badge rounded-pill badge-primary"
+                class="badge rounded-pill"
                 v-for="(tag, tagIndex) in account.tags.split(',')"
                 v-bind:key="tagIndex"
                 @click="removeTag(tag)"

@@ -88,24 +88,41 @@ body {
   cursor: pointer;
   box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
 }
-.badge-primary {
+
+.badge {
   color: #fff;
   background: linear-gradient(81.62deg, #2870ea 8.72%, #1b4aef 85.01%);
 }
+.badge:hover {
+  color: #0c8ed1;
+}
+
 @media (prefers-color-scheme: dark) {
-  .badge-primary {
-    background: #0b84fe;
+  .badge {
+    color: #0c8ed1;
+    background: #002e48;
+  }
+  .badge:hover {
+    color: #fff;
   }
 }
-.badge-primary:hover {
-  color: #162056db;
-}
+
 .badge-secondary {
   color: #2870ea;
-  background-color: #fff;
+  background: #fff;
 }
 .badge-secondary:hover {
-  background-color: #162056db;
+  background: #162056db;
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-secondary {
+    color: #2870ea;
+    background: #162056db;
+  }
+  .badge-secondary:hover {
+    color: #fff;
+  }
 }
 
 .button--navigation {
@@ -148,6 +165,12 @@ body {
 
 .progress-bar {
   background: linear-gradient(81.62deg, #2870ea 8.72%, #1b4aef 85.01%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .progress-bar {
+    background: #002e48;
+  }
 }
 
 .btn.btn-action {

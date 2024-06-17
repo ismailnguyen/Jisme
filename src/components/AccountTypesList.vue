@@ -17,8 +17,8 @@
                     </div>
                     <div class="card-footer">
                         <a class="btn btn-outline-primary float-end d-none">
-                            View
                             <i class="fa fa-arrow-right"></i>
+                            View
                         </a>
                     </div>
                 </div>
@@ -33,8 +33,8 @@
                     </div>
                     <div class="card-footer">
                         <a class="btn btn-outline-primary float-end d-none">
-                            View
                             <i class="fa fa-arrow-right"></i>
+                            View
                         </a>
                     </div>
                 </div>
@@ -49,8 +49,8 @@
                     </div>
                     <div class="card-footer">
                         <a class="btn btn-outline-primary float-end d-none">
-                            View
                             <i class="fa fa-arrow-right"></i>
+                            View
                         </a>
                     </div>
                 </div>

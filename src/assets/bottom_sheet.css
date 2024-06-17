@@ -231,15 +231,20 @@ hr {
 }
 @media (prefers-color-scheme: dark) {
   .btn-group label.btn {
-    color: #fff;
+    color: #0c8ed1;
+    background: #002e48;
+    border-color: #0c8ed1;
+  }
+  .btn-group label.btn {
+    color: #0c8ed1;
   }
   .btn-group label.btn.active {
-    color: #fff;
+    color: #0c8ed1;
   }
 
   .btn-group label.btn.active,
   .btn-group label.btn:hover {
-    background: #0b84fe;
+    background: #002e48;
   }
 }
 .sidebar.large-header .sidebar-body {
