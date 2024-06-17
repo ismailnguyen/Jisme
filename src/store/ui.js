@@ -105,10 +105,12 @@ const store = defineStore('ui', () => {
 
     const enableBodyScroll = () => {
         document.body.style.overflowY = 'auto';
+        document.body.style.touchAction = 'auto';
     }
 
     const disableBodyScroll = () => {
         document.body.style.overflowY = 'hidden';
+        document.body.style.touchAction = 'none';
     }
 
     const closeSidebar = (name) => {
