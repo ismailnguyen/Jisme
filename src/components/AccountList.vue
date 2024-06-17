@@ -25,9 +25,7 @@
         <input
           class="form-control search-input"
           type="search"
-          ref="searchInput"
           v-model="searchQuery"
-          autofocus
           placeholder="Search"
           :disabled="isLoading"
         />
@@ -190,8 +188,6 @@ export default {
           }, 1000);
         }
       }
-
-      this.focusSearchInput();
     },
 
     displayProgress: function (current, total) {
@@ -201,10 +197,6 @@ export default {
         total: total,
         progressionPercentage: Math.round((current / total) * 100),
       };
-    },
-
-    focusSearchInput: function () {
-      this.$refs.searchInput.focus();
     },
 
     updateFilteredAccounts: function (applyFilters = true) {

@@ -685,7 +685,6 @@
                   placeholder="Platform"
                   type="text"
                   v-model="account.platform"
-                  autofocus
                 />
               </div>
               <input
