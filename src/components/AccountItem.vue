@@ -1,62 +1,60 @@
 <template>
     <div class="card-wrapper col-12 col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
         <div class="card clickable" :id="account._id" >
-            <div class="card-body row" @click.prevent="onCardClick()">
-                <div class="col-8">
-                    <div class="row">
-                        <div class="col-sm-12 tags">
-                            <div
-                                class="badge rounded-pill"
-                                v-for="tag in account.tags.split(',')"
-                                @click="selectTag(tag)"
-                                v-bind:key="tag">
-                                {{tag}}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <h2 class=" card-title">
-                                {{ account.displayPlatform }}
-                            </h2>
-                        </div>
-                    </div>
-
-                    <div class="row" v-if="(account.type == 'account' || account.type == '2fa') && account.login">
-                        <div class="col-sm-12">
-                            <span class="small">
-                                {{ account.login }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-12" v-if="account.type == 'card' && account.card_name">
-                        <div class="col-sm-12">
-                            <span class="small">
-                                <i class="fa fa-user" aria-hidden="true" ></i>
-                                {{ account.card_name }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-12" v-if="account.description">
-                        <div class="col-sm-12">
-                                <span class="small description">
-                                {{ shortDescription }}
-                            </span>
+            <div class="card-body" @click.prevent="onCardClick()">
+                <div class="row">
+                    <div class="col-12 tags">
+                        <div
+                            class="badge rounded-pill"
+                            v-for="tag in account.tags.split(',')"
+                            @click="selectTag(tag)"
+                            v-bind:key="tag">
+                            {{tag}}
                         </div>
                     </div>
                 </div>
 
-                <div class="col-4 align-self-center">
-                    <img
-                        :src="account.icon"
-                        loading="lazy"
-                        :alt="account.displayPlatform"
-                        :title="account.displayPlatform"
-                        @error="onImageLoadingError()"
-                        class="card-icon float-end" />
+                <div class="row">
+                    <div class="col-8 align-self-center">
+                        <h2 class=" card-title">
+                            {{ account.displayPlatform }}
+                        </h2>
+                    </div>
+
+                    <div class="col-4 align-self-center">
+                        <img
+                            :src="account.icon"
+                            loading="lazy"
+                            :alt="account.displayPlatform"
+                            :title="account.displayPlatform"
+                            @error="onImageLoadingError()"
+                            class="card-icon float-end" />
+                    </div>
+                </div>
+
+                <div class="row" v-if="(account.type == 'account' || account.type == '2fa') && account.login">
+                    <div class="col-12">
+                        <span class="small">
+                            {{ account.login }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row" v-if="account.type == 'card' && account.card_name">
+                    <div class="col-12">
+                        <span class="small">
+                            <i class="fa fa-user" aria-hidden="true" ></i>
+                            {{ account.card_name }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row" v-if="account.description">
+                    <div class="col-12">
+                        <span class="small description">
+                            {{ shortDescription }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
