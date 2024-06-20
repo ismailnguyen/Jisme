@@ -339,79 +339,77 @@
             </h2>
             <div class="accordion-collapse show">
               <div class="accordion-body">
-                <label class="form-label" for="addAccount_password_input">
-                  <div class="btn-group" role="group" aria-label="Password type">
-                    <input
-                      type="radio"
-                      class="btn-check"
-                      name="password-type"
-                      id="addAccount_radiobutton_passwordtype_password"
-                      v-model="account.is_password_less"
-                      v-bind:value="false"
-                    />
-                    <label
-                      class="btn"
-                      for="addAccount_radiobutton_passwordtype_password"
-                      :class="!account.is_password_less ? 'active' : ''"
-                    >
-                      <i class="fa fa-lock" aria-hidden="true"></i>
-                      Password
-                    </label>
+                <div class="btn-group" role="group" aria-label="Password type">
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="password-type"
+                    id="addAccount_radiobutton_passwordtype_passwordless"
+                    v-model="account.is_password_less"
+                    v-bind:value="true"
+                  />
+                  <label
+                    class="btn"
+                    for="addAccount_radiobutton_passwordtype_passwordless"
+                    :class="account.is_password_less ? 'active' : ''"
+                  >
+                    <i class="fa fa-bolt" aria-hidden="true"></i>
+                    Password less
+                  </label>
+                  
+                  <input
+                    type="radio"
+                    class="btn-check"
+                    name="password-type"
+                    id="addAccount_radiobutton_passwordtype_password"
+                    v-model="account.is_password_less"
+                    v-bind:value="false"
+                  />
+                  <label
+                    class="btn"
+                    for="addAccount_radiobutton_passwordtype_password"
+                    :class="!account.is_password_less ? 'active' : ''"
+                  >
+                    <i class="fa fa-lock" aria-hidden="true"></i>
+                    Password
+                  </label>
+                </div>
 
-                    <input
-                      type="radio"
-                      class="btn-check"
-                      name="password-type"
-                      id="addAccount_radiobutton_passwordtype_passwordless"
-                      v-model="account.is_password_less"
-                      v-bind:value="true"
-                    />
-                    <label
-                      class="btn"
-                      for="addAccount_radiobutton_passwordtype_passwordless"
-                      :class="account.is_password_less ? 'active' : ''"
-                    >
-                      <i class="fa fa-bolt" aria-hidden="true"></i>
-                      Password less
-                    </label>
-                  </div>
-                </label>
-
-                <hr class="my-4" />
-
-                <div class="input-group" v-show="!account.is_password_less">
-                <input
-                  id="addAccount_password_input"
-                  class="form-control"
-                  type="text"
-                  aria-describedby="addAccount_passwordHelp"
-                  v-model="account.password"
-                  placeholder="Password"
-                  @keyup.enter="add()"
-                />
-                <button
-                  class="btn btn-outline-secondary"
-                  type="button"
-                  @click="account.generatePassword()"
+                <br>
+                <small
+                  id="addAccount_passwordLessHelp"
+                  class="form-text text-muted"
+                  v-show="account.is_password_less"
+                  >Password less generator will be available once the account will
+                  be created.</small
                 >
-                  <i class="fa fa-cogs"></i> Generate
-                </button>
-              </div>
-              <small
-                id="addAccount_passwordHelp"
-                class="form-text text-muted"
-                v-show="!account.is_password_less"
-                >Click button to generate password.</small
-              >
-              <small
-                id="addAccount_passwordLessHelp"
-                class="form-text text-muted"
-                v-show="account.is_password_less"
-                >Password less generator will be available once the account will
-                be created.</small
-              >
 
               <hr class="my-4" />
+
+              <div class="input-group" v-show="!account.is_password_less">
+                  <input
+                    class="form-control"
+                    type="text"
+                    aria-describedby="addAccount_passwordHelp"
+                    v-model="account.password"
+                    placeholder="Password"
+                  />
+                  <button
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    @click="account.generatePassword()"
+                  >
+                    <i class="fa fa-cogs"></i> Generate
+                  </button>
+              </div>
+              <small
+                  id="addAccount_passwordHelp"
+                  class="form-text text-muted"
+                  v-show="!account.is_password_less"
+                  >Click button to generate password.</small
+                >
+              
+              <hr class="my-4" v-show="!account.is_password_less" />
 
               <label class="form-label" for="password_clue_input">
               <i class="fa fa-eye" aria-hidden="true"></i>

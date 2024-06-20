@@ -9,7 +9,7 @@ class Account {
                     icon = '',
 					login = '', 
 					password = '',
-                    is_password_less = false,
+                    is_password_less = true, // By default enforce password less
 					password_clue = '', 
 					tags = '', 
 					created_date = new Date(),
