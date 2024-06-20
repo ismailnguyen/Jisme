@@ -32,25 +32,19 @@
                     </div>
                 </div>
 
-                <div class="row" v-if="(account.type == 'account' || account.type == '2fa') && account.login">
-                    <div class="col-12">
+                <div class="row">
+                    <div class="col-12" v-if="(account.type == 'account' || account.type == '2fa') && account.login">
                         <span class="small">
                             {{ account.login }}
                         </span>
                     </div>
-                </div>
-
-                <div class="row" v-if="account.type == 'card' && account.card_name">
-                    <div class="col-12">
+                    <div class="col-12" v-if="account.type == 'card' && account.card_name">
                         <span class="small">
                             <i class="fa fa-user" aria-hidden="true" ></i>
                             {{ account.card_name }}
                         </span>
                     </div>
-                </div>
-
-                <div class="row" v-if="account.description">
-                    <div class="col-12">
+                    <div class="col-12" v-if="account.description">
                         <span class="small description">
                             {{ shortDescription }}
                         </span>
