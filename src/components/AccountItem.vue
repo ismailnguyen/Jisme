@@ -108,7 +108,7 @@
                 if (accountToEdit) {
                     this.setCurrentEditingAccount(accountToEdit);
                 } else {
-                    this.openAlert('Account no more available', 'danger');
+                    this.openAlert('Account not found', 'Please refresh or retry.', 'danger');
                 }
 
                 this.openSidebar(this.SIDEBAR.EDIT_ACCOUNT);

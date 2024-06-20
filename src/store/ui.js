@@ -79,10 +79,6 @@ const store = defineStore('ui', () => {
     const openSidebar = (name) => {
         openedSidebarList.value.push(name);
         disableBodyScroll();
-
-        // if (name === SIDEBAR.EDIT_ACCOUNT || name === SIDEBAR.ADD_ACCOUNT) {
-        //     showBottomSheet(`${ name }-bottom-sheet`);
-        // }
     }
 
     const updateSheetHeight = (bottomSheetElementId, height) => {
@@ -92,11 +88,6 @@ const store = defineStore('ui', () => {
         const bottomSheet = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet`);
         // Toggles the fullscreen class to bottomSheet if the height is equal to 100
         bottomSheet.classList.toggle("fullscreen", height === 100);
-    }
-
-    const showBottomSheet = (bottomSheetElementId) => {
-        disableBodyScroll();
-        updateSheetHeight(bottomSheetElementId, 50);
     }
 
     const hideBottomSheet = () => {

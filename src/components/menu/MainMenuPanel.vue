@@ -54,8 +54,10 @@
             },
 
             onAddAccount: function () {
-                this.openSidebar(this.SIDEBAR.ADD_ACCOUNT);
+                // first clost the menu before opening the add account sidebar
+                // otherwise body scroll will be enabled when the menu is closed
                 this.closeSidebar(this.SIDEBAR.MENU);
+                this.openSidebar(this.SIDEBAR.ADD_ACCOUNT);
             },
         }
     }

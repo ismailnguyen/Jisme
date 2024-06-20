@@ -97,6 +97,15 @@ body {
   color: #0c8ed1;
 }
 
+.badge-red {
+  color: var(--btn-red-color-text);
+  background: var(--btn-red-color-background);
+}
+.badge-red:hover {
+  color: #fff;
+  background-color: var(--btn-red-color-text);
+}
+
 @media (prefers-color-scheme: dark) {
   .badge {
     color: #0c8ed1;
