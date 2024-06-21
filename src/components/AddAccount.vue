@@ -153,6 +153,7 @@
                   placeholder="Tag"
                   type="text"
                   v-model="newTag"
+                  @keyup.enter="addTag()"
                   required
                 />
 
