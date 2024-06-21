@@ -55,6 +55,12 @@
   display: flex;
 }
 
+.tray-icon {
+  border-radius: var(--btn-border-radius);
+  height: 48px;
+  width: 48px;
+}
+
 .tray .btn.btn-action {
   font-weight: 600;
   font-size: 17px;

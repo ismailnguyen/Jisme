@@ -10,7 +10,7 @@
                             loading="lazy"
                             :alt="user.email"
                             :title="user.email"
-                            class="sidebar-icon" />
+                            class="tray-icon" />
                     </div>
 
                     <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4" v-else>

@@ -9,7 +9,6 @@
 <script>
     import '@fortawesome/fontawesome-free/css/all.css';
     import './assets/base.css';
-    import './assets/sidebar.css';
 
     import {
         useAlertStore,
