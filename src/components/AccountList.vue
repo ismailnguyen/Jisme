@@ -279,15 +279,15 @@ export default {
 
 @media (prefers-color-scheme: dark) {
   .search-left-btn {
-    color: #0c8ed1;
-    background: #002e48;
+    color: #2282dc;
+    background: var(--color-background-soft);
   }
 
   .search-left-btn:hover,
   .search-left-btn:active,
   .search-left-btn:focus {
     color: #fff;
-    background: #002e48;
+    background: var(--color-background-soft);
   }
 }
 

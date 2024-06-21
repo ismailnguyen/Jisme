@@ -79,7 +79,7 @@
 @media (prefers-color-scheme: dark) {
   .bottom-sheet .content {
     box-shadow: none;
-    background-color: var(--color-background-mute);
+    background-color: var(--color-background-soft);
   }
 }
 .bottom-sheet.show .content {
@@ -105,6 +105,12 @@
   background-color: #f4f4f4;
   background-size: 0%;
   transition: height 0.5s;
+}
+
+@media (prefers-color-scheme: dark) {
+  .bottom-sheet .header {
+    background-color: var(--color-background-soft);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
@@ -183,7 +189,13 @@
   padding-left: 1rem;
   padding-right: 1rem;
 
-  border-top: 1px solid #c6c7c6;
+  border-top: 1px solid var(--color-background-soft);
+}
+
+@media (prefers-color-scheme: dark) {
+  .bottom-sheet .footer {
+    border-top: 1px solid var(--color-background-mute);
+  }
 }
 
 .bottom-sheet .footer .btn.btn-action {
@@ -201,12 +213,6 @@
 @media (max-width: 767.98px) {
   .bottom-sheet .footer .btn.btn-action {
     text-align: center;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .bottom-sheet .footer .btn.btn-action i {
-    color: #fefefe;
   }
 }
 
@@ -257,21 +263,16 @@ hr {
   background: #fff;
 }
 @media (prefers-color-scheme: dark) {
-  .btn-group label.btn {
-    color: #0c8ed1;
-    background: #002e48;
-    border-color: #0c8ed1;
+  .btn-group {
+    background-color: #453f4b;
   }
   .btn-group label.btn {
-    color: #0c8ed1;
+    color: #faf8fd;
   }
-  .btn-group label.btn.active {
-    color: #0c8ed1;
-  }
-
   .btn-group label.btn.active,
   .btn-group label.btn:hover {
-    background: #002e48;
+    color: #faf8fd;
+    background: #57535e;
   }
 }
 
@@ -360,6 +361,17 @@ a {
   background-color: #FFFFFF;
 }
 
+
+@media (prefers-color-scheme: dark) {
+  .accordion-item,
+  .accordion-button,
+  .accordion-button:not(.collapsed) {
+    box-shadow: none;
+    background-color: var(--color-background-mute);
+    color: #fefefe;
+  }
+}
+
 .accordion-button,
 .accordion-button:focus,
 .accordion-button:not(.collapsed) {
@@ -377,4 +389,14 @@ a {
 .accordion-item--without-body .accordion-button:not(.collapsed)::after,
 .accordion-item--without-body .accordion-button::after {
   background-image: unset !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236ea8fe'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  }
+
+  .accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236ea8fe'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  }
 }

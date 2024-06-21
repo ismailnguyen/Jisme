@@ -92,6 +92,8 @@ body {
 .badge {
   color: #fff;
   background: linear-gradient(81.62deg, #2870ea 8.72%, #1b4aef 85.01%);
+  font-weight: 500;
+  padding: .45rem .4rem;
 }
 .badge:hover {
   color: #0c8ed1;
@@ -108,8 +110,8 @@ body {
 
 @media (prefers-color-scheme: dark) {
   .badge {
-    color: #0c8ed1;
-    background: #002e48;
+    color: #2282dc;
+    background: #002850;
   }
   .badge:hover {
     color: #fff;
@@ -219,4 +221,16 @@ body {
 .btn.btn-action.btn-red,
 .btn.btn-action.btn-red i {
   color: var(--btn-red-color-icon);
+}
+
+
+@media (prefers-color-scheme: dark) {
+  .btn.btn-action.btn-red {
+    background: none;
+  }
+
+  .btn.btn-action.btn-red,
+  .btn.btn-action.btn-red i {
+    color: var(--btn-red-color-background);
+  }
 }
