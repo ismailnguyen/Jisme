@@ -16,20 +16,20 @@
               loading="lazy"
               :alt="account.displayPlatform"
               :title="account.displayPlatform"
-              class="sidebar-large-icon"
+              class="bottom-sheet-large-icon"
             />
           </div>
         </div>
         <div class="row justify-content-center">
           <div class="col-12 text-center">
-            <h2 class="sidebar-title" :title="account._id">
+            <h2 class="bottom-sheet-title" :title="account._id">
               {{ account.displayPlatform }}
             </h2>
           </div>
         </div>
       </div>
       <div class="body">
-          <div class="row">
+        <div class="row">
 
             <!-- region_start -- Account type: card -->
             <div class="accordion" v-if="account.type == 'card'">
@@ -576,6 +576,61 @@
 
             <div class="accordion">
               <div class="accordion-item">
+                <div class="accordion-collapse show">
+                  <div class="accordion-body text-center">
+                    <div class="btn-group" role="group" aria-label="Account type">
+                      <input
+                        type="radio"
+                        class="btn-check"
+                        name="account-type"
+                        id="editAccount_radiobutton_accounttype_account"
+                        v-model="account.type"
+                        value="account"
+                      />
+                      <label
+                        class="btn"
+                        for="editAccount_radiobutton_accounttype_account"
+                        :class="account.type == 'account' ? 'active' : ''"
+                        >Account</label
+                      >
+
+                      <input
+                        type="radio"
+                        class="btn-check"
+                        name="account-type"
+                        id="editAccount_radiobutton_accounttype_card"
+                        v-model="account.type"
+                        value="card"
+                      />
+                      <label
+                        class="btn"
+                        for="editAccount_radiobutton_accounttype_card"
+                        :class="account.type == 'card' ? 'active' : ''"
+                        >Card</label
+                      >
+
+                      <input
+                        type="radio"
+                        class="btn-check"
+                        name="account-type"
+                        id="editAccount_radiobutton_accounttype_2fa"
+                        v-model="account.type"
+                        value="2fa"
+                      />
+                      <label
+                        class="btn"
+                        for="editAccount_radiobutton_accounttype_2fa"
+                        :class="account.type == '2fa' ? 'active' : ''"
+                        >2FA</label
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion">
+              <div class="accordion-item">
                 <h2 class="accordion-header ">
                   <button
                     class="accordion-button" :class="fieldAttrs.description.description ? '' : 'collapsed'"
@@ -632,78 +687,6 @@
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div class="accordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button
-                    class="accordion-button" :class="fieldAttrs.type.isExpanded ? '' : 'collapsed'"
-                    type="button"
-                    @click="fieldAttrs.type.isExpanded = !fieldAttrs.type.isExpanded">
-                    <div>
-                      <div class="fw-medium">
-                        <i class="fa fa-circle" aria-hidden="true"></i>
-                        Type
-                      </div>
-                      <span class="fw-lighter" v-show="!fieldAttrs.type.isExpanded">
-                        {{ accountTypeToDisplay }}
-                      </span>
-                    </div>
-                  </button>
-                </h2>
-                <div class="accordion-collapse" :class="fieldAttrs.type.isExpanded ? 'show' : 'collapse'">
-                  <div class="accordion-body">
-                    <div class="btn-group" role="group" aria-label="Account type">
-                      <input
-                        type="radio"
-                        class="btn-check"
-                        name="account-type"
-                        id="editAccount_radiobutton_accounttype_account"
-                        v-model="account.type"
-                        value="account"
-                      />
-                      <label
-                        class="btn"
-                        for="editAccount_radiobutton_accounttype_account"
-                        :class="account.type == 'account' ? 'active' : ''"
-                        >Account</label
-                      >
-
-                      <input
-                        type="radio"
-                        class="btn-check"
-                        name="account-type"
-                        id="editAccount_radiobutton_accounttype_card"
-                        v-model="account.type"
-                        value="card"
-                      />
-                      <label
-                        class="btn"
-                        for="editAccount_radiobutton_accounttype_card"
-                        :class="account.type == 'card' ? 'active' : ''"
-                        >Card</label
-                      >
-
-                      <input
-                        type="radio"
-                        class="btn-check"
-                        name="account-type"
-                        id="editAccount_radiobutton_accounttype_2fa"
-                        v-model="account.type"
-                        value="2fa"
-                      />
-                      <label
-                        class="btn"
-                        for="editAccount_radiobutton_accounttype_2fa"
-                        :class="account.type == '2fa' ? 'active' : ''"
-                        >2FA</label
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-
             </div>
 
             <div class="accordion">
@@ -810,7 +793,7 @@
                   </div>
               </div> -->
 
-          </div>
+        </div>
 
         <div class="row footer">
           <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
