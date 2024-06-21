@@ -319,7 +319,7 @@
                   type="button">
                   <div>
                     <div class="fw-medium">
-                      <i class="fa fa-key" aria-hidden="true"></i>
+                      <i class="fa fa-lock" aria-hidden="true"></i>
                       Password
                     </div>
                   </div>
@@ -417,8 +417,7 @@
                 <hr class="my-4" />
 
                 <label class="form-label" for="addAccount_social_login_input"
-                  ><i class="fa fa-mobile-screen" aria-hidden="true"></i> Social
-                  login</label
+                  ><i class="fa fa-mobile-screen" aria-hidden="true"></i> Social login</label
                 >
                 <input
                   id="addAccount_social_login_input"

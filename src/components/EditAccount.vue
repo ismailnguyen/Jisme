@@ -258,39 +258,45 @@
                 </h2>
                 <div class="accordion-collapse" :class="fieldAttrs.password.isExpanded ? 'show' : 'collapse'">
                   <div class="accordion-body">
-                    <div
-                      class="input-group mb-3"
-                      v-if="fieldAttrs.password.isExpanded"
-                    >
-                      <button
-                        class="btn btn-outline-secondary dropdown-toggle"
-                        type="button"
-                        @click.prevent="
-                          showPasswordTypeOptions = !showPasswordTypeOptions
-                        "
+                    <div class="btn-group" role="group" aria-label="Password type">
+                      <input
+                        type="radio"
+                        class="btn-check"
+                        name="password-type"
+                        id="addAccount_radiobutton_passwordtype_passwordless"
+                        v-model="account.is_password_less"
+                        v-bind:value="true"
+                      />
+                      <label
+                        class="btn"
+                        for="addAccount_radiobutton_passwordtype_passwordless"
+                        :class="account.is_password_less ? 'active' : ''"
                       >
-                        {{ account.is_password_less ? "Password less" : "Password" }}
-                      </button>
-                      <ul
-                        class="dropdown-menu"
-                        :class="showPasswordTypeOptions ? 'show' : ''"
+                        <i class="fa fa-bolt" aria-hidden="true"></i>
+                        Password less
+                      </label>
+                      
+                      <input
+                        type="radio"
+                        class="btn-check"
+                        name="password-type"
+                        id="addAccount_radiobutton_passwordtype_password"
+                        v-model="account.is_password_less"
+                        v-bind:value="false"
+                      />
+                      <label
+                        class="btn"
+                        for="addAccount_radiobutton_passwordtype_password"
+                        :class="!account.is_password_less ? 'active' : ''"
                       >
-                        <li>
-                          <a
-                            class="dropdown-item"
-                            @click.prevent="selectPasswordType('password')"
-                            >Password</a
-                          >
-                        </li>
-                        <li>
-                          <a
-                            class="dropdown-item"
-                            @click.prevent="selectPasswordType('passwordLess')"
-                            >Password less</a
-                          >
-                        </li>
-                      </ul>
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                        Password
+                      </label>
+                    </div>
 
+                    <hr class="my-4" />
+
+                    <div class="input-group mb-3">
                       <input
                         id="editAccount_input_password"
                         class="form-control"
@@ -329,7 +335,7 @@
                           account.is_password_less && !passwordLess.generatedPassword
                         "
                       >
-                        <i class="fa fa-cogs"></i> Generate
+                        <i class="fa fa-eye"></i> Reveal
                       </button>
 
                       <input
@@ -362,7 +368,7 @@
                         !account.password
                       "
                     >
-                      Click button to generate password.
+                      Click button to suggest a password.
                     </small>
                     <small
                       id="editAccount_input_passwordlessHelp_masterPassword"
@@ -372,7 +378,7 @@
                         !passwordLess.generatedPassword
                       "
                     >
-                      Type your master password to generate the password less.
+                      Type your master password to reveal the password.
                     </small>
                     
                     <hr class="my-4" />
@@ -395,8 +401,7 @@
                     <hr class="my-4" />
 
                     <label class="form-label" for="editAccount_input_social_login"
-                      ><i class="fa fa-users" aria-hidden="true"></i> Social
-                      login</label
+                      ><i class="fa fa-users" aria-hidden="true"></i> Social login</label
                     >
                     <input
                       id="editAccount_input_social_login"
@@ -839,7 +844,6 @@ function initialState() {
     isSaving: false,
     isDeleting: false,
     newTag: "",
-    showPasswordTypeOptions: false,
     isSmallHeader: false,
     passwordLess: {
       masterPassword: "",
@@ -931,6 +935,10 @@ export default {
       }
     },
 
+    showPasswordTypeOptions: function () {
+      return this.account.is_password_less;
+    },
+
     createdDate: function () {
       return this.formatDate(new Date(this.account.created_date));
     },
@@ -980,11 +988,6 @@ export default {
 
     scrollFunction: function (e) {
       this.isSmallHeader = e.target.scrollTop > 20;
-    },
-
-    selectPasswordType: function (passwordType) {
-      this.account.is_password_less = passwordType === "passwordLess";
-      this.showPasswordTypeOptions = false;
     },
 
     save: async function () {

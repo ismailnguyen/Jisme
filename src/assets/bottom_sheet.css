@@ -247,6 +247,9 @@ hr {
   border: none;
   background: none;
   border-radius: 2rem !important;
+  padding: .3rem 1rem;
+  text-align: center;
+  vertical-align: middle;
 }
 .btn-group label.btn.active,
 .btn-group label.btn:hover {
