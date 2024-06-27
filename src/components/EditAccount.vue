@@ -543,7 +543,7 @@
                         Tags
                       </div>
                       <span class="fw-lighter" v-show="!fieldAttrs.tags.isExpanded">
-                        {{ account.tags }}
+                        {{ account.tags.split(',').join(', ') }}
                       </span>
                     </div>
                   </button>
