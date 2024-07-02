@@ -115,7 +115,7 @@
             ]),
 
             goToPreviousPanel: function () {
-                if (this.currentPanel == 'settings') {
+                if (['settings', 'tags-list'].includes(this.currentPanel)) {
                     this.currentPanel = 'menu';
                     return;
                 }
