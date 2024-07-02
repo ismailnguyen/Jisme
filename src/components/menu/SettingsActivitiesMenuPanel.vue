@@ -22,8 +22,7 @@
         </h2>
         <div class="accordion-collapse" :class="!!activity.isExpanded ? 'show' : 'collapse'">
           <div class="accordion-body">
-              <small>{{ activity.ip }} ({{ activity.referer }})</small>
-            
+              <small>{{ activity.ip }} ({{ activity.referer }} {{ activity.location ? ', ' + activity.location : ''}})</small>
           </div>
         </div>
       </div>

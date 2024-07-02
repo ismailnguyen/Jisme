@@ -295,3 +295,11 @@ a {
 .input-group-list .input-group {
   margin-bottom: 0.5rem;
 }
+
+.bottom-sheet .accordion-item:last-of-type {
+  margin-bottom: 1rem;
+}
+
+.bottom-sheet.fullscreen .accordion-item:last-of-type {
+  margin-bottom: 1.5rem;
+}
