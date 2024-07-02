@@ -1,22 +1,31 @@
 <template>
   <div class="row">
-    <Loader v-show="isLoading" />
-
-    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-      <div class="list-group">
-        <a
-          href="#"
-          class="list-group-item list-group-item-action"
-          v-for="(activity, i) in sortedActivities"
-          :key="i"
-        >
-          <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ capitalizeFirstLetter(activity.action) }}</h5>
-            <small>{{ toDaysAgo(activity.activity_date) }}</small>
+    <div class="accordion">
+      <div
+      class="accordion-item"
+      v-for="(activity, i) in sortedActivities"
+      :key="i">
+        <h2 class="accordion-header ">
+          <button
+            class="accordion-button"
+            :class="activity.isExpanded ? '' : 'collapsed'"
+            @click="activity.isExpanded = !!activity.isExpanded ? !activity.isExpanded : true"
+            type="button">
+            <div>
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ capitalizeFirstLetter(activity.action) }}</h5>
+                <small>{{ toDaysAgo(activity.activity_date) }}</small>
+              </div>
+              <p class="mb-1">{{ extractClient(activity.agent) }}</p>
+            </div>
+          </button>
+        </h2>
+        <div class="accordion-collapse" :class="!!activity.isExpanded ? 'show' : 'collapse'">
+          <div class="accordion-body">
+              <small>{{ activity.ip }} ({{ activity.referer }})</small>
+            
           </div>
-          <p class="mb-1">{{ extractClient(activity.agent) }}</p>
-          <small>{{ activity.ip }} ({{ activity.referer }})</small>
-        </a>
+        </div>
       </div>
     </div>
   </div>
@@ -24,28 +33,13 @@
 
 <script>
 import parser from "ua-parser-js";
-import Loader from "../Loader.vue";
 
 import { mapState } from "pinia";
 import { useUserStore } from "@/store";
 
 export default {
-  props: {
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  components: {
-    Loader,
-  },
-  data() {
-    return {
-      isLoading: false,
-    };
-  },
   computed: {
-    ...mapState(useUserStore, ["user"]),
+    ...mapState(useUserStore, ['user']),
     sortedActivities() {
       return (
         this.user &&

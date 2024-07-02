@@ -148,6 +148,14 @@ body {
   color: var(--color-text);
 }
 
+
+@media (prefers-color-scheme: dark) {
+  .button--navigation {
+    background: var(--color-background-mute);
+  }
+}
+
+
 .shake {
   animation: shake 0.3s ease-in-out;
 }
@@ -279,5 +287,78 @@ body {
   .btn-group label.btn.btn-secondary.active:hover {
     color: #faf8fd;
     background: #57535e;
+  }
+}
+
+
+
+.accordion-item {
+  border: none;
+}
+
+.accordion-item:first-of-type,
+.accordion-item:first-of-type > .accordion-header .accordion-button {
+  border-top-left-radius: .8rem;
+  border-top-right-radius: .8rem;
+}
+
+.accordion-item:last-of-type,
+.accordion-item:last-of-type > .accordion-collapse,
+.accordion-item:last-of-type > .accordion-header .accordion-button.collapsed,
+.accordion-item.accordion-item--without-body:last-of-type > .accordion-header .accordion-button {
+  border-bottom-left-radius: .8rem;
+  border-bottom-right-radius: .8rem;
+}
+
+.bottom-sheet .accordion-item:last-of-type {
+  margin-bottom: 1rem;
+}
+
+.bottom-sheet.fullscreen .accordion-item:last-of-type {
+  margin-bottom: 1.5rem;
+}
+
+.accordion-item,
+.accordion-button,
+.accordion-button:not(.collapsed) {
+  background-color: #FFFFFF;
+}
+
+@media (prefers-color-scheme: dark) {
+  .accordion-item,
+  .accordion-button,
+  .accordion-button:not(.collapsed) {
+    box-shadow: none;
+    background-color: var(--color-background-mute);
+    color: #fefefe;
+  }
+}
+
+.accordion-button,
+.accordion-button:focus,
+.accordion-button:not(.collapsed) {
+  box-shadow: none;
+}
+
+.accordion-body {
+  box-shadow: inset 0 calc(-1* 1px) 0 #dee2e6;
+}
+
+.accordion-body:last-of-type {
+  box-shadow: none;
+}
+
+.accordion-item--without-body .accordion-button:not(.collapsed)::after,
+.accordion-item--without-body .accordion-button::after {
+  background-image: unset !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  .accordion-button::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236ea8fe'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+  }
+
+  .accordion-button:not(.collapsed)::after {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%236ea8fe'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
   }
 }
