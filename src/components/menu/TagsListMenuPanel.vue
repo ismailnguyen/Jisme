@@ -12,7 +12,8 @@
             <span class="btn btn-xs btn-default" @click="selectTag(tag)">
               <i
                 class="fa-regular"
-                :class="isCurrentTag(tag) ? 'fa-square-check' : 'fa-square'"
+                 @click="selectTag(tag)"
+                :class="isCurrentTag(tag) ? 'fa-circle-check' : 'fa-circle'"
               ></i>
             </span>
           </span>
@@ -33,7 +34,7 @@ export default {
     await this.loadCache();
   },
   methods: {
-    ...mapActions(useAccountsStore, ["loadCache", "getUniqueTags"]),
+    ...mapActions(useAccountsStore, ['loadCache', 'getUniqueTags']),
 
     selectTag: function (tag) {
       const tags = this.updateTags(tag);
