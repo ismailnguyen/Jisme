@@ -17,18 +17,66 @@
   </div>
 
   <div id="page-content-wrapper" class="container-fluid">
-    <header class="search-input-container">
-      <div class="input-group mb-3">
-        <button class="btn search-left-btn" type="button" @click="onMenuOpened">
+    <header class="search-input-container d-flex justify-content-center">
+      <div class="btn-group" role="group" aria-label="Account type">
+        <label
+          class="btn"
+          :class="isSidebarOpen(SIDEBAR.MENU) ? 'active' : ''"
+          for="navbar_toggle-menu"
+          @click="onMenuOpened">
           <i class="fa fa-solid fa-bars-staggered"></i>
-        </button>
+        </label>
+
+        <label
+          v-show="!showSearchInput"
+          class="btn active"
+          v-for="(tag, tagIndex) in selectedTags"
+          v-bind:key="tagIndex"
+          @click="removeTag(tag)"
+          :for="'navbar_tag'+tag">
+          {{ tag }}
+          <i class="fa fa-close"></i>
+        </label>
+
+        <label
+          v-show="!showSearchInput"
+          class="btn btn-secondary active"
+          v-for="(type, typeIndex) in selectedTypes"
+          v-bind:key="typeIndex"
+          @click="removeType(type)"
+          :for="'navbar_type'+type">
+          <i class="fa fa-globe" aria-hidden="true" v-if="type == 'account'"></i>
+          <i class="fa fa-credit-card" aria-hidden="true" v-if="type == 'card'"></i>
+          <i class="fa fa-qrcode" aria-hidden="true" v-if="type == '2fa'"></i>
+
+          {{ type }}
+          <i class="fa fa-close"></i>
+        </label>
+
         <input
           class="form-control search-input"
           type="search"
           v-model="searchQuery"
           placeholder="Search"
           :disabled="isLoading"
+          v-show="showSearchInput || (!selectedTags.length && !selectedTypes.length)"
         />
+       
+        <label
+          v-show="showSearchInput && (selectedTags.length || selectedTypes.length)"
+          class="btn"
+          @click="showSearchInput = false"
+          for="navbar_close-search">
+          <i class="fa fa-solid fa-close"></i>
+        </label>
+
+        <label
+          v-show="!showSearchInput && (selectedTags.length || selectedTypes.length)"
+          class="btn"
+          @click="showSearchInput = true"
+          for="navbar_show-search">
+          <i class="fa fa-solid fa-search"></i>
+        </label>
       </div>
     </header>
 
@@ -49,7 +97,7 @@
 
 <script>
 import { mapState, mapWritableState, mapActions, mapStores } from "pinia";
-import { useAccountsStore, useAlertStore } from "@/store";
+import { useAccountsStore, useAlertStore, useUiStore } from "@/store";
 import LoadingAccountItem from "../components/LoadingAccountItem.vue";
 import AccountItem from "../components/AccountItem.vue";
 import RecentAccountList from "../components/RecentAccountList.vue";
@@ -60,7 +108,7 @@ import MostUsedTags from "../components/MostUsedTags.vue";
 const MIN_SEARCH_QUERY_LENGTH = 3;
 
 export default {
-  emits: ["menuOpened"],
+  emits: ['menuOpened'],
   components: {
     LoadingAccountItem,
     AccountItem,
@@ -71,6 +119,7 @@ export default {
   },
   data() {
     return {
+      showSearchInput: false,
       searchQuery: this.$route.query.search || "", // Default search query is looked up from query string,
       isLoading: true,
       filteredAccounts: [],
@@ -150,8 +199,12 @@ export default {
   },
   computed: {
     ...mapStores(useAccountsStore),
-    ...mapWritableState(useAccountsStore, ["selectedTags", "selectedTypes"]),
-    ...mapState(useAccountsStore, ["totalFetchedAccounts", "totalAccounts"]),
+    ...mapWritableState(useAccountsStore, ['selectedTags', 'selectedTypes']),
+    ...mapState(useAccountsStore, ['totalFetchedAccounts', 'totalAccounts']),
+    ...mapState(useUiStore, [
+      'isSidebarOpen',
+      'SIDEBAR',
+    ]),
 
     isSearching: function () {
       return (
@@ -173,7 +226,29 @@ export default {
     ...mapActions(useAlertStore, ["openAlert"]),
 
     onMenuOpened: function () {
-      this.$emit("menuOpened");
+      this.$emit('menuOpened');
+    },
+
+    removeTag: function (tag) {
+        let newTags = this.$route.query.tags.split(',').map(x => x.trim());
+        newTags.splice(newTags.indexOf(tag), 1);
+        
+        this.$router.push({ name: 'Home', query: { 
+            tags: newTags.join(','),
+            search: this.$route.query.search,
+            type: this.$route.query.type
+        } });
+    },
+
+    removeType: function (type) {
+        let newTypes = this.$route.query.type.split(',').map(x => x.trim());
+        newTypes.splice(newTypes.indexOf(type), 1);
+        
+        this.$router.push({ name: 'Home', query: { 
+            type: newTypes.join(','),
+            search: this.$route.query.search,
+            tags: this.$route.query.tags
+        } });
     },
 
     onAccountsLoaded: function (mutation, state) {
@@ -251,7 +326,7 @@ export default {
 
 @media (max-width: 767.98px) {
   .search-input-container {
-    bottom: 0.2rem;
+    bottom: 2rem;
     width: 100%;
   }
 }
@@ -295,6 +370,8 @@ export default {
   border-radius: var(--btn-border-radius);
   color: #000;
   line-height: 2.5;
+  margin-right: .5rem;
+  height: 2rem;
   background-color: var(--btn-color-background);
   backdrop-filter: blur(18px);
 }

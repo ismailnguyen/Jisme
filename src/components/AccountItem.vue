@@ -7,7 +7,7 @@
                         <div
                             class="badge rounded-pill"
                             v-for="tag in account.tags.split(',')"
-                            @click="selectTag(tag)"
+                            @click.prevent="selectTag(tag)"
                             v-bind:key="tag">
                             {{tag}}
                         </div>

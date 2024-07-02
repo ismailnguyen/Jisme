@@ -243,39 +243,6 @@ hr {
   }
 }
 
-.btn-group {
-  background-color: #e0e0e4;
-  padding: .3rem .7rem;
-  border-radius: 2rem;
-}
-.btn-group label.btn {
-  color: #002e48;
-  border: none;
-  background: none;
-  border-radius: 2rem !important;
-  padding: .3rem 1rem;
-  text-align: center;
-  vertical-align: middle;
-}
-.btn-group label.btn.active,
-.btn-group label.btn:hover {
-  color: #2870ea;
-  background: #fff;
-}
-@media (prefers-color-scheme: dark) {
-  .btn-group {
-    background-color: #453f4b;
-  }
-  .btn-group label.btn {
-    color: #faf8fd;
-  }
-  .btn-group label.btn.active,
-  .btn-group label.btn:hover {
-    color: #faf8fd;
-    background: #57535e;
-  }
-}
-
 .text-muted,
 a {
   color: #99c9ff !important;

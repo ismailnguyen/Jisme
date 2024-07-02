@@ -9,29 +9,6 @@
                 <h5 class="font-size-16 me-3 mb-0 " v-show="searchQuery">
                     Results for <span class="fw-bold">{{ searchQuery }}</span>
                 </h5>
-
-                <span
-                    class="badge rounded-pill"
-                    v-for="(tag, tagIndex) in selectedTags"
-                    v-bind:key="tagIndex"
-                    @click="removeTag(tag)">
-                    {{ tag }}
-                    <i class="fa fa-close"></i>
-                </span>
-
-                <span
-                    class="badge rounded-pill badge-secondary"
-                    v-for="(type, typeIndex) in selectedTypes"
-                    v-bind:key="typeIndex"
-                    @click="removeType(type)">
-
-                    <i class="fa fa-globe" aria-hidden="true" v-if="type == 'account'"></i>
-                    <i class="fa fa-credit-card" aria-hidden="true" v-if="type == 'card'"></i>
-                    <i class="fa fa-qrcode" aria-hidden="true" v-if="type == '2fa'"></i>
-
-                    {{ type }}
-                    <i class="fa fa-close"></i>
-                </span>
             </div>
 
             <div class="mb-3 col-6 col-xs-6 col-sm-6 placeholder-glow" v-if="isLoading">
@@ -93,35 +70,12 @@
             AccountItem,
         },
         computed: {
-            ...mapWritableState(useAccountsStore, ['selectedTags', 'selectedTypes']),
             ...mapState(useAccountsStore, ['accounts']),
         },
         methods: {
             ...mapActions(useAlertStore, [
                 'openAlert'
             ]),
-
-            removeTag: function (tag) {
-                let newTags = this.$route.query.tags.split(',').map(x => x.trim());
-                newTags.splice(newTags.indexOf(tag), 1);
-                
-                this.$router.push({ name: 'Home', query: { 
-                    tags: newTags.join(','),
-                    search: this.$route.query.search,
-                    type: this.$route.query.type
-                } });
-            },
-
-            removeType: function (type) {
-                let newTypes = this.$route.query.type.split(',').map(x => x.trim());
-                newTypes.splice(newTypes.indexOf(type), 1);
-                
-                this.$router.push({ name: 'Home', query: { 
-                    type: newTypes.join(','),
-                    search: this.$route.query.search,
-                    tags: this.$route.query.tags
-                } });
-            },
         } 
     }
 </script>
