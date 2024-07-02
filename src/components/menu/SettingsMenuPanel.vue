@@ -48,8 +48,11 @@ import { useUserStore } from "@/store";
 
 export default {
   emits: ["panelChanged"],
+  mounted() {
+    this.getAccountInformation();
+  },
   methods: {
-    ...mapActions(useUserStore, ["signOut"]),
+    ...mapActions(useUserStore, ['getAccountInformation', 'signOut']),
 
     onOpenSettingsProfile: function () {
       this.$emit("panelChanged", "settings-profile");
