@@ -2,121 +2,145 @@
   <div class="row">
     <Loader v-show="isLoading" />
 
-    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-      <label class="form-label" for="inputEmail"
-        ><i class="fa fa-id-badge" aria-hidden="true"></i> Username</label
-      >
-      <input
-        id="inputEmail"
-        class="form-control"
-        placeholder="Username, email address, phone number"
-        type="email"
-        v-model="user.email"
-        disabled
-      />
-    </div>
-
-    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-      <label class="form-label" for="inputAvatar"
-        ><i class="fa fa-circle-user" aria-hidden="true"></i> Avatar</label
-      >
-      <input
-        id="inputAvatar"
-        class="form-control"
-        type="text"
-        laceholder="Avatar image URL"
-        v-model="user.avatarUrl"
-      />
-    </div>
-
-    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-      <h5 class="font-size-16 me-3 mb-0">
-        <i class="fa fa-right-to-bracket" aria-hidden="true"></i> Auto login
-      </h5>
-
-      <div class="form-check form-switch">
-        <label class="form-check-label" for="autoLoginCheckbox">{{
-          isAutoLoginEnabled ? "Enabled" : "Disabled"
-        }}</label>
-        <input
-          class="form-check-input float-end"
-          type="checkbox"
-          role="switch"
-          id="autoLoginCheckbox"
-          v-model="isAutoLoginEnabled"
-        />
+    <div class="accordion">
+      <div class="accordion-item">
+        <h2 class="accordion-header ">
+          <button
+            class="accordion-button" :class="fieldAttrs.autoLogin.isExpanded ? '' : 'collapsed'"
+            type="button"
+            @click="fieldAttrs.autoLogin.isExpanded = !fieldAttrs.autoLogin.isExpanded">
+            <div>
+              <div class="fw-medium">
+                <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
+                Auto login
+              </div>
+              <span class="fw-lighter" v-show="!fieldAttrs.autoLogin.isExpanded">
+                {{ isAutoLoginEnabled ? 'Enabled' : 'Disabled' }}
+              </span>
+            </div>
+          </button>
+        </h2>
+        <div class="accordion-collapse" :class="fieldAttrs.autoLogin.isExpanded ? 'show' : 'collapse'">
+          <div class="accordion-body">
+              <div class="form-check form-switch">
+                <label class="form-check-label" for="autoLoginCheckbox">{{
+                  isAutoLoginEnabled ? "Enabled" : "Disabled"
+                }}</label>
+                <input
+                  class="form-check-input float-end"
+                  type="checkbox"
+                  role="switch"
+                  id="autoLoginCheckbox"
+                  v-model="isAutoLoginEnabled"
+                />
+              </div>
+              <small class="form-text text-muted">Applies only to this device.</small>
+          </div>
+        </div>
       </div>
-      <small class="form-text text-muted">Applies only to this device.</small>
-    </div>
 
-    <hr class="my-4" />
-
-    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-      <label class="form-label" for="inputTotpSecret">
-        <h5 class="font-size-16 me-3 mb-0">
-          <i class="fa fa-qrcode" aria-hidden="true"></i> TOTP Secret
-        </h5>
-      </label>
-      <input
-        id="inputTotpSecret"
-        class="form-control"
-        type="text"
-        placeholder="Loading"
-        laceholder="MFA TOTP secret"
-        v-model="user.totp_secret"
-        disabled
-      />
-    </div>
-
-    <hr class="my-4" />
-
-    <div class="mb-3 col-xs-12 col-md-12 col-lg-12 input-group-list">
-      <label class="form-label" for="passwordlesslogin_btn">
-        <h5 class="font-size-16 me-3 mb-0">
-          <i class="fa fa-fingerprint" aria-hidden="true"></i> Passkeys
-        </h5>
-      </label>
-
-      <div
-        class="input-group"
-        v-for="passkey in user.passkeys"
-        :key="passkey.passkey.id"
-      >
-        <input
-          :id="'passkey_' + passkey.passkey.id"
-          name="passkey_device"
-          class="form-control"
-          type="text"
-          placeholder="Loading"
-          v-model="passkey.deviceName"
-          disabled
-        />
-        <button
-          class="btn btn-outline-secondary hover-danger"
-          type="button"
-          @click="onRemovePasskey(passkey)"
-        >
-          <i class="fa fa-trash"></i> Remove
-        </button>
+      <div class="accordion-item">
+        <h2 class="accordion-header ">
+          <button
+            class="accordion-button" :class="fieldAttrs.totpSecret.isExpanded ? '' : 'collapsed'"
+            type="button"
+            @click="fieldAttrs.totpSecret.isExpanded = !fieldAttrs.totpSecret.isExpanded">
+            <div>
+              <div class="fw-medium">
+                <i class="fa fa-qrcode" aria-hidden="true"></i>
+                2FA
+              </div>
+              <span class="fw-lighter" v-show="!fieldAttrs.totpSecret.isExpanded">
+                {{ user.totp_secret ? 'Enabled' : 'Click to setup' }}
+              </span>
+            </div>
+          </button>
+        </h2>
+        <div class="accordion-collapse" :class="fieldAttrs.totpSecret.isExpanded ? 'show' : 'collapse'">
+          <div class="accordion-body">
+              <label class="form-label" for="settings_totpSecret">
+                <i class="fa fa-key" aria-hidden="true"></i> TOTP Secret
+              </label>
+              <input
+                id="settings_totpSecret"
+                class="form-control"
+                type="text"
+                placeholder="Loading"
+                laceholder="MFA TOTP secret"
+                v-model="user.totp_secret"
+                disabled
+              />
+          </div>
+        </div>
       </div>
-      <button
-        id="passwordlesslogin_btn"
-        class="btn btn-danger btn-block"
-        @click.prevent="onGeneratePasskey()"
-        v-if="isGeneratePasskeyBtnVisible"
-      >
-        <i class="fa fa-plus"></i> Allow a new device to connect
-      </button>
 
-      <button
-        id="passwordlesslogin_unsupported_btn"
-        class="btn btn-danger btn-block"
-        v-if="!isGeneratePasskeyBtnVisible"
-        disabled
-      >
-        <i class="fa fa-ban"></i> Passkey not supported in this device
-      </button>
+      <div class="accordion-item">
+        <h2 class="accordion-header ">
+          <button
+            class="accordion-button" :class="fieldAttrs.passkeys.isExpanded ? '' : 'collapsed'"
+            type="button"
+            @click="fieldAttrs.passkeys.isExpanded = !fieldAttrs.passkeys.isExpanded">
+            <div>
+              <div class="fw-medium">
+                <i class="fa fa-fingerprint" aria-hidden="true"></i>
+                Passkeys
+              </div>
+              <span class="fw-lighter" v-show="!fieldAttrs.passkeys.isExpanded">
+                {{ user.passkeys && user.passkeys.length ? user.passkeys.length + ' active passkeys' : 'Click to setup' }}
+              </span>
+            </div>
+          </button>
+        </h2>
+        <div class="accordion-collapse" :class="fieldAttrs.passkeys.isExpanded ? 'show' : 'collapse'">
+          <div class="accordion-body">
+                <div class="input-group-list">
+                  <div
+                    class="input-group"
+                    v-for="passkey in user.passkeys"
+                    :key="passkey.passkey.id"
+                  >
+                    <input
+                      :id="'passkey_' + passkey.passkey.id"
+                      name="passkey_device"
+                      class="form-control"
+                      type="text"
+                      placeholder="Loading"
+                      v-model="passkey.deviceName"
+                      disabled
+                    />
+                    <button
+                      class="btn btn-outline-secondary hover-danger"
+                      type="button"
+                      @click="onRemovePasskey(passkey)"
+                    >
+                      <i class="fa fa-trash"></i>
+                      <span class="d-none d-lg-inline">&nbsp; Remove</span>
+                    </button>
+                  </div>
+                  <button
+                    id="passwordlesslogin_btn"
+                    class="btn btn-danger btn-block"
+                    @click.prevent="onGeneratePasskey()"
+                    v-if="isGeneratePasskeyBtnVisible"
+                  >
+                    <i class="fa fa-plus"></i> Allow a new device to connect
+                  </button>
+
+                  <button
+                    id="passwordlesslogin_unsupported_btn"
+                    class="btn btn-danger btn-block"
+                    v-if="!isGeneratePasskeyBtnVisible"
+                    disabled
+                  >
+                    <i class="fa fa-ban"></i> Passkey not supported in this device
+                  </button>
+                </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    
 
     <hr class="my-4" />
 
@@ -160,6 +184,17 @@ export default {
       totpToken: "",
       isAutoLoginEnabled: false,
       isGeneratePasskeyBtnVisible: false,
+      fieldAttrs: {
+        autoLogin: {
+          isExpanded: false,
+        },
+        totpSecret: {
+          isExpanded: false,
+        },
+        passkeys: {
+          isExpanded: false,
+        },
+      },
     };
   },
   async mounted() {
