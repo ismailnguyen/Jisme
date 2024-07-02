@@ -16,13 +16,14 @@
                 <h5 class="mb-1">{{ capitalizeFirstLetter(activity.action) }}</h5>
                 <small>{{ toDaysAgo(activity.activity_date) }}</small>
               </div>
-              <p class="mb-1">{{ extractClient(activity.agent) }}</p>
+              <p class="mb-1">{{ activity.location }}</p>
+              <p class="mb-1"><small>{{ extractClient(activity.agent) }}</small></p>
             </div>
           </button>
         </h2>
         <div class="accordion-collapse" :class="!!activity.isExpanded ? 'show' : 'collapse'">
           <div class="accordion-body">
-              <small>{{ activity.ip }} ({{ activity.referer }} {{ activity.location ? ', ' + activity.location : ''}})</small>
+              <small>{{ activity.ip }} ({{ activity.referer }})</small>
           </div>
         </div>
       </div>
