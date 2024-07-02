@@ -379,7 +379,7 @@ export default {
 @media (prefers-color-scheme: dark) {
   .search-input {
     box-shadow: none;
-    background-color: #3d3d3d;
+    background-color: #57535e;
     color: rgb(162, 162, 162);
     border: 1px solid transparent;
   }
