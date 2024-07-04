@@ -11,8 +11,6 @@
   --btn-red-color-text: rgb(255 63 64);
   --btn-red-color-icon: rgb(255 63 64);
   
-  --btn-border-radius: 16px;
-
   --color-text: #162056;
   --color-text-mute: #16205670;
   --color-text-inverted: #eee;
@@ -29,11 +27,21 @@
     --btn-red-color-text: rgb(255 240 240);
     --btn-red-color-icon: rgb(255 240 240);
 
-    --btn-border-radius: 10px;
-
     --color-text: #eee;
     --color-text-mute: #eeeeee70;
     --color-text-inverted: #162056;
+  }
+}
+
+@media (min-width: 767.98px) {
+  :root {
+    --btn-border-radius: 10px;
+  }
+}
+
+@media (max-width: 767.98px) {
+  :root {
+    --btn-border-radius: 16px;
   }
 }
 
@@ -155,7 +163,6 @@ body {
   }
 }
 
-
 .shake {
   animation: shake 0.3s ease-in-out;
 }
@@ -172,6 +179,17 @@ body {
   40%,
   60% {
     margin-left: 12px;
+  }
+}
+ 
+@keyframes jiggle {
+  0% {
+      transform: rotate(-1deg);
+      animation-timing-function: ease-in;
+  }
+  50% {
+      transform: rotate(1.5deg);
+      animation-timing-function: ease-out;
   }
 }
 
@@ -241,6 +259,13 @@ body {
   .btn.btn-action.btn-red i {
     color: var(--btn-red-color-background);
   }
+}
+
+.btn.btn-action.btn-red:hover {
+  animation-name: jiggle;
+  animation-iteration-count: infinite;
+  animation-delay: -0.75;
+  animation-duration: .25s
 }
 
 .btn-group {

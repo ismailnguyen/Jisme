@@ -331,39 +331,11 @@ export default {
   }
 }
 
-.search-input-container .input-group {
-  box-shadow: 2px 4px 12px rgb(0 0 0 / 20%);
-  border-radius: var(--btn-border-radius);
-}
-
-.search-left-btn {
-  color: #fff;
-  line-height: 2.5;
-  background-color: var(--btn-color-background);
-  background: linear-gradient(81.62deg, #2870ea 8.72%, #1b4aef 85.01%);
-  backdrop-filter: blur(18px);
-}
-
-.search-left-btn:hover,
-.search-left-btn:active,
-.search-left-btn:focus {
-  color: #fff;
-  box-shadow: 2px 4px 16px rgb(0 0 0 / 16%);
-  transform: scale3d(1.01, 1.01, 1.01);
-}
-
-@media (prefers-color-scheme: dark) {
-  .search-left-btn {
-    color: #2282dc;
-    background: var(--color-background-soft);
-  }
-
-  .search-left-btn:hover,
-  .search-left-btn:active,
-  .search-left-btn:focus {
-    color: #fff;
-    background: var(--color-background-soft);
-  }
+.search-input-container label.btn.active:hover {
+  animation-name: jiggle;
+  animation-iteration-count: infinite;
+  animation-delay: -0.75;
+  animation-duration: .25s
 }
 
 .search-input {

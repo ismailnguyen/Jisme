@@ -816,7 +816,7 @@
           <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
             <button
               type="button"
-              class="btn btn-action btn-red"
+              class="btn btn-action"
               :class="isDeleting ? 'btn-dark' : 'btn-red'"
               @click="remove()"
             >

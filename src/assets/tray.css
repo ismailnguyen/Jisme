@@ -3,17 +3,37 @@
   z-index: 2147483647;
   max-width: 361px;
   margin-right: auto;
-  bottom: -80rem;
   left: 1rem;
   right: 1rem;
   position: fixed;
-  transition: all 0.5s;
+  transition: all ease 0.5s;
 }
 
-/* In small screen position tray in middle */
+/* In small screen position tray in middle
+  And animate its opening from bottom to top
+*/
 @media (max-width: 767.98px) {
   .tray-wrapper {
-    margin-left: auto;
+    bottom: -80rem;
+  }
+
+  .tray-wrapper.tray-wrapper-open {
+    bottom: 1rem;
+  }
+}
+
+/* In large screen position tray in left
+  And animate its opening from left to right
+*/
+@media (min-width: 767.98px) {
+  .tray-wrapper {
+    left: -80rem;
+  }
+
+  .tray-wrapper.tray-wrapper-open {
+    left: 0;
+    bottom: 0;
+    height: 100%;
   }
 }
 
@@ -35,17 +55,51 @@
 }
 
 .tray {
-  border-radius: 36px;
-  background: var(--color-background-mute);
   padding-top: 0.625rem;
   padding-bottom: 1.5rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (max-width: 767.98px) {
   .tray {
-    background-color: var(--color-background-soft);
+    border-radius: 36px;
+    max-height: 60vh;
+  }
+
+  @media (prefers-color-scheme: light) {
+    .tray {
+      background-color: var(--color-background-mute);
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .tray {
+      background-color: var(--color-background-soft);
+    }
+  }
+}
+
+@media (min-width: 767.98px) {
+  .tray {
+    border-radius: 0;
+    min-height: 100vh;
+    backdrop-filter: blur(18px);
+  }
+
+  @media (prefers-color-scheme: light) {
+    .tray {
+      background: none;
+      box-shadow: inset 0 0 300px 0px white;
+    }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .tray {
+      background-color: rgb(228, 228, 228, 0.2);;
+    }
   }
 }
 
@@ -77,23 +131,27 @@
   text-align: left;
   height: 3rem;
   align-items: center;
-  border-radius: 16px;
+  border-radius: var(--btn-border-radius);
 }
 
-@media (prefers-color-scheme: dark) {
-  .tray .btn.btn-action {
-    background: var(--color-background-mute);
+@media (max-width: 767.98px) {
+  @media (prefers-color-scheme: dark) {
+    .tray .btn.btn-action.btn-light {
+      background: var(--color-background-mute);
+    }
   }
 }
 
-.tray-wrapper.tray-wrapper-open {
-  bottom: 1rem;
-}
+@media (min-width: 767.98px) {
+  @media (prefers-color-scheme: dark) {
+    .tray .btn.btn-action {
+      font-weight: 400;
+    }
 
-.tray {
-  overflow-y: scroll;
-  max-height: 60vh;
-  overflow-x: hidden;
+    .tray .btn.btn-action.btn-light i {
+      color: #0b84fe;
+    }
+  }
 }
 
 .tray-body {
