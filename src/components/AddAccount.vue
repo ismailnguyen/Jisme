@@ -29,7 +29,7 @@
         </div>
       </div>
       <div class="body">
-        <div class="row">
+        <form class="row">
 
           <div class="accordion">
             <div class="accordion-item">
@@ -509,7 +509,7 @@
               </div>
             </div>
           </div>
-        </div>
+        </form>
 
         <div class="row footer">
           <div class="mb-3 col-xs-12 col-md-12 col-lg-12">

@@ -29,7 +29,7 @@
         </div>
       </div>
       <div class="body">
-        <div class="row">
+        <form class="row">
 
             <!-- region_start -- Account type: card -->
             <div class="accordion" v-if="account.type == 'card'">
@@ -798,7 +798,7 @@
                   </div>
               </div> -->
 
-        </div>
+        </form>
 
         <div class="row footer">
           <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
