@@ -371,6 +371,11 @@ export default {
       if (mode == 'advanced') {
         this.searchQuery = '';
 
+        // If no filters are set, add a default one
+        if (!this.searchFilters.length) {
+          this.addSearchFilter();
+        }
+
         this.$router.push({
           name: 'Home',
           query: {
