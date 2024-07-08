@@ -98,7 +98,7 @@
 
   @media (prefers-color-scheme: dark) {
     .tray {
-      background-color: rgb(228, 228, 228, 0.2);;
+      background-color: #1c1c1da3;
     }
   }
 }
@@ -148,6 +148,10 @@
       font-weight: 400;
     }
 
+    .tray .btn.btn-action:hover {
+      border: 1px solid white;
+    }
+
     .tray .btn.btn-action.btn-light i {
       color: #0b84fe;
     }
@@ -166,6 +170,25 @@
 .tray .accordion-body {
   background: var(--btn-color-background);
   border: none;
+}
+
+@media (min-width: 767.98px) {
+  .tray .accordion-item,
+  .tray .accordion-button,
+  .tray .accordion-button:not(.collapsed),
+  .tray .accordion-body {
+    background: #FFFFFF;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .tray .accordion-item,
+  .tray .accordion-button,
+  .tray .accordion-button:not(.collapsed),
+  .tray .accordion-body {
+    background: var(--btn-color-background);
+    border: none;
+  }
 }
 
 .tray .accordion-item:not(:last-of-type) {
