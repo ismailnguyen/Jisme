@@ -16,231 +16,232 @@ localforage.config({
     name: LOCAL_STORAGE_DB_NAME
 });
 
+const USERS_API_URL = BASE_API_URL + 'users';
+
+
 class UserService {
-    constructor() {
-        const USERS_API_URL = BASE_API_URL + 'users';
+    constructor() {}
 
-        this.getCachedUser = async function () {
-            return await localforage.getItem(LOCAL_STORAGE_USER_KEY);
-        }
+    async getCachedUser () {
+        return await localforage.getItem(LOCAL_STORAGE_USER_KEY);
+    }
 
-        this.updateCachedUser = async function (user) {
-            await localforage.setItem(LOCAL_STORAGE_USER_KEY, {
-                uuid: user.uuid,
-                avatarUrl: user.avatarUrl,
-                email: user.email,
-                token: user.token,
-                public_encryption_key: user.public_encryption_key
+    async updateCachedUser (user) {
+        await localforage.setItem(LOCAL_STORAGE_USER_KEY, {
+            uuid: user.uuid,
+            avatarUrl: user.avatarUrl,
+            email: user.email,
+            token: user.token,
+            public_encryption_key: user.public_encryption_key
+        });
+    }
+
+    async lastRememberedUsername () {
+        return await localforage.getItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY);
+    }
+
+    async setLastRememberedUsername (username) {
+        await localforage.setItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY, username);
+    }
+
+    async isAutoLoginEnabled () {
+        return await localforage.getItem(LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY);
+    }
+
+    async setAutoLogin (enabled) {
+        await localforage.setItem(LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY, enabled);
+    }
+
+    async getAccountInformation (accessToken) {
+        try {
+            const response = await fetch(USERS_API_URL, {
+                method: 'GET',
+                headers: getHeadersWithAuth(accessToken)
             });
+
+            return await response.json();
         }
-
-        this.lastRememberedUsername = async function () {
-            return await localforage.getItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY);
+        catch (error) {
+            throw new Error('Server unavailable!');
         }
+    }
 
-        this.setLastRememberedUsername = async function (username) {
-            await localforage.setItem(LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY, username);
+    async update (user) {
+        try {
+            const response = await fetch(USERS_API_URL, {
+                method: 'PUT',
+                headers: getHeadersWithAuth(user.token),
+                body: JSON.stringify(user)
+            });
+
+            return await response.json();
         }
-
-        this.isAutoLoginEnabled = async function () {
-            return await localforage.getItem(LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY);
+        catch (error) {
+            throw new Error('Server unavailable!');
         }
+    }
 
-        this.setAutoLogin = async function (enabled) {
-            await localforage.setItem(LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY, enabled);
-        }
+    async signOut () {
+        // Remove all user related data from local storage
+        await localforage.removeItem(LOCAL_STORAGE_USER_KEY);
 
-        this.getAccountInformation = async function (accessToken) {
-            try {
-                const response = await fetch(USERS_API_URL, {
-                    method: 'GET',
-                    headers: getHeadersWithAuth(accessToken)
-                });
+        // Remove all user's accounts from local storage
+        await localforage.removeItem(LOCAL_STORAGE_RECENT_ACCOUNTS_KEY);
+        await localforage.removeItem(LOCAL_STORAGE_ACCOUNTS_KEY);
+    }
 
-                return await response.json();
-            }
-            catch (error) {
-                throw new Error('Server unavailable!');
-            }
+    async requestLogin ({ username }) {
+        let credentials = {
+            email: username
         };
 
-        this.update = async function (user) {
-            try {
-                const response = await fetch(USERS_API_URL, {
-                    method: 'PUT',
-                    headers: getHeadersWithAuth(user.token),
-                    body: JSON.stringify(user)
-                });
+        try {
+            const response = await fetch(`${USERS_API_URL}/login`, {
+                method: 'POST',
+                headers: getHeaders(),
+                body: JSON.stringify(credentials)
+            });
 
-                return await response.json();
+            const body = await response.json();
+
+            if (!response.ok) {
+                if (response.status === 400) {
+                    throw new LoginException('Username is mandatory!');
+                }
+
+                if (response.status === 401) {
+                    throw new LoginException('Not authorized!', 'Pease try later.');
+                }
+
+                if (response.status === 404) {
+                    throw new LoginException('Invalid username/password !');
+                }
+
+                throw new LoginException(body.message);
             }
-            catch (error) {
-                throw new Error('Server unavailable!');
+
+            return body;
+        } catch (error) {
+            if (error instanceof LoginException) {
+                throw error;
             }
-        };
 
-        this.signOut = async function () {
-            // Remove all user related data from local storage
-            await localforage.removeItem(LOCAL_STORAGE_USER_KEY);
-
-            // Remove all user's accounts from local storage
-            await localforage.removeItem(LOCAL_STORAGE_RECENT_ACCOUNTS_KEY);
-            await localforage.removeItem(LOCAL_STORAGE_ACCOUNTS_KEY);
+            throw new Error('Server unavailable!');
         }
+    }
 
-        this.requestLogin = async function ({ username }) {
-            let credentials = {
-                email: username
-            };
-
-            try {
-                const response = await fetch(`${USERS_API_URL}/login`, {
-                    method: 'POST',
-                    headers: getHeaders(),
-                    body: JSON.stringify(credentials)
-                });
-
-                const body = await response.json();
-
-                if (!response.ok) {
-                    if (response.status === 400) {
-                        throw new LoginException('Username is mandatory!');
-                    }
-
-                    if (response.status === 401) {
-                        throw new LoginException('Not authorized!', 'Pease try later.');
-                    }
-
-                    if (response.status === 404) {
-                        throw new LoginException('Invalid username/password !');
-                    }
-
-                    throw new LoginException(body.message);
-                }
-
-                return body;
-            } catch (error) {
-                if (error instanceof LoginException) {
-                    throw error;
-                }
-
-                throw new Error('Server unavailable!');
-            }
+    async verifyPassword ({ accessToken, password }) {
+        let credentials = {
+            password: password
         };
 
-        this.verifyPassword = async function ({ accessToken, password }) {
-            let credentials = {
-                password: password
-            };
+        try {
+            const response = await fetch(`${USERS_API_URL}/login/password`, {
+                method: 'POST',
+                headers: getHeadersWithAuth(accessToken),
+                body: JSON.stringify(credentials)
+            });
 
-            try {
-                const response = await fetch(`${USERS_API_URL}/login/password`, {
-                    method: 'POST',
-                    headers: getHeadersWithAuth(accessToken),
-                    body: JSON.stringify(credentials)
-                });
+            const body = await response.json();
 
-                const body = await response.json();
-
-                if (!response.ok) {
-                    if (response.status === 400) {
-                        throw new LoginException('Password is mandatory!');
-                    }
-
-                    if (response.status === 401) {
-                        throw new LoginException('Not authorized!', 'Pease try later.');
-                    }
-
-                    if (response.status === 404) {
-                        throw new LoginException('Invalid username/password !');
-                    }
-
-                    throw new LoginException(body.message);
+            if (!response.ok) {
+                if (response.status === 400) {
+                    throw new LoginException('Password is mandatory!');
                 }
 
-                return body;
-            } catch (error) {
-                if (error instanceof LoginException) {
-                    throw error;
+                if (response.status === 401) {
+                    throw new LoginException('Not authorized!', 'Pease try later.');
                 }
 
-                throw new Error('Server unavailable!');
+                if (response.status === 404) {
+                    throw new LoginException('Invalid username/password !');
+                }
+
+                throw new LoginException(body.message);
             }
+
+            return body;
+        } catch (error) {
+            if (error instanceof LoginException) {
+                throw error;
+            }
+
+            throw new Error('Server unavailable!');
+        }
+    }
+
+    async verifyPasskey ({ accessToken, passkey }) {
+        try {
+            const response = await fetch(`${USERS_API_URL}/login/passkey`, {
+                method: 'POST',
+                headers: getHeadersWithAuth(accessToken),
+                body: JSON.stringify({
+                    passkey: passkey
+                })
+            });
+
+            const body = await response.json();
+
+            if (!response.ok) {
+                const { error} = body;
+
+                if (response.status === 400) {
+                    throw new LoginException('A valid passkey is mandatory!', error.reason || error.message);
+                }
+
+                if (response.status === 401) {
+                    throw new LoginException('Not authorized!', error.reason || error.message || 'Pease try later.');
+                }
+
+                if (response.status === 404) {
+                    throw new LoginException(error.message || 'Invalid passkey !', error.reason || error.message);
+                }
+
+                throw new LoginException(error.reason || error.message || body.message);
+            }
+
+            return body;
+        }
+        catch (error) {
+            if (error instanceof LoginException) {
+                throw error;
+            }
+
+            throw new Error('Server unavailable!');
+        }
+    }
+
+    async verifyMFA ({ accessToken, totpToken }) {
+        let mfa = {
+            totpToken: totpToken
         };
 
-        this.verifyPasskey = async function ({ accessToken, passkey }) {
-            try {
-                const response = await fetch(`${USERS_API_URL}/login/passkey`, {
-                    method: 'POST',
-                    headers: getHeadersWithAuth(accessToken),
-                    body: JSON.stringify({
-                        passkey: passkey
-                    })
-                });
+        try {
+            const response = await fetch(`${USERS_API_URL}/login/otp`, {
+                method: 'POST',
+                headers: getHeadersWithAuth(accessToken),
+                body: JSON.stringify(mfa)
+            });
 
-                const body = await response.json();
+            const body = await response.json();
 
-                if (!response.ok) {
-                    const { error} = body;
-
-                    if (response.status === 400) {
-                        throw new LoginException('A valid passkey is mandatory!', error.reason || error.message);
-                    }
-
-                    if (response.status === 401) {
-                        throw new LoginException('Not authorized!', error.reason || error.message || 'Pease try later.');
-                    }
-
-                    if (response.status === 404) {
-                        throw new LoginException(error.message || 'Invalid passkey !', error.reason || error.message);
-                    }
-
-                    throw new LoginException(error.reason || error.message || body.message);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    throw new LoginException('Invalid TOTP code!');
                 }
 
-                return body;
+                throw new LoginException(body.message);
             }
-            catch (error) {
-                if (error instanceof LoginException) {
-                    throw error;
-                }
 
-                throw new Error('Server unavailable!');
+            return body;
+        }
+        catch (error) {
+            if (error instanceof LoginException) {
+                throw error;
             }
-        };
 
-        this.verifyMFA = async function ({ accessToken, totpToken }) {
-            let mfa = {
-                totpToken: totpToken
-            };
-
-            try {
-                const response = await fetch(`${USERS_API_URL}/login/otp`, {
-                    method: 'POST',
-                    headers: getHeadersWithAuth(accessToken),
-                    body: JSON.stringify(mfa)
-                });
-
-                const body = await response.json();
-
-                if (!response.ok) {
-                    if (response.status === 401) {
-                        throw new LoginException('Invalid TOTP code!');
-                    }
-
-                    throw new LoginException(body.message);
-                }
-
-                return body;
-            }
-            catch (error) {
-                if (error instanceof LoginException) {
-                    throw error;
-                }
-
-                throw new Error('Server unavailable!');
-            }
-        };
+            throw new Error('Server unavailable!');
+        }
     }
 }
 
