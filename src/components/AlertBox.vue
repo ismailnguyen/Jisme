@@ -114,9 +114,7 @@
 <style scoped>
     #dynamic-island-container {
         position: fixed;
-        transform: translateX(-50%);
         cursor: pointer;
-        left: 50%;
 
         margin: 0 auto;
         padding: 18px;
@@ -132,12 +130,15 @@
     @media screen and (min-width: 767.98px) {
         #dynamic-island-container {
             bottom: 1.5rem;
+            right: 1.5rem;
         }
     }
 
     @media screen and (max-width: 767.98px) {
         #dynamic-island-container {
             top: 1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
         }
     }
 
