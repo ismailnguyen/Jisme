@@ -67,13 +67,13 @@ const store = defineStore('ui', () => {
                     updateSheetHeight(bottomSheetElementId, 100) : updateSheetHeight(bottomSheetElementId, 50);
         }
 
-        dragIcon.addEventListener("mousedown", (event) => dragStart(event, bottomSheetElementId));
-        document.addEventListener("mousemove", (event) => dragging(event, bottomSheetElementId));
-        document.addEventListener("mouseup", (event) => dragStop(event, bottomSheetElementId));
+        dragIcon.addEventListener('mousedown', (event) => dragStart(event, bottomSheetElementId));
+        document.addEventListener('mousemove', (event) => dragging(event, bottomSheetElementId));
+        document.addEventListener('mouseup', (event) => dragStop(event, bottomSheetElementId));
 
-        dragIcon.addEventListener("touchstart", (event) => dragStart(event, bottomSheetElementId));
-        document.addEventListener("touchmove", (event) => dragging(event, bottomSheetElementId));
-        document.addEventListener("touchend", (event) => dragStop(event, bottomSheetElementId));
+        dragIcon.addEventListener('touchstart', (event) => dragStart(event, bottomSheetElementId), { passive: true });
+        document.addEventListener('touchmove', (event) => dragging(event, bottomSheetElementId));
+        document.addEventListener('touchend', (event) => dragStop(event, bottomSheetElementId));
     }
 
     const openSidebar = (name) => {
