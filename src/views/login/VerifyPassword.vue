@@ -53,7 +53,7 @@
 
                     <p class="mt-5 mb-3 text-muted" tabindex="3">
                         <a class="link" @click="goBack()">
-                            <i class="fa-solid fa-arrow-left"></i>
+                            <i class="fa fa-arrow-left"></i>
                             Go back
                         </a>
                     </p>

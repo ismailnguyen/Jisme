@@ -203,7 +203,7 @@
                   <div class="accordion-body">
                     <div class="input-group">
                       <button
-                        class="btn btn-outline-secondary"
+                        class="btn btn-light"
                         type="button"
                         @click="copyToClipboard('editAccount_input_login_hidden')"
                       >
@@ -307,7 +307,7 @@
                         v-if="!account.is_password_less"
                       />
                       <button
-                        class="btn btn-outline-secondary"
+                        class="btn btn-light"
                         type="button"
                         @click="account.generatePassword()"
                         v-if="!account.is_password_less && !account.password"
@@ -328,7 +328,7 @@
                         "
                       />
                       <button
-                        class="btn btn-outline-secondary"
+                        class="btn btn-light"
                         type="button"
                         @click="generatePasswordLess()"
                         v-if="
@@ -349,7 +349,7 @@
                         readonly
                       />
                       <button
-                        class="btn btn-outline-secondary"
+                        class="btn btn-light"
                         type="button"
                         @click="resetPasswordLess()"
                         v-if="
@@ -434,7 +434,7 @@
                   <div class="accordion-body">
                     <div class="input-group" v-show="account.totp_secret">
                       <button
-                        class="btn btn-outline-secondary"
+                        class="btn btn-light"
                         type="button"
                         @click="copyToClipboard('editAccount_input_totp_token_hidden')"
                       >
@@ -494,7 +494,7 @@
                   <div class="accordion-body">
                     <div class="input-group">
                       <button
-                        class="btn btn-outline-secondary"
+                        class="btn btn-light"
                         type="button"
                         @click="copyToClipboard('editAccount_input_platform_hidden')"
                       >
@@ -784,16 +784,16 @@
                   </div>
                   <div class="col">
                       <div class="input-group mb-3">
-                          <button class="btn btn-outline-secondary" type="button" id="button-addon1">-</button>
+                          <button class="btn btn-light" type="button" id="button-addon1">-</button>
                           <input id="tatata" type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                          <button class="btn btn-outline-secondary" type="button" id="button-addon1">+</button>
+                          <button class="btn btn-light" type="button" id="button-addon1">+</button>
                       </div>
                   </div>
                   <div class="col">
                       <div class="input-group mb-3">
-                          <button class="btn btn-outline-secondary" type="button" id="button-addon1">-</button>
+                          <button class="btn btn-light" type="button" id="button-addon1">-</button>
                           <input id="tatata" type="text" class="form-control" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
-                          <button class="btn btn-outline-secondary" type="button" id="button-addon1">+</button>
+                          <button class="btn btn-light" type="button" id="button-addon1">+</button>
                       </div>
                   </div>
               </div> -->

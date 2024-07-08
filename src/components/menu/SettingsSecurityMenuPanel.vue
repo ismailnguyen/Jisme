@@ -109,7 +109,7 @@
                       disabled
                     />
                     <button
-                      class="btn btn-outline-secondary hover-danger"
+                      class="btn btn-light hover-danger"
                       type="button"
                       @click="onRemovePasskey(passkey)"
                     >
@@ -139,8 +139,6 @@
         </div>
       </div>
     </div>
-
-    
 
     <hr class="my-4" />
 
@@ -282,3 +280,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .input-group-list > .btn:last-of-type {
+    margin-top: 1rem;
+  }
+</style>

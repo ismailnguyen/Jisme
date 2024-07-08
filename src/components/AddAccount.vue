@@ -383,7 +383,7 @@
                       placeholder="Password"
                     />
                     <button
-                      class="btn btn-outline-secondary"
+                      class="btn btn-light"
                       type="button"
                       @click="account.generatePassword()"
                     >

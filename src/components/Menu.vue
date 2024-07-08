@@ -15,7 +15,7 @@
 
                     <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4" v-else>
                         <button type="button" class="button--navigation" @click="goToPreviousPanel()">
-                            <i class="fa fa-solid fa-chevron-left"></i>
+                            <i class="fa fa-chevron-left"></i>
                         </button>
                     </div>
 
@@ -24,7 +24,7 @@
                     
                     <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4 justify-content-end" v-if="user && user.avatarUrl">
                         <button type="button" class="button--navigation" @click="closeTray()">
-                            <i class="fa fa-solid fa-close"></i>
+                            <i class="fa fa-close"></i>
                         </button>
                     </div>
                 </div>
