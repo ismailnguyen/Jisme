@@ -4,30 +4,30 @@ import { generatePassword } from "../utils/passwordLess";
 
 class Account {
     constructor (
-                    _id = 0, 
-					platform = '',
-                    icon = '',
-					login = '', 
-					password = '',
-                    is_password_less = true, // By default enforce password less
-					password_clue = '', 
-					tags = '', 
-					created_date = new Date(),
-					social_login = '', 
-					description = '',
-					notes = '',
-					last_modified_date = null, 
-					last_opened_date = null, 
-                    opened_count = 0,
-                    type = 'account',
-                    card_number = '',
-                    card_name = '',
-                    card_expiracy = '',
-                    card_cryptogram = '',
-                    card_pin = '',
-                    totp_secret = '',
-                    isServerEncrypted = false
-				) {
+            _id = 0, 
+            platform = '',
+            icon = '',
+            login = '', 
+            password = '',
+            is_password_less = true, // By default enforce password less
+            password_clue = '', 
+            tags = '', 
+            created_date = new Date(),
+            social_login = '', 
+            description = '',
+            notes = '',
+            last_modified_date = null, 
+            last_opened_date = null, 
+            opened_count = 0,
+            type = 'account',
+            card_number = '',
+            card_name = '',
+            card_expiracy = '',
+            card_cryptogram = '',
+            card_pin = '',
+            totp_secret = '',
+            isServerEncrypted = false
+        ) {
         this._id = _id;
         this.icon = icon;
         this.platform = platform;

@@ -2,7 +2,13 @@ import {
     sortByInt,
     sortByString,
     sortByDate
-} from '../utils/sort'
+} from '../utils/sort';
+
+const filterActions = {
+    includes: 'includes',
+    equals: 'equals',
+    exluces: 'excludes'
+};
 
 class FilterService {
     constructor(accounts) {
@@ -24,8 +30,26 @@ class FilterService {
             this.filteredAccounts = this.filteredAccounts.filter(account => types.includes(account.type));
         }
 
+        this.applyFilters = function (filters) {
+            let _filteredAccounts = [];
+
+            filters.forEach(filter => {
+                this.filteredAccounts.forEach(account => {
+                    if (account[filter.field]
+                            && ((filterActions[filter.comparison] === 'includes' && account[filter.field].toString().toLowerCase().includes(filter.value.toLowerCase()))
+                                || (filterActions[filter.comparison] === 'equals' && account[filter.field].toString().toLowerCase() === filter.value.toLowerCase())
+                                || (filterActions[filter.comparison] === 'excludes' && !account[filter.field].toString().toLowerCase().includes(filter.value.toLowerCase())))
+                    ) {
+                        _filteredAccounts.push(account);
+                    }
+                });
+            });
+
+            this.filteredAccounts = _filteredAccounts;
+        }
+
         this.filterByTags = function (tags) {
-            if (!tags || tags.length === 0) {
+            if (!tags || tags.length === 0) {
                 return;
             }
 
