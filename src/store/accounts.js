@@ -19,17 +19,24 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     const selectedTags = ref([]);
     const selectedTypes = ref([]);
+    const selectedFilters = ref([]);
 
     let accountsService = new AccountsService(user.value);
 
     const getAccountsFilteredByQuery = computed(() => {
-        return (searchQuery, tags, types, sort = false) => {
-            if (!searchQuery && !tags && !types) {
+        return (searchQuery, tags, types, filters, sort = false) => {
+
+            if (!searchQuery && !tags && !types && !filters) {
                 _filteredAccounts.value = accounts.value;
                 return accounts.value;
             }
 
             const filterService = new FilterService(toRaw(accounts.value));
+
+            // Apply filters only if any value is provided for any field
+            if (filters && filters.map(f => f.value).filter(v => v).length > 0){
+                filterService.applyFilters(filters);
+            }
 
             if (tags) {
                 filterService.filterByTags(tags);
@@ -231,8 +238,9 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
     }
 
-    function applyFilters(searchQuery, tags, sort) {
+    function applyFilters(searchQuery, tags, filters, sort) {
         selectedTags.value = tags;
+        selectedFilters.value = filters;
     }
 
     return {
@@ -244,6 +252,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
         selectedTypes,
         selectedTags,
+        selectedFilters,
 
         applyFilters,
 
