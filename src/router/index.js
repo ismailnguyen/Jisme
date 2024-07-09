@@ -98,7 +98,7 @@ const router = createRouter({
     {
       name: 'Register',
       path: '/register', 
-      component: () => import('../views/Register.vue'),
+      component: () => import('../views/RequestRegister.vue'),
       meta: { requiresAuth: false, showFooter: true }
     },
     {

@@ -1,26 +1,10 @@
 <template>
-    <div class="container col-xl-10 col-xxl-8 px-4 py-5" v-if="user && user.email && this.user.token">
+    <div class="container py-5" v-if="user && user.email && this.user.token">
         <div class="row align-items-center g-lg-5 py-5">
             <LoginHero :isLoading="isLoading" />
 
-            <div class="col-md-10 mx-auto col-lg-5">
-                <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="onVerifyOtp()">
-                    <img
-                        v-show="user && user.avatarUrl"
-                        class="rounded-circle mb-3"
-                        loading="lazy"
-                        :src="user.avatarUrl"
-                        :alt="user.email"
-                        :title="user.email"
-                        width="72" height="72">
-                    <img
-                        v-show="!user || !user.avatarUrl"
-                        class="img-fluid rounded mb-4"
-                        loading="lazy"
-                        src="../../assets/logo_medium.png"
-                        alt="Jisme"
-                        title="Jisme">
-
+            <div class="col-xs-12 col-md-5 col-lg-5">
+                <form class="p-4 p-md-5 form-signin" @submit.prevent="onVerifyOtp()">
                     <h1 class="h3 mb-3 font-weight-normal">Sign in with OTP</h1>
                     
                     <LoginReadonlyEmailInput
@@ -55,15 +39,13 @@
                         :disabled="!isOtpFilled"
                         @click="onVerifyOtp"
                         tabindex="7">
-                        Verify
+                        {{ isLoading ? 'Verifying...' : 'Verify' }}
                         <i class="fa fa-arrow-right"></i>
                     </button>
 
-                    <hr class="my-4">
+                    <hr class="my-4 mt-5 mb-3">
 
-                    
-
-                    <p class="mt-5 mb-3 text-muted">Having trouble? <a class="link" @click="goBack()">Sign in another way</a></p>
+                    <p class="text-muted">Having trouble? <a class="link" @click="goBack()">Sign in another way</a></p>
                 </form>
             </div>
         </div>

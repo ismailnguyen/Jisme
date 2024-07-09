@@ -1,15 +1,10 @@
 <template>
-    <div class="container col-xl-10 col-xxl-8 px-4 py-5" v-if="user && user.email && this.user.token">
+    <div class="container py-5" v-if="user && user.email && this.user.token">
         <div class="row align-items-center g-lg-5 py-5">
             <LoginHero :isLoading="isLoading" />
 
-            <div class="col-xs-12 col-md-10 mx-auto col-lg-5">
-                <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="onVerifyPassword()">
-                    <div class="d-block d-md-none">
-                        <img class="img-fluid rounded mb-4" loading="lazy" src="../../assets/logo_medium.png" alt="Jisme" v-show="!isLoading">
-                        <Loader v-show="isLoading" />
-                    </div>
-
+            <div class="col-xs-12 col-md-5 col-lg-5">
+                <form class="p-4 p-md-5 form-signin" @submit.prevent="onVerifyPassword()">
                     <h1 class="h3 mb-3 font-weight-normal">Sign in with password</h1>
 
                     <LoginReadonlyEmailInput
@@ -45,13 +40,13 @@
                         :disabled="!password"
                         @click="onVerifyPassword"
                         tabindex="3">
-                        Sign in
+                        {{ isLoading ? 'Signing in...' : 'Sign in' }}
                         <i class="fa fa-arrow-right"></i>
                     </button>
 
-                    <hr class="my-4">
+                    <hr class="my-4 mt-5 mb-3">
 
-                    <p class="mt-5 mb-3 text-muted" tabindex="3">
+                    <p class="text-muted" tabindex="3">
                         <a class="link" @click="goBack()">
                             <i class="fa fa-arrow-left"></i>
                             Go back
@@ -74,7 +69,6 @@
         useAlertStore,
         useUserStore
     } from '@/store'
-    import Loader from '../../components/Loader.vue'
     import LoginHero from '../../components/LoginHero.vue'
     import LoginReadonlyEmailInput from '../../components/LoginReadonlyEmailInput.vue'
 
@@ -88,7 +82,6 @@
             }
         },
         components: {
-            Loader,
             LoginHero,
             LoginReadonlyEmailInput
         },
@@ -162,7 +155,7 @@
                     }
                     , 500);
 
-                    this.openAlert(error.reason ? error.message : 'Error', error.reason || error.message, 'danger');
+                    this.openAlert(error.reason ? error.reason : 'Error', error.message || error.reason, 'danger');
                 }
             }
         }

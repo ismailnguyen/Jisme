@@ -1,5 +1,5 @@
 <template>
-    <div class="form-floating input-group mb-3 readonly" v-show="user">
+    <div class="form-floating input-group mt-5 mb-3 readonly" v-show="user">
         <input
             type="text"
             id="readonlyInputUsername"

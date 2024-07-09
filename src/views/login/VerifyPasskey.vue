@@ -1,15 +1,10 @@
 <template>
-    <div class="container col-xl-10 col-xxl-8 px-4 py-5" v-if="user && user.email && this.user.token">
+    <div class="container py-5" v-if="user && user.email && this.user.token">
         <div class="row align-items-center g-lg-5 py-5">
             <LoginHero :isLoading="isLoading" />
 
-            <div class="col-xs-12 col-md-10 mx-auto col-lg-5">
-                <form class="p-4 p-md-5 rounded-3 form-signin" @submit.prevent="onVerifyPasskey()">
-                    <div class="d-block d-lg-none">
-                        <img class="img-fluid rounded mb-4" loading="lazy" src="../../assets/logo_medium.png" alt="Jisme" v-show="!isLoading">
-                        <Loader v-show="isLoading" />
-                    </div>
-
+            <div class="col-xs-12 col-md-5 col-lg-5">
+                <form class="p-4 p-md-5 form-signin" @submit.prevent="onVerifyPasskey()">
                     <h1 class="h3 mb-3 font-weight-normal">Sign in with a passkey</h1>
 
                     <LoginReadonlyEmailInput
@@ -25,7 +20,8 @@
                         tabindex="2"
                         v-show="isPasswordlessLoginBtnVisible">
                         <i class="fa fa-user-lock" aria-hidden="true"></i>
-                        Choose a passkey
+                        
+                        {{ isLoading ? 'Loading passkeys...' : 'Choose a passkey' }}
                     </button>
 
                     <button
@@ -35,9 +31,9 @@
                         <i class="fa fa-ban"></i> Passkey not supported in this device
                     </button>
 
-                    <hr class="my-4">
+                    <hr class="my-4 mt-5 mb-3">
 
-                    <p class="mt-5 mb-3 text-muted">Having trouble? <router-link to="/login/password">Sign in another way</router-link></p>
+                    <p class="text-muted">Having trouble? <router-link to="/login/password">Sign in another way</router-link></p>
                 </form>
             </div>
         </div>
@@ -55,7 +51,6 @@
         useAlertStore,
         useUserStore
     } from '@/store'
-    import Loader from '../../components/Loader.vue'
     import LoginHero from '../../components/LoginHero.vue'
     import LoginReadonlyEmailInput from '../../components/LoginReadonlyEmailInput.vue'
 
@@ -67,7 +62,6 @@
             }
         },
         components: {
-            Loader,
             LoginHero,
             LoginReadonlyEmailInput
         },
@@ -130,7 +124,7 @@
                     // NotAllowedError is thrown when user's request to cancel the passkey authentication
                     // So do not display any error message in that case
                     if (error.name !== 'NotAllowedError') {
-                        this.openAlert(error.reason ? error.message : 'Error', error.reason || error.message, 'danger');
+                        this.openAlert(error.reason ? error.reason : 'Error', error.message || error.reason, 'danger');
                     }
                 }
             }

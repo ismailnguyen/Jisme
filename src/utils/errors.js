@@ -4,7 +4,7 @@ export function Exception (reason, message, code) {
     this.code = code;
 }
 
-export function LoginException (message, reason = '') {
+export function LoginException (reason, message = '') {
     this.message = message;
     this.reason = reason;
 }

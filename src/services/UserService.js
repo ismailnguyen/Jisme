@@ -127,7 +127,7 @@ class UserService {
                 }
 
                 if (response.status === 404) {
-                    throw new LoginException('Invalid username/password !');
+                    throw new LoginException('Incorrect username or password.');
                 }
 
                 throw new LoginException(body.message);
@@ -167,7 +167,7 @@ class UserService {
                 }
 
                 if (response.status === 404) {
-                    throw new LoginException('Invalid username/password !');
+                    throw new LoginException('Incorrect username or password.');
                 }
 
                 throw new LoginException(body.message);
