@@ -17,7 +17,7 @@ localforage.config({
     name: LOCAL_STORAGE_DB_NAME
 });
 
-const ACCOUNTS_API_URL = BASE_API_URL + 'accounts';
+const ACCOUNTS_API_URL = `${ BASE_API_URL }accounts`;
 
 class AccountsService {
     constructor(user) {
@@ -42,10 +42,10 @@ class AccountsService {
             const { error } = await response.json()
 
             error.code = error.code || response.status
-            throwError(error)
+            this.throwError(error)
         }
         catch (error) {
-            throwError(error)
+            this.throwError(error)
         }
     }
 
@@ -80,10 +80,10 @@ class AccountsService {
             const { error } = await response.json()
 
             error.code = error.code || response.status
-            throwError(error)
+            this.throwError(error)
         }
         catch (error) {
-            throwError(error)
+            this.throwError(error)
         }
     }
 
@@ -136,10 +136,10 @@ class AccountsService {
             const { error } = await response.json()
 
             error.code = error.code || response.status
-            throwError(error)
+            this.throwError(error)
         }
         catch (error) {
-            throwError(error)
+            this.throwError(error)
         }
     }
 
@@ -163,10 +163,10 @@ class AccountsService {
             const { error } = await response.json()
 
             error.code = error.code || response.status
-            throwError(error)
+            this.throwError(error)
         }
         catch (error) {
-            throwError(error)
+            this.throwError(error)
         }
     }
 
@@ -190,10 +190,10 @@ class AccountsService {
             const { error } = await response.json()
 
             error.code = error.code || response.status
-            throwError(error)
+            this.throwError(error)
         }
         catch (error) {
-            throwError(error)
+            this.throwError(error)
         }
     }
 
@@ -212,10 +212,10 @@ class AccountsService {
             const { error } = await response.json()
 
             error.code = error.code || response.status
-            throwError(error)
+            this.throwError(error)
         }
         catch (error) {
-            throwError(error)
+            this.throwError(error)
         }
     }
 
@@ -246,10 +246,10 @@ class AccountsService {
                 const { error } = await response.json();
 
                 error.code = error.code || response.status;
-                throwError(error);
+                this.throwError(error);
             }
             catch (error) {
-                throwError(error);
+                this.throwError(error);
             }
         }
 
