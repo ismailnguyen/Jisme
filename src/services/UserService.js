@@ -10,14 +10,13 @@ import localforage from 'localforage'
 
 import { BASE_API_URL } from '../utils/api'
 import { getHeaders, getHeadersWithAuth } from '../utils/requestHeader'
-import { LoginException } from '../utils/errors'
+import { Exception, LoginException, SessionExpiredException } from '../utils/errors'
 
 localforage.config({
     name: LOCAL_STORAGE_DB_NAME
 });
 
-const USERS_API_URL = BASE_API_URL + 'users';
-
+const USERS_API_URL = `${ BASE_API_URL }users`;
 
 class UserService {
     constructor() {}
@@ -59,10 +58,17 @@ class UserService {
                 headers: getHeadersWithAuth(accessToken)
             });
 
-            return await response.json();
+            if (response.ok) {
+                return await response.json();
+            }
+
+            const { error } = await response.json();
+
+            error.code = error.code || response.status;
+            this.throwError(error);
         }
         catch (error) {
-            throw new Error('Server unavailable!');
+            this.throwError(error);
         }
     }
 
@@ -74,10 +80,17 @@ class UserService {
                 body: JSON.stringify(user)
             });
 
-            return await response.json();
+            if (response.ok) {
+                return await response.json();
+            }
+
+            const { error } = await response.json();
+
+            error.code = error.code || response.status;
+            this.throwError(error);
         }
         catch (error) {
-            throw new Error('Server unavailable!');
+            this.throwError(error);
         }
     }
 
@@ -126,7 +139,7 @@ class UserService {
                 throw error;
             }
 
-            throw new Error('Server unavailable!');
+            this.throwError(error);
         }
     }
 
@@ -166,7 +179,7 @@ class UserService {
                 throw error;
             }
 
-            throw new Error('Server unavailable!');
+            this.throwError(error);
         }
     }
 
@@ -207,7 +220,7 @@ class UserService {
                 throw error;
             }
 
-            throw new Error('Server unavailable!');
+            this.throwError(error);
         }
     }
 
@@ -240,8 +253,20 @@ class UserService {
                 throw error;
             }
 
-            throw new Error('Server unavailable!');
+            this.throwError(error);
         }
+    }
+
+    throwError(error) {
+        if (error.code > 400 && error.code < 500) {
+            throw new SessionExpiredException()
+        }
+
+        throw new Exception(
+            error.reason || 'Error',
+            error.message || 'Please retry',
+            error.code || 500
+        )
     }
 }
 

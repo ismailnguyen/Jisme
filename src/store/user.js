@@ -14,6 +14,7 @@ import { defineStore } from 'pinia'
 import { useAlertStore } from '@/store';
 import { APP_USER_STORE } from '../utils/store'
 import UserService from '../services/UserService'
+import { SessionExpiredException } from '../utils/errors'
 
 const useUserStore = defineStore(APP_USER_STORE, () => {
     const user = ref({})
@@ -35,7 +36,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     })
 
     async function setAutoLogin (enabled) {
-        await userService.enableAutoLogin(enabled);
+        await userService.setAutoLogin(enabled);
     }
 
     async function requestLogin({ username, extendSession }) {
@@ -94,11 +95,29 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function getLastUpdatedTime() { 
-        return await userService.getAccountInformation(user.value.token);
+        try {
+            return await userService.getAccountInformation(user.value.token);
+        }
+        catch(error) {
+            if (error instanceof SessionExpiredException) {
+                signOut();
+            }
+
+            throw error;
+        }
     }
 
     async function getAccountInformation() { 
-        user.value = await userService.getAccountInformation(user.value.token);
+        try {
+            user.value = await userService.getAccountInformation(user.value.token);
+        }
+        catch(error) {
+            if (error instanceof SessionExpiredException) {
+                signOut();
+            }
+
+            throw error;
+        }
     }
 
     async function update() {
