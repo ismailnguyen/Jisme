@@ -263,13 +263,13 @@
                         type="radio"
                         class="btn-check"
                         name="password-type"
-                        id="addAccount_radiobutton_passwordtype_passwordless"
+                        id="editAccount_radiobutton_passwordtype_passwordless"
                         v-model="account.is_password_less"
                         v-bind:value="true"
                       />
                       <label
                         class="btn"
-                        for="addAccount_radiobutton_passwordtype_passwordless"
+                        for="editAccount_radiobutton_passwordtype_passwordless"
                         :class="account.is_password_less ? 'active' : ''"
                       >
                         <i class="fa fa-bolt" aria-hidden="true"></i>
@@ -280,13 +280,13 @@
                         type="radio"
                         class="btn-check"
                         name="password-type"
-                        id="addAccount_radiobutton_passwordtype_password"
+                        id="editAccount_radiobutton_passwordtype_password"
                         v-model="account.is_password_less"
                         v-bind:value="false"
                       />
                       <label
                         class="btn"
-                        for="addAccount_radiobutton_passwordtype_password"
+                        for="editAccount_radiobutton_passwordtype_password"
                         :class="!account.is_password_less ? 'active' : ''"
                       >
                         <i class="fa fa-lock" aria-hidden="true"></i>
