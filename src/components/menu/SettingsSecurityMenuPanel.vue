@@ -167,12 +167,6 @@ import {
 import Loader from "../Loader.vue";
 
 export default {
-  props: {
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-  },
   components: {
     Loader,
   },

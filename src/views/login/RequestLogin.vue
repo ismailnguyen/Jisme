@@ -44,7 +44,7 @@
                         @click="onRequestLogin()"
                         :disabled="!username"
                         tabindex="2">
-                        {{ isLoading ? 'Loading next step...' : 'Next' }}
+                        {{ isLoading ? 'Authenticating...' : 'Next' }}
                         <i class="fa fa-arrow-right"></i>
                     </button>
 

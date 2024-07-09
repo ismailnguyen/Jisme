@@ -34,6 +34,17 @@
     </div>
 
     <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+      <button
+        class="btn btn-action btn-light"
+        type="button"
+        @click="onOpenSettingsAbout()"
+      >
+        <i class="fa fa-info"></i>
+        About
+      </button>
+    </div>
+
+    <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
       <button type="button" class="btn btn-action btn-red" @click="onSignOut()">
         <i class="fa fa-power-off"></i>
         Logout
@@ -64,6 +75,10 @@ export default {
 
     onOpenSettingsActivities: function () {
       this.$emit("panelChanged", "settings-activities");
+    },
+
+    onOpenSettingsAbout: function () {
+      this.$emit("panelChanged", "settings-about");
     },
 
     onSignOut: async function () {

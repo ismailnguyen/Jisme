@@ -55,6 +55,10 @@
                 <SettingsActivitiesMenuPanel
                     v-if="currentPanel == 'settings-activities'"
                     @panelChanged="onPanelChanged" />
+
+                <SettingsAboutMenuPanel
+                    v-if="currentPanel == 'settings-about'"
+                    @panelChanged="onPanelChanged" />
             </div>
         </div>
     </div>
@@ -69,6 +73,7 @@
     import SettingsSecurityMenuPanel from './menu/SettingsSecurityMenuPanel.vue'
     import SettingsActivitiesMenuPanel from './menu/SettingsActivitiesMenuPanel.vue'
     import TagsListMenuPanel from './menu/TagsListMenuPanel.vue'
+    import SettingsAboutMenuPanel from './menu/SettingsAboutMenuPanel.vue'
 
     import {
         mapState,
@@ -97,7 +102,8 @@
             SettingsProfileMenuPanel,
             SettingsSecurityMenuPanel,
             SettingsActivitiesMenuPanel,
-            TagsListMenuPanel
+            TagsListMenuPanel,
+            SettingsAboutMenuPanel
         },
         computed: {
             ...mapState(useUserStore, [
@@ -120,7 +126,7 @@
                     return;
                 }
 
-                if (['settings-profile', 'settings-security', 'settings-activities'].includes(this.currentPanel)) {
+                if (['settings-profile', 'settings-security', 'settings-activities', 'settings-about'].includes(this.currentPanel)) {
                     this.currentPanel = 'settings';
                     return;
                 }
