@@ -168,6 +168,7 @@
 </template>
 
 <script>
+import { SessionExpiredException } from '../utils/errors'
 import { mapState, mapWritableState, mapActions, mapStores } from "pinia";
 import { useAccountsStore, useAlertStore, useUiStore } from "@/store";
 import LoadingAccountItem from "../components/LoadingAccountItem.vue";
