@@ -4,9 +4,13 @@
     <div class="col-xs-12 col-md-7 col-lg-7 px-4 text-center text-lg-start">
         <img class="img-fluid rounded mb-4" :class="isLoading ? 'loader-animate' : ''" loading="lazy" src="../assets/logo_medium.png" alt="Jisme">
 
-        <h1 class="display-4 fw-bold lh-1 mb-3">We protect your integrity.</h1>
+        <h1 class="display-4 fw-bold lh-1 mb-3">Protect your integrity.</h1>
+        <h1 class="display-4 fw-bold lh-1 mb-3">Keep secrets safe.</h1>
         <p class="col-lg-10 fs-4">
-            An open source password manager, check it out at <a href="https://github.com/ismailnguyen/jisme" class="external-link" target="_blank">github.com/jisme</a>.
+            With Jisme, the open source password vault.
+        </p>
+        <p class="col-lg-10 fs-4">
+            Nothing to hide, everyhing in <a href="https://github.com/ismailnguyen/jisme" class="external-link" target="_blank">github.com/jisme</a>.
         </p>
         <div class="text-end d-none d-md-block">
             <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">
