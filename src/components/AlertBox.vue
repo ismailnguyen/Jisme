@@ -113,6 +113,7 @@
 
 <style scoped>
     #dynamic-island-container {
+        z-index: 9999;   
         position: fixed;
         cursor: pointer;
 

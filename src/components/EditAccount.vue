@@ -296,23 +296,52 @@
 
                     <hr class="my-4" />
 
-                    <div class="input-group mb-3">
+                    <div class="input-group mb-3" v-if="account.is_password_less && !passwordLess.generatedPassword">
                       <input
-                        id="editAccount_input_password"
+                        id="editAccount_input_passwordless_masterPassword"
                         class="form-control"
-                        type="text"
-                        autocomplete="new-password"
-                        aria-describedby="editAccount_input_passwordHelp"
-                        v-model="account.password"
-                        v-if="!account.is_password_less"
+                        type="password"
+                        placeholder="Master password"
+                        autocomplete="current-password"
+                        aria-describedby="editAccount_input_passwordlessHelp_masterPassword"
+                        v-model="passwordLess.masterPassword"
                       />
                       <button
                         class="btn btn-light"
                         type="button"
-                        @click="account.generatePassword()"
-                        v-if="!account.is_password_less && !account.password"
+                        @click="generatePasswordLess()"
                       >
-                        <i class="fa fa-cogs"></i> Suggest
+                        <i class="fa fa-eye"></i> Reveal
+                      </button>
+                    </div>
+
+                    <div class="input-group mb-3" v-if="account.is_password_less && passwordLess.generatedPassword">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="copyToClipboard('editAccount_input_passwordless_generatedPassword_hidden')"
+                      >
+                        <i class="fa fa-clipboard"></i>
+                      </button>
+
+                      <input
+                        id="editAccount_input_passwordless_generatedPassword"
+                        class="form-control"
+                        type="text"
+                        v-model="passwordLess.generatedPassword"
+                        readonly
+                      />
+                      <input
+                        id="editAccount_input_passwordless_generatedPassword_hidden"
+                        type="hidden"
+                        :value="passwordLess.generatedPassword"
+                      />
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="resetPasswordLess()"
+                      >
+                        <i class="fa fa-undo"></i> Reset
                       </button>
 
                       <input
@@ -337,39 +366,7 @@
                       >
                         <i class="fa fa-eye"></i> Reveal
                       </button>
-
-                      <input
-                        id="editAccount_input_passwordless_generatedPassword"
-                        class="form-control"
-                        type="text"
-                        v-model="passwordLess.generatedPassword"
-                        v-if="
-                          account.is_password_less && passwordLess.generatedPassword
-                        "
-                        readonly
-                      />
-                      <button
-                        class="btn btn-light"
-                        type="button"
-                        @click="resetPasswordLess()"
-                        v-if="
-                          account.is_password_less && passwordLess.generatedPassword
-                        "
-                      >
-                        <i class="fa fa-undo"></i> Reset
-                      </button>
                     </div>
-
-                    <small
-                      id="editAccount_input_passwordHelp"
-                      class="form-text text-muted"
-                      v-show="
-                        !account.is_password_less &&
-                        !account.password
-                      "
-                    >
-                      Click button to suggest a password.
-                    </small>
                     <small
                       id="editAccount_input_passwordlessHelp_masterPassword"
                       class="form-text text-muted"
@@ -379,6 +376,47 @@
                       "
                     >
                       Type your master password to reveal the password.
+                    </small>
+
+                    <div class="input-group mb-3" v-if="!account.is_password_less">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="copyToClipboard('editAccount_input_password_generatedPassword_hidden')"
+                        v-if="account.password"
+                      >
+                        <i class="fa fa-clipboard"></i>
+                      </button>
+                      <input
+                        id="editAccount_input_password"
+                        class="form-control"
+                        type="text"
+                        autocomplete="new-password"
+                        aria-describedby="editAccount_input_passwordHelp"
+                        v-model="account.password"
+                      />
+                      <input
+                        id="editAccount_input_password_generatedPassword_hidden"
+                        type="hidden"
+                        :value="account.password"
+                      />
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="account.generatePassword()"
+                      >
+                        <i class="fa fa-cogs"></i> Suggest
+                      </button>
+                    </div>
+                    <small
+                      id="editAccount_input_passwordHelp"
+                      class="form-text text-muted"
+                      v-show="
+                        !account.is_password_less &&
+                        !account.password
+                      "
+                    >
+                      Click button to suggest a password.
                     </small>
                     
                     <hr class="my-4" />
@@ -1080,7 +1118,7 @@ export default {
       inputToCopy.setAttribute("type", "hidden");
       window.getSelection().removeAllRanges();
 
-      this.openAlert(inputToCopy.value, "Copied to clipboard !", "info");
+      this.openAlert("Copied to clipboard !", inputToCopy.value, "info");
     },
 
     formatDate: function (date) {
