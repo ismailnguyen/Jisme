@@ -64,12 +64,25 @@
   background-color: var(--color-background-inverted);
 }
 
+.card-title {
+  font-weight: 400;
+}
+
+.card-footer {
+  background: #a0bcc6;
+  color: white;
+  font-weight: 100;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
+
 .card-footer {
   border: none;
   background: transparent;
 }
 
 .card-footer .btn {
+  font-size: small;
   border-radius: 1rem;
   padding: .2rem 1rem;
   font-weight: 500;
@@ -116,4 +129,22 @@
 
 .stacked-cards .card-wrapper .card {
   width: 100%;
+}
+
+.card.card-secondary {
+  background: #becdd5;
+  color: white;
+  border-radius: 1rem;
+}
+
+.card.card-secondary .card-footer {
+  background: #a0bcc6;
+  color: white;
+  border-radius: 0 0 1rem 1rem !important;
+}
+
+.card.card-secondary .card-footer .btn{
+  background: white;
+  border: none;
+  color: #0d6efd !important;
 }

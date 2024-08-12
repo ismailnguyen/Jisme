@@ -874,8 +874,7 @@ import "../assets/bottom_sheet.css";
 import { mapState, mapActions } from "pinia";
 import { useUiStore, useAlertStore, useAccountsStore } from "@/store";
 import totpGenerator from "totp-generator";
-  import { truncateString } from '../utils/textFormat'
-
+import { truncateString } from '../utils/textFormat'
 
 function initialState() {
   return {
@@ -993,7 +992,12 @@ export default {
       if (this.account.totp_secret) {
         // Remove all spaces because spaces are forbidden for TOTP generation
         // And some websites give the secret with spaces for better human readability
-        return totpGenerator(this.account.totp_secret.replace(/ /g, ""));
+        try {
+          return totpGenerator(this.account.totp_secret.replace(/ /g, ""));
+        }
+        catch (exception) {
+          return "Invalid secret";
+        }
       }
 
       return "Not setup";

@@ -8,25 +8,28 @@
     :visible="isSidebarOpen(SIDEBAR.EDIT_ACCOUNT)"
   />
 
-  <AccountList @menuOpened="onMenuOpened" />
+  <AccountList @menuOpened="onMenuOpened" v-if="hasAccounts" />
+  <NoAccounts v-else />
 </template>
 
 <script>
 import "../assets/home.css";
 
 import { mapState, mapActions } from "pinia";
-import { useUserStore, useUiStore } from "@/store";
+import { useAccountsStore, useUserStore, useUiStore } from "@/store";
 import Menu from "../components/Menu.vue";
 import AddAccountModal from "../components/AddAccount.vue";
 import EditAccountModal from "../components/EditAccount.vue";
 import AccountList from "../components/AccountList.vue";
+import NoAccounts from "../components/NoAccounts.vue";
 
 export default {
   components: {
     Menu,
     AddAccountModal,
     EditAccountModal,
-    AccountList
+    AccountList,
+    NoAccounts
   },
   props: {
     isAnySidebarOpen: {
@@ -47,11 +50,12 @@ export default {
     console.log("Last user update:", lastUserUpdate, new Date());
   },
   computed: {
-    ...mapState(useUserStore, ["user", "isLoggedIn"]),
+    ...mapState(useUserStore, ['user', 'isLoggedIn']),
+    ...mapState(useAccountsStore, ['hasAccounts']),
     ...mapState(useUiStore, [
-      "currentEditingAccount",
-      "isSidebarOpen",
-      "SIDEBAR",
+      'currentEditingAccount',
+      'isSidebarOpen',
+      'SIDEBAR',
     ]),
   },
   methods: {

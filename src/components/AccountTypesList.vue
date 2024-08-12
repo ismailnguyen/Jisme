@@ -8,7 +8,7 @@
 
         <div class="row stacked-cards stacked-cards-small">
             <div class="card-wrapper col-sm-4 mb-3">
-                <div class="card clickable" @click.prevent="openAccountType('account')">
+                <div class="card card-secondary clickable" @click.prevent="openAccountType('account')">
                     <div class="card-body">
                         <h5 class="card-title">
                             <i class="fa fa-globe" aria-hidden="true"></i>
@@ -16,15 +16,14 @@
                         </h5>
                     </div>
                     <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end d-none">
-                            <i class="fa fa-arrow-right"></i>
-                            View
+                        <a class="btn btn-outline-primary float-end">
+                            VIEW
                         </a>
                     </div>
                 </div>
             </div>
             <div class="card-wrapper col-sm-4 mb-3">
-                <div class="card clickable" @click.prevent="openAccountType('2fa')">
+                <div class="card card-secondary clickable" @click.prevent="openAccountType('2fa')">
                     <div class="card-body">
                         <h5 class="card-title">
                             <i class="fa fa-qrcode" aria-hidden="true"></i>
@@ -32,15 +31,14 @@
                         </h5>
                     </div>
                     <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end d-none">
-                            <i class="fa fa-arrow-right"></i>
-                            View
+                        <a class="btn btn-outline-primary float-end">
+                            VIEW
                         </a>
                     </div>
                 </div>
             </div>
             <div class="card-wrapper col-sm-4 mb-3">
-                <div class="card clickable" @click.prevent="openAccountType('card')">
+                <div class="card card-secondary clickable" @click.prevent="openAccountType('card')">
                     <div class="card-body">
                         <h5 class="card-title">
                             <i class="fa fa-credit-card" aria-hidden="true"></i>
@@ -48,9 +46,8 @@
                         </h5>
                     </div>
                     <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end d-none">
-                            <i class="fa fa-arrow-right"></i>
-                            View
+                        <a class="btn btn-outline-primary float-end">
+                            VIEW
                         </a>
                     </div>
                 </div>

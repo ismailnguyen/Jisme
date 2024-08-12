@@ -23,7 +23,6 @@
                     <div class="card-footer">
                         <a class="btn btn-outline-primary float-end d-none">
                             ...
-                            <i class="fa fa-arrow-right"></i>
                         </a>
                     </div>
                 </div>
@@ -34,7 +33,7 @@
             <div class="card-wrapper col-sm-4 mb-3"
                 v-for="(tag, index) in mostUsedTags"
                 v-bind:key="index">
-                <div class="card clickable" @click.prevent="selectTag(tag)">
+                <div class="card card-secondary clickable" @click.prevent="selectTag(tag)">
                     <div class="card-body">
                         <h5 class="card-title">
                             <i class="fa fa-tag" aria-hidden="true"></i>
@@ -42,9 +41,8 @@
                         </h5>
                     </div>
                     <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end d-none">
-                            <i class="fa fa-arrow-right"></i>
-                            View
+                        <a class="btn btn-outline-primary float-end">
+                            VIEW
                         </a>
                     </div>
                 </div>

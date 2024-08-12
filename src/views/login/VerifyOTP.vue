@@ -40,7 +40,6 @@
                         @click="onVerifyOtp"
                         tabindex="7">
                         {{ isLoading ? 'Verifying...' : 'Verify' }}
-                        <i class="fa fa-arrow-right"></i>
                     </button>
 
                     <hr class="my-4 mt-5 mb-3">

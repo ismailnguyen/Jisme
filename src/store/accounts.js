@@ -23,6 +23,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     let accountsService = new AccountsService(user.value);
 
+    const hasAccounts = computed(() => accounts.value.length > 0);
+
     const getAccountsFilteredByQuery = computed(() => {
         return (searchQuery, tags, types, filters, sort = false) => {
 
@@ -249,6 +251,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         accounts,
         totalFetchedAccounts,
         totalAccounts,
+        hasAccounts,
 
         selectedTypes,
         selectedTags,

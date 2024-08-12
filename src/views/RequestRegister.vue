@@ -25,7 +25,6 @@
                         @click="signUp()"
                         tabindex="3">
                         Next
-                        <i class="fa fa-arrow-right"></i>
                     </button>
                     -->
 
@@ -43,7 +42,6 @@
                         class="w-100 btn btn-lg btn-primary"
                         tabindex="3">
                         Request an access
-                        <i class="fa fa-arrow-right"></i>
                     </button>
 
                     <hr class="my-4 mt-5 mb-3">
