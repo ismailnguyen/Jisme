@@ -36,12 +36,11 @@
                     <button 
                         type="button"
                         class="btn btn-lg"
-                        :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'"
+                        :class="isLoading ? 'btn-outline-secondary' : 'btn-primary'"
                         :disabled="!password"
                         @click="onVerifyPassword"
                         tabindex="3">
                         {{ isLoading ? 'Signing in...' : 'Sign in' }}
-                        <i class="fa fa-arrow-right"></i>
                     </button>
 
                     <hr class="my-4 mt-5 mb-3">

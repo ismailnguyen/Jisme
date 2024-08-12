@@ -105,21 +105,26 @@
   cursor: pointer;
 }
 
+.form-signin .btn-primary,
+.form-signin .btn-outline-primary {
+  font-size: medium;
+}
+
 .form-signin .btn-primary {
-  color: var(--color-text);
-  background-color: var(--color-text-inverted);
-  border-color: var(--color-text);
+  background-color: #2870ea;
+  color: #FFF;
+  border-color: #2870ea;
 }
 
 .form-signin .btn-primary:hover,
 .form-signin .btn-primary:active {
-  color: var(--color-text-inverted);
-  background-color: var(--color-text);
-  border-color: var(--color-text-inverted);
+  background: none;
+  color: #2870ea;
+  border-color: #2870ea;
 }
 
 .form-signin .btn-outline-primary {
-  color: var(--color-text);
+  color: #FFF;
   border-color: var(--color-text) !important;
 }
 

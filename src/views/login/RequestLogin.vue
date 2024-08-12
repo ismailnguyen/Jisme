@@ -40,12 +40,11 @@
                     <button
                         type="button"
                         class="btn btn-lg"
-                        :class="isLoading ? 'btn-outline-secondary' : 'btn-outline-primary'"
+                        :class="isLoading ? 'btn-outline-secondary' : 'btn-primary'"
                         @click="onRequestLogin()"
                         :disabled="!username"
                         tabindex="2">
-                        {{ isLoading ? 'Authenticating...' : 'Next' }}
-                        <i class="fa fa-arrow-right"></i>
+                        {{ isLoading ? 'Authenticating...' : 'Continue' }}
                     </button>
 
                     <hr class="my-4 mt-5 mb-3 ">
