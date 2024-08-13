@@ -16,7 +16,9 @@
     ></div>
   </div>
 
-  <div id="page-content-wrapper" class="container-fluid">
+  <NoAccounts v-if="!hasAccounts" />
+
+  <div id="page-content-wrapper" class="container-fluid" v-else>
     <header class="search-input-container justify-content-center" :class="currentSearchMode == 'advanced' ? 'search-input-container--large' : ''">
       <div class="btn-group" role="group">
         <label
@@ -177,6 +179,7 @@ import RecentAccountList from "../components/RecentAccountList.vue";
 import FilteredAccountList from "../components/FilteredAccountList.vue";
 import AccountTypesList from "../components/AccountTypesList.vue";
 import MostUsedTags from "../components/MostUsedTags.vue";
+import NoAccounts from "../components/NoAccounts.vue";
 
 const MIN_SEARCH_QUERY_LENGTH = 3;
 
@@ -189,6 +192,7 @@ export default {
     FilteredAccountList,
     AccountTypesList,
     MostUsedTags,
+    NoAccounts
   },
   data() {
     return {
@@ -286,7 +290,7 @@ export default {
   computed: {
     ...mapStores(useAccountsStore),
     ...mapWritableState(useAccountsStore, ['selectedTags', 'selectedTypes']),
-    ...mapState(useAccountsStore, ['totalFetchedAccounts', 'totalAccounts']),
+    ...mapState(useAccountsStore, ['totalFetchedAccounts', 'totalAccounts', 'hasAccounts']),
     ...mapState(useUiStore, [
       'isSidebarOpen',
       'SIDEBAR',
