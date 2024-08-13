@@ -8,7 +8,7 @@
     :visible="isSidebarOpen(SIDEBAR.EDIT_ACCOUNT)"
   />
 
-  <AccountList @menuOpened="onMenuOpened" v-if="!hasAccounts" />
+  <AccountList @menuOpened="onMenuOpened" v-if="hasAccounts" />
   <NoAccounts v-else />
 </template>
 
