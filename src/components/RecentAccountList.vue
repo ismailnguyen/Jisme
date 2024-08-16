@@ -5,7 +5,7 @@
                 <span class="placeholder col-4 me-3 mb-0"></span><br>
             </div>
             <div class="mb-3 col-12 col-xs-12 col-sm-6" v-show="!isLoading">
-                <h5 class="font-size-16 me-3 mb-0">Recently viewed</h5>
+                <h5 class="font-size-16 font-weight-light é me-3 mb-0">Recently viewed</h5>
             </div>
 
             <div class="mb-3 col-6 col-xs-6 col-sm-6 d-none d-sm-block placeholder-glow" v-if="isLoading">

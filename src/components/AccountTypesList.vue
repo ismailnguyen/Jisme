@@ -2,7 +2,7 @@
     <div class="main-container container-fluid">
         <div class="row">
             <div class="mb-3 col-12 col-xs-12 col-sm-12">
-                <h5 class="font-size-16 me-3 mb-0">Account types</h5>
+                <h5 class="font-size-16 font-weight-light me-3 mb-0">Account types</h5>
             </div>
         </div>
 

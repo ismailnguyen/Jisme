@@ -5,7 +5,7 @@
                 <span class="placeholder col-2 font-size-16 me-3 mb-0"></span><br>
             </div>
             <div class="mb-3 col-12 col-xs-12 col-sm-12" v-show="mostUsedTags.length">
-                <h5 class="font-size-16 me-3 mb-0">Most used tags</h5>
+                <h5 class="font-size-16 font-weight-light  me-3 mb-0">Most used tags</h5>
             </div>
         </div>
 

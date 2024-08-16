@@ -530,6 +530,7 @@ export default {
   border-radius: var(--btn-border-radius);
   color: #000;
   line-height: 2.5;
+  font-weight: 100;
   margin-right: .5rem;
   height: 2rem;
   background-color: var(--btn-color-background);
