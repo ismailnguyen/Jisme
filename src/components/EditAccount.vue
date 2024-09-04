@@ -53,11 +53,25 @@
                 </h2>
                 <div class="accordion-collapse" :class="fieldAttrs.card_number.isExpanded ? 'show' : 'collapse'">
                   <div class="accordion-body">
+                    <div class="input-group">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="copyToClipboard('editAccount_input_card_number_hidden')"
+                      >
+                        <i class="fa fa-clipboard"></i>
+                      </button>
+                      <input
+                        class="form-control"
+                        placeholder="Card number"
+                        type="text"
+                        v-model="account.card_number"
+                      />
+                    </div>
                     <input
-                      class="form-control"
-                      placeholder="Card number"
-                      type="text"
-                      v-model="account.card_number"
+                      id="editAccount_input_card_number_hidden"
+                      type="hidden"
+                      :value="account.card_number"
                     />
                   </div>
                 </div>
@@ -68,7 +82,7 @@
                   <button
                     class="accordion-button" :class="fieldAttrs.card_name.isExpanded ? '' : 'collapsed'"
                     type="button"
-                    @click="fieldAttrs.card_number.isExpanded = !fieldAttrs.card_name.isExpanded">
+                    @click="fieldAttrs.card_name.isExpanded = !fieldAttrs.card_name.isExpanded">
                     <div>
                       <div class="fw-medium">
                         <i class="fa fa-user" aria-hidden="true"></i>
