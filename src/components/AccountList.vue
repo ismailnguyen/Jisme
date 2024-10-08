@@ -16,9 +16,8 @@
     ></div>
   </div>
 
-  <NoAccounts v-if="!hasAccounts" />
+  <div id="page-content-wrapper" class="container-fluid">
 
-  <div id="page-content-wrapper" class="container-fluid" v-else>
     <header class="search-input-container justify-content-center" :class="currentSearchMode == 'advanced' ? 'search-input-container--large' : ''">
       <div class="btn-group" role="group">
         <label
@@ -64,69 +63,69 @@
           v-show="currentSearchMode == 'text'"
         />
 
-      <div class="search-filters-container" v-show="currentSearchMode == 'advanced'">
-        <div class="filter input-group" v-show="selectedTags.length || selectedTypes.length">
-          <label
-            class="btn active"
-            v-for="(tag, tagIndex) in selectedTags"
-            v-bind:key="tagIndex"
-            @click="removeTag(tag)"
-            :for="'navbar_tag'+tag">
-            {{ tag }}
-            <i class="fa fa-close"></i>
-          </label>
+        <div class="search-filters-container" v-show="currentSearchMode == 'advanced'">
+          <div class="filter input-group" v-show="selectedTags.length || selectedTypes.length">
+            <label
+              class="btn active"
+              v-for="(tag, tagIndex) in selectedTags"
+              v-bind:key="tagIndex"
+              @click="removeTag(tag)"
+              :for="'navbar_tag'+tag">
+              {{ tag }}
+              <i class="fa fa-close"></i>
+            </label>
 
-          <label
-            class="btn btn-secondary active"
-            v-for="(type, typeIndex) in selectedTypes"
-            v-bind:key="typeIndex"
-            @click="removeType(type)"
-            :for="'navbar_type'+type">
-            <i class="fa fa-globe" aria-hidden="true" v-if="type == 'account'"></i>
-            <i class="fa fa-credit-card" aria-hidden="true" v-if="type == 'card'"></i>
-            <i class="fa fa-qrcode" aria-hidden="true" v-if="type == '2fa'"></i>
+            <label
+              class="btn btn-secondary active"
+              v-for="(type, typeIndex) in selectedTypes"
+              v-bind:key="typeIndex"
+              @click="removeType(type)"
+              :for="'navbar_type'+type">
+              <i class="fa fa-globe" aria-hidden="true" v-if="type == 'account'"></i>
+              <i class="fa fa-credit-card" aria-hidden="true" v-if="type == 'card'"></i>
+              <i class="fa fa-qrcode" aria-hidden="true" v-if="type == '2fa'"></i>
 
-            {{ type }}
-            <i class="fa fa-close"></i>
-          </label>
-        </div>
+              {{ type }}
+              <i class="fa fa-close"></i>
+            </label>
+          </div>
 
-        <div
-          v-for="(filter, filterIndex) in searchFilters"
-          :key="filterIndex"
-          class="filter input-group">
-          <select class="custom-select form-control" v-model="filter.field" @change="onFiltersChange">
-            <option selected value="platform">Platform</option>
-            <option value="login">Login</option>
-            <option value="password">Password</option>
-            <option value="is_password_less">Is password less</option>
-            <option value="password_clue">Password clue</option>
-            <option value="tags">Tags</option>
-            <option value="social_login">Social login</option>
-            <option value="description">Description</option>
-            <option value="notes">Notes</option>
-            <option value="card_number">Card number</option>
-            <option value="card_name">Name on card</option>
-            <option value="card_expiracy">Card expiracy</option>
-            <option value="card_cryptogram">Card cryptogram</option>
-            <option value="card_pin">Card PIN</option>
-          </select>
-          <select class="custom-select form-control" v-model="filter.comparison" @change="onFiltersChange">
-            <option selected value="includes">Includes</option>
-            <option value="equals">Equals</option>
-            <option value="excludes">Excludes</option>
-          </select>
-          <input placeholder="Field value (i.e; Simpson)" type="text" class="form-control" v-model="filter.value" @input="onFiltersChange">
-          <button class="btn btn-light" type="button" @click="removeSearchFilter(filter)">
-            <i class="fa fa-close"></i>
+          <div
+            v-for="(filter, filterIndex) in searchFilters"
+            :key="filterIndex"
+            class="filter input-group">
+            <select class="custom-select form-control" v-model="filter.field" @change="onFiltersChange">
+              <option selected value="platform">Platform</option>
+              <option value="login">Login</option>
+              <option value="password">Password</option>
+              <option value="is_password_less">Is password less</option>
+              <option value="password_clue">Password clue</option>
+              <option value="tags">Tags</option>
+              <option value="social_login">Social login</option>
+              <option value="description">Description</option>
+              <option value="notes">Notes</option>
+              <option value="card_number">Card number</option>
+              <option value="card_name">Name on card</option>
+              <option value="card_expiracy">Card expiracy</option>
+              <option value="card_cryptogram">Card cryptogram</option>
+              <option value="card_pin">Card PIN</option>
+            </select>
+            <select class="custom-select form-control" v-model="filter.comparison" @change="onFiltersChange">
+              <option selected value="includes">Includes</option>
+              <option value="equals">Equals</option>
+              <option value="excludes">Excludes</option>
+            </select>
+            <input placeholder="Field value (i.e; Simpson)" type="text" class="form-control" v-model="filter.value" @input="onFiltersChange">
+            <button class="btn btn-light" type="button" @click="removeSearchFilter(filter)">
+              <i class="fa fa-close"></i>
+            </button>
+          </div>
+
+          <button class="btn btn-filter" @click="addSearchFilter()">
+            <i class="fa fa-plus"></i>
+            Add filter
           </button>
         </div>
-
-        <button class="btn btn-filter" @click="addSearchFilter()">
-          <i class="fa fa-plus"></i>
-          Add filter
-        </button>
-      </div>
 
         <label
           v-show="currentSearchMode == 'text'"
@@ -154,25 +153,46 @@
       </div>
     </header>
 
-    <AccountTypesList v-if="!isSearching" />
+    <NoAccounts v-if="!hasAccounts" />
 
-    <MostUsedTags v-if="!isSearching" />
+    <AccountTypesList
+      v-if="hasAccounts && !isSearching"
+      :isLoading="isLoading"
+    />
 
-    <RecentAccountList :isLoading="isLoading" v-if="!isSearching" />
+    <MostUsedTags
+      v-if="hasAccounts && !isSearching"
+      :isLoading="isLoading"
+     />
+
+    <RecentAccountList
+      v-if="hasAccounts && !isSearching"
+      :isLoading="isLoading"  />
 
     <FilteredAccountList
       :searchQuery="searchQuery"
       :filteredAccounts="filteredAccounts"
       :isLoading="isLoading"
-      v-if="isSearching"
+      v-if="hasAccounts && isSearching"
     />
+
   </div>
 </template>
 
 <script>
 import { SessionExpiredException } from '../utils/errors'
-import { mapState, mapWritableState, mapActions, mapStores } from "pinia";
-import { useAccountsStore, useAlertStore, useUiStore } from "@/store";
+import {
+  mapState,
+  mapWritableState,
+  mapActions,
+  mapStores
+} from "pinia";
+import { 
+  useUserStore,
+  useAccountsStore,
+  useAlertStore,
+  useUiStore
+} from "@/store";
 import LoadingAccountItem from "../components/LoadingAccountItem.vue";
 import AccountItem from "../components/AccountItem.vue";
 import RecentAccountList from "../components/RecentAccountList.vue";
@@ -290,7 +310,8 @@ export default {
   computed: {
     ...mapStores(useAccountsStore),
     ...mapWritableState(useAccountsStore, ['selectedTags', 'selectedTypes']),
-    ...mapState(useAccountsStore, ['totalFetchedAccounts', 'totalAccounts', 'hasAccounts']),
+    ...mapState(useUserStore, ['user', 'hasAccounts']),
+    ...mapState(useAccountsStore, ['totalFetchedAccounts', 'totalAccounts', 'areAccountsLoaded']),
     ...mapState(useUiStore, [
       'isSidebarOpen',
       'SIDEBAR',
@@ -304,7 +325,7 @@ export default {
         this.selectedTypes.length > 0 ||
         this.searchFilters.length > 0
       );
-    },
+    }
   },
   methods: {
     ...mapActions(useAccountsStore, [

@@ -37,7 +37,7 @@
 
             // If anytime user logs out, redirect to login page
             this.userStore.$subscribe((mutation, state) => {
-                if (!this.isLoggedIn) {
+                if (!state.isLoggedIn) {
                     this.$router.push({ name: 'Login' });
                 }
             })

@@ -1,27 +1,27 @@
 <template>
     <div class="main-container container-fluid">
         <div class="row">
-            <div class="mb-3 col-12 col-xs-12 col-sm-12 placeholder-glow" v-show="mostUsedTags.length == 0">
+            <div class="mb-3 col-12 col-xs-12 col-sm-12 placeholder-glow" v-if="isLoading">
                 <span class="placeholder col-2 font-size-16 me-3 mb-0"></span><br>
             </div>
-            <div class="mb-3 col-12 col-xs-12 col-sm-12" v-show="mostUsedTags.length">
+            <div class="mb-3 col-12 col-xs-12 col-sm-12" v-else>
                 <h5 class="font-size-16 font-weight-light  me-3 mb-0">Most used tags</h5>
             </div>
         </div>
 
-        <div class="row stacked-cards stacked-cards-small" v-if="mostUsedTags.length == 0">
+        <div class="row stacked-cards stacked-cards-small" v-if="isLoading">
             <div class="card-wrapper col-sm-4 mb-3"
-                v-for="(tag, index) in 5"
+                v-for="index in 5"
                 v-bind:key="index">
-                <div class="card clickable" @click.prevent="selectTag(tag)">
+                <div class="card card-secondary clickable">
                     <div class="card-body">
                         <h5 class="card-title">
-                            <i class="fa fa-tag" aria-hidden="true"></i>&nbsp;
-                            <span class="placeholder col-4 me-3 mb-0"></span><br>
+                            <i class="fa fa-loading" aria-hidden="true"></i>
+                            <span class="placeholder col-4 me-3 mb-0"></span>
                         </h5>
                     </div>
                     <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end d-none">
+                        <a class="btn btn-outline-primary float-end">
                             ...
                         </a>
                     </div>
@@ -60,7 +60,11 @@
      } from '@/store'
 
     export default {
-        async mounted() {
+        props: {
+            isLoading: {
+                type: Boolean,
+                default: true
+            }
         },
         computed: {
             mostUsedTags: function () {

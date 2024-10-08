@@ -82,7 +82,7 @@ export default {
     },
 
     onSignOut: async function () {
-      await this.signOut();
+      await this.signOut();  
     },
   },
 };

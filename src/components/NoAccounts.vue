@@ -1,5 +1,4 @@
 <template>
-  <div id="page-content-wrapper" class="container-fluid">
     <div class="empty-accounts-container main-container container-fluid">
         <div class="row">
             <div class="mb-3 col-12 col-xs-12 col-sm-12">
@@ -30,7 +29,6 @@
             </div>
         </div>
     </div>
-  </div>
 </template>
 
 <script>

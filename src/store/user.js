@@ -17,11 +17,11 @@ import UserService from '../services/UserService'
 import { SessionExpiredException } from '../utils/errors'
 
 const useUserStore = defineStore(APP_USER_STORE, () => {
-    const user = ref({})
-    const isLoggedIn = ref(false)
-    const userService = new UserService()
-    const isExtendedSession = ref(false)
-    const alertStore = useAlertStore()
+    const user = ref({});
+    const isLoggedIn = ref(false);
+    const userService = new UserService();
+    const isExtendedSession = ref(false);
+    const alertStore = useAlertStore();
 
     const lastRememberedUsername = computed(async () => {
         return await userService.lastRememberedUsername();
@@ -38,6 +38,10 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     async function setAutoLogin (enabled) {
         await userService.setAutoLogin(enabled);
     }
+
+    const hasAccounts = computed(() => {
+        return user && user.value && user.value.hasAccounts;
+    })
 
     async function requestLogin({ username, extendSession }) {
         user.value = await userService.requestLogin({ username });
@@ -100,7 +104,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         }
         catch(error) {
             if (error instanceof SessionExpiredException) {
-                signOut();
+                await signOut();
             }
 
             throw error;
@@ -113,7 +117,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         }
         catch(error) {
             if (error instanceof SessionExpiredException) {
-                signOut();
+                await signOut();
             }
 
             throw error;
@@ -244,6 +248,8 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         isLoggedIn.value = false;
         user.value = null;
+
+        //location.reload();
     }
     
     return {
@@ -254,6 +260,8 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         isAutoLoginEnabled,
         setAutoLogin,
+
+        hasAccounts,
 
         init,
         requestLogin,

@@ -11,9 +11,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const userStore = useUserStore();
     const { user } = storeToRefs(userStore);
 
-    // By default we assume that the user has accounts
-    // After fetching the data (locally or online) we will update this value
-    const hasAccounts = ref(true);
+    const areAccountsLoaded = ref(false);
 
     const totalAccounts = ref(0);
     const totalFetchedAccounts = ref(0);
@@ -103,8 +101,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         recentAccounts.value = await accountsService.getRecentsCached();
         accounts.value = await accountsService.getAllCached();
 
-        // After loading accounts from cache update the hasAccounts value
-        hasAccounts.value = accounts.value.length > 0;
+        // After loading accounts from cache update the areAccountsLoaded value
+        areAccountsLoaded.value = accounts.value.length > 0;
 
         _filteredAccounts.value = accounts.value;
     }
@@ -121,7 +119,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                userStore.signOut();
+                await userStore.signOut();
             }
 
             throw error;
@@ -154,8 +152,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
                     totalFetchedAccounts.value += fetchedAccounts.length;
 
-                    // After loading accounts from server update the hasAccounts value
-                    hasAccounts.value = totalAccountsNumber > 0;
+                    // After loading accounts from server update the areAccountsLoaded value
+                    areAccountsLoaded.value = totalAccountsNumber > 0;
                 },
                 // Update cached accounts only when all accounts are fetched
                 () => {
@@ -165,7 +163,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                userStore.signOut();
+                await userStore.signOut();
             }
 
             throw error;
@@ -187,7 +185,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                userStore.signOut();
+                await userStore.signOut();
             }
 
             throw error;
@@ -210,7 +208,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                userStore.signOut();
+                await userStore.signOut();
             }
 
             throw error;
@@ -229,7 +227,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                userStore.signOut();
+                await userStore.signOut();
             }
 
             throw error;
@@ -242,7 +240,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                userStore.signOut();
+                await userStore.signOut();
             }
 
             throw error;
@@ -260,7 +258,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         accounts,
         totalFetchedAccounts,
         totalAccounts,
-        hasAccounts,
+        areAccountsLoaded,
 
         selectedTypes,
         selectedTags,

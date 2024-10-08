@@ -31,7 +31,8 @@ class UserService {
             avatarUrl: user.avatarUrl,
             email: user.email,
             token: user.token,
-            public_encryption_key: user.public_encryption_key
+            public_encryption_key: user.public_encryption_key,
+            hasAccounts: user.hasAccounts
         });
     }
 
