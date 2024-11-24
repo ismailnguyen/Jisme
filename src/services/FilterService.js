@@ -33,13 +33,19 @@ class FilterService {
         this.applyFilters = function (filters) {
             let _filteredAccounts = [];
 
-            filters.forEach(filter => {
-                this.filteredAccounts.forEach(account => {
+            this.filteredAccounts.forEach(account => {
+                let nbAppliedFilters = 0;
+                filters.forEach(filter => {
                     if (account[filter.field]
                             && ((filterActions[filter.comparison] === 'includes' && account[filter.field].toString().toLowerCase().includes(filter.value.toLowerCase()))
                                 || (filterActions[filter.comparison] === 'equals' && account[filter.field].toString().toLowerCase() === filter.value.toLowerCase())
                                 || (filterActions[filter.comparison] === 'excludes' && !account[filter.field].toString().toLowerCase().includes(filter.value.toLowerCase())))
                     ) {
+                        nbAppliedFilters++;
+                    }
+
+                    // Add the account only if all filters conditions are met
+                    if (nbAppliedFilters === filters.length) {
                         _filteredAccounts.push(account);
                     }
                 });
