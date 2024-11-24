@@ -526,7 +526,7 @@
 
             <div class="accordion">
               <div class="accordion-item">
-                <h2 class="accordion-header ">
+                <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.platform.isExpanded ? '' : 'collapsed'"
                     type="button"
@@ -548,9 +548,9 @@
                       <button
                         class="btn btn-light"
                         type="button"
-                        @click="copyToClipboard('editAccount_input_platform_hidden')"
+                        @click="openLink(account.platform)"
                       >
-                        <i class="fa fa-clipboard"></i>
+                        <i class="fa fa-arrow-up-right-from-square"></i>
                       </button>
                       <input
                         id="editAccount_input_platform"
@@ -560,24 +560,28 @@
                         v-model="account.platform"
                       />
                     </div>
-                    <input
-                      id="editAccount_input_platform_hidden"
-                      type="hidden"
-                      :value="account.platform"
-                    />
 
                     <hr class="my-4" />
 
                     <label class="form-label" for="editAccount_input_icon"
                       ><i class="fa fa-icons" aria-hidden="true"></i> Icon</label
                     >
-                    <input
-                      id="editAccount_input_icon"
-                      class="form-control"
-                      placeholder="Icon URL"
-                      type="text"
-                      v-model="account.icon"
-                    />
+                    <div class="input-group">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        :style="'background-image: url(' + account.icon + '); background-size: cover;'"
+                      >
+                      &nbsp;
+                      </button>
+                      <input
+                        id="editAccount_input_icon"
+                        class="form-control"
+                        placeholder="Icon URL"
+                        type="text"
+                        v-model="account.icon"
+                      />
+                    </div>
 
                   </div>
                 </div>
@@ -1137,6 +1141,14 @@ export default {
       window.getSelection().removeAllRanges();
 
       this.openAlert("Copied to clipboard !", inputToCopy.value, "info");
+    },
+
+    openLink: function (url) {
+      // if url doesn't start with http or https, add http
+      if (!url.startsWith("http") && !url.startsWith("https")) {
+        url = "http://" + url;
+      }
+      window.open(url, "_blank");
     },
 
     formatDate: function (date) {
