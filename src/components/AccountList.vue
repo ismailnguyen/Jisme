@@ -48,7 +48,6 @@
           :for="'navbar_type'+type">
           <i class="fa fa-globe" aria-hidden="true" v-if="type == 'account'"></i>
           <i class="fa fa-credit-card" aria-hidden="true" v-if="type == 'card'"></i>
-          <i class="fa fa-qrcode" aria-hidden="true" v-if="type == '2fa'"></i>
 
           {{ type }}
           <i class="fa fa-close"></i>
@@ -83,7 +82,6 @@
               :for="'navbar_type'+type">
               <i class="fa fa-globe" aria-hidden="true" v-if="type == 'account'"></i>
               <i class="fa fa-credit-card" aria-hidden="true" v-if="type == 'card'"></i>
-              <i class="fa fa-qrcode" aria-hidden="true" v-if="type == '2fa'"></i>
 
               {{ type }}
               <i class="fa fa-close"></i>

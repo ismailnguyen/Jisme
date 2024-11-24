@@ -33,7 +33,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-12" v-if="(account.type == 'account' || account.type == '2fa') && account.login">
+                    <div class="col-12" v-if="account.type == 'account' && account.login">
                         <span class="small">
                             {{ account.login }}
                         </span>

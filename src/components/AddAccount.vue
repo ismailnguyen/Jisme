@@ -138,23 +138,6 @@
                       <i class="fa fa-credit-card" aria-hidden="true"></i>
                       Card
                     </label>
-
-                    <input
-                      type="radio"
-                      class="btn-check"
-                      name="account-type"
-                      id="addAccount_radiobutton_accounttype_2fa"
-                      v-model="account.type"
-                      value="2fa"
-                    />
-                    <label
-                      class="btn"
-                      for="addAccount_radiobutton_accounttype_2fa"
-                      :class="account.type == '2fa' ? 'active' : ''"
-                    >
-                      <i class="fa fa-qrcode" aria-hidden="true"></i>
-                      OTP
-                    </label>
                   </div>
                 </div>
               </div>
@@ -284,7 +267,7 @@
             </div>
           </div>
 
-          <div class="accordion" v-if="account.type == 'account' || account.type == '2fa'">
+          <div class="accordion" v-if="account.type == 'account'">
             <div class="accordion-item">
               <h2 class="accordion-header">
                 <button

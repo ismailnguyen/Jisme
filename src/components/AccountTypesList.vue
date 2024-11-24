@@ -46,21 +46,6 @@
                 </div>
             </div>
             <div class="card-wrapper col-sm-4 mb-3">
-                <div class="card card-secondary clickable" @click.prevent="openAccountType('2fa')">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fa fa-qrcode" aria-hidden="true"></i>
-                            OTP
-                        </h5>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end">
-                            VIEW
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="card-wrapper col-sm-4 mb-3">
                 <div class="card card-secondary clickable" @click.prevent="openAccountType('card')">
                     <div class="card-body">
                         <h5 class="card-title">

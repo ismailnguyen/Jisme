@@ -196,7 +196,7 @@
             </div>
 
             <div class="accordion">
-              <div class="accordion-item" v-if="account.type == 'account' || account.type == '2fa'">
+              <div class="accordion-item" v-if="account.type == 'account'">
                 <h2 class="accordion-header ">
                   <button
                     class="accordion-button" :class="fieldAttrs.login.isExpanded ? '' : 'collapsed'"
@@ -254,9 +254,7 @@
                       </div>
                       <span class="fw-lighter" v-show="!fieldAttrs.password.isExpanded">
                         {{
-                          account.password ||
-                          account.password_clue ||
-                          (account.social_login ? "" : "Password")
+                          passwordPreview
                         }}
                         <div
                           class="badge rounded-pill badge-red"
@@ -322,6 +320,7 @@
                       />
                       <button
                         class="btn btn-light"
+                        :class="passwordLess.masterPassword ? 'is-active' : ''"
                         type="button"
                         @click="generatePasswordLess()"
                       >
@@ -416,6 +415,7 @@
                       />
                       <button
                         class="btn btn-light"
+                        :class="account.password ? 'is-active' : ''"
                         type="button"
                         @click="account.generatePassword()"
                       >
@@ -668,21 +668,6 @@
                         for="editAccount_radiobutton_accounttype_card"
                         :class="account.type == 'card' ? 'active' : ''"
                         >Card</label
-                      >
-
-                      <input
-                        type="radio"
-                        class="btn-check"
-                        name="account-type"
-                        id="editAccount_radiobutton_accounttype_2fa"
-                        v-model="account.type"
-                        value="2fa"
-                      />
-                      <label
-                        class="btn"
-                        for="editAccount_radiobutton_accounttype_2fa"
-                        :class="account.type == '2fa' ? 'active' : ''"
-                        >2FA</label
                       >
                     </div>
                   </div>
@@ -983,8 +968,6 @@ export default {
       switch (this.account.type) {
         case "card":
           return "Card";
-        case "2fa":
-          return "2FA";
         default:
           return "Account";
       }
@@ -992,6 +975,26 @@ export default {
 
     showPasswordTypeOptions: function () {
       return this.account.is_password_less;
+    },
+
+    passwordPreview: function () {
+      if (this.account.is_password_less) {
+        return this.passwordLess.generatedPassword || "Expand to generate";
+      }
+
+      if (this.account.password) {
+        return this.account.password;
+      }
+
+      if (this.account.password_clue) {
+        return this.account.password_clue;
+      }
+
+      if (this.account.social_login) {
+        return '';
+      }
+
+      return 'No password';
     },
 
     createdDate: function () {

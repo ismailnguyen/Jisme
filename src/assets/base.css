@@ -229,6 +229,12 @@ body {
   border: none;
 }
 
+.btn.btn-light.is-active {
+  color: var(--color-background-inverted);
+  border: .05em solid var(--color-background-inverted);
+  transition: all 0.3s;
+}
+
 .btn.btn-action {
   font-weight: 600;
   font-size: 17px;
