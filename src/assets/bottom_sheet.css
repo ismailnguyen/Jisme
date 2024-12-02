@@ -140,21 +140,26 @@
   background-size: 500%;
   background-position: center;
   z-index: 30;
+  background-color: rgb(77, 61, 0);
 }
 
 .bottom-sheet-large-icon {
-  border-radius: 5px;
-  height: 90px;
-  width: 90px;
+  border-radius: 20%;
+  height: 60px;
+  width: 60px;
   box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
 }
 
-.bottom-sheet-title {
-  color: var(--color-text);
-}
-
-.bottom-sheet .header.hasIcon .bottom-sheet-title {
+.bottom-sheet.fullscreen .header.hasIcon .bottom-sheet-title {
   transition: all 0.5s;
+  color: #fff;
+  font-size: 2.6rem !important;
+  line-height: 31px !important;
+  padding-bottom: 1rem;
+  padding-top: 1rem;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
 }
 
 .bottom-sheet .header .bottom-sheet-large-icon {
