@@ -10,6 +10,22 @@ const filterActions = {
     exluces: 'excludes'
 };
 
+/*
+    * FilterService
+    * This service is responsible for filtering the accounts based on the user's query and filters.
+    * It also provides the user with the list of tags that are currently in use.
+    * The service is initialized with a list of accounts.
+    *  - getAccounts: returns the list of filtered accounts
+    * - getTags: returns the list of tags that are currently in use
+    * - filterByTypes: filters the accounts by the account type
+    * - applyFilters: filters the accounts by the user's query and filters
+    * - filterByTags: filters the accounts by the tags
+    * - filterByQuery: filters the accounts by the user's query
+    * - sortByName: sorts the accounts by the account name
+    * - sortByLastOpened: sorts the accounts by the last opened date
+    * - sortByOpenedCount: sorts the accounts by the opened count
+    * 
+*/
 class FilterService {
     constructor(accounts) {
         this.filteredAccounts = accounts || [];

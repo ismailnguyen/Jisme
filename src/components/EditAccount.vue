@@ -978,7 +978,8 @@ export default {
     },
 
     passwordPreview: function () {
-      if (this.account.is_password_less) {
+      // If passwordless, and no social login is used as "password less", display the latest generated pwd or offer to expand to generate
+      if (this.account.is_password_less && !this.account.social_login) {
         return this.passwordLess.generatedPassword || "Expand to generate";
       }
 
