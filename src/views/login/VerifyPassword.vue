@@ -135,11 +135,13 @@
                 this.isLoading = true;
 
                 try {
-                    const { next } = await this.verifyPassword({
+                    const passwordVerification = await this.verifyPassword({
                         password: this.password
                     });
 
-                    if (next.step === 'verify_otp') {
+                    if (passwordVerification
+                        && passwordVerification.next
+                        && passwordVerification.next.step === 'verify_otp') {
                         this.$router.push({ name: 'VerifyOTP' });
                     }
                     else {

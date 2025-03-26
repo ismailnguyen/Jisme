@@ -61,9 +61,17 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
             password: password
         });
 
-        return {
-            next: user.value.next
+        // If there is an extra step for login, return the next step
+        if (user.value && user.value.next) {
+            return {
+                next: user.value.next
+            }
         }
+
+        // Otherwise login the user
+        isLoggedIn.value = user.value && user.value.uuid ? true : false;
+
+        await createSession(user);
     }
 
     async function verifyMFA({ totpToken }) {
