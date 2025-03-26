@@ -38,6 +38,12 @@
                             {{ account.login }}
                         </span>
                     </div>
+                    <div class="col-12" v-if="account.type == 'card' && account.card_number">
+                        <span class="small">
+                            <i class="fa fa-barcode" aria-hidden="true" ></i>
+                            {{ maskedCardNumber }}
+                        </span>
+                    </div>
                     <div class="col-12" v-if="account.type == 'card' && account.card_name">
                         <span class="small">
                             <i class="fa fa-user" aria-hidden="true" ></i>
@@ -92,6 +98,14 @@
                 }
 
                 return this.account.description;
+            },
+
+            maskedCardNumber: function () {
+                if (this.account.card_number && this.account.card_number.length > 4) {
+                    return '**** **** **** ' + this.account.card_number.slice(-4);
+                }
+
+                return this.account.card_number;
             }
         },
         methods: {
