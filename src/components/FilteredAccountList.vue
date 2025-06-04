@@ -24,6 +24,12 @@
             v-for="index in 7"
             v-bind:key="index" />
         </div>
+        <div class="row" v-else-if="!filteredAccounts.length">
+            <p>No account yet for this query, woudld you like to create one?</p>
+            
+            <NewAccountItem
+                :query="searchQuery" />
+        </div>
         <div class="row" v-else>
             <AccountItem
                 v-for="(account, accountIndex) in filteredAccounts"
@@ -36,7 +42,6 @@
 <script>
     import {
         mapState,
-        mapWritableState,
         mapActions,
     } from 'pinia'
     import {
@@ -45,6 +50,7 @@
      } from '@/store'
     import LoadingAccountItem from '../components/LoadingAccountItem.vue'
     import AccountItem from '../components/AccountItem.vue'
+    import NewAccountItem from '../components/NewAccountItem.vue'
     
     export default {
         props: {
@@ -68,6 +74,7 @@
         components: {
             LoadingAccountItem,
             AccountItem,
+            NewAccountItem
         },
         computed: {
             ...mapState(useAccountsStore, ['accounts']),

@@ -7,6 +7,7 @@ import Account from '../models/Account';
 const store = defineStore('ui', () => {
     const accountsStore = useAccountsStore();
 
+    const currentAddingAccount = ref(new Account());
     const currentEditingAccount = ref(new Account());
     const openedSidebarList = ref([]);
 
@@ -15,6 +16,14 @@ const store = defineStore('ui', () => {
         ADD_ACCOUNT: 'add-account',
         EDIT_ACCOUNT: 'edit-account'
     };
+
+    const setCurrentAddingAccount = async (account) => {
+        currentAddingAccount.value = account;
+    }
+
+    const resetCurrentAddingAccount = () => {
+        currentAddingAccount.value = new Account();
+    }
 
     const setCurrentEditingAccount = async (account) => {
         currentEditingAccount.value = account;
@@ -127,6 +136,10 @@ const store = defineStore('ui', () => {
     }
 
     return {
+        currentAddingAccount,
+        setCurrentAddingAccount,
+        resetCurrentAddingAccount,
+
         currentEditingAccount,
         setCurrentEditingAccount,
         resetCurrentEditingAccount,
