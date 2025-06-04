@@ -104,7 +104,7 @@ class FilterService {
         };
 
         this.sortByName = function () {
-            this.filteredAccounts = this.filteredAccounts.sort((account1, account2) => sortByString(account1.displayPlatform, account2.displayPlatform));
+            this.filteredAccounts = this.filteredAccounts.sort((account1, account2) => sortByString(account1.label, account2.label));
         };
 
         this.sortByLastOpened = function () {

@@ -48,6 +48,8 @@
           :for="'navbar_type'+type">
           <i class="fa fa-globe" aria-hidden="true" v-if="type == 'account'"></i>
           <i class="fa fa-credit-card" aria-hidden="true" v-if="type == 'card'"></i>
+          <i class="fa fa-building-columns" aria-hidden="true" v-if="type == 'bank'"></i>
+          <i class="fa fa-id-card" aria-hidden="true" v-if="type == 'document'"></i>
 
           {{ type }}
           <i class="fa fa-close"></i>

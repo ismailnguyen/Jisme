@@ -35,7 +35,7 @@
                     <div class="card-body">
                         <h5 class="card-title">
                             <i class="fa fa-globe" aria-hidden="true"></i>
-                            Login
+                            Credentials
                         </h5>
                     </div>
                     <div class="card-footer">
@@ -50,7 +50,37 @@
                     <div class="card-body">
                         <h5 class="card-title">
                             <i class="fa fa-credit-card" aria-hidden="true"></i>
-                            Card
+                            Cards
+                        </h5>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-outline-primary float-end">
+                            VIEW
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-wrapper col-sm-4 mb-3">
+                <div class="card card-secondary clickable" @click.prevent="openAccountType('bank')">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fa fa-building-columns" aria-hidden="true"></i>
+                            Banks
+                        </h5>
+                    </div>
+                    <div class="card-footer">
+                        <a class="btn btn-outline-primary float-end">
+                            VIEW
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-wrapper col-sm-4 mb-3">
+                <div class="card card-secondary clickable" @click.prevent="openAccountType('document')">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fa fa-id-card" aria-hidden="true"></i>
+                            Documents
                         </h5>
                     </div>
                     <div class="card-footer">
