@@ -4,7 +4,7 @@
     class="bottom-sheet"
     :class="visible ? 'show' : ''"
   >
-    <div class="sheet-overlay" @click="closeAccountEditing()"></div>
+    <div class="sheet-overlay" @click="closeAccountEditing"></div>
     <div class="content">
       <div class="header row" :class="account.icon ? 'hasIcon' : ''">
         <div class="drag-icon row justify-content-center"><span></span></div>
@@ -14,8 +14,8 @@
             <img
               :src="account.icon"
               loading="lazy"
-              :alt="account.displayPlatform"
-              :title="account.displayPlatform"
+              :alt="account.label"
+              :title="account.label"
               class="bottom-sheet-large-icon"
             />
           </div>
@@ -23,7 +23,7 @@
         <div class="row justify-content-center">
           <div class="col-12 text-center">
             <h2 class="bottom-sheet-title" :title="account._id">
-              {{ account.displayPlatform }}
+              {{ account.label }}
             </h2>
           </div>
         </div>
@@ -32,8 +32,26 @@
         <form class="row">
 
             <!-- region_start -- Account type: card -->
+            <div class="accordion" v-if="account.type == 'card' && (account.subtype == 'loyalty' || account.subtype == 'gift')"> 
+              <div class="accordion-item accordion-item--without-body">
+                <h1 class="accordion-header text-center">
+                  <img
+                    ref="barcodeEl"
+                    id="barcodeEl"
+                    @click="fullscreenBarcodeVisible = true"
+                    class="clickable"/>
+
+                    <FullscreenBarcode
+                      :visible="fullscreenBarcodeVisible"
+                      :number="account.card_number"
+                      :format="barcodeFormat"
+                      @close="fullscreenBarcodeVisible = false"
+                    />
+                </h1>
+              </div>
+            </div>
+
             <div class="accordion" v-if="account.type == 'card'">
-              
               <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button
@@ -77,7 +95,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item">
+              <div class="accordion-item" v-if="account.type == 'card'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.card_name.isExpanded ? '' : 'collapsed'"
@@ -135,7 +153,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item">
+              <div class="accordion-item" v-if="account.type == 'card'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.card_expiracy.isExpanded ? '' : 'collapsed'"
@@ -164,7 +182,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item">
+              <div class="accordion-item" v-if="account.type == 'card'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.card_cryptogram.isExpanded ? '' : 'collapsed'"
@@ -195,8 +213,9 @@
 
             </div>
 
-            <div class="accordion">
-              <div class="accordion-item" v-if="account.type == 'account'">
+            <!-- region_start -- Account type: login -->
+            <div class="accordion" v-if="account.type == 'account'">
+              <div class="accordion-item" v-if="account.subtype == 'login'">
                 <h2 class="accordion-header ">
                   <button
                     class="accordion-button" :class="fieldAttrs.login.isExpanded ? '' : 'collapsed'"
@@ -227,6 +246,51 @@
                         id="editAccount_input_login"
                         class="form-control"
                         placeholder="Login"
+                        type="text"
+                        autocomplete="username"
+                        v-model="account.login"
+                      />
+                    </div>
+                    <input
+                      id="editAccount_input_login_hidden"
+                      type="hidden"
+                      :value="account.login"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item" v-if="account.subtype == 'wifi'">
+                <h2 class="accordion-header ">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.login.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.login.isExpanded = !fieldAttrs.login.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-wifi" aria-hidden="true"></i>
+                        SSID
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.login.isExpanded">
+                        {{ account.login }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.login.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <div class="input-group">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="copyToClipboard('editAccount_input_login_hidden')"
+                      >
+                        <i class="fa fa-clipboard"></i>
+                      </button>
+                      <input
+                        id="editAccount_input_login"
+                        class="form-control"
+                        placeholder="SSID"
                         type="text"
                         autocomplete="username"
                         v-model="account.login"
@@ -450,22 +514,23 @@
                       v-model="account.password_clue"
                     />
 
-                    <hr class="my-4" />
+                    <hr class="my-4" v-if="account.subtype == 'login'" />
 
-                    <label class="form-label" for="editAccount_input_social_login"
-                      ><i class="fa fa-users" aria-hidden="true"></i> Social login</label
-                    >
+                    <label class="form-label" for="editAccount_input_social_login" v-if="account.subtype == 'login'">
+                      <i class="fa fa-users" aria-hidden="true"></i> Social login
+                    </label>
                     <input
                       id="editAccount_input_social_login"
                       class="form-control"
                       type="text"
+                       v-if="account.subtype == 'login'"
                       v-model="account.social_login"
                     />
                   </div>
                 </div>
               </div>
 
-              <div class="accordion-item">
+              <div class="accordion-item" v-if="account.type == 'account' && account.subtype == 'login'">
                 <h2 class="accordion-header ">
                   <button
                     class="accordion-button" :class="fieldAttrs.totpToken.isExpanded ? '' : 'collapsed'"
@@ -522,10 +587,8 @@
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="accordion">
-              <div class="accordion-item">
+              <div class="accordion-item"  v-if="account.type == 'account' && (account.subtype == 'login' || account.subtype == 'secret_key')">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.platform.isExpanded ? '' : 'collapsed'"
@@ -557,9 +620,161 @@
                         class="form-control"
                         placeholder="Platform"
                         type="text"
+                        @change="onPlatformChange()"
                         v-model="account.platform"
                       />
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion">
+              <div class="accordion-item"  v-if="account.type == 'card' && account.subtype == 'payment'">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.platform.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.platform.isExpanded = !fieldAttrs.platform.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-building-columns" aria-hidden="true"></i>
+                        Provider
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.platform.isExpanded">
+                        {{ account.platform }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.platform.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <div class="input-group">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="openLink(account.platform)"
+                      >
+                        <i class="fa fa-arrow-up-right-from-square"></i>
+                      </button>
+                      <input
+                        id="editAccount_input_platform"
+                        class="form-control"
+                        placeholder="Provider name (e.g. HSBC bank)"
+                        type="text"
+                        @change="onPlatformChange()"
+                        v-model="account.platform"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header ">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.description.description ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.description.isExpanded = !fieldAttrs.description.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-message" aria-hidden="true"></i>
+                        Description
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.description.isExpanded">
+                        {{ shortDescription }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.description.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <textarea
+                      class="form-control"
+                      type="text"
+                      v-model="account.description"
+                      rows="3"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+
+               <div class="accordion-item">
+                <h2 class="accordion-header ">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.notes.notes ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.notes.isExpanded = !fieldAttrs.notes.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-marker" aria-hidden="true"></i>
+                        Notes
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.notes.isExpanded">
+                        {{ shortNotes }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.notes.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <textarea
+                      class="form-control"
+                      type="text"
+                      v-model="account.notes"
+                      rows="6"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion">
+              <div class="accordion-item accordion-item--without-body">
+                <h2 class="accordion-header ">
+                  <button
+                    class="accordion-button"
+                    type="button">
+                    <div>
+                      <div class="fw-medium">
+                        {{ account.displayType }}
+                      </div>
+                      <span class="fw-lighter">
+                        {{ account.displaySubtype }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.label.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.label.isExpanded = !fieldAttrs.label.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-tag" aria-hidden="true"></i>
+                        Label
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.label.isExpanded">
+                        {{ account.label }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.label.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <input
+                      id="editAccount_input_label"
+                      class="form-control"
+                      placeholder="Label"
+                      type="text"
+                      v-model="account.label"
+                    />
 
                     <hr class="my-4" />
 
@@ -629,107 +844,6 @@
                       @keyup.enter="addTag()"
                       v-model="newTag"
                     />
-
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion">
-              <div class="accordion-item">
-                <div class="accordion-collapse show">
-                  <div class="accordion-body text-center">
-                    <div class="btn-group" role="group" aria-label="Account type">
-                      <input
-                        type="radio"
-                        class="btn-check"
-                        name="account-type"
-                        id="editAccount_radiobutton_accounttype_account"
-                        v-model="account.type"
-                        value="account"
-                      />
-                      <label
-                        class="btn"
-                        for="editAccount_radiobutton_accounttype_account"
-                        :class="account.type == 'account' ? 'active' : ''"
-                        >Account</label
-                      >
-
-                      <input
-                        type="radio"
-                        class="btn-check"
-                        name="account-type"
-                        id="editAccount_radiobutton_accounttype_card"
-                        v-model="account.type"
-                        value="card"
-                      />
-                      <label
-                        class="btn"
-                        for="editAccount_radiobutton_accounttype_card"
-                        :class="account.type == 'card' ? 'active' : ''"
-                        >Card</label
-                      >
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="accordion">
-              <div class="accordion-item">
-                <h2 class="accordion-header ">
-                  <button
-                    class="accordion-button" :class="fieldAttrs.description.description ? '' : 'collapsed'"
-                    type="button"
-                    @click="fieldAttrs.description.isExpanded = !fieldAttrs.description.isExpanded">
-                    <div>
-                      <div class="fw-medium">
-                        <i class="fa fa-message" aria-hidden="true"></i>
-                        Description
-                      </div>
-                      <span class="fw-lighter" v-show="!fieldAttrs.description.isExpanded">
-                        {{ shortDescription }}
-                      </span>
-                    </div>
-                  </button>
-                </h2>
-                <div class="accordion-collapse" :class="fieldAttrs.description.isExpanded ? 'show' : 'collapse'">
-                  <div class="accordion-body">
-                    <textarea
-                      class="form-control"
-                      type="text"
-                      v-model="account.description"
-                      rows="3"
-                    ></textarea>
-                  </div>
-                </div>
-              </div>
-
-               <div class="accordion-item">
-                <h2 class="accordion-header ">
-                  <button
-                    class="accordion-button" :class="fieldAttrs.notes.notes ? '' : 'collapsed'"
-                    type="button"
-                    @click="fieldAttrs.notes.isExpanded = !fieldAttrs.notes.isExpanded">
-                    <div>
-                      <div class="fw-medium">
-                        <i class="fa fa-marker" aria-hidden="true"></i>
-                        Notes
-                      </div>
-                      <span class="fw-lighter" v-show="!fieldAttrs.notes.isExpanded">
-                        {{ shortNotes }}
-                      </span>
-                    </div>
-                  </button>
-                </h2>
-                <div class="accordion-collapse" :class="fieldAttrs.notes.isExpanded ? 'show' : 'collapse'">
-                  <div class="accordion-body">
-                    <textarea
-                      class="form-control"
-                      type="text"
-                      v-model="account.notes"
-                      rows="6"
-                    ></textarea>
                   </div>
                 </div>
               </div>
@@ -873,14 +987,17 @@
 
 <script>
 import "../assets/bottom_sheet.css";
-
+import FullscreenBarcode from "./FullscreenBarcode.vue";
 import { mapState, mapActions } from "pinia";
 import { useUiStore, useAlertStore, useAccountsStore } from "@/store";
 import totpGenerator from "totp-generator";
+import JsBarcode from 'jsbarcode'
+import QrcodeVue from 'qrcode.vue'
 import { truncateString } from '../utils/textFormat'
 
 function initialState() {
   return {
+    fullscreenBarcodeVisible: false,
     isSaving: false,
     isDeleting: false,
     newTag: "",
@@ -890,6 +1007,9 @@ function initialState() {
       generatedPassword: "",
     },
     fieldAttrs: {
+      label: {
+        isExpanded: false,
+      },
       type: {
         isExpanded: false,
       },
@@ -941,6 +1061,9 @@ function initialState() {
       card_name: {
         isExpanded: false,
       },
+      card_format: {
+        isExpanded: false,
+      },
     },
   };
 }
@@ -952,26 +1075,24 @@ export default {
       default: false,
     },
   },
+  components: {
+    FullscreenBarcode
+  },
   data: function () {
     return initialState();
   },
   mounted() {
     this.initBottomSheet("edit-account-bottom-sheet");
   },
+  updated() {
+    // Render barcode once the svg is ready (updated() is called after the DOM is updated)
+    this.renderBarcode();
+  },
   computed: {
     ...mapState(useUiStore, {
       account: "currentEditingAccount",
       SIDEBAR: "SIDEBAR",
     }),
-
-    accountTypeToDisplay: function () {
-      switch (this.account.type) {
-        case "card":
-          return "Card";
-        default:
-          return "Account";
-      }
-    },
 
     showPasswordTypeOptions: function () {
       return this.account.is_password_less;
@@ -1039,7 +1160,24 @@ export default {
         }
 
         return this.account.notes;
-    }
+    },
+
+    barcodeFormat: function () {
+      if (this.account.card_format.value === 'qrcode') {
+        return 'QR';
+      }
+
+      let barcodeFormat = 'CODE128'; // default format
+
+      if (/^\d{13}$/.test(this.account.card_number)) {
+        barcodeFormat = 'EAN13';
+      }
+      else if (/^\d{12}$/.test(this.account.card_number)) {
+        barcodeFormat = 'UPC';
+      }
+
+      return barcodeFormat;
+    },
   },
   methods: {
     ...mapActions(useAccountsStore, ["updateAccount", "removeAccount"]),
@@ -1054,6 +1192,35 @@ export default {
       this.isSmallHeader = e.target.scrollTop > 20;
     },
 
+    renderBarcode: function () {
+      if (this.account.card_format.value === 'qrcode') {
+        return;
+      }
+
+      if (this.$refs.barcodeEl) {
+        JsBarcode(this.$refs.barcodeEl, this.account.card_number, {
+          format: this.barcodeFormat,
+          displayValue: true,
+          margin: 0,
+          flat: true,
+          width: 1,
+        })
+      }
+    },
+
+    onPlatformChange: function () {
+      // if no label is set but platform is set, use display platform as label
+      if ((!this.account.label || this.account.label.length === 0)
+          && this.account.platform && this.account.platform.length > 0) {
+        this.account.label = this.account.displayPlatform;
+      }
+      // if no icon is set but platform is set, use icon from Google Favicon API
+      if ((!this.account.icon || this.account.icon.length === 0)
+          && this.account.platform && this.account.platform.length > 0) {
+        this.account.icon = "https://www.google.com/s2/favicons?domain=" + this.account.platform;
+      }
+    },
+
     save: async function () {
       if (!this.account.isValid()) {
         this.openAlert("Error", "Please fill all fields !", "danger");
@@ -1066,7 +1233,7 @@ export default {
         await this.updateAccount(this.account);
 
         this.openAlert(
-          this.account.displayPlatform,
+          this.account.label,
           "Updated !",
           "success",
           this.account.icon
@@ -1097,7 +1264,7 @@ export default {
     remove: async function () {
       if (
         confirm(
-          `Are you sure to delete : ${this.account.displayPlatform} ?`
+          `Are you sure to delete : ${this.account.label} ?`
         ) === true
       ) {
         this.isDeleting = true;
@@ -1105,7 +1272,7 @@ export default {
         try {
           await this.removeAccount(this.account);
 
-          this.openAlert(this.account.displayPlatform, "Removed !", "success");
+          this.openAlert(this.account.label, "Removed !", "success");
 
           this.isSaving = false;
           this.isDeleting = false;
