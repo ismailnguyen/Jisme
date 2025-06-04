@@ -21,7 +21,7 @@
             <qrcode-vue
                 v-if="format === 'QR'"
                 :value="number"
-                :size="qrPx" />
+                :size="qrSize" />
 
             <!-- Barcode -->
             <svg

@@ -391,7 +391,7 @@
                 <div class="accordion-body">
                   <input
                     class="form-control"
-                    placeholder="Expiracy"
+                    placeholder="MM/YYYY"
                     type="text"
                     v-model="account.card_expiracy"
                   />

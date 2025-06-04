@@ -35,6 +35,12 @@
             <div class="accordion" v-if="account.type == 'card' && (account.subtype == 'loyalty' || account.subtype == 'gift')"> 
               <div class="accordion-item accordion-item--without-body">
                 <h1 class="accordion-header text-center">
+                  <QrcodeVue
+                  v-if="barcodeFormat === 'QR'"
+                  :value="account.card_number"
+                  @click="fullscreenBarcodeVisible = true"
+                  class="clickable"/>
+                  
                   <img
                     ref="barcodeEl"
                     id="barcodeEl"
@@ -210,8 +216,46 @@
                   </div>
                 </div>
               </div>
-
             </div>
+            
+            <!-- region_start -- Card formats -->
+            <div class="accordion" v-if="account.type == 'card' && (account.subtype == 'loyalty' || account.subtype == 'gift')">
+              <div
+                class="accordion-item"
+                :class="account.card_format == 'qrcode' ? 'is-active' : 'accordion-item--without-body'">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button collapsed"
+                    @click="account.card_format = 'qrcode'"
+                    type="button">
+                    <div>
+                      <span :class="account.card_format == 'qrcode' ? 'fw-medium' : 'fw-lighter'">
+                        QR Code
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+              </div>
+
+              <div
+                class="accordion-item"
+                :class="account.card_format == 'barcode' ? 'is-active' : 'accordion-item--without-body'">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button collapsed"
+                    @click="account.card_format = 'barcode'"
+                    type="button">
+                    <div>
+                      <span :class="account.card_format == 'barcode' ? 'fw-medium' : 'fw-lighter'">
+                        Barcode
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+              </div>
+            </div>
+            <!-- region_end -- Card formats -->
+            <!-- region_end -- Cards -->
 
             <!-- region_start -- Account type: login -->
             <div class="accordion" v-if="account.type == 'account'">
@@ -732,23 +776,6 @@
             </div>
 
             <div class="accordion">
-              <div class="accordion-item accordion-item--without-body">
-                <h2 class="accordion-header ">
-                  <button
-                    class="accordion-button"
-                    type="button">
-                    <div>
-                      <div class="fw-medium">
-                        {{ account.displayType }}
-                      </div>
-                      <span class="fw-lighter">
-                        {{ account.displaySubtype }}
-                      </span>
-                    </div>
-                  </button>
-                </h2>
-              </div>
-
               <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button
@@ -844,6 +871,100 @@
                       @keyup.enter="addTag()"
                       v-model="newTag"
                     />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.type.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.type.isExpanded = !fieldAttrs.type.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        {{ fieldAttrs.type.isExpanded ? 'Type' : account.displayType }}
+                      </div>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.type.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <span class="clickable" :class="account.type == 'account' ? 'fw-medium' : 'fw-lighter'" @click="onTypeChange('account')">
+                      Credential
+                    </span>
+                    <hr class="my-4" />
+                    <span class="clickable" :class="account.type == 'card' ? 'fw-medium' : 'fw-lighter'" @click="onTypeChange('card')">
+                      Card
+                    </span>
+                    <hr class="my-4" />
+                    <span class="clickable" :class="account.type == 'bank' ? 'fw-medium' : 'fw-lighter'" @click="onTypeChange('bank')">
+                      Bank
+                    </span>
+                    <hr class="my-4" />
+                    <span class="clickable" :class="account.type == 'document' ? 'fw-medium' : 'fw-lighter'" @click="onTypeChange('document')">
+                      Document
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="accordion">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.subtype.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.subtype.isExpanded = !fieldAttrs.subtype.isExpanded">
+                    <div>
+                      <span class="fw-medium">
+                        {{ fieldAttrs.subtype.isExpanded ? 'Sub Type' : account.displaySubtype }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.subtype.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body" v-if="account.type == 'account'">
+                    <span class="clickable" :class="account.subtype == 'login' ? 'fw-medium' : 'fw-lighter'" @click="account.subtype = 'login'">
+                      Login
+                    </span>
+                    <hr class="my-4" />
+                    <span class="clickable" :class="account.subtype == 'wifi' ? 'fw-medium' : 'fw-lighter'" @click="account.subtype = 'wifi'">
+                      Wifi
+                    </span>
+                    <hr class="my-4" />
+                    <span class="clickable" :class="account.subtype == 'secret_key' ? 'fw-medium' : 'fw-lighter'" @click="account.subtype = 'secret_key'">
+                      Secret key
+                    </span>
+                  </div>
+
+                  <div class="accordion-body" v-if="account.type == 'card'">
+                    <span class="clickable" :class="account.subtype == 'payment' ? 'fw-medium' : 'fw-lighter'" @click="account.subtype = 'payment'">
+                      Payment
+                    </span>
+                    <hr class="my-4" />
+                    <span class="clickable" :class="account.subtype == 'loyalty' ? 'fw-medium' : 'fw-lighter'" @click="account.subtype = 'loyalty'">
+                      Loyalty
+                    </span>
+                    <hr class="my-4" />
+                    <span class="clickable" :class="account.subtype == 'gift' ? 'fw-medium' : 'fw-lighter'" @click="account.subtype = 'gift'">
+                      Gift
+                    </span>
+                  </div>
+
+                  <div class="accordion-body" v-if="account.type == 'bank'">
+                    <span class="clickable fw-lighter'">
+                      IBAN
+                    </span>
+                  </div>
+
+                  <div class="accordion-body" v-if="account.type == 'document'">
+                    <span class="clickable fw-lighter'">
+                      Identity
+                    </span>
                   </div>
                 </div>
               </div>
@@ -1013,6 +1134,9 @@ function initialState() {
       type: {
         isExpanded: false,
       },
+      subtype: {
+        isExpanded: false,
+      },
       login: {
         isExpanded: false,
       },
@@ -1076,7 +1200,8 @@ export default {
     },
   },
   components: {
-    FullscreenBarcode
+    FullscreenBarcode,
+    QrcodeVue
   },
   data: function () {
     return initialState();
@@ -1163,7 +1288,7 @@ export default {
     },
 
     barcodeFormat: function () {
-      if (this.account.card_format.value === 'qrcode') {
+      if (this.account.card_format === 'qrcode') {
         return 'QR';
       }
 
@@ -1192,8 +1317,28 @@ export default {
       this.isSmallHeader = e.target.scrollTop > 20;
     },
 
+    onTypeChange: function (accountType) {
+      this.account.type = accountType;
+
+      // if the subtype is not one of the subtypes of the type, set it to the default subtype
+
+      if (this.account.type == 'account' && !['login', 'wifi', 'secret_key'].includes(this.account.subtype)) {
+        this.account.subtype = 'login'; // default subtype for account type
+      }
+
+      if (this.account.type == 'card' && !['payment', 'loyalty', 'gift'].includes(this.account.subtype)) {
+        this.account.subtype = 'payment'; // default subtype for card type
+      }
+      if (this.account.type == 'document' && this.account.subtype) {
+        this.account.subtype = 'identity';
+      }
+      if (this.account.type == 'bank' && this.account.subtype) {
+        this.account.subtype = 'iban';
+      }
+    },
+
     renderBarcode: function () {
-      if (this.account.card_format.value === 'qrcode') {
+      if (this.account.card_format === 'qrcode') {
         return;
       }
 
