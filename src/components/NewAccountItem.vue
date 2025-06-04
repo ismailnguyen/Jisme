@@ -45,8 +45,6 @@
 <script>
     import '../assets/card.css';
   
-    import { generateInitialIcon } from "../utils/icon.js";
-
     import { 
         mapState,
         mapActions,
@@ -63,7 +61,7 @@
         },
         mounted() {
             this.account.label = this.query;
-            this.account.icon = generateInitialIcon(this.query);
+            this.account.icon = this.account.icon = "https://www.google.com/s2/favicons?domain=" + this.query;
 
             // get tags from url if any
             this.account.tags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()).join(',') : '';

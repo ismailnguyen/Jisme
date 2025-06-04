@@ -1368,6 +1368,10 @@ export default {
     },
 
     save: async function () {
+
+      // if no label is set, use platform as label
+      this.onPlatformChange.call(this);
+
       if (!this.account.isValid()) {
         this.openAlert("Error", "Please fill all fields !", "danger");
         return;
