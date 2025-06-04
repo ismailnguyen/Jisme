@@ -36,12 +36,13 @@
               <div class="accordion-item accordion-item--without-body">
                 <h1 class="accordion-header text-center">
                   <QrcodeVue
-                  v-if="barcodeFormat === 'QR'"
-                  :value="account.card_number"
-                  @click="fullscreenBarcodeVisible = true"
-                  class="clickable"/>
+                    v-if="account.card_format == 'qrcode'"
+                    :value="account.card_number"
+                    @click="fullscreenBarcodeVisible = true"
+                    class="clickable"/>
                   
                   <img
+                    v-if="account.card_format == 'barcode'"
                     ref="barcodeEl"
                     id="barcodeEl"
                     @click="fullscreenBarcodeVisible = true"
