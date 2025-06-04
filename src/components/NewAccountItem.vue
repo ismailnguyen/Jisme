@@ -66,7 +66,7 @@
             this.account.icon = generateInitialIcon(this.query);
 
             // get tags from url if any
-            this.account.tags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()).join(',') : [];
+            this.account.tags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()).join(',') : '';
         },
         computed: {
             ...mapWritableState(useUiStore, {
