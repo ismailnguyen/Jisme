@@ -17,7 +17,7 @@
                 <div class="row">
                     <div class="col-8 align-self-center">
                         <h2 class=" card-title">
-                            {{ account.displayPlatform }}
+                            {{ account.label || account.displayPlatform }}
                         </h2>
                     </div>
 
@@ -25,14 +25,14 @@
                         <img
                             :src="account.icon"
                             loading="lazy"
-                            :alt="account.displayPlatform"
-                            :title="account.displayPlatform"
+                            :alt="account.label"
+                            :title="account.label"
                             @error="onImageLoadingError()"
                             class="card-icon float-end" />
                     </div>
                 </div>
 
-                <div class="row">
+                <div class="row" v-if="account.type == 'account'">
                     <div class="col-12" v-if="account.type == 'account' && account.login">
                         <span class="small">
                             {{ account.login }}
@@ -48,6 +48,82 @@
                         <span class="small">
                             <i class="fa fa-user" aria-hidden="true" ></i>
                             {{ account.card_name }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="account.type == 'loyalty' && account.type == 'loyalty' && account.card_pin">
+                        <span class="small">
+                            <i class="fa fa-barcode" aria-hidden="true" ></i>
+                            {{ account.card_pin }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="account.description">
+                        <span class="small description">
+                            {{ shortDescription }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row" v-if="account.type == 'card'">
+                    <div class="col-12" v-if="account.subtype == 'payment' && account.card_number">
+                        <span class="small">
+                            <i class="fa fa-barcode" aria-hidden="true" ></i>
+                            {{ maskedCardNumber }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="(account.subtype == 'loyalty' || account.subtype == 'gift') && account.card_number">
+                        <span class="small">
+                            <i class="fa fa-barcode" aria-hidden="true" ></i>
+                            {{ account.card_number }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="account.subtype == 'payment' && account.card_expiracy">
+                        <span class="small">
+                            <i class="fa fa-calendar" aria-hidden="true" ></i>
+                            {{ account.card_expiracy }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="(account.subtype == 'loyalty' || account.subtype == 'gift') && account.card_pin">
+                        <span class="small">
+                            <i class="fa fa-lock" aria-hidden="true" ></i>
+                            {{ account.card_pin }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="account.card_name">
+                        <span class="small">
+                            <i class="fa fa-user" aria-hidden="true" ></i>
+                            {{ account.card_name }}
+                        </span>
+                    </div>
+                    <div class="col-12">
+                        <span class="small">
+                            <i class="fa fa-building-columns" aria-hidden="true" ></i>
+                            {{ account.platform }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="account.description">
+                        <span class="small description">
+                            {{ shortDescription }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row" v-if="account.type == 'bank'">
+                    <div class="col-12">
+                        <span class="small">
+                            <i class="fa fa-barcode" aria-hidden="true" ></i>
+                            {{ account.password }}
+                        </span>
+                    </div>
+                    <div class="col-12">
+                        <span class="small">
+                            <i class="fa fa-building-columns" aria-hidden="true" ></i>
+                            {{ account.platform }}
+                        </span>
+                    </div>
+                    <div class="col-12">
+                        <span class="small">
+                            <i class="fa fa-user" aria-hidden="true" ></i>
+                            {{ account.login }}
                         </span>
                     </div>
                     <div class="col-12" v-if="account.description">
@@ -84,7 +160,7 @@
         },
         mounted() {
             if (!this.account.icon) {
-                this.account.icon = generateInitialIcon(this.account.displayPlatform);
+                this.account.icon = generateInitialIcon(this.account.label);
             }
         },
         computed: {
