@@ -24,6 +24,7 @@
     box-shadow: none;
   }
 }
+
 /* Add animation only on large devices */
 @media (min-width: 576px) {
   .card {
@@ -147,4 +148,19 @@
   background: white;
   border: none;
   color: #0d6efd !important;
+}
+
+.card.card-new {
+  color: #ffffff;
+  background: #0b84fe;
+}
+
+
+.card.card-new .badge {
+  color: var(--color-text);
+  background: var(--color-background-mute);
+}
+
+.card.card-new .description {
+  color: #fefefe;
 }

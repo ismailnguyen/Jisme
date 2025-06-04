@@ -1,6 +1,6 @@
 <template>
     <div class="card-wrapper col-12 col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
-        <div class="card clickable" :id="account._id" >
+        <div class="card card-new clickable" :id="account._id" >
             <div class="card-body" @click.prevent="onCardClick()">
                 <div class="row">
                     <div class="col-12 tags">
