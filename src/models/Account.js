@@ -5,6 +5,7 @@ import { generatePassword } from "../utils/passwordLess";
 class Account {
     constructor (
             _id = 0, 
+            label = '',
             platform = '',
             icon = '',
             login = '', 
@@ -20,16 +21,19 @@ class Account {
             last_opened_date = null, 
             opened_count = 0,
             type = 'account',
+            subtype = 'login',
             card_number = '',
             card_name = '',
             card_expiracy = '',
             card_cryptogram = '',
             card_pin = '',
+            card_format = '',
             totp_secret = '',
             isServerEncrypted = false
         ) {
         this._id = _id;
         this.icon = icon;
+        this.label = label;
         this.platform = platform;
         this.login = login;
         this.password = password;
@@ -45,12 +49,14 @@ class Account {
         // if account never opened, take creation date as last opened date
         this.last_opened_date = new Date((last_opened_date instanceof Date && !isNaN(last_opened_date)) ? last_opened_date : created_date).toUTCString();
         this.opened_count = opened_count;
+        this.subtype = subtype;
         this.type = type;
         this.card_number = card_number;
         this.card_name = card_name;
         this.card_expiracy = card_expiracy;
         this.card_cryptogram = card_cryptogram;
         this.card_pin = card_pin;
+        this.card_format = card_format;
         this.totp_secret = totp_secret;
         this.isServerEncrypted = isServerEncrypted;
     }

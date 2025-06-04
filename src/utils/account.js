@@ -4,6 +4,7 @@ import Account from '../models/Account'
 export function parseAccount(account) {
     return new Account(
         account._id,
+        account.label,
         account.platform,
         account.icon,
         account.login,
@@ -19,18 +20,21 @@ export function parseAccount(account) {
         account.last_opened_date,
         account.opened_count,
         account.type,
+        account.subtype,
         account.card_number,
         account.card_name,
         account.card_expiracy,
         account.card_cryptogram,
         account.card_pin,
+        account.card_format,
         account.totp_secret,
         account.isServerEncrypted
     );
 }
 
 const cryptedArgs = [
-	'platform',
+	'label',
+    'platform',
     'icon',
 	'login',
 	'password',
