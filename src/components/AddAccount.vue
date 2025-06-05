@@ -674,7 +674,7 @@
                   <div>
                     <div class="fw-medium">
                       <i class="fa fa-wifi" aria-hidden="true"></i>
-                      SSID
+                      Network name (SSID)
                     </div>
                   </div>
                 </button>
@@ -774,7 +774,7 @@
           <!-- region_end -- Bank -->
 
           <div class="accordion" v-if="account.type == 'account'">
-            <div class="accordion-item" v-if="account.subtype == 'login' || account.subtype == 'wifi'">
+            <div class="accordion-item" v-if="account.subtype == 'login'">
               <h2 class="accordion-header">
                 <button
                   class="accordion-button"
@@ -856,8 +856,7 @@
                     id="addAccount_passwordHelp"
                     class="form-text text-muted"
                     v-show="!account.is_password_less"
-                    >Click button to generate password.</small
-                  >
+                    >Click button to generate password.</small>
                 
                 <hr class="my-4" v-show="!account.is_password_less" />
 
@@ -876,9 +875,9 @@
                   v-model="account.password_clue"
                 />
 
-                <hr class="my-4" v-if="account.subtype == 'login'" />
+                <hr class="my-4" />
 
-                <label class="form-label" for="addAccount_social_login_input" v-if="account.subtype == 'login'">
+                <label class="form-label" for="addAccount_social_login_input">
                   <i class="fa fa-mobile-screen" aria-hidden="true"></i> Social login
                   </label>
                 <input
@@ -886,9 +885,46 @@
                   class="form-control"
                   placeholder="Google, Facebook, LinkedIn, ..."
                   type="text"
-                  v-model="account.social_login"
-                  v-if="account.subtype == 'login'"
-                />
+                  v-model="account.social_login"/>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item" v-if="account.subtype == 'wifi'">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button"
+                  type="button">
+                  <div>
+                    <div class="fw-medium">
+                      <i class="fa fa-lock" aria-hidden="true"></i>
+                      Password
+                    </div>
+                  </div>
+                </button>
+              </h2>
+              <div class="accordion-collapse show">
+                <div class="accordion-body">
+                  <input
+                    class="form-control"
+                    type="text"
+                    v-model="account.password"
+                    placeholder="Password"
+                  />
+
+                  <hr class="my-4" v-show="!account.is_password_less" />
+
+                  <label class="form-label" for="password_security_mode_input">
+                    <i class="fa fa-key" aria-hidden="true"></i>
+                    Security mode
+                  </label>
+                  <input
+                    id="password_security_mode_input"
+                    class="form-control"
+                    type="text"
+                    placeholder="WPA, WPA2, WEP, Open"
+                    v-model="account.password_clue"
+                  />
                 </div>
               </div>
             </div>

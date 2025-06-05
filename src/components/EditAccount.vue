@@ -314,7 +314,7 @@
                     <div>
                       <div class="fw-medium">
                         <i class="fa fa-wifi" aria-hidden="true"></i>
-                        SSID
+                        Network name (SSID)
                       </div>
                       <span class="fw-lighter" v-show="!fieldAttrs.login.isExpanded">
                         {{ account.login }}
@@ -350,7 +350,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item" v-if="account.type == 'account'">
+              <div class="accordion-item" v-if="account.type == 'account' && account.subtype == 'login'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.password.isExpanded ? '' : 'collapsed'"
@@ -559,18 +559,121 @@
                       v-model="account.password_clue"
                     />
 
-                    <hr class="my-4" v-if="account.subtype == 'login'" />
+                    <hr class="my-4" />
 
-                    <label class="form-label" for="editAccount_input_social_login" v-if="account.subtype == 'login'">
+                    <label class="form-label" for="editAccount_input_social_login">
                       <i class="fa fa-users" aria-hidden="true"></i> Social login
                     </label>
                     <input
                       id="editAccount_input_social_login"
                       class="form-control"
                       type="text"
-                       v-if="account.subtype == 'login'"
                       v-model="account.social_login"
                     />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item" v-if="account.type == 'account' && account.subtype == 'wifi'">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.password.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.password.isExpanded = !fieldAttrs.password.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-lock" aria-hidden="true"></i>
+                        Password
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.password.isExpanded">
+                        {{ passwordPreview }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.password.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <div class="input-group mb-3">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="copyToClipboard('editAccount_input_password_hidden')"
+                        v-if="account.password"
+                      >
+                        <i class="fa fa-clipboard"></i>
+                      </button>
+                      <input
+                        id="editAccount_input_password"
+                        class="form-control"
+                        type="text"
+                        autocomplete="new-password"
+                        v-model="account.password"
+                      />
+                      <input
+                        id="editAccount_input_password_hidden"
+                        type="hidden"
+                        :value="account.password"
+                      />
+                    </div>
+                   
+                    <hr class="my-4" />
+
+                    <label class="form-label" for="editAccount_input_password_security_mode">
+                      <i class="fa fa-key" aria-hidden="true"></i>
+                      Security mode
+                    </label>
+                    <input
+                      id="editAccount_input_password_security_mode"
+                      class="form-control"
+                      type="text"
+                      placeholder="WPA, WPA2, WEP, Open"
+                      v-model="account.password_clue"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item" v-if="account.type == 'account' && account.subtype == 'secret_key'">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.password.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.password.isExpanded = !fieldAttrs.password.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-key" aria-hidden="true"></i>
+                        Key
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.password.isExpanded">
+                        {{ passwordPreview }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.password.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <div class="input-group mb-3">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="copyToClipboard('editAccount_input_password_hidden')"
+                        v-if="account.password"
+                      >
+                        <i class="fa fa-clipboard"></i>
+                      </button>
+                      <input
+                        id="editAccount_input_password"
+                        class="form-control"
+                        type="text"
+                        autocomplete="new-password"
+                        v-model="account.password"
+                      />
+                      <input
+                        id="editAccount_input_password_hidden"
+                        type="hidden"
+                        :value="account.password"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
