@@ -105,35 +105,6 @@
               <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button
-                    class="accordion-button" :class="fieldAttrs.card_name.isExpanded ? '' : 'collapsed'"
-                    type="button"
-                    @click="fieldAttrs.card_name.isExpanded = !fieldAttrs.card_name.isExpanded">
-                    <div>
-                      <div class="fw-medium">
-                        <i class="fa fa-user" aria-hidden="true"></i>
-                        Name
-                      </div>
-                      <span class="fw-lighter" v-show="!fieldAttrs.card_name.isExpanded">
-                        {{ account.card_name }}
-                      </span>
-                    </div>
-                  </button>
-                </h2>
-                <div class="accordion-collapse" :class="fieldAttrs.card_name.isExpanded ? 'show' : 'collapse'">
-                  <div class="accordion-body">
-                    <input
-                      class="form-control"
-                      placeholder="Name on card (e.g. M Gandhi)"
-                      type="text"
-                      v-model="account.card_name"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="accordion-item">
-                <h2 class="accordion-header">
-                  <button
                     class="accordion-button" :class="fieldAttrs.card_pin.isExpanded ? '' : 'collapsed'"
                     type="button"
                     @click="fieldAttrs.card_pin.isExpanded = !fieldAttrs.card_pin.isExpanded">
@@ -160,7 +131,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item">
+              <div class="accordion-item" v-if="account.subtype == 'payment' || account.subtype == 'gift'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.card_expiracy.isExpanded ? '' : 'collapsed'"
@@ -189,7 +160,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item">
+              <div class="accordion-item" v-if="account.subtype == 'payment'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.card_cryptogram.isExpanded ? '' : 'collapsed'"
@@ -213,6 +184,35 @@
                       placeholder="Cryptogram (CVV/CVC)"
                       type="text"
                       v-model="account.card_cryptogram"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.card_name.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.card_name.isExpanded = !fieldAttrs.card_name.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        Name
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.card_name.isExpanded">
+                        {{ account.card_name }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.card_name.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <input
+                      class="form-control"
+                      placeholder="Name on card (e.g. M Gandhi)"
+                      type="text"
+                      v-model="account.card_name"
                     />
                   </div>
                 </div>
@@ -984,7 +984,7 @@
               </div>
             </div>
 
-            <div class="accordion" v-if="account.type == 'card' && account.subtype == 'payment'">
+            <div class="accordion" v-if="account.type == 'card'">
               <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button

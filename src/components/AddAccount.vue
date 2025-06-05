@@ -374,7 +374,7 @@
                 </div>
               </div>
             </div>
-            <div class="accordion-item" v-if="account.subtype == 'payment'">
+            <div class="accordion-item" v-if="account.subtype == 'payment' || account.subtype == 'gift'">
               <h2 class="accordion-header">
                 <button
                   class="accordion-button"
