@@ -33,27 +33,10 @@
                 </div>
 
                 <div class="row" v-if="account.type == 'account'">
-                    <div class="col-12" v-if="account.type == 'account' && account.login">
-                        <span class="small">
-                            {{ account.login }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.type == 'card' && account.card_number">
-                        <span class="small">
-                            <i class="fa fa-barcode" aria-hidden="true" ></i>
-                            {{ maskedCardNumber }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.type == 'card' && account.card_name">
+                    <div class="col-12" v-if="account.login">
                         <span class="small">
                             <i class="fa fa-user" aria-hidden="true" ></i>
-                            {{ account.card_name }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.type == 'loyalty' && account.type == 'loyalty' && account.card_pin">
-                        <span class="small">
-                            <i class="fa fa-barcode" aria-hidden="true" ></i>
-                            {{ account.card_pin }}
+                            {{ account.login }}
                         </span>
                     </div>
                     <div class="col-12" v-if="account.description">
@@ -94,7 +77,7 @@
                             {{ account.card_name }}
                         </span>
                     </div>
-                    <div class="col-12">
+                    <div class="col-12" v-if="account.platform">
                         <span class="small">
                             <i class="fa fa-building-columns" aria-hidden="true" ></i>
                             {{ account.platform }}
@@ -108,22 +91,48 @@
                 </div>
 
                 <div class="row" v-if="account.type == 'bank'">
-                    <div class="col-12">
+                    <div class="col-12" v-if="account.password">
                         <span class="small">
                             <i class="fa fa-barcode" aria-hidden="true" ></i>
                             {{ account.password }}
                         </span>
                     </div>
-                    <div class="col-12">
+                    <div class="col-12" v-if="account.platform">
                         <span class="small">
                             <i class="fa fa-building-columns" aria-hidden="true" ></i>
                             {{ account.platform }}
                         </span>
                     </div>
-                    <div class="col-12">
+                    <div class="col-12" v-if="account.login">
                         <span class="small">
                             <i class="fa fa-user" aria-hidden="true" ></i>
                             {{ account.login }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="account.description">
+                        <span class="small description">
+                            {{ shortDescription }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="row" v-if="account.type == 'document'">
+                   <div class="col-12" v-if="account.card_name">
+                        <span class="small">
+                            <i class="fa fa-user" aria-hidden="true" ></i>
+                            {{ account.card_name }}
+                        </span>
+                    </div>
+                     <div class="col-12" v-if="account.card_number">
+                        <span class="small">
+                            <i class="fa fa-barcode" aria-hidden="true" ></i>
+                            {{ account.card_number }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="account.card">>
+                        <span class="small">
+                            <i class="fa fa-calendar" aria-hidden="true" ></i>
+                            {{ account.card_expiracy }}
                         </span>
                     </div>
                     <div class="col-12" v-if="account.description">

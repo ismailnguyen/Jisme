@@ -102,7 +102,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item" v-if="account.type == 'card'">
+              <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.card_name.isExpanded ? '' : 'collapsed'"
@@ -160,7 +160,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item" v-if="account.type == 'card'">
+              <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.card_expiracy.isExpanded ? '' : 'collapsed'"
@@ -189,7 +189,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item" v-if="account.type == 'card'">
+              <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.card_cryptogram.isExpanded ? '' : 'collapsed'"
@@ -258,7 +258,170 @@
             <!-- region_end -- Card formats -->
             <!-- region_end -- Cards -->
 
-            <!-- region_start -- Account type: login -->
+            <!-- region_start -- Account type: Document -->
+            <div class="accordion" v-if="account.type == 'document'">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.card_name.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.card_name.isExpanded = !fieldAttrs.card_name.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                        Name
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.card_name.isExpanded">
+                        {{ account.card_name }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.card_name.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <input
+                      class="form-control"
+                      placeholder="Name on card (e.g. M Gandhi)"
+                      type="text"
+                      v-model="account.card_name"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.card_number.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.card_number.isExpanded = !fieldAttrs.card_number.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-barcode" aria-hidden="true"></i>
+                        Number
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.card_number.isExpanded">
+                        {{ account.card_number }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.card_number.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <div class="input-group">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="copyToClipboard('editAccount_input_card_number_hidden')"
+                      >
+                        <i class="fa fa-clipboard"></i>
+                      </button>
+                      <input
+                        class="form-control"
+                        placeholder="Card number"
+                        type="text"
+                        v-model="account.card_number"
+                      />
+                    </div>
+                    <input
+                      id="editAccount_input_card_number_hidden"
+                      type="hidden"
+                      :value="account.card_number"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.card_expiracy.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.card_expiracy.isExpanded = !fieldAttrs.card_expiracy.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                        Expiracy
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.card_expiracy.isExpanded">
+                        {{ account.card_expiracy }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.card_expiracy.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <input
+                      class="form-control"
+                      placeholder="DD/MM/YYYY"
+                      type="text"
+                      v-model="account.card_expiracy"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.card_issue_date.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.card_issue_date.isExpanded = !fieldAttrs.card_issue_date.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                        Issued date
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.card_issue_date.isExpanded">
+                        {{ account.card_issue_date }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.card_issue_date.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <input
+                      class="form-control"
+                      placeholder="DD/MM/YYYY"
+                      type="text"
+                      v-model="account.card_issue_date"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.platform.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.platform.isExpanded = !fieldAttrs.platform.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-building-columns" aria-hidden="true"></i>
+                        Issued by
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.platform.isExpanded">
+                        {{ account.platform }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.platform.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <input
+                      class="form-control"
+                      placeholder="Issued place / authority"
+                      type="text"
+                      v-model="account.platform"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- region_end -- Account type: Document -->
+
+            <!-- region_start -- Account type: Login -->
             <div class="accordion" v-if="account.type == 'account' && account.subtype == 'login'">
               <div class="accordion-item">
                 <h2 class="accordion-header ">
@@ -1413,6 +1576,9 @@ function initialState() {
         isExpanded: false,
       },
       card_format: {
+        isExpanded: false,
+      },
+      card_issue_date: {
         isExpanded: false,
       },
     },
