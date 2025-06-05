@@ -33,9 +33,21 @@
                 </div>
 
                 <div class="row" v-if="account.type == 'account'">
-                    <div class="col-12" v-if="account.login">
+                    <div class="col-12" v-if="account.subtype == 'login' && account.login">
                         <span class="small">
                             <i class="fa fa-user" aria-hidden="true" ></i>
+                            {{ account.login }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="account.subtype == 'wifi' && account.login">
+                        <span class="small">
+                            <i class="fa fa-wifi" aria-hidden="true" ></i>
+                            {{ account.login }}
+                        </span>
+                    </div>
+                    <div class="col-12" v-if="account.subtype == 'secret_key' && account.login">
+                        <span class="small">
+                            <i class="fa fa-hashtag" aria-hidden="true" ></i>
                             {{ account.login }}
                         </span>
                     </div>

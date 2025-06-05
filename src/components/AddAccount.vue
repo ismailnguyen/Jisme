@@ -666,6 +666,31 @@
               </div>
             </div>
 
+            <div class="accordion-item" v-if="account.subtype == 'secret_key'">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button"
+                  type="button">
+                  <div>
+                    <div class="fw-medium">
+                      <i class="fa fa-hashtag" aria-hidden="true"></i>
+                      Key identifier
+                    </div>
+                  </div>
+                </button>
+              </h2>
+              <div class="accordion-collapse show">
+                <div class="accordion-body">
+                  <input
+                    class="form-control"
+                    placeholder="Key ID (e.g. Org ID, Device ID, ...)"
+                    type="text"
+                    v-model="account.login"
+                  />
+                </div>
+              </div>
+            </div>
+
             <div class="accordion-item" v-if="account.subtype == 'wifi'">
               <h2 class="accordion-header">
                 <button

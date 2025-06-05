@@ -422,8 +422,8 @@
             <!-- region_end -- Account type: Document -->
 
             <!-- region_start -- Account type: Login -->
-            <div class="accordion" v-if="account.type == 'account' && account.subtype == 'login'">
-              <div class="accordion-item">
+            <div class="accordion" v-if="account.type == 'account'">
+              <div class="accordion-item" v-if="account.subtype == 'login'">
                 <h2 class="accordion-header ">
                   <button
                     class="accordion-button" :class="fieldAttrs.login.isExpanded ? '' : 'collapsed'"
@@ -456,6 +456,50 @@
                         placeholder="Login"
                         type="text"
                         autocomplete="username"
+                        v-model="account.login"
+                      />
+                    </div>
+                    <input
+                      id="editAccount_input_login_hidden"
+                      type="hidden"
+                      :value="account.login"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item" v-if="account.subtype == 'secret_key'">
+                <h2 class="accordion-header ">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.login.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.login.isExpanded = !fieldAttrs.login.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-id-badge" aria-hidden="true"></i>
+                        Key identifier
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.login.isExpanded">
+                        {{ account.login }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.login.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <div class="input-group">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="copyToClipboard('editAccount_input_login_hidden')"
+                      >
+                        <i class="fa fa-clipboard"></i>
+                      </button>
+                      <input
+                        id="editAccount_input_login"
+                        class="form-control"
+                        placeholder="Key ID (e.g. Org ID, Device ID, ...)"
+                        type="text"
                         v-model="account.login"
                       />
                     </div>
@@ -513,7 +557,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item" v-if="account.type == 'account' && account.subtype == 'login'">
+              <div class="accordion-item" v-if="account.subtype == 'login'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.password.isExpanded ? '' : 'collapsed'"
@@ -737,7 +781,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item" v-if="account.type == 'account' && account.subtype == 'wifi'">
+              <div class="accordion-item" v-if="account.subtype == 'wifi'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.password.isExpanded ? '' : 'collapsed'"
@@ -796,7 +840,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item" v-if="account.type == 'account' && account.subtype == 'secret_key'">
+              <div class="accordion-item" v-if="account.subtype == 'secret_key'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.password.isExpanded ? '' : 'collapsed'"
@@ -841,7 +885,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item" v-if="account.type == 'account' && account.subtype == 'login'">
+              <div class="accordion-item" v-if="account.subtype == 'login'">
                 <h2 class="accordion-header ">
                   <button
                     class="accordion-button" :class="fieldAttrs.totpToken.isExpanded ? '' : 'collapsed'"
@@ -899,7 +943,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item" v-if="account.type == 'account' && (account.subtype == 'login' || account.subtype == 'secret_key')">
+              <div class="accordion-item" v-if="account.subtype == 'login' || account.subtype == 'secret_key'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.platform.isExpanded ? '' : 'collapsed'"
