@@ -259,8 +259,8 @@
             <!-- region_end -- Cards -->
 
             <!-- region_start -- Account type: login -->
-            <div class="accordion" v-if="account.type == 'account'">
-              <div class="accordion-item" v-if="account.subtype == 'login'">
+            <div class="accordion" v-if="account.type == 'account' && account.subtype == 'login'">
+              <div class="accordion-item">
                 <h2 class="accordion-header ">
                   <button
                     class="accordion-button" :class="fieldAttrs.login.isExpanded ? '' : 'collapsed'"
@@ -586,7 +586,7 @@
                         Password
                       </div>
                       <span class="fw-lighter" v-show="!fieldAttrs.password.isExpanded">
-                        {{ passwordPreview }}
+                        {{ account.password }}
                       </span>
                     </div>
                   </button>
@@ -645,7 +645,7 @@
                         Key
                       </div>
                       <span class="fw-lighter" v-show="!fieldAttrs.password.isExpanded">
-                        {{ passwordPreview }}
+                        {{ account.password }}
                       </span>
                     </div>
                   </button>
@@ -736,7 +736,7 @@
                 </div>
               </div>
 
-              <div class="accordion-item"  v-if="account.type == 'account' && (account.subtype == 'login' || account.subtype == 'secret_key')">
+              <div class="accordion-item" v-if="account.type == 'account' && (account.subtype == 'login' || account.subtype == 'secret_key')">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.platform.isExpanded ? '' : 'collapsed'"
@@ -777,8 +777,8 @@
               </div>
             </div>
 
-            <div class="accordion">
-              <div class="accordion-item"  v-if="account.type == 'card' && account.subtype == 'payment'">
+            <div class="accordion" v-if="account.type == 'card' && account.subtype == 'payment'">
+              <div class="accordion-item">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button" :class="fieldAttrs.platform.isExpanded ? '' : 'collapsed'"
@@ -814,6 +814,129 @@
                         v-model="account.platform"
                       />
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion" v-if="account.type == 'bank' && account.subtype == 'iban'">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.platform.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.platform.isExpanded = !fieldAttrs.platform.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-building-columns" aria-hidden="true"></i>
+                        BIC / SWIFT code
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.platform.isExpanded">
+                        {{ account.platform }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.platform.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <input
+                      id="editAccount_input_platform"
+                      class="form-control"
+                      placeholder="e.g. BOUS FRPPAR"
+                      type="text"
+                      @change="onPlatformChange()"
+                      v-model="account.platform"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.password.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.password.isExpanded = !fieldAttrs.password.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-money-check" aria-hidden="true"></i>
+                        International Bank Account Number (IBAN)
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.password.isExpanded">
+                        {{ account.password }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.password.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <div class="input-group mb-3">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="copyToClipboard('editAccount_input_password_hidden')"
+                        v-if="account.password"
+                      >
+                        <i class="fa fa-clipboard"></i>
+                      </button>
+                      <input
+                        id="editAccount_input_password"
+                        class="form-control"
+                        type="text"
+                        placeholder="IBAN"
+                        autocomplete="new-password"
+                        v-model="account.password"
+                      />
+                      <input
+                        id="editAccount_input_password_hidden"
+                        type="hidden"
+                        :value="account.password"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header ">
+                  <button
+                    class="accordion-button" :class="fieldAttrs.login.isExpanded ? '' : 'collapsed'"
+                    type="button"
+                    @click="fieldAttrs.login.isExpanded = !fieldAttrs.login.isExpanded">
+                    <div>
+                      <div class="fw-medium">
+                        <i class="fa fa-id-badge" aria-hidden="true"></i>
+                        Account holder
+                      </div>
+                      <span class="fw-lighter" v-show="!fieldAttrs.login.isExpanded">
+                        {{ account.login }}
+                      </span>
+                    </div>
+                  </button>
+                </h2>
+                <div class="accordion-collapse" :class="fieldAttrs.login.isExpanded ? 'show' : 'collapse'">
+                  <div class="accordion-body">
+                    <div class="input-group">
+                      <button
+                        class="btn btn-light"
+                        type="button"
+                        @click="copyToClipboard('editAccount_input_login_hidden')"
+                      >
+                        <i class="fa fa-clipboard"></i>
+                      </button>
+                      <input
+                        id="editAccount_input_login"
+                        class="form-control"
+                        placeholder="Account holder name"
+                        type="text"
+                        v-model="account.login"
+                      />
+                    </div>
+                    <input
+                      id="editAccount_input_login_hidden"
+                      type="hidden"
+                      :value="account.login"
+                    />
                   </div>
                 </div>
               </div>
