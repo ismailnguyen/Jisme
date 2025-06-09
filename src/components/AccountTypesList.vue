@@ -34,7 +34,7 @@
                 <div class="card card-secondary clickable" @click.prevent="openAccountType('account')">
                     <div class="card-body">
                         <h5 class="card-title">
-                            <i class="fa fa-globe" aria-hidden="true"></i>
+                            <i class="fa fa-user-secret" aria-hidden="true"></i>
                             Credentials
                         </h5>
                     </div>
