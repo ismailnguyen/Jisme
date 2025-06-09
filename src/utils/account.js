@@ -46,11 +46,11 @@ const cryptedArgs = [
 	'description',
 	'notes',
     'card_number',
-    'card_pin',
+    'card_name',
     'card_expiracy',
     'card_issue_date',
     'card_cryptogram',
-    'card_number',
+    'card_pin',
     'totp_secret'
 ];
 
