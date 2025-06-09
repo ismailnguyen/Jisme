@@ -937,7 +937,7 @@
                     placeholder="Password"
                   />
 
-                  <hr class="my-4" v-show="!account.is_password_less" />
+                  <hr class="my-4" />
 
                   <label class="form-label" for="password_security_mode_input">
                     <i class="fa fa-key" aria-hidden="true"></i>
