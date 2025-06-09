@@ -59,6 +59,11 @@ class Account {
         return this.subtype.charAt(0).toUpperCase() + this.subtype.slice(1);
     }
 
+    // Trim card number to remove spaces because QRCode and Barcodes don't support spaces
+    get rawCardNumber () {
+        return this.card_number.replaceAll(' ', '');
+    }
+
     generatePassword () {
         this.password = randomPassword(8);
     }

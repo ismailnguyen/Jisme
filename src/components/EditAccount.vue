@@ -37,7 +37,7 @@
                 <h1 class="accordion-header text-center">
                   <QrcodeVue
                     v-if="account.card_format == 'qrcode'"
-                    :value="account.card_number"
+                    :value="account.rawCardNumber"
                     @click="fullscreenBarcodeVisible = true"
                     class="clickable"/>
                   
@@ -50,7 +50,7 @@
 
                     <FullscreenBarcode
                       :visible="fullscreenBarcodeVisible"
-                      :number="account.card_number"
+                      :number="account.rawCardNumber"
                       :format="barcodeFormat"
                       @close="fullscreenBarcodeVisible = false"
                     />
@@ -1557,6 +1557,12 @@
               {{ isDuplicating ? 'Duplicating ...' : 'Duplicate' }}
             </button>
           </div>
+
+          <br>
+          <br>
+          <span class="small text-light">
+            ID: {{ account._id }}
+          </span>
         </div>
       </div>
     </div>
@@ -1806,7 +1812,7 @@ export default {
       }
 
       if (this.$refs.barcodeEl) {
-        JsBarcode(this.$refs.barcodeEl, this.account.card_number, {
+        JsBarcode(this.$refs.barcodeEl, this.account.rawCardNumber, {
           format: this.barcodeFormat,
           displayValue: true,
           margin: 0,
