@@ -1534,6 +1534,18 @@
               {{ isDeleting ? "Removing ..." : "Don't need it anymore" }}
             </button>
           </div>
+
+          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+            <button
+              class="btn btn-action"
+              :class="isDuplicating ? 'btn-dark' : 'btn-outline-primary'"
+              type="button"
+              @click="duplicate()"
+            >
+              <i class="fa fa-copy"></i>
+              {{ isDuplicating ? 'Duplicating ...' : 'Duplicate' }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1555,6 +1567,7 @@ function initialState() {
     fullscreenBarcodeVisible: false,
     isSaving: false,
     isDeleting: false,
+    isDuplicating: false,
     newTag: "",
     isSmallHeader: false,
     passwordLess: {
@@ -1744,9 +1757,11 @@ export default {
   methods: {
     ...mapActions(useAccountsStore, ["updateAccount", "removeAccount"]),
     ...mapActions(useUiStore, [
-      "closeSidebar",
-      "resetCurrentEditingAccount",
-      "initBottomSheet",
+      'openSidebar',
+      'setCurrentAddingAccount',
+      'closeSidebar',
+      'resetCurrentEditingAccount',
+      'initBottomSheet',
     ]),
     ...mapActions(useAlertStore, ["openAlert"]),
 
@@ -1804,7 +1819,6 @@ export default {
     },
 
     save: async function () {
-
       // if no label is set, use platform as label
       this.onPlatformChange.call(this);
 
@@ -1832,6 +1846,32 @@ export default {
       } catch (error) {
         this.openAlert("Error", error.toString(), "danger");
         this.isSaving = false;
+      }
+    },
+
+    duplicate: async function () {
+      this.isDuplicating = true;
+
+      try {
+        let duplicatedAccount = await this.account.duplicate();
+
+        this.setCurrentAddingAccount(duplicatedAccount);
+
+        this.openSidebar(this.SIDEBAR.ADD_ACCOUNT);
+
+        this.isDuplicating = false;
+
+        this.openAlert(
+          duplicatedAccount.label,
+          "Save to validate duplicate",
+          "info",
+          duplicatedAccount.icon
+        );
+
+        this.closeAccountEditing();
+      } catch (error) {
+        this.openAlert("Error", error.toString(), "danger");
+        this.isDuplicating = false;
       }
     },
 
