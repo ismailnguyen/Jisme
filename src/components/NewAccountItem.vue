@@ -44,6 +44,7 @@
 
 <script>
     import '../assets/card.css';
+    import { generateInitialIcon } from "../utils/icon.js";
   
     import { 
         mapState,
@@ -56,15 +57,46 @@
     } from '@/store'
 
     export default {
-        props: {
-            query: String,
-        },
-        mounted() {
-            this.account.label = this.query;
-            this.account.icon = this.account.icon = "https://www.google.com/s2/favicons?domain=" + this.query;
+        created() {
+            this.$watch(
+                '$route.query.query',
+                () => {
+                    this.initAccount();
+                },
+                {
+                    immediate: true,
+                }
+            );
 
-            // get tags from url if any
-            this.account.tags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()).join(',') : '';
+            this.$watch(
+                '$route.query.tags',
+                () => {
+                    this.initAccount();
+                },
+                {
+                    immediate: true,
+                }
+            );
+
+            this.$watch(
+                '$route.query.type',
+                () => {
+                    this.initAccount();
+                },
+                {
+                    immediate: true,
+                }
+            );
+
+            this.$watch(
+                '$route.query.filters',
+                () => {
+                    this.initAccount();
+                },
+                {
+                    immediate: true,
+                }
+            );
         },
         computed: {
             ...mapWritableState(useUiStore, {
@@ -77,14 +109,49 @@
         },
         methods: {
             ...mapActions(useUiStore, [
-                'openSidebar',
-                'setCurrentAddingAccount'
+                'openSidebar'
             ]),
             ...mapActions(useAlertStore, ['openAlert']),
 
-            add: async function() {
-                this.setCurrentAddingAccount(this.account);
+            initAccount: function() {
+                this.account.label = this.$route.query.query ? this.$route.query.query : '';
 
+                // get tags from url if any
+                this.account.tags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()).join(',') : '';
+
+                // type;
+                this.account.type = this.$route.query.type ? this.$route.query.type : '';
+
+                // if there are filters in query string and it's an array
+                if (this.$route.query.filters && this.$route.query.filters.length) {
+                    try {
+                        const filters = JSON.parse(this.$route.query.filters);
+
+                        for (const filter of filters) {
+                            console.log("Applying filter from URL", filter);
+                            if (filter.field && filter.value) {
+                                this.account[filter.field] = filter.value;
+                            }
+                        }
+                    } catch (e) {
+                        this.openAlert({
+                            type: 'error',
+                            message: e.message || 'Invalid filters format in URL',
+                        });
+                    }
+                }
+
+                // If the account has a platform, set the icon accordingly, otherwise generate an initial icon from label
+                if (this.account.platform) {
+                    this.account.icon = "https://www.google.com/s2/favicons?domain=" + this.account.platform;
+                }
+                else {
+                    console.log("Generating initial icon for new account", this.account);
+                    this.account.icon = generateInitialIcon(this.account.label);
+                }
+            },
+
+            add: async function() {
                 this.openSidebar(this.SIDEBAR.ADD_ACCOUNT);
             },
 

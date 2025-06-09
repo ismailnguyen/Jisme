@@ -27,8 +27,7 @@
         <div class="row" v-else-if="!filteredAccounts.length">
             <p>No account yet for this query, woudld you like to create one?</p>
             
-            <NewAccountItem
-                :query="searchQuery" />
+            <NewAccountItem  />
         </div>
         <div class="row" v-else>
             <AccountItem
