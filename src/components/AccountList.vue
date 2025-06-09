@@ -95,7 +95,8 @@
             :key="filterIndex"
             class="filter input-group">
             <select class="custom-select form-control" v-model="filter.field" @change="onFiltersChange">
-              <option selected value="platform">Platform</option>
+              <option selected value="label">Label</option>
+              <option value="platform">Platform</option>
               <option value="login">Login</option>
               <option value="password">Password</option>
               <option value="is_password_less">Is password less</option>
@@ -416,7 +417,7 @@ export default {
     
     addSearchFilter: function () {
       this.searchFilters.push({
-        field: 'platform',
+        field: 'label',
         comparison: 'includes',
         value: '',
       });
