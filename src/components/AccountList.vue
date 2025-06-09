@@ -98,34 +98,36 @@
             class="filter input-group">
             <select class="custom-select form-control" v-model="filter.field" @change="onFiltersChange">
 
+              <option value="_id">ID</option>
+              
               <option selected value="label">Label</option>
               <option value="tags">Tags</option>
 
-              <option value="platform" v-show="selectedTypes.includes('account')">Platform</option>
-              <option value="login" v-show="selectedTypes.includes('account')">Login</option>
-              <option value="login" v-show="selectedTypes.includes('account')">SSID</option>
-              <option value="login" v-show="selectedTypes.includes('account')">Key ID</option>
-              <option value="password" v-show="selectedTypes.includes('account')">Secret Key</option>
-              <option value="password" v-show="selectedTypes.includes('account')">Password</option>
-              <option value="is_password_less" v-show="selectedTypes.includes('account')">Is password less</option>
-              <option value="password_clue" v-show="selectedTypes.includes('account')">Password clue</option>
-              <option value="social_login" v-show="selectedTypes.includes('account')">Social login</option>
+              <option value="platform" v-show="!selectedTypes.length || selectedTypes.includes('account')">Platform</option>
+              <option value="login" v-show="!selectedTypes.length || selectedTypes.includes('account')">Login</option>
+              <option value="login" v-show="!selectedTypes.length || selectedTypes.includes('account')">SSID</option>
+              <option value="login" v-show="!selectedTypes.length || selectedTypes.includes('account')">Key ID</option>
+              <option value="password" v-show="!selectedTypes.length || selectedTypes.includes('account')">Secret Key</option>
+              <option value="password" v-show="!selectedTypes.length || selectedTypes.includes('account')">Password</option>
+              <option value="is_password_less" v-show="!selectedTypes.length || selectedTypes.includes('account')">Is password less</option>
+              <option value="password_clue" v-show="!selectedTypes.length || selectedTypes.includes('account')">Password clue</option>
+              <option value="social_login" v-show="!selectedTypes.length || selectedTypes.includes('account')">Social login</option>
               
-              <option value="platform" v-show="selectedTypes.includes('card')">Provider</option>
-              <option value="card_number" v-show="selectedTypes.includes('card')">Card number</option>
-              <option value="card_name" v-show="selectedTypes.includes('card')">Name on card</option>
-              <option value="card_expiracy" v-show="selectedTypes.includes('card')">Card expiracy</option>
-              <option value="card_cryptogram" v-show="selectedTypes.includes('card')">Card cryptogram</option>
-              <option value="card_pin" v-show="selectedTypes.includes('card')">Card PIN</option>
+              <option value="platform" v-show="!selectedTypes.length || selectedTypes.includes('card')">Provider</option>
+              <option value="card_number" v-show="!selectedTypes.length || selectedTypes.includes('card')">Card number</option>
+              <option value="card_name" v-show="!selectedTypes.length || selectedTypes.includes('card')">Name on card</option>
+              <option value="card_expiracy" v-show="!selectedTypes.length || selectedTypes.includes('card')">Card expiracy</option>
+              <option value="card_cryptogram" v-show="!selectedTypes.length || selectedTypes.includes('card')">Card cryptogram</option>
+              <option value="card_pin" v-show="!selectedTypes.length || selectedTypes.includes('card')">Card PIN</option>
 
-              <option value="password" v-show="selectedTypes.includes('bank')">IBAN</option>
-              <option value="login" v-show="selectedTypes.includes('document')">Account holder</option>
-              <option value="platform" v-show="selectedTypes.includes('document')">BIC/SWIFT</option>
+              <option value="password" v-show="!selectedTypes.length || selectedTypes.includes('bank')">IBAN</option>
+              <option value="login" v-show="!selectedTypes.length || selectedTypes.includes('document')">Account holder</option>
+              <option value="platform" v-show="!selectedTypes.length || selectedTypes.includes('document')">BIC/SWIFT</option>
 
-              <option value="card_number" v-show="selectedTypes.includes('document')">Card number</option>
-              <option value="card_name" v-show="selectedTypes.includes('document')">Name on card</option>
-              <option value="card_expiracy" v-show="selectedTypes.includes('document')">Card expiracy</option>
-              <option value="platform" v-show="selectedTypes.includes('document')">Issued by</option>
+              <option value="card_number" v-show="!selectedTypes.length || selectedTypes.includes('document')">Card number</option>
+              <option value="card_name" v-show="!selectedTypes.length || selectedTypes.includes('document')">Name on card</option>
+              <option value="card_expiracy" v-show="!selectedTypes.length || selectedTypes.includes('document')">Card expiracy</option>
+              <option value="platform" v-show="!selectedTypes.length || selectedTypes.includes('document')">Issued by</option>
 
               <option value="description">Description</option>
               <option value="notes">Notes</option>
