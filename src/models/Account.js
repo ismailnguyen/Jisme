@@ -35,7 +35,8 @@ class Account {
         this.card_pin = account.card_pin || '';
         this.card_format = account.card_format || '';
         this.totp_secret = account.totp_secret || '';
-        this.isServerEncrypted = account.   isServerEncrypted || false;
+        this.isServerEncrypted = account.isServerEncrypted || false;
+        this.isPinned = account.isPinned || false;
     }
 
     get displayPlatform () {

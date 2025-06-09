@@ -61,10 +61,6 @@
                 type: Array,
                 default: []
             },
-            accountsCardSize: {
-                type: String,
-                default: 'small'
-            },
             isLoading: {
                 type: Boolean,
                 default: true

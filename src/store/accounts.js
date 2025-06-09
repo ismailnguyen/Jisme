@@ -25,6 +25,9 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     let accountsService = new AccountsService(user.value);
 
+    // find all accounts with attributes isPinned to true
+    const favoriteAccounts = computed(() => accounts.value.filter(account => account.isPinned));
+
     const getAccountsFilteredByQuery = computed(() => {
         return (searchQuery, tags, types, filters, sort = false) => {
 
@@ -255,6 +258,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     return {
         user,
         recentAccounts,
+        favoriteAccounts,
         accounts,
         totalFetchedAccounts,
         totalAccounts,

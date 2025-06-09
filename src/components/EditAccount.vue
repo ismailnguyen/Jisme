@@ -1525,6 +1525,17 @@
 
           <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
             <button
+              class="btn btn-action btn-outline-danger"
+              type="button"
+              @click="addToFavorite()"
+            >
+              <i class="fa fa-thumbtack"></i>
+              {{ account.isPinned ? 'Remove from favorite' : 'Add to favorite' }}
+            </button>
+          </div>
+
+          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+            <button
               type="button"
               class="btn btn-action"
               :class="isDeleting ? 'btn-dark' : 'btn-red'"
@@ -1847,6 +1858,11 @@ export default {
         this.openAlert("Error", error.toString(), "danger");
         this.isSaving = false;
       }
+    },
+
+    addToFavorite: function () {
+      this.account.isPinned = !this.account.isPinned;
+      this.save();
     },
 
     duplicate: async function () {

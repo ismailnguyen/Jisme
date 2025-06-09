@@ -29,7 +29,8 @@ export function parseAccount(account) {
         card_pin: account.card_pin,
         card_format: account.card_format,
         totp_secret: account.totp_secret,
-        isServerEncrypted: account.isServerEncrypted
+        isServerEncrypted: account.isServerEncrypted,
+        isPinned: account.isPinned,
     });
 }
 

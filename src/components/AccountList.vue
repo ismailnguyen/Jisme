@@ -180,6 +180,10 @@
       v-if="hasAccounts && !isSearching"
       :isLoading="isLoading"
     />
+  
+    <FavoriteAccountList
+      v-if="hasAccounts && !isSearching"
+      :isLoading="isLoading"  />
 
     <MostUsedTags
       v-if="hasAccounts && !isSearching"
@@ -217,6 +221,7 @@ import {
 import LoadingAccountItem from "../components/LoadingAccountItem.vue";
 import AccountItem from "../components/AccountItem.vue";
 import RecentAccountList from "../components/RecentAccountList.vue";
+import FavoriteAccountList from "../components/FavoriteAccountList.vue";
 import FilteredAccountList from "../components/FilteredAccountList.vue";
 import AccountTypesList from "../components/AccountTypesList.vue";
 import MostUsedTags from "../components/MostUsedTags.vue";
@@ -230,6 +235,7 @@ export default {
     LoadingAccountItem,
     AccountItem,
     RecentAccountList,
+    FavoriteAccountList,
     FilteredAccountList,
     AccountTypesList,
     MostUsedTags,
