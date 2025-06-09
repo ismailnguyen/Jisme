@@ -59,7 +59,7 @@
     export default {
         created() {
             this.$watch(
-                '$route.query.query',
+                '$route.query.search',
                 () => {
                     this.initAccount();
                 },
@@ -114,13 +114,18 @@
             ...mapActions(useAlertStore, ['openAlert']),
 
             initAccount: function() {
-                this.account.label = this.$route.query.query ? this.$route.query.query : '';
+                this.account.label = this.$route.query.search ? this.$route.query.search : '';
 
                 // get tags from url if any
                 this.account.tags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()).join(',') : '';
 
-                // type;
-                this.account.type = this.$route.query.type ? this.$route.query.type : '';
+                // if there is one type assign it, if there are multiple types, don't assign any
+                const types = this.$route.query.type ? this.$route.query.type.split(',').map(x => x.trim()) : [];
+                if (types.length === 1) {
+                    this.account.type = types[0];
+                } else if (types.length > 1) {
+                    this.account.type = '';
+                }
 
                 // if there are filters in query string and it's an array
                 if (this.$route.query.filters && this.$route.query.filters.length) {
@@ -128,7 +133,6 @@
                         const filters = JSON.parse(this.$route.query.filters);
 
                         for (const filter of filters) {
-                            console.log("Applying filter from URL", filter);
                             if (filter.field && filter.value) {
                                 this.account[filter.field] = filter.value;
                             }
@@ -146,7 +150,6 @@
                     this.account.icon = "https://www.google.com/s2/favicons?domain=" + this.account.platform;
                 }
                 else {
-                    console.log("Generating initial icon for new account", this.account);
                     this.account.icon = generateInitialIcon(this.account.label);
                 }
             },
