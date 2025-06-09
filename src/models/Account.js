@@ -80,6 +80,17 @@ class Account {
         return this.label !== '';
     }
 
+    duplicate () {
+        return new Account({
+            ...this,
+            _id: 0, // Reset ID for duplication
+            created_date: new Date().toUTCString(),
+            last_modified_date: new Date().toUTCString(),
+            last_opened_date: new Date().toUTCString(),
+            opened_count: 0
+        });
+    }
+
     contains (word) {
         return this.label.toLowerCase().includes(word) ||
             this.platform.toLowerCase().includes(word) ||

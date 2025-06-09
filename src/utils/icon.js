@@ -26,7 +26,7 @@ export function generateInitialIcon(name, color) {
     ctx.font = `${avatar.width / 2}px Arial`;
     ctx.textAlign = "center";
 
-    var initials = name ? name.split(' ').map(s => s[0].toUpperCase()).join('') : '';
+    var initials = name ? name.split(' ').filter(x => x).map(s => s[0].toUpperCase()).join('') : '';
 
     //generating color if not provided
     color = color || generateRandomColor();
