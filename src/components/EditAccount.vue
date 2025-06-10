@@ -1578,6 +1578,7 @@ import totpGenerator from "totp-generator";
 import JsBarcode from 'jsbarcode'
 import QrcodeVue from 'qrcode.vue'
 import { truncateString } from '../utils/textFormat'
+import { detectBarcodeSymbology } from '../utils/barcode'
 
 function initialState() {
   return {
@@ -1759,16 +1760,7 @@ export default {
         return 'QR';
       }
 
-      let barcodeFormat = 'CODE128'; // default format
-
-      if (/^\d{13}$/.test(this.account.card_number)) {
-        barcodeFormat = 'EAN13';
-      }
-      else if (/^\d{12}$/.test(this.account.card_number)) {
-        barcodeFormat = 'UPC';
-      }
-
-      return barcodeFormat;
+      return detectBarcodeSymbology(this.account.card_number);
     },
   },
   methods: {
