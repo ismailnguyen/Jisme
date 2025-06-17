@@ -19,6 +19,13 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const accounts = ref([]);
     const _filteredAccounts = ref([]);
 
+    // Add these new refs to store filter state
+    const currentSearchQuery = ref('');  
+    const currentTags = ref([]);
+    const currentTypes = ref([]);
+    const currentFilters = ref([]);
+    const shouldSort = ref(false);
+
     const selectedTags = ref([]);
     const selectedTypes = ref([]);
     const selectedFilters = ref([]);
@@ -28,43 +35,48 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     // find all accounts with attributes isPinned to true
     const favoriteAccounts = computed(() => accounts.value.filter(account => account.isPinned));
 
-    const getAccountsFilteredByQuery = computed(() => {
-        return (searchQuery, tags, types, filters, sort = false) => {
-
-            if (!searchQuery && !tags && !types && !filters) {
-                _filteredAccounts.value = accounts.value;
-                return accounts.value;
-            }
-
-            const filterService = new FilterService(toRaw(accounts.value));
-
-            // Apply filters only if any value is provided for any field
-            if (filters && filters.map(f => f.value).filter(v => v).length > 0){
-                filterService.applyFilters(filters);
-            }
-
-            if (tags) {
-                filterService.filterByTags(tags);
-            }
-
-            if (types) {
-                filterService.filterByTypes(types);
-            }
-
-            if (searchQuery) {
-                filterService.filterByQuery(searchQuery);
-            }
-
-            if (sort) {
-                filterService.sortByName();
-            }
-
-            // Store the filtered accounts to be used in other methods (like getUniqueTags)
-            _filteredAccounts.value = filterService.getAccounts();
-
-            return _filteredAccounts.value;
+    // Replace getAccountsFilteredByQuery with these:
+    const filteredAccounts = computed(() => {
+        if (!currentSearchQuery.value && !currentTags.value.length && 
+            !currentTypes.value.length && !currentFilters.value.length) {
+            _filteredAccounts.value = accounts.value;
+            return accounts.value;
         }
-    })
+
+        const filterService = new FilterService(toRaw(accounts.value));
+
+        if (currentFilters.value.length > 0) {
+            filterService.applyFilters(currentFilters.value);
+        }
+
+        if (currentTags.value.length > 0) {
+            filterService.filterByTags(currentTags.value);
+        }
+
+        if (currentTypes.value.length > 0) {
+            filterService.filterByTypes(currentTypes.value); 
+        }
+
+        if (currentSearchQuery.value) {
+            filterService.filterByQuery(currentSearchQuery.value);
+        }
+
+        if (shouldSort.value) {
+            filterService.sortByName();
+        }
+
+        _filteredAccounts.value = filterService.getAccounts();
+        return _filteredAccounts.value;
+    });
+
+    // Add a function to update filter parameters
+    function updateFilters(searchQuery, tags, types, filters, sort = false) {
+        currentSearchQuery.value = searchQuery;
+        currentTags.value = tags || [];
+        currentTypes.value = types || [];
+        currentFilters.value = filters || [];
+        shouldSort.value = sort;
+    }
 
     const getUniqueTags = () => {
         let uniqueTags = [];
@@ -270,7 +282,9 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
         applyFilters,
 
-        getAccountsFilteredByQuery,
+        filteredAccounts,
+        updateFilters,
+
         getUniqueTags,
         getMostUsedTags,
 

@@ -488,15 +488,18 @@ export default {
     },
 
     updateFilteredAccounts: function (applyFilters = true) {
-      this.filteredAccounts = applyFilters
-        ? this.getAccountsFilteredByQuery(
-            this.searchQuery,
-            this.selectedTags,
-            this.selectedTypes,
-            this.searchFilters,
-            true
-          )
-        : [];
+      if (applyFilters) {
+        this.accountsStore.updateFilters(
+          this.searchQuery,
+          this.selectedTags,
+          this.selectedTypes, 
+          this.searchFilters,
+          true
+        );
+        this.filteredAccounts = this.accountsStore.filteredAccounts;
+      } else {
+        this.filteredAccounts = [];
+      }
     },
 
     fetchLatestAccounts: async function () {
