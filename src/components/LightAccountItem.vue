@@ -1,11 +1,11 @@
 <template>
-    <div class="card-wrapper col-12 col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
+    <div class="card-wrapper col-6 col-xs-6 col-sm-4 col-md-4 col-lg-4 col-xl-3">
         <div class="card clickable" :style="'background-image: url('+account.icon+');'" :id="account._id" >
             <div class="card-body" @click.prevent="onCardClick()">
                 <div class="row">
                     <div class="col-8 align-self-center">
                         <h2 class=" card-title">
-                            {{ account.label }}
+                            &nbsp;
                         </h2>
                     </div>
                 </div>

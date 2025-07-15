@@ -58,6 +58,7 @@
         <input
           class="form-control search-input"
           type="search"
+          name="search"
           v-model="searchQuery"
           placeholder="Search"
           :disabled="isLoading"
@@ -178,14 +179,14 @@
 
     <NoAccounts v-if="!hasAccounts" />
 
+    <FavoriteAccountList
+      v-if="hasAccounts && !isSearching"
+      :isLoading="isLoading"  />
+
     <AccountTypesList
       v-if="hasAccounts && !isSearching"
       :isLoading="isLoading"
     />
-  
-    <FavoriteAccountList
-      v-if="hasAccounts && !isSearching"
-      :isLoading="isLoading"  />
 
     <MostUsedTags
       v-if="hasAccounts && !isSearching"
@@ -538,12 +539,16 @@ export default {
 
 @media (prefers-color-scheme: light) {
   .search-input-container {
-    background-color: #e0e0e4;
+    background-color: #FFFFFF;
   }
 
   .search-input-container.search-input-container--large {
     box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
   }
+}
+
+.search-input-container .btn-group {
+  background: none;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -586,7 +591,7 @@ export default {
   font-weight: 100;
   margin-right: .5rem;
   height: 2rem;
-  background-color: var(--btn-color-background);
+  background-color: #FFFFFF;
   backdrop-filter: blur(18px);
 }
 

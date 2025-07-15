@@ -17,12 +17,12 @@
                 <span class="category-title float-end">{{ favoriteAccounts.length }} out of {{ accounts.length }}</span>
             </div>
         </div>
-        <div class="row stacked-cards" v-if="isLoading">
+        <div class="row" v-if="isLoading">
             <LoadingAccountItem
                 v-for="index in 3"
                 v-bind:key="index" />
         </div>
-        <div class="row stacked-cards" v-if="favoriteAccounts.length">
+        <div class="row " v-if="favoriteAccounts.length">
             <LightAccountItem
                 v-for="(account, index) in favoriteAccounts"
                 v-bind:key="index"
