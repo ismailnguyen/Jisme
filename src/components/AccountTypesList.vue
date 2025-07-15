@@ -99,7 +99,7 @@
         props: {
             isLoading: {
                 type: Boolean,
-                default: true
+                default: false
             }
         },
         methods: {
