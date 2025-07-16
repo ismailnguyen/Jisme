@@ -34,7 +34,10 @@ export default {
     await this.loadCache();
   },
   methods: {
-    ...mapActions(useAccountsStore, ['loadCache', 'getUniqueTags']),
+    ...mapActions(useAccountsStore, [
+      'loadCache', 
+      'getUniqueTags'
+    ]),
 
     selectTag: function (tag) {
       const tags = this.updateTags(tag);

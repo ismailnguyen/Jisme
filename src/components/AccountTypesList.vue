@@ -1,94 +1,27 @@
 <template>
-    <div class="main-container container-fluid">
-        <div class="row">
-            <div class="mb-3 col-12 col-xs-12 col-sm-12 placeholder-glow" v-if="isLoading">
-                <span class="placeholder col-2 font-size-16 me-3 mb-0"></span><br>
-            </div>
-            <div class="mb-3 col-12 col-xs-12 col-sm-12" v-else>
-                <h5 class="font-size-16 font-weight-light me-3 mb-0">Account types</h5>
-            </div>
-        </div>
-
-        <div class="row stacked-cards stacked-cards-small" v-if="isLoading">
-            <div class="card-wrapper col-sm-4 mb-3"
-                v-for="index in 5"
+    <div class="account-types-list-container container-fluid">
+        <div class="account-types-list" v-if="isLoading">
+            <div v-for="index in 5"
                 v-bind:key="index">
-                <div class="card card-secondary clickable">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fa fa-loading" aria-hidden="true"></i>
-                            <span class="placeholder col-4 me-3 mb-0"></span>
-                        </h5>
+                <div class="tag-circle">
+                    <div class="tag-icon">
+                        <i class="fa fa-loading" aria-hidden="true"></i>
                     </div>
-                    <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end">
-                            ...
-                        </a>
-                    </div>
+                    <div class="tag-label placeholder col-4 me-3 mb-0"></div>
                 </div>
             </div>
         </div>
 
-        <div class="row stacked-cards stacked-cards-small" v-else>
-            <div class="card-wrapper col-sm-4 mb-3">
-                <div class="card card-secondary clickable" @click.prevent="openAccountType('account')">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fa fa-user-secret" aria-hidden="true"></i>
-                            Credentials
-                        </h5>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end">
-                            VIEW
-                        </a>
+        <div class="account-types-list" v-else>
+            <div v-for="type in types"
+                    v-bind:key="type.key"
+                    @click.prevent="openAccountType(type.key)">
+                <div class="account-type-card card card-secondary">
+                    <div class="account-type-icon">
+                        <i :class="type.icon" aria-hidden="true"></i>
                     </div>
                 </div>
-            </div>
-            <div class="card-wrapper col-sm-4 mb-3">
-                <div class="card card-secondary clickable" @click.prevent="openAccountType('card')">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fa fa-credit-card" aria-hidden="true"></i>
-                            Cards
-                        </h5>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end">
-                            VIEW
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="card-wrapper col-sm-4 mb-3">
-                <div class="card card-secondary clickable" @click.prevent="openAccountType('bank')">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fa fa-building-columns" aria-hidden="true"></i>
-                            Banks
-                        </h5>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end">
-                            VIEW
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="card-wrapper col-sm-4 mb-3">
-                <div class="card card-secondary clickable" @click.prevent="openAccountType('document')">
-                    <div class="card-body">
-                        <h5 class="card-title">
-                            <i class="fa fa-id-card" aria-hidden="true"></i>
-                            Documents
-                        </h5>
-                    </div>
-                    <div class="card-footer">
-                        <a class="btn btn-outline-primary float-end">
-                            VIEW
-                        </a>
-                    </div>
-                </div>
+                <div class="account-type-label">{{ type.label }}</div>
             </div>
         </div>
     </div>
@@ -98,14 +31,95 @@
     export default {
         props: {
             isLoading: {
-                type: Boolean,
-                default: false
+            type: Boolean,
+            default: false
             }
+        },
+        data() {
+            return {
+                types: [
+                        {
+                        key: 'account',
+                        label: 'Credentials',
+                        icon: 'fa fa-user-secret'
+                    },
+                    {
+                        key: 'card',
+                        label: 'Cards',
+                        icon: 'fa fa-credit-card'
+                    },
+                    {
+                        key: 'bank',
+                        label: 'Banks',
+                        icon: 'fa fa-building-columns'
+                    },
+                    {
+                        key: 'document',
+                        label: 'Documents',
+                        icon: 'fa fa-id-card'
+                    }
+                ]
+            };
         },
         methods: {
             openAccountType(type) {
-                this.$router.push({name: 'Home', query: { search: this.$route.query.search, tags: this.$route.query.tags, type: type }});
+                this.$router.push({
+                    name: 'Home',
+                    query: {
+                        search: this.$route.query.search,
+                        tags: this.$route.query.tags,
+                        type: type
+                    }
+                });
             }
-        } 
-    }
+        }
+    };
 </script>
+
+<style scoped>
+.account-types-list-container {
+    padding-top: 9rem
+}
+@media (min-width: 767px) {
+    .account-types-list-container {
+        padding-top: 1rem
+    }
+}
+.account-types-list {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding-bottom: 1rem;
+}
+.account-type-card {
+    display: flex;
+    background: #fff;
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    padding: 1.5rem 1.2rem 1rem 1.2rem;
+    min-width: 7rem;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: box-shadow 0.2s;
+}
+.account-type-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+}
+.account-type-icon {
+  position: relative;
+  margin-bottom: 0.5rem;
+  justify-content: center;
+  align-items: center;
+}
+.account-type-label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #222;
+  text-align: center;
+  margin-top: 0.2rem;
+  white-space: pre-line;
+}
+</style>
