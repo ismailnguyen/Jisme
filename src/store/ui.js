@@ -11,6 +11,8 @@ const store = defineStore('ui', () => {
     const currentEditingAccount = ref(new Account());
     const openedSidebarList = ref([]);
 
+    const isSummaryPaneExpanded = ref(false);
+
     const SIDEBAR = {
         MENU: 'menu',
         ADD_ACCOUNT: 'add-account',
@@ -135,6 +137,10 @@ const store = defineStore('ui', () => {
         }
     }
 
+    const resizeSummaryPane = () => {
+        isSummaryPaneExpanded.value = !isSummaryPaneExpanded.value;
+    }
+
     return {
         currentAddingAccount,
         setCurrentAddingAccount,
@@ -152,7 +158,10 @@ const store = defineStore('ui', () => {
 
         isSidebarOpen,
 
-        initBottomSheet
+        initBottomSheet,
+
+        isSummaryPaneExpanded,
+        resizeSummaryPane
     };
 })
 

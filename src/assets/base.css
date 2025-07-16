@@ -211,6 +211,22 @@ body {
   border-radius: 0;
   width: 100%;
   background: none;
+  top: 0;
+  left: 0;
+}
+
+/* On mobile show progress bar on top of whole screen */
+@media (max-width: 767px) {
+  .progress {
+    position: fixed;
+  }
+}
+
+/* On desktop show progress bar on top of accounts panel */
+@media (min-width: 767px) {
+  .progress {
+    position: absolute;
+  }
 }
 
 .progress-bar {

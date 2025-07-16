@@ -7,6 +7,8 @@ import { SessionExpiredException } from '../utils/errors'
 import AccountsService from '../services/AccountsService';
 import FilterService from '../services/FilterService';
 
+const MIN_SEARCH_QUERY_LENGTH = 3;
+
 const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const userStore = useUserStore();
     const { user } = storeToRefs(userStore);
@@ -20,45 +22,53 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const _filteredAccounts = ref([]);
 
     // Add these new refs to store filter state
-    const currentSearchQuery = ref('');  
-    const currentTags = ref([]);
-    const currentTypes = ref([]);
-    const currentFilters = ref([]);
+    const searchQuery = ref('');  
+
     const shouldSort = ref(false);
 
     const selectedTags = ref([]);
     const selectedTypes = ref([]);
     const selectedFilters = ref([]);
+    const searchFilters = ref([]);
 
     let accountsService = new AccountsService(user.value);
+
+    const isSearching = computed(() => {
+        return !!(
+            (searchQuery.value && searchQuery.value.length >= MIN_SEARCH_QUERY_LENGTH)
+            || selectedTags.value.length > 0
+            || selectedTypes.value.length > 0
+            || selectedFilters.value.length > 0
+            || searchFilters.value.length > 0)
+    });
 
     // find all accounts with attributes isPinned to true
     const favoriteAccounts = computed(() => accounts.value.filter(account => account.isPinned));
 
     // Replace getAccountsFilteredByQuery with these:
     const filteredAccounts = computed(() => {
-        if (!currentSearchQuery.value && !currentTags.value.length && 
-            !currentTypes.value.length && !currentFilters.value.length) {
+        if (!searchQuery.value && !selectedTags.value.length && 
+            !selectedTypes.value.length && !selectedFilters.value.length) {
             _filteredAccounts.value = accounts.value;
             return accounts.value;
         }
 
         const filterService = new FilterService(toRaw(accounts.value));
 
-        if (currentFilters.value.length > 0) {
-            filterService.applyFilters(currentFilters.value);
+        if (selectedFilters.value.length > 0) {
+            filterService.applyFilters(selectedFilters.value);
         }
 
-        if (currentTags.value.length > 0) {
-            filterService.filterByTags(currentTags.value);
+        if (selectedTags.value.length > 0) {
+            filterService.filterByTags(selectedTags.value);
         }
 
-        if (currentTypes.value.length > 0) {
-            filterService.filterByTypes(currentTypes.value); 
+        if (selectedTypes.value.length > 0) {
+            filterService.filterByTypes(selectedTypes.value); 
         }
 
-        if (currentSearchQuery.value) {
-            filterService.filterByQuery(currentSearchQuery.value);
+        if (searchQuery.value) {
+            filterService.filterByQuery(searchQuery.value);
         }
 
         if (shouldSort.value) {
@@ -68,15 +78,6 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         _filteredAccounts.value = filterService.getAccounts();
         return _filteredAccounts.value;
     });
-
-    // Add a function to update filter parameters
-    function updateFilters(searchQuery, tags, types, filters, sort = false) {
-        currentSearchQuery.value = searchQuery;
-        currentTags.value = tags || [];
-        currentTypes.value = types || [];
-        currentFilters.value = filters || [];
-        shouldSort.value = sort;
-    }
 
     const getUniqueTags = () => {
         let uniqueTags = [];
@@ -262,11 +263,6 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
     }
 
-    function applyFilters(searchQuery, tags, filters, sort) {
-        selectedTags.value = tags;
-        selectedFilters.value = filters;
-    }
-
     return {
         user,
         recentAccounts,
@@ -276,14 +272,14 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         totalAccounts,
         areAccountsLoaded,
 
+        searchQuery,
         selectedTypes,
         selectedTags,
         selectedFilters,
 
-        applyFilters,
+        isSearching,
 
         filteredAccounts,
-        updateFilters,
 
         getUniqueTags,
         getMostUsedTags,
