@@ -117,7 +117,7 @@
 .account-type-label {
   font-size: 0.95rem;
   font-weight: 500;
-  color: #222;
+  color: var(--color-text);
   text-align: center;
   margin-top: 0.2rem;
   white-space: pre-line;

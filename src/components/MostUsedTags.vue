@@ -109,7 +109,6 @@
     }
 }
 .tag-circle {
-  background: #fff;
   border-radius: 50%;
   width: 4rem;
   height: 4rem;
@@ -119,11 +118,13 @@
   justify-content: center;
   margin-bottom: 0.5rem;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  background: var(--color-background-mute);
   transition: box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 .tag-circle:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    background: var(--color-background);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
 }
 .tag-icon {
   display: flex;
@@ -139,7 +140,7 @@
 .tag-label {
   font-size: 0.95rem;
   font-weight: 500;
-  color: #222;
+  color: var(--color-text);
   text-align: center;
   margin-top: 0.2rem;
   white-space: pre-line;

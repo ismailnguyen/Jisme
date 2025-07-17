@@ -116,7 +116,6 @@ export default {
       return this.hasAccounts // Show summary pane only if there are accounts
             && (!this.isMobile // On desktop always show summary pane
                 || (this.isMobile && !this.isSearching)); // On mobile show summary pane only when not searching
-            
     }
   },
   methods: {
@@ -146,7 +145,24 @@ export default {
 }
 .summary-header {
   padding: 1rem 1rem 0;
-  background: #f8f9fa;
+}
+@media (prefers-color-scheme: light) {
+  .summary-header,
+  .summary-pane {
+    background: #f8f9fa;
+  }
+  .summary-pane {
+    border-right: 1px solid #eee;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .summary-header,
+  .summary-pane {
+    background: var(--color-background-soft);
+  }
+  .summary-pane {
+    border-right: 1px solid transparent;
+  }
 }
 @media (max-width: 767px) {
   .summary-header {
@@ -158,14 +174,11 @@ export default {
 @media (min-width: 767px) {
   .summary-header {
     position: relative;
-    background: #f8f9fa;
   }
 }
 .summary-pane {
   width: 350px;
   min-width: 300px;
-  background: #f8f9fa;
-  border-right: 1px solid #eee;
   transition: all 0.3s;
   overflow-y: auto;
 }
