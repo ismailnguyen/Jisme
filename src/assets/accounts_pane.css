@@ -1,0 +1,27 @@
+/* Main Content */
+#page-content-wrapper {
+  width: 100%;
+  position: absolute;
+}
+
+/* On standalone mode on mobile phone, the header is hidden by notch, so lower down content */
+@media screen and (display-mode: standalone) {
+  #page-content-wrapper {
+    padding-top: 2rem;
+  }
+}
+
+/* Add animation only on large devices */
+@media (min-width: 576px) {
+  #page-content-wrapper {
+    transition: all 0.5s;
+  }
+}
+
+/* For small devices, when the searchbar moves on bottom,
+give some space in the page so that the searbar doesn't overlap content */
+@media (max-width: 767.98px) {
+  #page-content-wrapper .main-container:last-of-type {
+    padding-bottom: 6rem;
+  }
+}

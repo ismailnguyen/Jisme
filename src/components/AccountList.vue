@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import "../assets/accounts_pane.css";
+
 import { SessionExpiredException } from '../utils/errors'
 import {
   mapState,
