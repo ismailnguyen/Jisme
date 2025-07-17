@@ -1,5 +1,5 @@
 <template>
-    <div class="main-container container-fluid">
+    <div class="recent-accounts-list container-fluid">
         <div class="row">
             <div class="mb-3 col-12 col-xs-12 col-sm-6 placeholder-glow" v-show="isLoading">
                 <span class="placeholder col-4 me-3 mb-0"></span><br>
@@ -88,3 +88,17 @@
         } 
     }
 </script>
+
+<style scoped>
+    @media (max-width: 767.98px) {
+        .recent-accounts-list {
+            margin-top: 1.5rem;
+        }
+    }
+
+    @media (min-width: 767.98px) {
+        .recent-accounts-list {
+            margin-top: 3.5rem;
+        }
+    }
+</style>

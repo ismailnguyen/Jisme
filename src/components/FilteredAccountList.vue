@@ -1,5 +1,5 @@
 <template>
-    <div class="filtered-account-list main-container container-fluid">
+    <div class="filtered-account-list container-fluid">
         <div class="row">
             <div class="mb-3 col-6 col-xs-6 col-sm-6 placeholder-glow" v-show="isLoading">
                 <span class="placeholder col-2 me-3 mb-0"></span><br>
@@ -81,11 +81,3 @@
         } 
     }
 </script>
-
-<style scoped>
-@media (max-width: 767px) {
-    .filtered-account-list {
-        padding-top: 10rem;
-    }
-}
-</style>

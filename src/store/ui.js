@@ -12,6 +12,7 @@ const store = defineStore('ui', () => {
     const openedSidebarList = ref([]);
 
     const isSummaryPaneExpanded = ref(false);
+    const isAdvancedSearchMode = ref(false);
 
     const SIDEBAR = {
         MENU: 'menu',
@@ -137,8 +138,54 @@ const store = defineStore('ui', () => {
         }
     }
 
-    const resizeSummaryPane = () => {
-        isSummaryPaneExpanded.value = !isSummaryPaneExpanded.value;
+    const reduceSummaryPane = () => {
+        isSummaryPaneExpanded.value = false;
+    }
+
+    const expandSummaryPane = () => {
+        isSummaryPaneExpanded.value = true;
+    }
+
+    const toggleAdvancedSearchMode = (toggled) => {
+        isAdvancedSearchMode.value = toggled;
+        if (isAdvancedSearchMode.value) {
+            expandSummaryPane();
+        } else {
+            reduceSummaryPane();
+        }
+    }
+
+    const isMobile = () => {
+        return window.innerWidth <= 768; // Adjust the width as per your design breakpoints
+    }
+
+    const isSummaryShortcutsEnabled = () => {
+        // Show summary shortcuts only if there are accounts
+        if (accountsStore.totalAccounts === false) {
+            return false;
+        }
+
+        // On desktop, always show summary shortcuts
+        if (!isMobile()) {
+            return true;
+        }
+
+        // On mobile, show summary shortcuts only when:
+        // - not searching
+        // - and not in advanced search mode
+        if (isMobile()) {
+            // Is user is searching
+            if (accountsStore.isSearching) {
+                return false;
+            }
+
+            // Or advanced search mode panel is open
+            if (isAdvancedSearchMode.value) {
+                return true;//false;
+            }
+        }
+
+        return true;
     }
 
     return {
@@ -161,7 +208,11 @@ const store = defineStore('ui', () => {
         initBottomSheet,
 
         isSummaryPaneExpanded,
-        resizeSummaryPane
+
+        isAdvancedSearchMode,
+        toggleAdvancedSearchMode,
+
+        isSummaryShortcutsEnabled
     };
 })
 

@@ -14,14 +14,14 @@
         </div>
 
         <AccountTypesList
-            v-if="shouldDisplaySummaryPane"
+            v-if="isSummaryShortcutsEnabled()"
             :isLoading="!areAccountsLoaded"
         />
 
-        <hr v-if="shouldDisplaySummaryPane">
+        <hr v-if="isSummaryShortcutsEnabled()">
 
         <MostUsedTags
-            v-if="shouldDisplaySummaryPane"
+            v-if="isSummaryShortcutsEnabled()"
             :isLoading="!areAccountsLoaded"
         />
     </aside>
@@ -50,33 +50,21 @@ export default {
     MostUsedTags,
     SearchBar
   },
-  data() {
-    return {
-      isMobile: window.matchMedia('(max-width: 767px)').matches
-    };
-  },
   computed: {
     ...mapState(useUserStore, [
       'hasAccounts'
     ]),
     ...mapState(useUiStore, [
-      'isSummaryPaneExpanded'
+      'isSummaryPaneExpanded',
+      'isAdvancedSearchMode',
+      'isSummaryShortcutsEnabled'
     ]),
     ...mapState(useAccountsStore, [
       'areAccountsLoaded',
       'isSearching'
     ]),
-
-    shouldDisplaySummaryPane() {
-      return this.hasAccounts // Show summary pane only if there are accounts
-            && (!this.isMobile // On desktop always show summary pane
-                || (this.isMobile && !this.isSearching)); // On mobile show summary pane only when not searching
-    }
   },
   methods: {
-    ...mapActions(useUiStore, [
-    ]),
-
     onMenuOpened: function () {
       this.$emit('menuOpened');
     }

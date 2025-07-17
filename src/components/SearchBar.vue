@@ -1,5 +1,5 @@
 <template>
-  <header class="search-input-container justify-content-center" :class="searchMode == 'advanced' ? 'search-input-container--large' : ''">
+  <header class="search-input-container justify-content-center">
     <div class="btn-group" role="group">
       <label
         class="btn"
@@ -73,10 +73,10 @@
         </div>
 
         <div
-          v-for="(filter, filterIndex) in searchFilters"
+          v-for="(filter, filterIndex) in selectedFilters"
           :key="filterIndex"
           class="filter input-group">
-          <select class="custom-select form-control" v-model="filter.field" @change="onFiltersChange">
+          <select name="filterFields" class="custom-select form-control" v-model="filter.field" @change="onFiltersChange">
             <option value="_id">ID</option>
             <option selected value="label">Label</option>
             <option value="tags">Tags</option>
@@ -110,8 +110,8 @@
             <option value="equals">Equals</option>
             <option value="excludes">Excludes</option>
           </select>
-          <input placeholder="Field value (i.e; Simpson)" type="text" class="form-control" v-model="filter.value" @input="$emit('filtersChange')">
-          <button class="btn btn-light" type="button" @click="removeSearchFilter(filter)">
+          <input :name="'filterValue'+filterIndex" placeholder="Field value (i.e; Simpson)" type="text" class="form-control" v-model="filter.value" @change="onFiltersChange">
+          <button class="btn btn-light" type="button" @click="removeSearchFilter(filter)" v-show="selectedFilters.length > 1">
             <i class="fa fa-close"></i>
           </button>
         </div>
@@ -121,14 +121,6 @@
           Add filter
         </button>
       </div>
-
-      <label
-        v-show="searchMode == 'text'"
-        class="btn"
-        @click="changeSearchMode('advanced')"
-        for="navbar_close-search">
-        <i class="fa fa-filter"></i>
-      </label>
      
       <label
         v-show="searchMode == 'text' && (selectedTags.length || selectedTypes.length)"
@@ -145,11 +137,21 @@
         for="navbar_show-search">
         <i class="fa fa-search"></i>
       </label>
+
+       <label
+        v-show="searchMode == 'text' || searchMode == 'tags'"
+        class="btn"
+        @click="changeSearchMode('advanced')"
+        for="navbar_close-search">
+        <i class="fa fa-filter"></i>
+      </label>
     </div>
   </header>
 </template>
 
 <script>
+import "../assets/search_bar.css";
+
 import {
   mapState,
   mapWritableState,
@@ -168,9 +170,8 @@ export default {
   data() {
     return {
       localSearchQuery: this.$route.query.search || '', // Default search query is looked up from query string
-      searchFilters: [],
       searchMode: 'text',
-      filteredAccounts: [],
+      filteredAccounts: []
     };
   },
   async created() {
@@ -182,14 +183,17 @@ export default {
             ? newTags.split(",").map((x) => x.trim())
             : [];
 
-        if (this.selectedTags.length) {
-          this.searchMode = 'tags';
+        if (this.selectedTags.length && this.selectedTags.length < 3) {
+          this.changeSearchMode('tags');
+        }
+        else if (this.selectedTags.length && this.selectedTags.length > 2) {
+          this.changeSearchMode('advanced');
         }
 
         this.updateFilteredAccounts(this.isSearching);
       },
       {
-        immediate: true,
+        immediate: true
       }
     );
 
@@ -202,7 +206,7 @@ export default {
             : [];
 
         if (this.selectedTypes.length) {
-          this.searchMode = 'tags';
+          this.changeSearchMode('tags');
         }
 
         this.updateFilteredAccounts(this.isSearching);
@@ -231,22 +235,21 @@ export default {
      },
   },
   async mounted() {
-    const urlQueryTags = this.$route.query.tags
+    this.searchQuery = this.localSearchQuery;
+    this.selectedTags = this.$route.query.tags
       ? this.$route.query.tags.split(',').map((x) => x.trim())
       : [];
-    const urlQueryTypes = this.$route.query.type
+    this.selectedTypes = this.$route.query.type
       ? this.$route.query.type.split(',').map((x) => x.trim())
+      : [];;
+    this.selectedFilters = this.$route.query.filters
+      ? JSON.parse(this.$route.query.filters)
       : [];
-
-    this.searchQuery = this.localSearchQuery;
-    this.selectedTags = urlQueryTags;
-    this.selectedTypes = urlQueryTypes;
-    //searchFilters
 
     this.updateFilteredAccounts(true);
 
     if (this.$route.query.filters) {
-      this.searchMode = 'advanced';
+      this.changeSearchMode('advanced');
     }
   },
   computed: {
@@ -255,6 +258,7 @@ export default {
         'searchQuery',
         'selectedTags',
         'selectedTypes',
+        'selectedFilters',
         'isSearching'
     ]),
     ...mapState(useUserStore, [
@@ -273,7 +277,9 @@ export default {
   },
   methods: {
     ...mapActions(useAlertStore, ['openAlert']),
-    ...mapActions(useUiStore, ['resizeSummaryPane']),
+    ...mapActions(useUiStore, [
+        'toggleAdvancedSearchMode'
+    ]),
 
     onMenuOpened: function () {
       this.$emit('menuOpened');
@@ -302,17 +308,32 @@ export default {
     },
 
     changeSearchMode: function (mode) {
-        this.resizeSummaryPane();
-      
+      let previousMode = this.searchMode;
       this.searchMode = mode;
 
-      if (mode == 'text' || mode == 'tags') {
-        this.searchFilters = [];
+      if (mode === 'text' || mode === 'tags') {
+        this.toggleAdvancedSearchMode(false);
+
+
+        // When coming from the advanced search mode, reset the search query
+        if (previousMode == 'advanced') {
+            // if selected filters contained just one filter, it was probably a search query
+            if (this.selectedFilters.length === 1) {
+              this.localSearchQuery = this.selectedFilters[0].value;
+            } else {
+            // Otherwise if there were many filters, reset the search query,
+            // because unable to know which field to use for query
+              this.localSearchQuery = '';
+            }
+        }
+
+        // Reset the selected filters
+        this.selectedFilters = [];
       
         this.$router.push({
           name: 'Home',
           query: {
-            search: this.searchQuery,
+            search: this.localSearchQuery,
             tags: this.$route.query.tags,
             type: this.$route.query.type,
             filters: [],
@@ -320,18 +341,20 @@ export default {
         });
       }
 
-      if (mode == 'advanced') {
-        this.searchQuery = '';
+      if (mode === 'advanced') {
+        this.toggleAdvancedSearchMode(true);
 
-        // If no filters are set, add a default one
-        if (!this.searchFilters.length) {
-          this.addSearchFilter();
+        // If no filters are set, add a default one with the current search query in Label field
+        if (!this.selectedFilters.length) {
+          this.addSearchFilter(this.localSearchQuery);
         }
+
+        this.localSearchQuery = '';
 
         this.$router.push({
           name: 'Home',
           query: {
-            search: this.searchQuery,
+            search: this.localSearchQuery,
             tags: this.$route.query.tags,
             type: this.$route.query.type,
             filters: [],
@@ -340,16 +363,16 @@ export default {
       }
     },
     
-    addSearchFilter: function () {
-      this.searchFilters.push({
+    addSearchFilter: function (defaultQuery = '') {
+      this.selectedFilters.push({
         field: 'label',
         comparison: 'includes',
-        value: '',
+        value: defaultQuery,
       });
     },
 
     removeSearchFilter: function (filter) {
-      this.searchFilters.splice(this.searchFilters.indexOf(filter), 1);
+      this.selectedFilters.splice(this.selectedFilters.indexOf(filter), 1);
 
       this.onFiltersChange();
     },
@@ -395,17 +418,17 @@ export default {
         this.updateFilteredAccounts(this.isSearching);
     },
 
-    onFiltersChange: function () {
-      const filledFilters = this.searchFilters.filter(f => f.value);
+    onFiltersChange: function (event) {
+      const filledFilters = this.selectedFilters.filter(f => f.value);
 
       if (filledFilters && filledFilters.length) {
         //Reset the search query to use the advanced search instead
-        this.searchQuery = '';
+        this.localSearchQuery = '';
 
         this.$router.push({
           name: 'Home',
           query: {
-            search: this.searchQuery,
+            search: this.localSearchQuery,
             tags: this.$route.query.tags,
             type: this.$route.query.type,
             filters: JSON.stringify(filledFilters),
@@ -430,172 +453,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.search-input-container {
-  color: var(--color-text);
-  margin: 20px auto 20px auto;
-  padding: .2rem 0rem .2rem .5rem;
-  border-radius: 2rem;
-  transition: all 0.5s;
-}
-
-@media (prefers-color-scheme: light) {
-  .search-input-container {
-    background-color: #FFFFFF;
-  }
-
-  .search-input-container.search-input-container--large {
-    box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
-  }
-}
-
-.search-input-container .btn-group {
-  background: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  .search-input-container  {
-    background-color: #453f4b;
-  }
-}
-
-.search-input-container label.btn.active:hover {
-  animation-name: jiggle;
-  animation-iteration-count: infinite;
-  animation-delay: -0.75;
-  animation-duration: .25s
-}
-
-.search-input-container .btn-group {
-  width: 100%;
-}
-
-.search-input {
-  border-radius: var(--btn-border-radius);
-  color: #000;
-  line-height: 2.5;
-  font-weight: 100;
-  margin-right: .5rem;
-  height: 2rem;
-  background-color: #FFFFFF;
-  backdrop-filter: blur(18px);
-}
-
-@media (prefers-color-scheme: dark) {
-  .search-input {
-    box-shadow: none;
-    background-color: #57535e;
-    color: rgb(162, 162, 162);
-    border: 1px solid transparent;
-  }
-}
-
-.search-input::placeholder {
-  color: #818182;
-}
-
-@media (prefers-color-scheme: dark) {
-  .search-input::placeholder {
-    color: rgb(162, 162, 162);
-  }
-}
-
-@media (prefers-color-scheme: light) {
-  .search-input:hover,
-  .search-input:focus-within,
-  .search-input:active,
-  .search-input:focus {
-    border: none !important;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .search-input:hover,
-  .search-input:focus-within,
-  .search-input:active,
-  .search-input:focus {
-    border-color: gray;
-    color: rgb(162, 162, 162);
-    background: #464646;
-    transform: none;
-  }
-}
-
-.search-filters-container {
-  padding: 0 0.5rem;
-  align-items: center;
-  transition: all 0.5s;
-  display: flex;
-  flex-direction: column;
-  height: fit-content;
-}
-
-.search-filters-container .btn-filter,
-.search-filters-container .filter {
-  padding: 0.5rem;
-  border-radius: 1rem;
-  align-items: center;
-  width: 100%;
-  font-weight: 400;
-}
-
-@media (prefers-color-scheme: light) {
-  .search-filters-container .btn-filter,
-  .search-filters-container .filter {
-    color: var(--color-text-mute);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .search-filters-container .btn-filter,
-  .search-filters-container .filter {
-    color: var(--color-text-mute);
-  }
-}
-
-.search-filters-container .filter.input-group {
-  display: flex;
-  margin-bottom: .5rem;
-}
-
-.search-filters-container .btn-filter {
-  margin-top: .5rem;
-}
-
-.search-filters-container .filter .btn {
-  border: none;
-}
-
-.search-filters-container .btn-filter:hover {
-  font-weight: 500;
-  color: #0b84fe;
-}
-
-@media (prefers-color-scheme: light) {
-  .search-filters-container .btn-filter,
-  .search-filters-container .filter {
-    background-color: #FFFFFF;
-    box-shadow: 2px 4px 12px rgb(0 0 0 / 8%);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .search-filters-container .btn-filter,
-  .search-filters-container .filter {
-    background-color: #000000;
-  }
-}
-
-@media (min-width: 767.98px) {
-  .search-filters-container .btn-filter {
-    min-width: 20rem;
-  }
-}
-
-@media (max-width: 767.98px) {
-  .search-filters-container .btn-filter {
-    min-width: 10rem;
-  }
-}
-</style>

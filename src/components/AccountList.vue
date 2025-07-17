@@ -16,7 +16,7 @@
     ></div>
   </div>
 
-  <div id="page-content-wrapper" class="container-fluid">
+  <main class="account-list-pane container-fluid" :class="{ 'summary-pane--expanded': isSummaryPaneExpanded, 'advanced-search--opened': isAdvancedSearchMode }">
     <NoAccounts v-if="!hasAccounts" />
 
     <FavoriteAccountList
@@ -33,8 +33,7 @@
       :isLoading="!areAccountsLoaded"
       v-if="hasAccounts && isSearching"
     />
-
-  </div>
+  </main>
 </template>
 
 <script>
@@ -91,7 +90,7 @@ export default {
     await this.fetchLatestAccounts();
   },
   computed: {
-    ...mapStores(useAccountsStore, useUiStore),
+    ...mapStores(useAccountsStore),
     ...mapState(useUserStore, [
       'user',
       'hasAccounts'
@@ -108,6 +107,8 @@ export default {
     ...mapState(useUiStore, [
       'isSidebarOpen',
       'SIDEBAR',
+      'isSummaryPaneExpanded',
+      'isAdvancedSearchMode',
     ])
   },
   methods: {

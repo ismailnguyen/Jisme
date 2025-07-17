@@ -13,11 +13,9 @@
         @menuOpened="onMenuOpened"
     />
 
-    <main class="account-list-pane">
-      <AccountList
-        @menuOpened="onMenuOpened"
-      />
-    </main>
+    <AccountList
+      @menuOpened="onMenuOpened"
+    />
   </div>
 </template>
 
@@ -31,7 +29,6 @@ import {
 import {
   useUserStore,
   useUiStore,
-  useAccountsStore
 } from "@/store";
 import Menu from "../components/Menu.vue";
 import AddAccountModal from "../components/AddAccount.vue";

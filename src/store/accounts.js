@@ -29,7 +29,6 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const selectedTags = ref([]);
     const selectedTypes = ref([]);
     const selectedFilters = ref([]);
-    const searchFilters = ref([]);
 
     let accountsService = new AccountsService(user.value);
 
@@ -39,7 +38,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             || selectedTags.value.length > 0
             || selectedTypes.value.length > 0
             || selectedFilters.value.length > 0
-            || searchFilters.value.length > 0)
+        )
     });
 
     // find all accounts with attributes isPinned to true

@@ -3,11 +3,11 @@
         <div class="account-types-list" v-if="isLoading">
             <div v-for="index in 5"
                 v-bind:key="index">
-                <div class="tag-circle">
-                    <div class="tag-icon">
+                <div class="account-type-card card card-secondary">
+                    <div class="account-type-icon">
                         <i class="fa fa-loading" aria-hidden="true"></i>
                     </div>
-                    <div class="tag-label placeholder col-4 me-3 mb-0"></div>
+                    <div class="account-type-label placeholder col-4 me-3 mb-0"></div>
                 </div>
             </div>
         </div>
@@ -77,9 +77,6 @@
 </script>
 
 <style scoped>
-.account-types-list-container {
-    padding-top: 9rem
-}
 @media (min-width: 767px) {
     .account-types-list-container {
         padding-top: 1rem
