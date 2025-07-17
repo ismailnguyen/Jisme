@@ -1,5 +1,6 @@
 <script setup>
     // can't be used directly on the template
+    const app_name = __APP_NAME__
     const version = __APP_VERSION__
 </script>
 
@@ -14,10 +15,10 @@
                     src="../assets/logo_medium.png"
                     height="30"
                     width="30"
-                    alt="Jisme">
+                    :alt="app_name">
                 </a>
                 <span class="mb-3 mb-md-0 text-body-secondary">
-                    &copy; {{ (new Date()).getFullYear() }} Jisme
+                    &copy; {{ (new Date()).getFullYear() }} {{ app_name }}
                 </span>
             </div>
 

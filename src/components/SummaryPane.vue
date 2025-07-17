@@ -1,7 +1,12 @@
+<script setup>
+    // can't be used directly on the template
+    const app_name = __APP_NAME__
+</script>
+
 <template>
     <aside class="summary-pane" :class="{ 'summary-pane--expanded': isSummaryPaneExpanded }">
         <div class="summary-header">
-            <h1>Jisme</h1>
+            <h1>{{ app_name }}</h1>
 
             <SearchBar
                 @menuOpened="onMenuOpened"

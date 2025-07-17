@@ -1,5 +1,6 @@
 <script setup>
     // can't be used directly on the template
+    const app_name = __APP_NAME__
     const version = __APP_VERSION__
 </script>
 
@@ -19,7 +20,7 @@
                 App name
               </div>
               <span class="fw-lighter">
-                Jisme
+                {{ app_name }}
               </span>
             </div>
           </button>
