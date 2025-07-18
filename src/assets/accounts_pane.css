@@ -1,4 +1,8 @@
-/* Add animation only on large devices */
+.account-list-pane {
+  padding-top: 1rem;
+}
+
+  /* Add animation only on large devices */
 @media (min-width: 576px) {
   .account-list-pane {
     transition: all 0.5s;
@@ -8,9 +12,6 @@
 /* For small devices, when the searchbar moves on bottom,
 give some space in the page so that the searbar doesn't overlap content */
 @media (max-width: 767.98px) {
-  .account-list-pane {
-    padding-top: 1rem;
-  }
   .account-list-pane:last-of-type {
     padding-bottom: 6rem;
   }
