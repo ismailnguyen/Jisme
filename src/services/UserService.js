@@ -95,13 +95,15 @@ class UserService {
         }
     }
 
-    async signOut () {
-        // Remove all user related data from local storage
+    async signOut (preserveCache = false) {
+        // Always remove user session/token info
         await localforage.removeItem(LOCAL_STORAGE_USER_KEY);
 
-        // Remove all user's accounts from local storage
-        await localforage.removeItem(LOCAL_STORAGE_RECENT_ACCOUNTS_KEY);
-        await localforage.removeItem(LOCAL_STORAGE_ACCOUNTS_KEY);
+        // Optionally preserve cached accounts for faster re-login (e.g., session expired)
+        if (!preserveCache) {
+            await localforage.removeItem(LOCAL_STORAGE_RECENT_ACCOUNTS_KEY);
+            await localforage.removeItem(LOCAL_STORAGE_ACCOUNTS_KEY);
+        }
     }
 
     async requestLogin ({ username }) {

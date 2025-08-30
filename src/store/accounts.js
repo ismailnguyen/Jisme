@@ -134,7 +134,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                await userStore.signOut();
+                await userStore.signOut(true); // keep local cache when session expires
             }
 
             throw error;
@@ -178,7 +178,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                await userStore.signOut();
+                await userStore.signOut(true);
             }
 
             throw error;
@@ -200,7 +200,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                await userStore.signOut();
+                await userStore.signOut(true);
             }
 
             throw error;
@@ -223,7 +223,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                await userStore.signOut();
+                await userStore.signOut(true);
             }
 
             throw error;
@@ -242,7 +242,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
-                await userStore.signOut();
+                await userStore.signOut(true);
             }
 
             throw error;

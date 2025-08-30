@@ -112,7 +112,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         }
         catch(error) {
             if (error instanceof SessionExpiredException) {
-                await signOut();
+                await signOut(true); // preserve local cache on session expiry
             }
 
             throw error;
@@ -125,7 +125,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         }
         catch(error) {
             if (error instanceof SessionExpiredException) {
-                await signOut();
+                await signOut(true); // preserve local cache on session expiry
             }
 
             throw error;
@@ -249,13 +249,13 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value.passkeys = user.value.passkeys.filter(passkey => passkey.passkey.id !== passkeyToDelete.passkey.id);
     }
 
-    async function signOut() {
-        await userService.signOut();
+    async function signOut(preserveCache = false) {
+        await userService.signOut(preserveCache);
 
         alertStore.openAlert('Logged out', 'You have been successfully logged out.', 'info');
 
-        isLoggedIn.value = false;
-        user.value = null;
+    isLoggedIn.value = false;
+    user.value = null;
 
         //location.reload();
     }
