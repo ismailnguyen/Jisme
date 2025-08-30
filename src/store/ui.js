@@ -93,13 +93,26 @@ const store = defineStore('ui', () => {
         disableBodyScroll();
     }
 
-    const updateSheetHeight = (bottomSheetElementId, height) => {
+    const updateSheetHeight = (bottomSheetElementId, height) => {   
         const sheetContent = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet .content`);
         sheetContent.style.height = `${height}vh`; //updates the height of the sheet content
 
         const bottomSheet = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet`);
         // Toggles the fullscreen class to bottomSheet if the height is equal to 100
         bottomSheet.classList.toggle("fullscreen", height === 100);
+    }
+
+    // Programmatic controls
+    const setBottomSheetHeight = (bottomSheetElementId, height) => {
+        updateSheetHeight(bottomSheetElementId, height);
+    }
+
+    const expandBottomSheet = (bottomSheetElementId) => {
+        updateSheetHeight(bottomSheetElementId, 100);
+    }
+
+    const reduceBottomSheet = (bottomSheetElementId) => {
+        updateSheetHeight(bottomSheetElementId, 50);
     }
 
     const hideBottomSheet = () => {
@@ -206,6 +219,9 @@ const store = defineStore('ui', () => {
         isSidebarOpen,
 
         initBottomSheet,
+        setBottomSheetHeight,
+        expandBottomSheet,
+        reduceBottomSheet,
 
         isSummaryPaneExpanded,
 

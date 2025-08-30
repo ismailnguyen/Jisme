@@ -1677,6 +1677,18 @@ export default {
   mounted() {
     this.initBottomSheet("edit-account-bottom-sheet");
   },
+  watch: {
+    // Watch all field expansion flags; expand sheet when a field opens
+    fieldAttrs: {
+      deep: true,
+      handler() {
+        const anyExpanded = Object.values(this.fieldAttrs).some(f => f && f.isExpanded);
+        if (anyExpanded) {
+          this.expandBottomSheet("edit-account-bottom-sheet");
+        }
+      }
+    }
+  },
   updated() {
     // Render barcode once the svg is ready (updated() is called after the DOM is updated)
     this.renderBarcode();
@@ -1764,15 +1776,17 @@ export default {
     },
   },
   methods: {
-    ...mapActions(useAccountsStore, ["updateAccount", "removeAccount"]),
+    ...mapActions(useAccountsStore, ['updateAccount', 'removeAccount']),
     ...mapActions(useUiStore, [
       'openSidebar',
       'setCurrentAddingAccount',
       'closeSidebar',
       'resetCurrentEditingAccount',
-      'initBottomSheet',
+  'initBottomSheet',
+  'expandBottomSheet',
+  'reduceBottomSheet',
     ]),
-    ...mapActions(useAlertStore, ["openAlert"]),
+    ...mapActions(useAlertStore, ['openAlert']),
 
     scrollFunction: function (e) {
       this.isSmallHeader = e.target.scrollTop > 20;
