@@ -52,7 +52,11 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             return accounts.value;
         }
 
-        const filterService = new FilterService(toRaw(accounts.value));
+        // Use a shallow copy of the reactive array to keep reactivity tracking of
+        // array contents (push/replace) while avoiding in-place mutations by FilterService.
+        // Avoid toRaw here, as it breaks deep reactivity and prevents recomputation
+        // when accounts are added/updated.
+        const filterService = new FilterService([...accounts.value]);
 
         if (selectedFilters.value.length > 0) {
             filterService.applyFilters(selectedFilters.value);
