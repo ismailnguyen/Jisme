@@ -6,7 +6,18 @@
 <template>
     <aside class="summary-pane" :class="{ 'summary-pane--expanded': isSummaryPaneExpanded }">
         <div class="summary-header">
-            <h1>{{ app_name }}</h1>
+            <h1 class="d-flex align-items-center">
+                {{ app_name }}
+                
+                <span class="badge badge-red" v-if="isOffline">
+                  <i
+                    class="fa fa-link-slash"
+                    aria-hidden="true"
+                    title="Offline"
+                  ></i>
+                  Offline
+                </span>
+            </h1>
 
             <SearchBar
                 @menuOpened="onMenuOpened"
@@ -50,6 +61,11 @@ export default {
     MostUsedTags,
     SearchBar
   },
+  data() {
+    return {
+      isOffline: !navigator.onLine,
+    };
+  },
   computed: {
     ...mapState(useUserStore, [
       'hasAccounts'
@@ -64,9 +80,20 @@ export default {
       'isSearching'
     ]),
   },
+  mounted() {
+    window.addEventListener('online', this.updateNetworkStatus);
+    window.addEventListener('offline', this.updateNetworkStatus);
+  },
+  beforeUnmount() {
+    window.removeEventListener('online', this.updateNetworkStatus);
+    window.removeEventListener('offline', this.updateNetworkStatus);
+  },
   methods: {
     onMenuOpened: function () {
       this.$emit('menuOpened');
+    },
+    updateNetworkStatus: function () {
+      this.isOffline = !navigator.onLine;
     }
   }
 };
