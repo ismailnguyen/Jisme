@@ -11,7 +11,7 @@ import {
 } from '../utils/account'
 import { BASE_API_URL } from '../utils/api'
 import { getHeadersWithAuth } from '../utils/requestHeader'
-import { Exception, SessionExpiredException } from '../utils/errors'
+import { Exception, SessionExpiredException, isNetworkError, NetworkException } from '../utils/errors'
 
 localforage.config({
     name: LOCAL_STORAGE_DB_NAME
@@ -45,6 +45,17 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
+            // Fallback to cached account if offline
+            if (isNetworkError(error)) {
+                const cached = await this.getAllCached();
+                const found = cached.find(a => a._id === account._id);
+                if (found) {
+                    return found;
+                }
+
+                throw new NetworkException('You seem to be offline and this account is not in cache.');
+            }
+
             this.throwError(error)
         }
     }
@@ -83,6 +94,15 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
+            if (isNetworkError(error)) {
+                const cached = await this.getRecentsCached();
+                if (cached && cached.length) {
+                    return cached;
+                }
+
+                throw new NetworkException('You seem to be offline. No recent accounts available in cache.');
+            }
+
             this.throwError(error)
         }
     }
@@ -139,6 +159,18 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
+            if (isNetworkError(error)) {
+                // Use cached accounts if available
+                const cached = await this.getAllCached();
+                if (cached && cached.length) {
+                    fetchCallback(cached, cached.length);
+                    endCallback();
+                    return;
+                }
+
+                throw new NetworkException('You seem to be offline. No cached data available.');
+            }
+
             this.throwError(error)
         }
     }
@@ -166,6 +198,7 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
+            error.message = 'You are offline. The account cannot be created right now. Please retry when back online.';
             this.throwError(error)
         }
     }
@@ -193,6 +226,7 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
+            error.message = 'You are offline. Changes were not saved. Please retry when back online.';
             this.throwError(error)
         }
     }
@@ -215,6 +249,7 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
+            error.message = 'You are offline. The account could not be deleted. Please retry when online.';
             this.throwError(error)
         }
     }
@@ -249,6 +284,7 @@ class AccountsService {
                 this.throwError(error);
             }
             catch (error) {
+                
                 this.throwError(error);
             }
         }
@@ -271,6 +307,10 @@ class AccountsService {
     throwError(error) {
         if (error.code === 401) {
             throw new SessionExpiredException()
+        }
+
+        if (isNetworkError(error)) {
+            throw new NetworkException(error.message || 'Network Error. Please retry.');
         }
 
         throw new Exception(

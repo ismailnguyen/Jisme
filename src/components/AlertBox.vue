@@ -29,7 +29,7 @@
         <div class="dynamic-island-large-content" :class="isExpanded ? '' : 'd-none'" :style="isExpanded ? 'opacity:1;' : 'opacity:0;'">
             <div class="dynamic-island-header-section">
                 <div class="dynamic-island-header-left">
-                    <span class="dynamic-island-title">Notifications</span>
+                    <span class="dynamic-island-title">{{ title }}</span>
                 </div>
 
                 <div class="dynamic-island-header-right">
@@ -50,9 +50,6 @@
                         :alt="title">
 
                     <div class="notification-item-text-container">
-                        <span class="notification-itemtitle">
-                            {{ title }}
-                        </span>
                         <span class="profile-user-username">
                             {{ message }}
                         </span>
