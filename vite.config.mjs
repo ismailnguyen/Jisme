@@ -17,6 +17,23 @@ export default defineConfig({
     vue(),
     VitePWA({
       registerType: 'autoUpdate',
+      workbox: {
+        // Ensure FontAwesome webfonts and other fonts are precached for offline use
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,woff,ttf,eot}'],
+        runtimeCaching: [
+          {
+            urlPattern: /.*\.(?:woff2|woff|ttf|eot)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'font-cache',
+              expiration: {
+                maxEntries: 32,
+                maxAgeSeconds: 60 * 60 * 24 * 365, // 1 year
+              },
+            },
+          },
+        ],
+      },
       manifest: {
         name: 'Jisme',
         short_name: 'Jisme',
