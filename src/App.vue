@@ -12,7 +12,8 @@
 
     import {
         useAlertStore,
-        useUserStore
+        useUserStore,
+        useAccountsStore
     } from '@/store';
     import { 
         mapState,
@@ -41,9 +42,18 @@
                     this.$router.push({ name: 'Login' });
                 }
             })
+
+            // Initialize offline sync listeners
+            if (this.accountsStore && this.accountsStore.initSyncListeners) {
+                this.accountsStore.initSyncListeners();
+            }
+            // Try processing any pending outbox on startup if online
+            if (this.accountsStore && this.accountsStore.processOutbox && navigator.onLine) {
+                this.accountsStore.processOutbox();
+            }
         },
         computed: {
-            ...mapStores(useAlertStore, useUserStore),
+            ...mapStores(useAlertStore, useUserStore, useAccountsStore),
             ...mapState(useAlertStore, ['hasAlert']),
             ...mapState(useUserStore, ['isLoggedIn']),
         },

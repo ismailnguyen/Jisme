@@ -1,10 +1,13 @@
-import { ref, computed, toRaw } from 'vue';
+import { ref, computed } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import { useUserStore } from '@/store';
 import { APP_ACCOUNTS_STORE } from '../utils/store';
-import { SessionExpiredException } from '../utils/errors'
+import { SessionExpiredException, isNetworkError } from '../utils/errors'
+import localforage from 'localforage'
+import { LOCAL_STORAGE_OUTBOX_KEY } from '../utils/storage'
 
 import AccountsService from '../services/AccountsService';
+import { parseAccount } from '../utils/account';
 import FilterService from '../services/FilterService';
 
 const MIN_SEARCH_QUERY_LENGTH = 3;
@@ -31,6 +34,9 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const selectedFilters = ref([]);
 
     let accountsService = new AccountsService(user.value);
+
+    // Simple lock to prevent concurrent sync
+    const isSyncing = ref(false);
 
     const isSearching = computed(() => {
         return !!(
@@ -126,6 +132,109 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         _filteredAccounts.value = accounts.value;
     }
 
+    // -------- Outbox helpers --------
+    async function readOutbox() {
+        const q = await localforage.getItem(LOCAL_STORAGE_OUTBOX_KEY);
+        return Array.isArray(q) ? q : [];
+    }
+
+    async function writeOutbox(queue) {
+        await localforage.setItem(LOCAL_STORAGE_OUTBOX_KEY, queue || []);
+    }
+
+    async function enqueueOutbox(item) {
+        const queue = await readOutbox();
+        queue.push({ ...item, id: `${Date.now()}-${Math.random().toString(36).slice(2)}` });
+        await writeOutbox(queue);
+    }
+
+    // Map temp ids to server ids during sync
+    function isTempId(id) {
+        return typeof id === 'string' && id.startsWith('tmp_');
+    }
+
+    // Process queued offline operations when back online
+    async function processOutbox() {
+        if (isSyncing.value) return;
+        if (!navigator.onLine) return;
+        if (!user.value || !user.value.token) return;
+
+        isSyncing.value = true;
+        try {
+            let queue = await readOutbox();
+            if (!queue.length) return;
+
+            const idMap = {}; // tempId -> realId
+
+            for (let i = 0; i < queue.length; i++) {
+                const item = queue[i];
+                try {
+                    if (item.type === 'create') {
+                        // Send create
+                        const created = await accountsService.add(item.account);
+
+                        // Replace temp in local state
+                        const index = accounts.value.findIndex(a => a._id === item.account._id);
+                        if (index !== -1) {
+                            accounts.value[index] = created;
+                        } else {
+                            accounts.value.push(created);
+                        }
+
+                        idMap[item.account._id] = created._id;
+                        await updateLocalAccounts();
+                    }
+                    else if (item.type === 'update') {
+                        // Fix id if it was a temp id replaced earlier in the same run
+                        if (isTempId(item.account._id) && idMap[item.account._id]) {
+                            item.account._id = idMap[item.account._id];
+                        }
+                        const updated = await accountsService.save(item.account);
+                        const index = accounts.value.findIndex(a => a._id === updated._id);
+                        if (index !== -1) {
+                            accounts.value[index] = updated;
+                        }
+                        await updateLocalAccounts();
+                    }
+                    else if (item.type === 'remove') {
+                        // Fix id if it was a temp id
+                        if (isTempId(item.account._id) && idMap[item.account._id]) {
+                            item.account._id = idMap[item.account._id];
+                        }
+                        await accountsService.remove(item.account);
+                        // Already removed locally when enqueued
+                    }
+
+                    // Remove processed item from the queue
+                    queue.splice(i, 1);
+                    i--; // adjust index after removal
+                    await writeOutbox(queue);
+                }
+                catch (err) {
+                    // Stop processing on first failure (likely offline again or server issue)
+                    break;
+                }
+            }
+        } finally {
+            isSyncing.value = false;
+        }
+    }
+
+    function initSyncListeners() {
+        if (typeof window === 'undefined') return;
+        // Re-run when online: sync outbox then refresh accounts
+        window.addEventListener('online', async () => {
+            await processOutbox();
+            // Refresh list from server when back online
+            try {
+                await fetchAccounts();
+                await fetchRecentAccounts();
+            } catch (_) {
+                // ignore
+            }
+        });
+    }
+
     function findAccountById(accountId) {
         return accounts.value.find(a => a._id === accountId);
     }
@@ -184,7 +293,10 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             if (error instanceof SessionExpiredException) {
                 await userStore.signOut(true);
             }
-
+            // If network issue, keep using cache and schedule refresh on online
+            if (isNetworkError(error) || error?.name === 'Offline' || error?.code === 0) {
+                return; // cache is already loaded in loadCache; online listener will refresh
+            }
             throw error;
         }
     }
@@ -205,6 +317,18 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         catch (error) {
             if (error instanceof SessionExpiredException) {
                 await userStore.signOut(true);
+                throw error;
+            }
+
+            // Offline: create a temporary account locally and enqueue
+            if (isNetworkError(error) || error?.name === 'Offline' || error?.code === 0) {
+                const tempId = `tmp_${Date.now()}`;
+                const tempAccount = parseAccount({ ...account, _id: tempId, created_date: new Date(), last_modified_date: new Date(), last_opened_date: new Date(), opened_count: account.opened_count || 0 });
+                accounts.value.push(tempAccount);
+                await updateLocalAccounts();
+
+                await enqueueOutbox({ type: 'create', account: tempAccount, timestamp: Date.now() });
+                return; // consider as success for UX
             }
 
             throw error;
@@ -228,6 +352,19 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         catch (error) {
             if (error instanceof SessionExpiredException) {
                 await userStore.signOut(true);
+                throw error;
+            }
+
+            // Offline: update locally and enqueue
+            if (isNetworkError(error) || error?.name === 'Offline' || error?.code === 0) {
+                const index = accounts.value.findIndex(a => a._id === account._id);
+                if (index !== -1) {
+                    accounts.value[index] = parseAccount({ ...account });
+                }
+                await updateLocalAccounts();
+
+                await enqueueOutbox({ type: 'update', account: { ...account }, timestamp: Date.now() });
+                return;
             }
 
             throw error;
@@ -247,6 +384,19 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         catch (error) {
             if (error instanceof SessionExpiredException) {
                 await userStore.signOut(true);
+                throw error;
+            }
+
+            // Offline: remove locally and enqueue
+            if (isNetworkError(error) || error?.name === 'Offline' || error?.code === 0) {
+                const indexToRemove = accounts.value.findIndex(a => a._id === account._id);
+                if (indexToRemove !== -1) {
+                    accounts.value.splice(indexToRemove, 1);
+                }
+                await updateLocalAccounts();
+
+                await enqueueOutbox({ type: 'remove', account: { _id: account._id }, timestamp: Date.now() });
+                return;
             }
 
             throw error;
@@ -295,7 +445,11 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         removeAccount,
         findAccountById,
 
-        enableServerEncryption
+        enableServerEncryption,
+
+        // offline sync API
+        processOutbox,
+        initSyncListeners
     }
 }); 
 
