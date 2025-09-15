@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
-import { useAccountsStore } from '@/store';
+import { useAccountsStore, useNetworkStore } from '@/store';
 
 import Account from '../models/Account';
 
@@ -32,7 +32,13 @@ const store = defineStore('ui', () => {
         currentEditingAccount.value = account;
 
         // Do not await for this task because it can run on background
-        accountsStore.updateAccount(account);
+        const networkStore = useNetworkStore();
+        accountsStore.updateAccount(account).catch((error) => {
+            if (networkStore.isOffline) {
+                return; // silently ignore background updates while offline
+            }
+            console.error('Background updateAccount failed', error);
+        });
     }
 
     const resetCurrentEditingAccount = () => {

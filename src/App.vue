@@ -13,7 +13,8 @@
     import {
         useAlertStore,
         useUserStore,
-        useAccountsStore
+        useAccountsStore,
+        useNetworkStore
     } from '@/store';
     import { 
         mapState,
@@ -43,17 +44,22 @@
                 }
             })
 
+            // Initialize network listeners
+            if (this.networkStore && this.networkStore.initNetworkListeners) {
+                this.networkStore.initNetworkListeners();
+            }
+
             // Initialize offline sync listeners
             if (this.accountsStore && this.accountsStore.initSyncListeners) {
                 this.accountsStore.initSyncListeners();
             }
             // Try processing any pending outbox on startup if online
-            if (this.accountsStore && this.accountsStore.processOutbox && navigator.onLine) {
+            if (this.accountsStore && this.accountsStore.processOutbox && this.networkStore.isOnline) {
                 this.accountsStore.processOutbox();
             }
         },
         computed: {
-            ...mapStores(useAlertStore, useUserStore, useAccountsStore),
+            ...mapStores(useAlertStore, useUserStore, useAccountsStore, useNetworkStore),
             ...mapState(useAlertStore, ['hasAlert']),
             ...mapState(useUserStore, ['isLoggedIn']),
         },

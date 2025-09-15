@@ -12,6 +12,7 @@ import {
 import { BASE_API_URL } from '../utils/api'
 import { getHeadersWithAuth } from '../utils/requestHeader'
 import { Exception, SessionExpiredException, isNetworkError, NetworkException } from '../utils/errors'
+import { useNetworkStore } from '@/store'
 
 localforage.config({
     name: LOCAL_STORAGE_DB_NAME
@@ -45,8 +46,9 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
+            const networkStore = (() => { try { return useNetworkStore(); } catch { return null; } })();
             // Fallback to cached account if offline
-            if (isNetworkError(error)) {
+            if ((networkStore && networkStore.isOffline) || isNetworkError(error)) {
                 const cached = await this.getAllCached();
                 const found = cached.find(a => a._id === account._id);
                 if (found) {
@@ -94,7 +96,8 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
-            if (isNetworkError(error)) {
+            const networkStore = (() => { try { return useNetworkStore(); } catch { return null; } })();
+            if ((networkStore && networkStore.isOffline) || isNetworkError(error)) {
                 const cached = await this.getRecentsCached();
                 if (cached && cached.length) {
                     return cached;
@@ -159,7 +162,8 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
-            if (isNetworkError(error)) {
+            const networkStore = (() => { try { return useNetworkStore(); } catch { return null; } })();
+            if ((networkStore && networkStore.isOffline) || isNetworkError(error)) {
                 // Use cached accounts if available
                 const cached = await this.getAllCached();
                 if (cached && cached.length) {
@@ -305,11 +309,12 @@ class AccountsService {
     }
 
     throwError(error) {
+        const networkStore = (() => { try { return useNetworkStore(); } catch { return null; } })();
         if (error.code === 401) {
             throw new SessionExpiredException()
         }
 
-        if (isNetworkError(error)) {
+        if ((networkStore && networkStore.isOffline) || isNetworkError(error)) {
             throw new NetworkException(error.message || 'Network Error. Please retry.');
         }
 

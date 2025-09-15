@@ -1573,7 +1573,7 @@
 import "../assets/bottom_sheet.css";
 import FullscreenBarcode from "./FullscreenBarcode.vue";
 import { mapState, mapActions } from "pinia";
-import { useUiStore, useAlertStore, useAccountsStore } from "@/store";
+import { useUiStore, useAlertStore, useAccountsStore, useNetworkStore } from "@/store";
 import totpGenerator from "totp-generator";
 import JsBarcode from 'jsbarcode'
 import QrcodeVue from 'qrcode.vue'
@@ -1698,6 +1698,9 @@ export default {
       account: "currentEditingAccount",
       SIDEBAR: "SIDEBAR",
     }),
+    ...mapState(useNetworkStore, [
+      'isOffline'
+    ]),
 
     showPasswordTypeOptions: function () {
       return this.account.is_password_less;
@@ -1867,7 +1870,12 @@ export default {
 
         this.closeAccountEditing();
       } catch (error) {
-        this.openAlert("Error", error.toString(), "danger");
+        const isOffline = this.isOffline;
+        this.openAlert(
+          error.name || (isOffline ? 'Offline' : 'Error'),
+          error.message || error.reason || (typeof error === 'string' ? error : ''),
+          isOffline ? 'warning' : 'danger'
+        );
         this.isSaving = false;
       }
     },
@@ -1898,7 +1906,12 @@ export default {
 
         this.closeAccountEditing();
       } catch (error) {
-        this.openAlert("Error", error.toString(), "danger");
+        const isOffline = this.isOffline;
+        this.openAlert(
+          error.name || (isOffline ? 'Offline' : 'Error'),
+          error.message || error.reason || (typeof error === 'string' ? error : ''),
+          isOffline ? 'warning' : 'danger'
+        );
         this.isDuplicating = false;
       }
     },
@@ -1933,7 +1946,12 @@ export default {
 
           this.closeAccountEditing();
         } catch (error) {
-          this.openAlert("Error", error.toString(), "danger");
+          const isOffline = this.isOffline;
+          this.openAlert(
+            error.name || (isOffline ? 'Offline' : 'Error'),
+            error.message || error.reason || (typeof error === 'string' ? error : ''),
+            isOffline ? 'warning' : 'danger'
+          );
           this.isDeleting = false;
         }
       }

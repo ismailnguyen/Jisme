@@ -48,7 +48,7 @@ export function isNetworkError(error) {
             msg.includes('NetworkError') ||
             msg.includes('Load failed')
         )
-    ) || (!navigator.onLine);
+    );
 }
 
 export function NetworkException (message = 'You appear to be offline. We will show cached data if available.', code = 0) {

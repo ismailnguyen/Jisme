@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
-import { useUserStore } from '@/store';
+import { useUserStore, useNetworkStore } from '@/store';
 import { APP_ACCOUNTS_STORE } from '../utils/store';
 import { SessionExpiredException, isNetworkError } from '../utils/errors'
 import localforage from 'localforage'
@@ -34,6 +34,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const selectedFilters = ref([]);
 
     let accountsService = new AccountsService(user.value);
+    const networkStore = useNetworkStore();
 
     // Simple lock to prevent concurrent sync
     const isSyncing = ref(false);
@@ -156,7 +157,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     // Process queued offline operations when back online
     async function processOutbox() {
         if (isSyncing.value) return;
-        if (!navigator.onLine) return;
+        if (networkStore.isOffline) return;
         if (!user.value || !user.value.token) return;
 
         isSyncing.value = true;
@@ -221,18 +222,19 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     }
 
     function initSyncListeners() {
-        if (typeof window === 'undefined') return;
-        // Re-run when online: sync outbox then refresh accounts
-        window.addEventListener('online', async () => {
-            await processOutbox();
-            // Refresh list from server when back online
-            try {
-                await fetchAccounts();
-                await fetchRecentAccounts();
-            } catch (_) {
-                // ignore
+        // Subscribe to network store to trigger sync and refresh when going online
+        const unsub = networkStore.$subscribe(async (mutation, state) => {
+            if (state.isOnline) {
+                await processOutbox();
+                try {
+                    await fetchAccounts();
+                    await fetchRecentAccounts();
+                } catch (_) {
+                    // ignore
+                }
             }
         });
+        // return unsub if needed by caller
     }
 
     function findAccountById(accountId) {
@@ -293,8 +295,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             if (error instanceof SessionExpiredException) {
                 await userStore.signOut(true);
             }
-            // If network issue, keep using cache and schedule refresh on online
-            if (isNetworkError(error) || error?.name === 'Offline' || error?.code === 0) {
+            // If offline, keep using cache and schedule refresh on online
+            if (networkStore.isOffline) {
                 return; // cache is already loaded in loadCache; online listener will refresh
             }
             throw error;
@@ -321,7 +323,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             }
 
             // Offline: create a temporary account locally and enqueue
-            if (isNetworkError(error) || error?.name === 'Offline' || error?.code === 0) {
+            if (networkStore.isOffline) {
                 const tempId = `tmp_${Date.now()}`;
                 const tempAccount = parseAccount({ ...account, _id: tempId, created_date: new Date(), last_modified_date: new Date(), last_opened_date: new Date(), opened_count: account.opened_count || 0 });
                 accounts.value.push(tempAccount);
@@ -356,7 +358,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             }
 
             // Offline: update locally and enqueue
-            if (isNetworkError(error) || error?.name === 'Offline' || error?.code === 0) {
+            if (networkStore.isOffline) {
                 const index = accounts.value.findIndex(a => a._id === account._id);
                 if (index !== -1) {
                     accounts.value[index] = parseAccount({ ...account });
@@ -388,7 +390,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             }
 
             // Offline: remove locally and enqueue
-            if (isNetworkError(error) || error?.name === 'Offline' || error?.code === 0) {
+            if (networkStore.isOffline) {
                 const indexToRemove = accounts.value.findIndex(a => a._id === account._id);
                 if (indexToRemove !== -1) {
                     accounts.value.splice(indexToRemove, 1);

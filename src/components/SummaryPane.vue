@@ -43,12 +43,12 @@ import "../assets/summary_pane.css";
 
 import {
   mapState,
-  mapActions
 } from "pinia";
 import {
   useUserStore,
   useUiStore,
-  useAccountsStore
+  useAccountsStore,
+  useNetworkStore
 } from "@/store";
 import AccountTypesList from "../components/AccountTypesList.vue";
 import MostUsedTags from "../components/MostUsedTags.vue";
@@ -61,12 +61,10 @@ export default {
     MostUsedTags,
     SearchBar
   },
-  data() {
-    return {
-      isOffline: !navigator.onLine,
-    };
-  },
   computed: {
+    ...mapState(useNetworkStore, [
+      'isOffline'
+    ]),
     ...mapState(useUserStore, [
       'hasAccounts'
     ]),
@@ -80,20 +78,9 @@ export default {
       'isSearching'
     ]),
   },
-  mounted() {
-    window.addEventListener('online', this.updateNetworkStatus);
-    window.addEventListener('offline', this.updateNetworkStatus);
-  },
-  beforeUnmount() {
-    window.removeEventListener('online', this.updateNetworkStatus);
-    window.removeEventListener('offline', this.updateNetworkStatus);
-  },
   methods: {
     onMenuOpened: function () {
       this.$emit('menuOpened');
-    },
-    updateNetworkStatus: function () {
-      this.isOffline = !navigator.onLine;
     }
   }
 };

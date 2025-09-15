@@ -1,6 +1,7 @@
 import useUiStore from './ui';
 import useAlertStore from './alert';
 import useAccountsStore from './accounts';
+import useNetworkStore from './network';
 import useUserStore from './user';
 
 export {
@@ -8,4 +9,5 @@ export {
     useAlertStore,
     useAccountsStore,
     useUserStore,
+    useNetworkStore,
 }

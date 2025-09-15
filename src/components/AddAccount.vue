@@ -1097,7 +1097,8 @@ import {
 import {
   useUiStore,
   useAlertStore,
-  useAccountsStore
+  useAccountsStore,
+  useNetworkStore
 } from "@/store";
 
 export default {
@@ -1124,6 +1125,9 @@ export default {
     ...mapState(useUiStore, {
       SIDEBAR: "SIDEBAR",
     }),
+    ...mapState(useNetworkStore, [
+      'isOffline'
+    ]),
   },
   methods: {
     ...mapActions(useAlertStore, ["openAlert"]),
@@ -1179,7 +1183,12 @@ export default {
 
         this.updateUI();
       } catch (error) {
-        this.openAlert("Error", error.toString(), "danger");
+        const isOffline = this.isOffline;
+        this.openAlert(
+          error.name || (isOffline ? 'Offline' : 'Error'),
+          error.message || error.reason || (typeof error === 'string' ? error : ''),
+          isOffline ? 'warning' : 'danger'
+        );
         this.isCreating = false;
       }
     },

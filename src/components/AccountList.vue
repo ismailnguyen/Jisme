@@ -49,7 +49,8 @@ import {
   useUserStore,
   useAccountsStore,
   useAlertStore,
-  useUiStore
+  useUiStore,
+  useNetworkStore
 } from "@/store";
 import LoadingAccountItem from "../components/LoadingAccountItem.vue";
 import AccountItem from "../components/AccountItem.vue";
@@ -109,6 +110,9 @@ export default {
       'SIDEBAR',
       'isSummaryPaneExpanded',
       'isAdvancedSearchMode',
+    ]),
+    ...mapState(useNetworkStore, [
+      'isOffline'
     ])
   },
   methods: {
@@ -178,10 +182,11 @@ export default {
           this.openAlert("Session expired", error.message, "danger");
           this.$router.go("/");
         } else {
+          const offline = this.isOffline;
           this.openAlert(
-            error.name || "Error while loading accounts",
+            error.name || (offline ? 'Offline' : 'Error while loading accounts'),
             error.message,
-            "danger"
+            offline ? 'warning' : 'danger'
           );
         }
       }
