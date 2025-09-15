@@ -1181,6 +1181,15 @@ export default {
       try {
         await this.addAccount(this.account);
 
+        // If offline, message should reflect queued sync
+        const isOffline = this.isOffline;
+        this.openAlert(
+          isOffline ? 'Saved locally — will sync when back online.' : 'Created !',
+          this.account.label || 'Account',
+          isOffline ? 'info' : 'success',
+          this.account.icon
+        );
+
         this.updateUI();
       } catch (error) {
         const isOffline = this.isOffline;
@@ -1218,13 +1227,6 @@ export default {
       this.isCreating = false;
 
       this.closeSidebar(this.SIDEBAR.ADD_ACCOUNT);
-
-      this.openAlert(
-        this.account.label,
-        "Created !",
-        "success",
-        this.account.icon
-      );
 
       this.resetCurrentAddingAccount();
     },

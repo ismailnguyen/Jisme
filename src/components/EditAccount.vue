@@ -1858,10 +1858,11 @@ export default {
       try {
         await this.updateAccount(this.account);
 
+        const isOffline = this.isOffline;
         this.openAlert(
+          isOffline ? 'Saved locally — will sync when back online.' : 'Updated !',
           this.account.label,
-          "Updated !",
-          "success",
+          isOffline ? 'info' : 'success',
           this.account.icon
         );
 
@@ -1939,7 +1940,12 @@ export default {
         try {
           await this.removeAccount(this.account);
 
-          this.openAlert(this.account.label, "Removed !", "success");
+          const isOffline = this.isOffline;
+          this.openAlert(
+            this.account.label,
+            isOffline ? 'Removed locally — will sync when back online.' : 'Removed !',
+            isOffline ? 'info' : 'success'
+          );
 
           this.isSaving = false;
           this.isDeleting = false;

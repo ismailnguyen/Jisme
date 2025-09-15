@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
-import { useUserStore, useNetworkStore } from '@/store';
+import { useUserStore, useNetworkStore, useAlertStore } from '@/store';
 import { APP_ACCOUNTS_STORE } from '../utils/store';
 import { SessionExpiredException, isNetworkError } from '../utils/errors'
 import localforage from 'localforage'
@@ -38,6 +38,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     // Simple lock to prevent concurrent sync
     const isSyncing = ref(false);
+    const outbox = ref([]);
 
     const isSearching = computed(() => {
         return !!(
@@ -136,11 +137,15 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     // -------- Outbox helpers --------
     async function readOutbox() {
         const q = await localforage.getItem(LOCAL_STORAGE_OUTBOX_KEY);
-        return Array.isArray(q) ? q : [];
+        outbox.value = Array.isArray(q) ? q : [];
+        return outbox.value;
     }
 
     async function writeOutbox(queue) {
-        await localforage.setItem(LOCAL_STORAGE_OUTBOX_KEY, queue || []);
+        // Ensure we never pass reactive proxies to IndexedDB
+        const serializable = JSON.parse(JSON.stringify(queue || []));
+        outbox.value = serializable;
+        await localforage.setItem(LOCAL_STORAGE_OUTBOX_KEY, serializable);
     }
 
     async function enqueueOutbox(item) {
@@ -166,6 +171,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             if (!queue.length) return;
 
             const idMap = {}; // tempId -> realId
+            let processedCount = 0;
 
             for (let i = 0; i < queue.length; i++) {
                 const item = queue[i];
@@ -210,11 +216,18 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
                     queue.splice(i, 1);
                     i--; // adjust index after removal
                     await writeOutbox(queue);
+                    processedCount++;
                 }
                 catch (err) {
                     // Stop processing on first failure (likely offline again or server issue)
                     break;
                 }
+            }
+
+            // Notify user once when sync succeeded for some items
+            if (processedCount > 0) {
+                const alertStore = useAlertStore();
+                alertStore.openAlert('Synced changes', `Successfully synced ${processedCount} change${processedCount>1?'s':''}.`, 'success');
             }
         } finally {
             isSyncing.value = false;
@@ -426,6 +439,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         totalFetchedAccounts,
         totalAccounts,
         areAccountsLoaded,
+        outbox,
 
         searchQuery,
         selectedTypes,
