@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { defineStore, storeToRefs } from 'pinia';
 import { useUserStore, useNetworkStore, useAlertStore } from '@/store';
 import { APP_ACCOUNTS_STORE } from '../utils/store';
@@ -33,7 +33,23 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const selectedTypes = ref([]);
     const selectedFilters = ref([]);
 
-    let accountsService = new AccountsService(user.value);
+    let accountsService = null;
+
+    const refreshAccountsService = (currentUser) => {
+        accountsService = currentUser ? new AccountsService(currentUser) : null;
+    };
+
+    watch(user, (newUser) => {
+        refreshAccountsService(newUser);
+    }, { immediate: true });
+
+    const ensureAccountsService = () => {
+        if (!accountsService) {
+            throw new SessionExpiredException('Session expired. Please sign in again.');
+        }
+
+        return accountsService;
+    };
     const networkStore = useNetworkStore();
 
     // Simple lock to prevent concurrent sync
@@ -124,9 +140,19 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     }
 
     async function loadCache () {
+        if (!accountsService) {
+            recentAccounts.value = [];
+            accounts.value = [];
+            areAccountsLoaded.value = false;
+            _filteredAccounts.value = [];
+            return;
+        }
+
+        const service = accountsService;
+
         // Pre fill the store with the cached accounts
-        recentAccounts.value = await accountsService.getRecentsCached();
-        accounts.value = await accountsService.getAllCached();
+        recentAccounts.value = await service.getRecentsCached();
+        accounts.value = await service.getAllCached();
 
         // After loading accounts from cache update the areAccountsLoaded value
         areAccountsLoaded.value = accounts.value.length > 0;
@@ -165,6 +191,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         if (networkStore.isOffline) return;
         if (!user.value || !user.value.token) return;
 
+        const service = ensureAccountsService();
+
         isSyncing.value = true;
         try {
             let queue = await readOutbox();
@@ -178,7 +206,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
                 try {
                     if (item.type === 'create') {
                         // Send create
-                        const created = await accountsService.add(item.account);
+                        const created = await service.add(item.account);
 
                         // Replace temp in local state
                         const index = accounts.value.findIndex(a => a._id === item.account._id);
@@ -196,7 +224,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
                         if (isTempId(item.account._id) && idMap[item.account._id]) {
                             item.account._id = idMap[item.account._id];
                         }
-                        const updated = await accountsService.save(item.account);
+                        const updated = await service.save(item.account);
                         const index = accounts.value.findIndex(a => a._id === updated._id);
                         if (index !== -1) {
                             accounts.value[index] = updated;
@@ -208,7 +236,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
                         if (isTempId(item.account._id) && idMap[item.account._id]) {
                             item.account._id = idMap[item.account._id];
                         }
-                        await accountsService.remove(item.account);
+                        await service.remove(item.account);
                         // Already removed locally when enqueued
                     }
 
@@ -256,9 +284,10 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     async function fetchRecentAccounts() {
         try {
-            recentAccounts.value = await accountsService.getRecents() || [];
+            const service = ensureAccountsService();
+            recentAccounts.value = await service.getRecents() || [];
 
-            await accountsService.updateLocalRecentAccounts(recentAccounts.value);
+            await service.updateLocalRecentAccounts(recentAccounts.value);
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
@@ -271,8 +300,9 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     async function fetchAccounts () {
         try {
+            const service = ensureAccountsService();
             // Update account while getting page by page from server
-            await accountsService.getAll(
+            await service.getAll(
                 (fetchedAccounts, totalAccountsNumber) => {
                     totalAccounts.value = totalAccountsNumber;
 
@@ -317,13 +347,15 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     }
 
     async function updateLocalAccounts() {
-        await accountsService.updateLocalAccounts(accounts.value);
+        const service = ensureAccountsService();
+        await service.updateLocalAccounts(accounts.value);
     }
 
     async function addAccount (account) {
         try {
+            const service = ensureAccountsService();
            // Wait for account to come with newly created _id
-            const addedAccount = await accountsService.add(account);
+            const addedAccount = await service.add(account);
 
             accounts.value.push(addedAccount);
 
@@ -356,7 +388,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             account.last_opened_date = new Date();
             account.opened_count = account.opened_count ? account.opened_count + 1 : 1;
 
-            const updatedAccount = await accountsService.save(account);
+            const service = ensureAccountsService();
+            const updatedAccount = await service.save(account);
 
             let index = accounts.value.findIndex(a => a._id === updatedAccount._id);
 
@@ -388,7 +421,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     async function removeAccount(account) {
         try {
-            await accountsService.remove(account);
+            const service = ensureAccountsService();
+            await service.remove(account);
 
             let indexToRemove = accounts.value.findIndex(a => a._id === account._id);
 
@@ -420,7 +454,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
 
     async function enableServerEncryption() {
         try {
-            await accountsService.enableServerEncryption(accounts.value);
+            const service = ensureAccountsService();
+            await service.enableServerEncryption(accounts.value);
         }
         catch (error) {
             if (error instanceof SessionExpiredException) {
