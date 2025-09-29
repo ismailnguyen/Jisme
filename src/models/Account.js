@@ -61,7 +61,23 @@ class Account {
 
     // Trim card number to remove spaces because QRCode and Barcodes don't support spaces
     get rawCardNumber () {
+        if (this.type === 'account' && this.subtype === 'wifi') {
+            return this.wifiQrCode;
+        }
+
         return this.card_number.replaceAll(' ', '');
+    }
+
+    get cardFormat () {
+        if (this.type === 'account' && this.subtype === 'wifi') {
+            return 'qrcode';
+        }
+
+        return this.card_format;
+    }
+
+    get wifiQrCode () {
+        return `WIFI:S:${ this.login };T:${ this.password_clue };P:${ this.password };`;
     }
 
     generatePassword () {

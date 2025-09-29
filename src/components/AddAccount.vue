@@ -947,7 +947,7 @@
                     id="password_security_mode_input"
                     class="form-control"
                     type="text"
-                    placeholder="WPA, WPA2, WEP, Open"
+                    placeholder="WPA, WEP, None"
                     v-model="account.password_clue"
                   />
                 </div>

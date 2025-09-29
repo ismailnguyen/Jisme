@@ -32,17 +32,17 @@
         <form class="row">
 
             <!-- region_start -- Account type: card -->
-            <div class="accordion" v-if="account.type == 'card' && (account.subtype == 'loyalty' || account.subtype == 'gift')"> 
+            <div class="accordion" v-if="displayCodeImage"> 
               <div class="accordion-item accordion-item--without-body">
                 <h1 class="accordion-header text-center">
                   <QrcodeVue
-                    v-if="account.card_format == 'qrcode'"
+                    v-if="account.cardFormat == 'qrcode'"
                     :value="account.rawCardNumber"
                     @click="fullscreenBarcodeVisible = true"
                     class="clickable"/>
-                  
+
                   <img
-                    v-if="account.card_format == 'barcode'"
+                    v-if="account.cardFormat == 'barcode'"
                     ref="barcodeEl"
                     id="barcodeEl"
                     @click="fullscreenBarcodeVisible = true"
@@ -223,14 +223,14 @@
             <div class="accordion" v-if="account.type == 'card' && (account.subtype == 'loyalty' || account.subtype == 'gift')">
               <div
                 class="accordion-item"
-                :class="account.card_format == 'qrcode' ? 'is-active' : 'accordion-item--without-body'">
+                :class="account.cardFormat == 'qrcode' ? 'is-active' : 'accordion-item--without-body'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button collapsed"
-                    @click="account.card_format = 'qrcode'"
+                    @click="account.cardFormat = 'qrcode'"
                     type="button">
                     <div>
-                      <span :class="account.card_format == 'qrcode' ? 'fw-medium' : 'fw-lighter'">
+                      <span :class="account.cardFormat == 'qrcode' ? 'fw-medium' : 'fw-lighter'">
                         QR Code
                       </span>
                     </div>
@@ -240,14 +240,14 @@
 
               <div
                 class="accordion-item"
-                :class="account.card_format == 'barcode' ? 'is-active' : 'accordion-item--without-body'">
+                :class="account.cardFormat == 'barcode' ? 'is-active' : 'accordion-item--without-body'">
                 <h2 class="accordion-header">
                   <button
                     class="accordion-button collapsed"
-                    @click="account.card_format = 'barcode'"
+                    @click="account.cardFormat = 'barcode'"
                     type="button">
                     <div>
-                      <span :class="account.card_format == 'barcode' ? 'fw-medium' : 'fw-lighter'">
+                      <span :class="account.cardFormat == 'barcode' ? 'fw-medium' : 'fw-lighter'">
                         Barcode
                       </span>
                     </div>
@@ -833,7 +833,7 @@
                       id="editAccount_input_password_security_mode"
                       class="form-control"
                       type="text"
-                      placeholder="WPA, WPA2, WEP, Open"
+                      placeholder="WPA, WEP, None"
                       v-model="account.password_clue"
                     />
                   </div>
@@ -1650,7 +1650,7 @@ function initialState() {
       card_name: {
         isExpanded: false,
       },
-      card_format: {
+      cardFormat: {
         isExpanded: false,
       },
       card_issue_date: {
@@ -1704,6 +1704,18 @@ export default {
 
     showPasswordTypeOptions: function () {
       return this.account.is_password_less;
+    },
+
+    displayCodeImage: function () {
+      if (this.account.type == 'card' && (this.account.subtype == 'loyalty' || this.account.subtype == 'gift')) {
+        return true;
+      }
+
+      if (this.account.type == 'account' && this.account.subtype == 'wifi') {
+        return true;
+      }
+
+      return false;
     },
 
     passwordPreview: function () {
@@ -1771,7 +1783,7 @@ export default {
     },
 
     barcodeFormat: function () {
-      if (this.account.card_format === 'qrcode') {
+      if (this.account.cardFormat === 'qrcode') {
         return 'QR';
       }
 
@@ -1816,7 +1828,7 @@ export default {
     },
 
     renderBarcode: function () {
-      if (this.account.card_format === 'qrcode') {
+      if (!this.account.cardFormat || this.account.cardFormat !== 'barcode') {
         return;
       }
 
