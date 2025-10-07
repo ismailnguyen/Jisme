@@ -76,6 +76,16 @@ class Account {
         return this.card_format;
     }
 
+    set cardFormat (value) {
+        if (this.type === 'account' && this.subtype === 'wifi') {
+            // Wi-Fi credentials always render as a QR code, ignore manual overrides
+            this.card_format = 'qrcode';
+            return;
+        }
+
+        this.card_format = value || '';
+    }
+
     get wifiQrCode () {
         return `WIFI:S:${ this.login };T:${ this.password_clue };P:${ this.password };`;
     }
