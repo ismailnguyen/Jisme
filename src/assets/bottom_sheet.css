@@ -100,7 +100,6 @@
   padding-top: 0.5rem;
   margin-right: auto;
   margin-left: auto;
-  border-bottom: 1px solid var(--btn-color-background);;
   background-size: 0%;
   transition: height 0.5s;
 }
@@ -135,10 +134,13 @@
   position: fixed;
   width: 100%;
   color: #f8f9fa;
-  background-size: 500%;
-  background-position: center;
   z-index: 30;
-  background-color: rgb(77, 61, 0);
+  background: linear-gradient(
+    180deg,
+    rgb(77, 61, 0) 0%,
+    rgba(77, 61, 0, 0.85) 60%,
+    #f4f4f4 100%
+  );
 }
 
 .bottom-sheet-large-icon {
