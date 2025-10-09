@@ -7,10 +7,18 @@
     <div class="sheet-overlay" @click="closeAccountEditing"></div>
     <div class="content">
       <div class="header row" :class="account.icon ? 'hasIcon' : ''">
+        <button
+          type="button"
+          class="bottom-sheet-close"
+          aria-label="Close"
+          @click="closeAccountEditing"
+        >
+          <i class="fa fa-close" aria-hidden="true"></i>
+        </button>
         <div class="drag-icon row justify-content-center"><span></span></div>
 
         <div class="row justify-content-center">
-          <div class="col text-center">
+          <div class="text-center">
             <img
               :src="account.icon"
               loading="lazy"

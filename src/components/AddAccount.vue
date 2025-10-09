@@ -4,13 +4,21 @@
     class="bottom-sheet"
     :class="visible ? 'show' : ''"
   >
-  <div class="sheet-overlay" @click="closeSidebar(SIDEBAR.ADD_ACCOUNT)"></div>
+    <div class="sheet-overlay" @click="closeSidebar(SIDEBAR.ADD_ACCOUNT)"></div>
     <div class="content">
       <div class="header row" :class="account.icon ? 'hasIcon' : ''">
+        <button
+          type="button"
+          class="bottom-sheet-close"
+          aria-label="Close"
+          @click="closeSidebar(SIDEBAR.ADD_ACCOUNT)"
+        >
+          <i class="fa fa-close" aria-hidden="true"></i>
+        </button>
         <div class="drag-icon row justify-content-center"><span></span></div>
 
         <div class="row justify-content-center">
-          <div class="col text-center" v-show="account.icon">
+          <div class="text-center" v-show="account.icon">
             <img
               :src="account.icon"
               loading="lazy"
