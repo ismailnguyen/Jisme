@@ -103,9 +103,9 @@ const store = defineStore('ui', () => {
         const sheetContent = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet .content`);
         sheetContent.style.height = `${height}vh`; //updates the height of the sheet content
 
-        const bottomSheet = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet`);
-        // Toggles the fullscreen class to bottomSheet if the height is equal to 100
-        bottomSheet.classList.toggle("fullscreen", height === 100);
+        // const bottomSheet = document.querySelector(`#${ bottomSheetElementId }.bottom-sheet`);
+        // // Toggles the fullscreen class to bottomSheet if the height is equal to 100
+        // bottomSheet.classList.toggle("fullscreen", height === 100);
     }
 
     // Programmatic controls

@@ -1,7 +1,7 @@
 <template>
   <div
     id="edit-account-bottom-sheet"
-    class="bottom-sheet"
+    class="bottom-sheet fullscreen"
     :class="visible ? 'show' : ''"
   >
     <div class="sheet-overlay" @click="closeAccountEditing"></div>
