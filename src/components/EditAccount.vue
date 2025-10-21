@@ -9,12 +9,71 @@
       <div class="header row" :class="account.icon ? 'hasIcon' : ''">
         <button
           type="button"
-          class="bottom-sheet-close"
-          aria-label="Close"
+          class="bottom-sheet-close bottom-sheet-back"
+          aria-label="Back"
           @click="closeAccountEditing"
         >
-          <i class="fa fa-close" aria-hidden="true"></i>
+          <i class="fa fa-arrow-left" aria-hidden="true"></i>
         </button>
+        <div
+          class="bottom-sheet-action-menu"
+          ref="actionMenu"
+        >
+          <button
+            type="button"
+            class="bottom-sheet-close bottom-sheet-menu-toggle"
+            :aria-expanded="isActionMenuOpen ? 'true' : 'false'"
+            aria-haspopup="true"
+            aria-label="Account options"
+            @click.stop="toggleActionMenu"
+          >
+            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+          </button>
+          <transition name="fade">
+            <ul
+              v-if="isActionMenuOpen"
+              class="action-menu"
+              role="menu"
+              @click.stop
+            >
+              <li role="none">
+                <button
+                  type="button"
+                  role="menuitem"
+                  @click="addToFavorite()"
+                >
+                  <i
+                    class="fa fa-thumbtack"
+                    aria-hidden="true"
+                  ></i>
+                  {{ account.isPinned ? 'Remove from favorite' : 'Add to favorite' }}
+                </button>
+              </li>
+              <li role="none">
+                <button
+                  type="button"
+                  role="menuitem"
+                  :class="isDeleting ? 'is-busy' : ''"
+                  @click="remove()"
+                >
+                  <i class="fa fa-trash" aria-hidden="true"></i>
+                  {{ isDeleting ? "Removing ..." : "Don't need it anymore" }}
+                </button>
+              </li>
+              <li role="none">
+                <button
+                  type="button"
+                  role="menuitem"
+                  :class="isDuplicating ? 'is-busy' : ''"
+                  @click="duplicate()"
+                >
+                  <i class="fa fa-copy" aria-hidden="true"></i>
+                  {{ isDuplicating ? 'Duplicating ...' : 'Duplicate' }}
+                </button>
+              </li>
+            </ul>
+          </transition>
+        </div>
         <div class="drag-icon row justify-content-center"><span></span></div>
 
         <div class="row justify-content-center">
@@ -1530,42 +1589,6 @@
               {{ isSaving ? 'Updating ...' : 'Update' }}
             </button>
           </div>
-
-          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-            <button
-              class="btn btn-action btn-outline-danger"
-              type="button"
-              @click="addToFavorite()"
-            >
-              <i class="fa fa-thumbtack"></i>
-              {{ account.isPinned ? 'Remove from favorite' : 'Add to favorite' }}
-            </button>
-          </div>
-
-          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-            <button
-              type="button"
-              class="btn btn-action"
-              :class="isDeleting ? 'btn-dark' : 'btn-red'"
-              @click="remove()"
-            >
-              <i class="fa fa-trash"></i>
-              {{ isDeleting ? "Removing ..." : "Don't need it anymore" }}
-            </button>
-          </div>
-
-          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
-            <button
-              class="btn btn-action"
-              :class="isDuplicating ? 'btn-dark' : 'btn-outline-primary'"
-              type="button"
-              @click="duplicate()"
-            >
-              <i class="fa fa-copy"></i>
-              {{ isDuplicating ? 'Duplicating ...' : 'Duplicate' }}
-            </button>
-          </div>
-
           <br>
           <br>
           <span class="small text-light">
@@ -1594,6 +1617,7 @@ function initialState() {
     isSaving: false,
     isDeleting: false,
     isDuplicating: false,
+    isActionMenuOpen: false,
     newTag: "",
     isSmallHeader: false,
     passwordLess: {
@@ -1684,6 +1708,10 @@ export default {
   },
   mounted() {
     this.initBottomSheet("edit-account-bottom-sheet");
+    document.addEventListener('click', this.onGlobalClick);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.onGlobalClick);
   },
   watch: {
     // Watch all field expansion flags; expand sheet when a field opens
@@ -1811,6 +1839,26 @@ export default {
     ]),
     ...mapActions(useAlertStore, ['openAlert']),
 
+    toggleActionMenu: function () {
+      this.isActionMenuOpen = !this.isActionMenuOpen;
+    },
+
+    closeActionMenu: function () {
+      this.isActionMenuOpen = false;
+    },
+
+    onGlobalClick: function (event) {
+      if (!this.isActionMenuOpen) {
+        return;
+      }
+
+      const menuEl = this.$refs.actionMenu;
+
+      if (!menuEl || !menuEl.contains(event.target)) {
+        this.closeActionMenu();
+      }
+    },
+
     scrollFunction: function (e) {
       this.isSmallHeader = e.target.scrollTop > 20;
     },
@@ -1902,11 +1950,13 @@ export default {
     },
 
     addToFavorite: function () {
+      this.closeActionMenu();
       this.account.isPinned = !this.account.isPinned;
       this.save();
     },
 
     duplicate: async function () {
+      this.closeActionMenu();
       this.isDuplicating = true;
 
       try {
@@ -1950,6 +2000,7 @@ export default {
     },
 
     remove: async function () {
+      this.closeActionMenu();
       if (
         confirm(
           `Are you sure to delete : ${this.account.label} ?`
