@@ -1,6 +1,15 @@
 .summary-header {
   padding: 1rem 1rem 0;
 }
+
+/* Reduce home page size when bottom sheet modal is open in mobile */
+@media (max-width: 767px) {
+  .bottom-sheet.show ~ .home-layout,
+  .bottom-sheet.show ~ .home-layout .summary-pane {
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+  }
+}
 .summary-pane {
     border-right: 1px solid var(--color-text-inverted);
   }
@@ -54,6 +63,8 @@
     border-right: none;
     border-bottom: 1px solid var(--color-text-inverted);
   }
+
+  
   .account-list-pane {
     width: 100%;
     padding: 0 0.5rem;

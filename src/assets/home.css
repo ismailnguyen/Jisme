@@ -24,4 +24,13 @@ a {
   display: flex;
   flex-direction: row;
   height: 100vh;
+  background-color: var(--color-background);
+  transition: margin 0.1s linear;
+}
+
+/* Reduce home page size when bottom sheet modal is open in mobile */
+@media (max-width: 767px) {
+  .bottom-sheet.show ~ .home-layout {
+    margin: 1rem 1rem 0;
+  }
 }

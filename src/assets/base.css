@@ -58,7 +58,7 @@ body {
 }
 body {
   color: var(--color-text);
-  background: var(--color-background);
+  background-color: #000;
 }
 .btn {
   border-radius: var(--btn-border-radius);
