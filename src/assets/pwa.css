@@ -5,10 +5,10 @@
 
     /* Reduce home page size when bottom sheet modal is open in mobile */
     .bottom-sheet.show ~ .home-layout {
-        margin: 3rem 1rem 0;
+        margin: 3rem 1rem 0 !important;
     }
 
     .bottom-sheet.show {
-        padding-top: 4rem;
+        padding-top: 4rem !important;
     }
 }
