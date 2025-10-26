@@ -1,7 +1,8 @@
 .tray-wrapper {
   left: 0;
   z-index: 2147483647;
-  max-width: 333px;
+  width: 350px;
+  min-width: 300px;
   margin-right: auto;
   left: 1rem;
   right: 1rem;
@@ -11,25 +12,19 @@
 
 /* In small screen position tray in middle
   And animate its opening from bottom to top
-*/
-@media (max-width: 767.98px) {
-  .tray-wrapper {
-    bottom: -80rem;
-  }
-
-  .tray-wrapper.tray-wrapper-open {
-    bottom: 1rem;
-  }
-}
-
-/* In large screen position tray in left
+  In large screen position tray in left
   And animate its opening from left to right
 */
-@media (min-width: 767.98px) {
-  .tray-wrapper {
-    left: -80rem;
+.tray-wrapper {
+  bottom: -80rem;
+}
+@media (max-width: 767.98px) {
+  .tray-wrapper.tray-wrapper-open {
+    bottom: 1rem;
+    margin-left: auto;
   }
-
+}
+@media (min-width: 767.98px) {
   .tray-wrapper.tray-wrapper-open {
     left: 0;
     bottom: 0;
@@ -81,6 +76,8 @@
   padding-right: .4rem;
   overflow-y: scroll;
   overflow-x: hidden;
+  width: 350px;
+  min-width: 300px;
 }
 
 @media (max-width: 767.98px) {
@@ -104,10 +101,9 @@
 
 @media (min-width: 767.98px) {
   .tray {
-    border-radius: 0;
     min-height: 95vh;
     backdrop-filter: blur(18px);
-    margin: 1rem 1rem 1rem 2rem;
+    margin: 2rem 2rem 0 2rem;
     border-radius: 2rem;
   }
 

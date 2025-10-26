@@ -1,5 +1,14 @@
 @media (display-mode: standalone) {
     .summary-header {
-        margin-top: 60px
+        margin-top: 3rem
+    }
+
+    /* Reduce home page size when bottom sheet modal is open in mobile */
+    .bottom-sheet.show ~ .home-layout {
+        margin: 3rem 1rem 0;
+    }
+
+    .bottom-sheet.show {
+        padding-top: 4rem;
     }
 }
