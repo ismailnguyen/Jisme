@@ -12,3 +12,20 @@
         padding-top: 4rem !important;
     }
 }
+
+@media (display-mode: standalone) and (max-width: 767.98px) {
+    .bottom-sheet.show .content {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .bottom-sheet.show ~ .home-layout {
+        overflow: hidden;
+        height: 100vh;
+    }
+
+    .bottom-sheet.show ~ .home-layout .summary-pane,
+    .bottom-sheet.show ~ .home-layout .account-list-pane {
+        overflow: hidden;
+    }
+}
