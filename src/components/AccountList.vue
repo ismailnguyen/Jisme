@@ -60,8 +60,6 @@ import FilteredAccountList from "../components/FilteredAccountList.vue";
 import NoAccounts from "../components/NoAccounts.vue";
 import SearchBar from "../components/SearchBar.vue";
 
-const MIN_SEARCH_QUERY_LENGTH = 3;
-
 export default {
   emits: ['menuOpened'],
   components: {
