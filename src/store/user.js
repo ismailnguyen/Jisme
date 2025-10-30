@@ -16,6 +16,9 @@ import { APP_USER_STORE } from '../utils/store'
 import UserService from '../services/UserService'
 import { SessionExpiredException } from '../utils/errors'
 
+const SESSION_REFRESH_BUFFER_MS = 15 * 60 * 1000; // Refresh when less than 15 minutes remain
+const MIN_REFRESH_INTERVAL_MS = 5 * 60 * 1000; // Avoid refreshing more than once within 5 minutes
+
 const useUserStore = defineStore(APP_USER_STORE, () => {
     const user = ref({});
     const isLoggedIn = ref(false);
@@ -122,6 +125,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     async function getAccountInformation() { 
         try {
             user.value = await userService.getAccountInformation(user.value.token);
+            await userService.setLastActivity();
         }
         catch(error) {
             if (error instanceof SessionExpiredException) {
@@ -142,6 +146,12 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value = await userService.getCachedUser();
         // User's uuid is only filled when logged in successfully
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
+
+        if (isLoggedIn.value) {
+            await maybeRefreshSession();
+        } else {
+            await userService.clearLastActivity();
+        }
     }
 
     async function createSession({ value: user }) {
@@ -150,6 +160,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         }
 
         await userService.updateCachedUser(user);
+        await userService.setLastActivity();
 
         if (isExtendedSession.value) {
             await setLastRememberedUsername(user.email);
@@ -254,10 +265,63 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         alertStore.openAlert('Logged out', 'You have been successfully logged out.', 'info');
 
-    isLoggedIn.value = false;
-    user.value = null;
+        isLoggedIn.value = false;
+        user.value = null;
 
         //location.reload();
+    }
+
+    async function maybeRefreshSession() {
+        const cachedUser = user.value;
+
+        if (!cachedUser || !cachedUser.token || !cachedUser.tokenExpiry) {
+            await userService.setLastActivity();
+            return;
+        }
+
+        const expiryTime = new Date(cachedUser.tokenExpiry).getTime();
+
+        if (Number.isNaN(expiryTime)) {
+            await userService.setLastActivity();
+            return;
+        }
+
+        const now = Date.now();
+        const lastActivity = await userService.getLastActivity();
+        const lastActivityTime = typeof lastActivity === 'number'
+            ? lastActivity
+            : new Date(lastActivity || 0).getTime();
+
+        let sessionEnded = false;
+
+        if (expiryTime <= now) {
+            await signOut(true);
+            sessionEnded = true;
+        } else {
+            const timeUntilExpiry = expiryTime - now;
+            const hasSatisfiedCooldown = !lastActivityTime || (now - lastActivityTime) >= MIN_REFRESH_INTERVAL_MS;
+            const shouldRefresh = hasSatisfiedCooldown && timeUntilExpiry <= SESSION_REFRESH_BUFFER_MS;
+
+            if (shouldRefresh) {
+                try {
+                    const refreshedUser = await userService.getAccountInformation(cachedUser.token);
+                    user.value = refreshedUser;
+                    isLoggedIn.value = refreshedUser && refreshedUser.uuid ? true : false;
+                    await userService.updateCachedUser(refreshedUser);
+                } catch (error) {
+                    if (error instanceof SessionExpiredException) {
+                        await signOut(true);
+                        sessionEnded = true;
+                    } else {
+                        console.error('Failed to refresh session', error);
+                    }
+                }
+            }
+        }
+
+        if (!sessionEnded) {
+            await userService.setLastActivity(now);
+        }
     }
     
     return {

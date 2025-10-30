@@ -4,7 +4,8 @@ import {
     LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY,
     LOCAL_STORAGE_IS_AUTO_LOGIN_ENABLED_KEY,
     LOCAL_STORAGE_ACCOUNTS_KEY,
-    LOCAL_STORAGE_RECENT_ACCOUNTS_KEY
+    LOCAL_STORAGE_RECENT_ACCOUNTS_KEY,
+    LOCAL_STORAGE_LAST_ACTIVITY_KEY
  } from '../utils/storage'
 import localforage from 'localforage'
 
@@ -31,9 +32,22 @@ class UserService {
             avatarUrl: user.avatarUrl,
             email: user.email,
             token: user.token,
+            tokenExpiry: user.tokenExpiry,
             public_encryption_key: user.public_encryption_key,
             hasAccounts: user.hasAccounts
         });
+    }
+
+    async getLastActivity () {
+        return await localforage.getItem(LOCAL_STORAGE_LAST_ACTIVITY_KEY);
+    }
+
+    async setLastActivity (timestamp = Date.now()) {
+        await localforage.setItem(LOCAL_STORAGE_LAST_ACTIVITY_KEY, timestamp);
+    }
+
+    async clearLastActivity () {
+        await localforage.removeItem(LOCAL_STORAGE_LAST_ACTIVITY_KEY);
     }
 
     async lastRememberedUsername () {
@@ -98,6 +112,7 @@ class UserService {
     async signOut (preserveCache = false) {
         // Always remove user session/token info
         await localforage.removeItem(LOCAL_STORAGE_USER_KEY);
+        await this.clearLastActivity();
 
         // Optionally preserve cached accounts for faster re-login (e.g., session expired)
         if (!preserveCache) {
