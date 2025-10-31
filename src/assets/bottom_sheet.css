@@ -294,7 +294,7 @@
   z-index: 30;
   color: #ffffff;
   backdrop-filter: blur(8px);
-  background: url('images/deep.png') no-repeat;
+  background: url('/images/deep.png') no-repeat;
 }
 
 .bottom-sheet-large-icon {
