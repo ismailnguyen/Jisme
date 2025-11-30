@@ -40,21 +40,6 @@
   }
 }
 
-/* On standalone mode on mobile phone, the header is hidden by notch, so lower down content */
-@media screen and (display-mode: standalone) {
-  .bottom-sheet.fullscreen .header  {
-    padding-top: 3.5rem !important;
-  }
-
-  .bottom-sheet.fullscreen .header.hasIcon + .body {
-    padding-top: 14.5rem !important;
-  }
-  
-  .bottom-sheet.fullscreen .body {
-    padding-top: 9rem !important;
-  }
-}
-
 .bottom-sheet .sheet-overlay {
   position: fixed;
   top: 0;
