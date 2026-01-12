@@ -98,7 +98,7 @@ const store = defineStore('ui', () => {
         openedSidebarList.value.push(name);
         disableBodyScroll();
 
-        if (name === SIDEBAR.EDIT_ACCOUNT && isMobile()) {
+        if (name === SIDEBAR.EDIT_ACCOUNT) {
             expandBottomSheet('edit-account-bottom-sheet');
         }
     }
