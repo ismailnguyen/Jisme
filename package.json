@@ -1,7 +1,10 @@
 {
   "name": "jisme",
   "description": "Jisme",
-  "version": "4.8.8",
+  "version": "4.8.9",
+  "engines": {
+    "node": ">=22"
+  },
   "author": "Ismaïl <dev@ismailnguyen.com>",
   "scripts": {
     "dev": "vite",

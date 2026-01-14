@@ -108,7 +108,7 @@
 ## 🛠️ Development Setup
 
 ### Prerequisites
-- Node.js (v16+ recommended)
+- Node.js (v22+ recommended)
 - npm or yarn package manager
 
 ### Installation
