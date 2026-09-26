@@ -264,8 +264,6 @@ class AccountsService {
         for (let i = 0; i < accounts.length; i += chunkSize) {
             const chunk = accounts.slice(i, i + chunkSize);
             
-            console.log('Sending accounts', chunk);
-
             try {
                 const response = await fetch(`${ ACCOUNTS_API_URL }/encryption/enable/`, {
                         method: 'POST',
@@ -277,8 +275,6 @@ class AccountsService {
                 );
 
                 if (response.ok) {
-                    console.log('Successfully sent', response)
-
                     continue;
                 }
 
@@ -293,7 +289,6 @@ class AccountsService {
             }
         }
 
-        console.log('All accounts sent');
     }
 
     async updateLocalRecentAccounts (accounts) {

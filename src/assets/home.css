@@ -1,40 +1,43 @@
-body {
-  background-color: #000;
-}
-
-a {
-  color: var(--color-text);
-}
-.main-container {
-  padding-top: 4rem;
-}
-@media (max-width: 767.98px) {
-  .main-container {
-    padding-top: 2rem;
-  }
-}
-.form-control {
-  color: #f8f9fa;
-  border: none;
-  border-radius: var(--btn-border-radius);
-  background-color: var(--btn-color-background);
-}
-.form-control::placeholder {
-  color: #f8f9fa;
-  opacity: 1;
-}
+/* Home: a desk of paper. Summary (brand, search, types, tags) then the envelope stack. */
 
 .home-layout {
   display: flex;
   flex-direction: row;
-  height: 100vh;
-  background-color: var(--color-background);
-  transition: margin 0.1s linear;
+  min-height: 100dvh;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
-/* Reduce home page size when bottom sheet modal is open in mobile */
-@media (max-width: 767px) {
-  .bottom-sheet.show ~ .home-layout {
-    margin: 1rem 1rem 0;
+.account-list-pane {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 24px calc(120px + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 767.98px) {
+  .home-layout {
+    flex-direction: column;
   }
+
+  .account-list-pane {
+    padding: 0 16px calc(110px + env(safe-area-inset-bottom));
+  }
+}
+
+/* Behind an open sheet, the desk settles back a little */
+@media (max-width: 767.98px) {
+  .home-layout {
+    transition: transform 0.35s var(--ease-out), filter 0.35s var(--ease-out);
+    transform-origin: 50% 0;
+  }
+
+  .bottom-sheet.show ~ .home-layout {
+    transform: scale(0.96);
+    filter: saturate(0.9);
+  }
+}
+
+/* An open sheet owns the screen; the dock steps away instead of peeking out */
+body:has(.bottom-sheet.show) .home-dock {
+  visibility: hidden;
 }

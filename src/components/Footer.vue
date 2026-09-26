@@ -5,26 +5,32 @@
 </script>
 
 <template>
-    <div class="container d-none d-md-block">
-        <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-            <div class="col-md-4 d-flex align-items-center">
-                <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
-                    <img
-                    class="img-fluid"
-                    loading="lazy"
-                    src="../assets/logo_medium.png"
-                    height="30"
-                    width="30"
-                    :alt="app_name">
-                </a>
-                <span class="mb-3 mb-md-0 text-body-secondary">
-                    &copy; {{ (new Date()).getFullYear() }} {{ app_name }}
-                </span>
-            </div>
-
-            <span class="badge-secondary">
-            v. {{ version }}
-            </span>
-        </footer>
-    </div>
+    <footer class="paper-footer d-none d-md-flex">
+        <span class="carbon">&copy; {{ (new Date()).getFullYear() }} {{ app_name }} · v{{ version }}</span>
+        <a href="https://github.com/ismailnguyen/jisme" target="_blank" rel="noopener">
+            Source on GitHub<span class="visually-hidden"> (opens in a new tab)</span>
+        </a>
+    </footer>
 </template>
+
+<style scoped>
+.paper-footer {
+    height: 56px;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--ink-2);
+    background: radial-gradient(circle, rgba(46, 58, 79, 0.24) 1px, transparent 1.4px) 0 0 / 6px 3px repeat-x;
+}
+
+.paper-footer a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    font-weight: 600;
+    color: var(--ink);
+}
+</style>

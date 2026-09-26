@@ -5,31 +5,24 @@
 
 <template>
     <aside class="summary-pane" :class="{ 'summary-pane--expanded': isSummaryPaneExpanded }">
-        <div class="summary-header">
-            <h1 class="d-flex align-items-center">
-                {{ app_name }}
-                
-                <span class="badge badge-red" v-if="isOffline">
-                  <i
-                    class="fa fa-link-slash"
-                    aria-hidden="true"
-                    title="Offline"
-                  ></i>
-                  Offline
-                </span>
-            </h1>
+        <header class="summary-header">
+            <div class="brand-row">
+                <h1 class="brand">
+                    <img src="../assets/logo_medium.png" alt="" width="30" height="30">
+                    {{ app_name }}
+                </h1>
+                <VaultStatus />
+            </div>
 
             <SearchBar
                 @menuOpened="onMenuOpened"
             />
-        </div>
+        </header>
 
         <AccountTypesList
             v-if="isSummaryShortcutsEnabled()"
             :isLoading="!areAccountsLoaded"
         />
-
-        <hr v-if="isSummaryShortcutsEnabled()">
 
         <MostUsedTags
             v-if="isSummaryShortcutsEnabled()"
@@ -53,13 +46,15 @@ import {
 import AccountTypesList from "../components/AccountTypesList.vue";
 import MostUsedTags from "../components/MostUsedTags.vue";
 import SearchBar from "../components/SearchBar.vue";
+import VaultStatus from "../components/VaultStatus.vue";
 
 export default {
     emits: ['menuOpened'],
   components: {
     AccountTypesList,
     MostUsedTags,
-    SearchBar
+    SearchBar,
+    VaultStatus
   },
   computed: {
     ...mapState(useNetworkStore, [

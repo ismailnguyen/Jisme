@@ -17,6 +17,8 @@
       @menuOpened="onMenuOpened"
     />
   </div>
+
+  <HomeDock />
 </template>
 
 <script>
@@ -36,6 +38,7 @@ import EditAccountModal from "../components/EditAccount.vue";
 import SummaryPane from "../components/SummaryPane.vue";
 
 import AccountList from "../components/AccountList.vue";
+import HomeDock from "../components/HomeDock.vue";
 
 export default {
   components: {
@@ -43,7 +46,8 @@ export default {
     AddAccountModal,
     EditAccountModal,
     SummaryPane,
-    AccountList
+    AccountList,
+    HomeDock
   },
   props: {
     isAnySidebarOpen: {
@@ -67,8 +71,8 @@ export default {
       this.openSidebar(this.sidebarName);
     }
 
-    const lastUserUpdate = await this.getLastUpdatedTime();
-    console.log("Last user update:", lastUserUpdate, new Date());
+    // Touch the session so an expired token signs the user out early
+    await this.getLastUpdatedTime().catch(() => {});
   },
   beforeUnmount() {
     window.removeEventListener('resize', this.handleResize);

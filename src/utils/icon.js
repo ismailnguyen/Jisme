@@ -1,14 +1,9 @@
+// Initial icons are printed in the vault's ink tones, never in random brights
 export function generateRandomColor() {
     const color = [
-        "#5050ff",
-        "#50ff50",
-        "#ff5050",
-        "#ff5000",
-        "#ff0050",
-        "#0050ff",
-        "#00ff50",
-        "#50ff00",
-        "#5000ff"
+        "#2e3a4f",
+        "#4f5c72",
+        "#66728a"
     ];
 
     let random = Math.floor(Math.random() * color.length);
@@ -23,7 +18,7 @@ export function generateInitialIcon(name, color) {
     avatar = document.createElement("canvas");
     avatar.width = avatar.height = "48";
     ctx = avatar.getContext("2d");
-    ctx.font = `${avatar.width / 2}px Arial`;
+    ctx.font = `700 ${avatar.width / 2}px "Public Sans", Arial, sans-serif`;
     ctx.textAlign = "center";
 
     var initials = name ? name.split(' ').filter(x => x).map(s => s[0].toUpperCase()).join('') : '';
@@ -37,7 +32,7 @@ export function generateInitialIcon(name, color) {
     ctx.fillRect(0, 0, avatar.width, avatar.height);
 
     //add background
-    ctx.fillStyle = `${color}60`;
+    ctx.fillStyle = "#eef1f4";
     ctx.fillRect(0, 0, avatar.width, avatar.height);
 
     //add text
@@ -46,4 +41,18 @@ export function generateInitialIcon(name, color) {
 
     //generate as Image
     return avatar.toDataURL();
+}
+
+// Google's favicon service defaults to 16px, which pixelates in a 48px window.
+// Ask for a larger size for new icons and upgrade stored ones at display time.
+export function faviconUrl (platform) {
+    return "https://www.google.com/s2/favicons?sz=128&domain=" + platform;
+}
+
+export function displayIcon (icon) {
+    if (icon && icon.includes('google.com/s2/favicons') && !/[?&]sz=/.test(icon)) {
+        return icon.replace('favicons?', 'favicons?sz=128&');
+    }
+
+    return icon;
 }

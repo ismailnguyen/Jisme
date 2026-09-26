@@ -44,8 +44,8 @@ export default defineConfig({
         lang: 'en',
         display: 'standalone',
         orientation: 'any',
-        theme_color: '#f0f2f5',
-        background_color: '#f0f2f5',
+        theme_color: '#f7f8f6',
+        background_color: '#f7f8f6',
         related_applications: [],
         prefer_related_applications: false,
         icons: [{

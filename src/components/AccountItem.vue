@@ -1,169 +1,49 @@
 <template>
-    <div class="card-wrapper col-12 col-xs-12 col-sm-12 col-md-12 col-lg-6 col-xl-4">
-        <div class="card clickable" :id="account._id" >
-            <div class="card-body" @click.prevent="onCardClick()">
-                <div class="row">
-                    <div class="col-12 tags">
-                        <div
-                            class="badge rounded-pill"
-                            v-for="tag in account.tags.split(',')"
-                            @click.stop="selectTag(tag)"
-                            v-bind:key="tag">
-                            {{tag}}
-                        </div>
-                    </div>
-                </div>
+    <article class="env" :id="account._id" :aria-label="title">
+        <button
+            type="button"
+            class="env-window win"
+            :aria-label="'Open ' + title"
+            @click="onCardClick()">
+            <span class="logo-sq" aria-hidden="true">
+                <img v-if="hasIcon" :src="displayIcon(account.icon)" loading="lazy" alt="" @error="isIconBroken = true">
+                <span v-else class="initial">{{ initial }}</span>
+            </span>
+            <span class="env-text">
+                <b>
+                    <span class="env-title">{{ title }}</span>
+                    <span v-if="account.totp_secret" class="code-tag"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>Code</span>
+                </b>
+                <small class="carbon" v-if="subtitle">{{ subtitle }}</small>
+            </span>
+        </button>
 
-                <div class="row">
-                    <div class="col-8 align-self-center">
-                        <h2 class=" card-title">
-                            {{ account.label || account.displayPlatform }}
-                        </h2>
-                    </div>
-
-                    <div class="col-4 align-self-center">
-                        <img
-                            :src="account.icon"
-                            loading="lazy"
-                            :alt="account.label"
-                            :title="account.label"
-                            @error="onImageLoadingError()"
-                            class="card-icon float-end" />
-                    </div>
-                </div>
-
-                <div class="row" v-if="account.type == 'account'">
-                    <div class="col-12" v-if="account.subtype == 'login' && account.login">
-                        <span class="small">
-                            <i class="fa fa-user" aria-hidden="true" ></i>
-                            {{ account.login }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.subtype == 'wifi' && account.login">
-                        <span class="small">
-                            <i class="fa fa-wifi" aria-hidden="true" ></i>
-                            {{ account.login }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.subtype == 'secret_key' && account.login">
-                        <span class="small">
-                            <i class="fa fa-hashtag" aria-hidden="true" ></i>
-                            {{ account.login }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.description">
-                        <span class="small description">
-                            {{ shortDescription }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="row" v-if="account.type == 'card'">
-                    <div class="col-12" v-if="account.subtype == 'payment' && account.card_number">
-                        <span class="small">
-                            <i class="fa fa-barcode" aria-hidden="true" ></i>
-                            {{ maskedCardNumber }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="(account.subtype == 'loyalty' || account.subtype == 'gift') && account.card_number">
-                        <span class="small">
-                            <i class="fa fa-barcode" aria-hidden="true" ></i>
-                            {{ account.card_number }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.subtype == 'payment' && account.card_expiracy">
-                        <span class="small">
-                            <i class="fa fa-calendar" aria-hidden="true" ></i>
-                            {{ account.card_expiracy }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="(account.subtype == 'loyalty' || account.subtype == 'gift') && account.card_pin">
-                        <span class="small">
-                            <i class="fa fa-lock" aria-hidden="true" ></i>
-                            {{ account.card_pin }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.card_name">
-                        <span class="small">
-                            <i class="fa fa-user" aria-hidden="true" ></i>
-                            {{ account.card_name }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.platform">
-                        <span class="small">
-                            <i class="fa fa-building-columns" aria-hidden="true" ></i>
-                            {{ account.platform }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.description">
-                        <span class="small description">
-                            {{ shortDescription }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="row" v-if="account.type == 'bank'">
-                    <div class="col-12" v-if="account.password">
-                        <span class="small">
-                            <i class="fa fa-barcode" aria-hidden="true" ></i>
-                            {{ account.password }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.platform">
-                        <span class="small">
-                            <i class="fa fa-building-columns" aria-hidden="true" ></i>
-                            {{ account.platform }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.login">
-                        <span class="small">
-                            <i class="fa fa-user" aria-hidden="true" ></i>
-                            {{ account.login }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.description">
-                        <span class="small description">
-                            {{ shortDescription }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="row" v-if="account.type == 'document'">
-                   <div class="col-12" v-if="account.card_name">
-                        <span class="small">
-                            <i class="fa fa-user" aria-hidden="true" ></i>
-                            {{ account.card_name }}
-                        </span>
-                    </div>
-                     <div class="col-12" v-if="account.card_number">
-                        <span class="small">
-                            <i class="fa fa-barcode" aria-hidden="true" ></i>
-                            {{ account.card_number }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.card">>
-                        <span class="small">
-                            <i class="fa fa-calendar" aria-hidden="true" ></i>
-                            {{ account.card_expiracy }}
-                        </span>
-                    </div>
-                    <div class="col-12" v-if="account.description">
-                        <span class="small description">
-                            {{ shortDescription }}
-                        </span>
-                    </div>
-                </div>
-            </div>
+        <div class="env-seal" :class="quickCopy ? 'tint' : 'is-plain'">
+            <button
+                v-if="quickCopy"
+                type="button"
+                class="ibtn"
+                :class="{ 'is-done': justCopied }"
+                :aria-label="`Copy ${ quickCopy.name.toLowerCase() } for ${ title }`"
+                @click="copySecret()">
+                <i class="fa-solid" :class="justCopied ? 'fa-check' : 'fa-copy'" aria-hidden="true"></i>
+            </button>
+            <button
+                v-else
+                type="button"
+                class="ibtn is-quiet"
+                :aria-label="hasBarcode ? 'Show barcode for ' + title : 'Open ' + title"
+                @click="onCardClick()">
+                <i class="fa-solid" :class="hasBarcode ? 'fa-barcode' : 'fa-chevron-right'" aria-hidden="true"></i>
+            </button>
         </div>
-    </div>
+    </article>
 </template>
 
 <script>
     import '../assets/card.css';
-  
-    import { generateInitialIcon } from "../utils/icon.js";
 
-    import { 
+    import {
         mapState,
         mapActions
     } from 'pinia'
@@ -173,39 +53,82 @@
         useAccountsStore
     } from '@/store'
     import Account from '../models/Account'
-    import { truncateString } from '../utils/textFormat'
+    import { maskSecret } from '../utils/secrets'
+    import { copyText } from '../utils/clipboard'
+    import { displayIcon } from '../utils/icon.js'
 
     export default {
         props: {
             account: Account,
         },
-        mounted() {
-            if (!this.account.icon) {
-                this.account.icon = generateInitialIcon(this.account.label);
-            }
+        data() {
+            return {
+                isIconBroken: false,
+                justCopied: false,
+            };
+        },
+        beforeUnmount() {
+            clearTimeout(this.copiedTimer);
         },
         computed: {
             ...mapState(useUiStore, [
                 'SIDEBAR'
             ]),
 
-            shortDescription: function () {
-                if (this.account.description && this.account.description.length > 30) {
-                    return truncateString(this.account.description, 30)
-                }
-
-                return this.account.description;
+            title: function () {
+                return this.account.label || this.account.displayPlatform || 'Untitled';
             },
 
-            maskedCardNumber: function () {
-                if (this.account.card_number && this.account.card_number.length > 4) {
-                    return '**** **** **** ' + this.account.card_number.slice(-4);
+            initial: function () {
+                return (this.title.trim()[0] || '?').toUpperCase();
+            },
+
+            hasIcon: function () {
+                return !!this.account.icon && !this.isIconBroken;
+            },
+
+            hasBarcode: function () {
+                return this.account.type === 'card' && ['loyalty', 'gift'].includes(this.account.subtype) && !!this.account.card_number;
+            },
+
+            // What the seal copies without opening the envelope
+            quickCopy: function () {
+                const { type, subtype, password } = this.account;
+
+                if (type !== 'account' || !password) {
+                    return null;
                 }
 
-                return this.account.card_number;
-            }
+                if (subtype === 'wifi') return { name: 'Wi-Fi password', value: password };
+                if (subtype === 'secret_key') return { name: 'Key', value: password };
+                if (subtype === 'login' && !this.account.is_password_less) return { name: 'Password', value: password };
+
+                return null;
+            },
+
+            subtitle: function () {
+                const a = this.account;
+
+                if (a.type === 'account') {
+                    if (a.subtype === 'wifi') return a.login ? 'SSID ' + a.login : 'Wi-Fi';
+                    if (a.subtype === 'secret_key') return a.login || 'Secret key';
+                    return a.login || a.social_login || '';
+                }
+
+                if (a.type === 'card') {
+                    if (a.subtype === 'payment') return a.card_number ? maskSecret(a.card_number, 4) : 'Payment card';
+                    return a.subtype === 'gift' ? 'Gift card' : 'Loyalty card';
+                }
+
+                if (a.type === 'bank') return a.password ? maskSecret(a.password, 4) : 'Bank account';
+                if (a.type === 'document') return a.card_number ? maskSecret(a.card_number, 3) : (a.card_name || 'Document');
+
+                return a.description || '';
+            },
         },
         methods: {
+            displayIcon,
+
             ...mapActions(useUiStore, [
                 'openSidebar',
                 'setCurrentEditingAccount'
@@ -219,7 +142,8 @@
                 if (accountToEdit) {
                     this.setCurrentEditingAccount(accountToEdit);
                 } else {
-                    this.openAlert('Account not found', 'Please refresh or retry.', 'danger');
+                    this.openAlert("Couldn't open this item", 'Refresh the page and try again.', 'danger');
+                    return;
                 }
 
                 this.openSidebar(this.SIDEBAR.EDIT_ACCOUNT);
@@ -229,31 +153,22 @@
                 await this.edit();
             },
 
-            selectTag: function (tag) {
-                // Don't add the tag if it is already selected
-                if (this.$route.query.tags && this.$route.query.tags.split(',').map(x => x.trim()).includes(tag.trim())) {
+            copySecret: async function () {
+                const { name, value } = this.quickCopy;
+                const isCopied = await copyText(value);
+
+                if (!isCopied) {
+                    this.openAlert(`Couldn't copy ${ name.toLowerCase() }`, 'Open the item and reveal it instead.', 'danger');
                     return;
                 }
 
-                const tags = this.addTag(tag);
+                // Never echo the secret: the toast is visible to anyone nearby
+                this.openAlert(`${ name } copied`, this.title, 'info', this.hasIcon ? this.account.icon : null);
 
-                this.$router.push({name: 'Home', query: {
-                    tags: tags,
-                    search: this.$route.query.search,
-                    type: this.$route.query.type
-                }});
+                this.justCopied = true;
+                clearTimeout(this.copiedTimer);
+                this.copiedTimer = setTimeout(() => { this.justCopied = false; }, 1600);
             },
-
-            addTag: function (tag) {
-                let newTags = this.$route.query.tags ? this.$route.query.tags.split(',').map(x => x.trim()) : [];
-                newTags.push(tag.trim());
-
-                return newTags.join(',');
-            },
-
-            onImageLoadingError() {
-                this.account.icon = '';
-            }
         }
     }
 </script>

@@ -22,8 +22,7 @@
                         class="w-100 btn btn-lg"
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
                         :disabled="!username || !password"
-                        @click="signUp()"
-                        tabindex="3">
+                        @click="signUp()">
                         Next
                     </button>
                     -->
@@ -39,8 +38,7 @@
                         id="signUpButton"
                         type="button"
                         @click="signUp"
-                        class="w-100 btn btn-lg btn-primary"
-                        tabindex="3">
+                        class="w-100 btn btn-lg btn-primary">
                         Request an access
                     </button>
 

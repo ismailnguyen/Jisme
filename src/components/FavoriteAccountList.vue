@@ -1,39 +1,20 @@
 <template>
-    <div class="favorite-accounts-list container-fluid">
-        <div class="row">
-            <div class="mb-3 col-12 col-xs-12 col-sm-6 placeholder-glow" v-show="isLoading">
-                <span class="placeholder col-4 me-3 mb-0"></span><br>
-            </div>
-            <div class="mb-3 col-12 col-xs-12 col-sm-6" v-show="!isLoading">
-                <h5 class="font-size-16 font-weight-light é me-3 mb-0">
-                    Favorites
-                </h5>
-            </div>
-
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 d-none d-sm-block placeholder-glow" v-if="isLoading">
-                <span class="placeholder col-4 float-end"></span>
-            </div>
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 d-none d-sm-block" v-if="favoriteAccounts.length">
-                <span class="category-title float-end">{{ favoriteAccounts.length }} out of {{ accounts.length }}</span>
-            </div>
+    <section class="favorite-accounts-list" aria-labelledby="favorites-title">
+        <div class="section-hd">
+            <h2 id="favorites-title"><i class="fa-solid fa-star" aria-hidden="true"></i>Favorites</h2>
+            <span v-if="favoriteAccounts.length">{{ favoriteAccounts.length }}</span>
         </div>
-        <div class="row" v-if="isLoading">
-            <LoadingAccountItem
-                v-for="index in 3"
-                v-bind:key="index" />
+        <div class="mini-grid" v-if="isLoading" aria-hidden="true">
+            <div class="mini-env placeholder-glow" v-for="index in 3" :key="index"><span class="placeholder col-12" style="height: 44px; border-radius: 5px;"></span></div>
         </div>
-        <div class="row " v-if="favoriteAccounts.length">
+        <div class="mini-grid" v-else-if="favoriteAccounts.length">
             <LightAccountItem
                 v-for="(account, index) in favoriteAccounts"
                 v-bind:key="index"
                 :account="account" />
         </div>
-        <div class="rows" v-if="!isLoading && !favoriteAccounts.length">
-            <div class="col-12">
-                <p class="text-left">Pin your favorite accounts to see them here.</p>
-            </div>
-        </div>
-    </div>
+        <p class="list-empty" v-else>Open an item and choose <b>Add to favorites</b> to keep it here.</p>
+    </section>
 </template>
 
 <script>
@@ -45,7 +26,7 @@
         useAccountsStore,
         useAlertStore,
      } from '@/store'
-    import LoadingAccountItem from './LoadingAccountItem.vue'
+    import '../assets/accounts_pane.css'
     import LightAccountItem from './LightAccountItem.vue'
     
     export default {
@@ -56,7 +37,6 @@
             }
         },
         components: {
-            LoadingAccountItem,
             LightAccountItem,
         },
         computed: {
@@ -70,16 +50,3 @@
     }
 </script>
 
-<style scoped>
-    @media (max-width: 767.98px) {
-        .favorite-accounts-list {
-            margin-top: 0.5rem;
-        }
-    }
-
-    @media (min-width: 767.98px) {
-        .favorite-accounts-list {
-            margin-top: 2rem;
-        }
-    }
-</style>

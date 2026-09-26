@@ -1,39 +1,35 @@
 <template>
   <header class="search-input-container justify-content-center">
     <div class="btn-group" role="group">
-      <label
-        class="btn"
-        :class="isSidebarOpen(SIDEBAR.MENU) ? 'active' : ''"
-        for="navbar_toggle-menu"
-        @click="onMenuOpened">
-        <i class="fa fa-bars-staggered"></i>
-      </label>
+      <i class="fa-solid fa-magnifying-glass search-glyph" aria-hidden="true" v-show="searchMode == 'text'"></i>
 
-      <label
+      <button
+        type="button"
         v-show="searchMode == 'tags'"
         class="btn active"
         v-for="(tag, tagIndex) in selectedTags"
         :key="tagIndex"
-        @click="removeTag(tag)"
-        :for="'navbar_tag'+tag">
+        :aria-label="'Remove tag filter ' + tag"
+        @click="removeTag(tag)">
         {{ tag }}
-        <i class="fa fa-close"></i>
-      </label>
+        <i class="fa fa-close" aria-hidden="true"></i>
+      </button>
 
-      <label
+      <button
+        type="button"
         v-show="searchMode == 'tags'"
         class="btn btn-secondary active"
         v-for="(type, typeIndex) in selectedTypes"
         :key="typeIndex"
-        @click="removeType(type)"
-        :for="'navbar_type'+type">
+        :aria-label="'Remove type filter ' + type"
+        @click="removeType(type)">
         <i class="fa fa-user-secret" aria-hidden="true" v-if="type == 'account'"></i>
         <i class="fa fa-credit-card" aria-hidden="true" v-if="type == 'card'"></i>
         <i class="fa fa-building-columns" aria-hidden="true" v-if="type == 'bank'"></i>
         <i class="fa fa-id-card" aria-hidden="true" v-if="type == 'document'"></i>
         {{ type }}
-        <i class="fa fa-close"></i>
-      </label>
+        <i class="fa fa-close" aria-hidden="true"></i>
+      </button>
 
       <input
         class="form-control search-input"
@@ -41,42 +37,49 @@
         name="search"
         v-model="localSearchQuery"
         placeholder="Search"
+        aria-label="Search your vault"
+        autocapitalize="off"
+        autocorrect="off"
+        spellcheck="false"
+        enterkeyhint="search"
         :disabled="!areAccountsLoaded"
         v-show="searchMode == 'text'"
       />
 
       <div class="search-filters-container" v-show="searchMode == 'advanced'">
         <div class="filter input-group" v-show="selectedTags.length || selectedTypes.length">
-          <label
+          <button
+            type="button"
             class="btn active"
             v-for="(tag, tagIndex) in selectedTags"
             :key="tagIndex"
-            @click="removeTag(tag)"
-            :for="'navbar_tag'+tag">
+            :aria-label="'Remove tag filter ' + tag"
+            @click="removeTag(tag)">
             {{ tag }}
-            <i class="fa fa-close"></i>
-          </label>
+            <i class="fa fa-close" aria-hidden="true"></i>
+          </button>
 
-          <label
+          <button
+            type="button"
             class="btn btn-secondary active"
             v-for="(type, typeIndex) in selectedTypes"
             :key="typeIndex"
-            @click="removeType(type)"
-            :for="'navbar_type'+type">
+            :aria-label="'Remove type filter ' + type"
+            @click="removeType(type)">
             <i class="fa fa-user-secret" aria-hidden="true" v-if="type == 'account'"></i>
             <i class="fa fa-credit-card" aria-hidden="true" v-if="type == 'card'"></i>
             <i class="fa fa-building-columns" aria-hidden="true" v-if="type == 'bank'"></i>
             <i class="fa fa-id-card" aria-hidden="true" v-if="type == 'document'"></i>
             {{ type }}
-            <i class="fa fa-close"></i>
-          </label>
+            <i class="fa fa-close" aria-hidden="true"></i>
+          </button>
         </div>
 
         <div
           v-for="(filter, filterIndex) in selectedFilters"
           :key="filterIndex"
           class="filter input-group">
-          <select name="filterFields" class="custom-select form-control" v-model="filter.field" @change="onFiltersChange">
+          <select name="filterFields" aria-label="Field" class="custom-select form-control" v-model="filter.field" @change="onFiltersChange">
             <option value="_id">ID</option>
             <option selected value="label">Label</option>
             <option value="tags">Tags</option>
@@ -92,7 +95,7 @@
             <option value="platform" v-show="!selectedTypes.length || selectedTypes.includes('card')">Provider</option>
             <option value="card_number" v-show="!selectedTypes.length || selectedTypes.includes('card')">Card number</option>
             <option value="card_name" v-show="!selectedTypes.length || selectedTypes.includes('card')">Name on card</option>
-            <option value="card_expiracy" v-show="!selectedTypes.length || selectedTypes.includes('card')">Card expiracy</option>
+            <option value="card_expiracy" v-show="!selectedTypes.length || selectedTypes.includes('card')">Card expiry</option>
             <option value="card_cryptogram" v-show="!selectedTypes.length || selectedTypes.includes('card')">Card cryptogram</option>
             <option value="card_pin" v-show="!selectedTypes.length || selectedTypes.includes('card')">Card PIN</option>
             <option value="password" v-show="!selectedTypes.length || selectedTypes.includes('bank')">IBAN</option>
@@ -100,19 +103,19 @@
             <option value="platform" v-show="!selectedTypes.length || selectedTypes.includes('document')">BIC/SWIFT</option>
             <option value="card_number" v-show="!selectedTypes.length || selectedTypes.includes('document')">Card number</option>
             <option value="card_name" v-show="!selectedTypes.length || selectedTypes.includes('document')">Name on card</option>
-            <option value="card_expiracy" v-show="!selectedTypes.length || selectedTypes.includes('document')">Card expiracy</option>
+            <option value="card_expiracy" v-show="!selectedTypes.length || selectedTypes.includes('document')">Card expiry</option>
             <option value="platform" v-show="!selectedTypes.length || selectedTypes.includes('document')">Issued by</option>
             <option value="description">Description</option>
             <option value="notes">Notes</option>
           </select>
-          <select class="custom-select form-control" v-model="filter.comparison" @change="onFiltersChange">
+          <select aria-label="Comparison" class="custom-select form-control" v-model="filter.comparison" @change="onFiltersChange">
             <option selected value="includes">Includes</option>
             <option value="equals">Equals</option>
             <option value="excludes">Excludes</option>
           </select>
-          <input :name="'filterValue'+filterIndex" placeholder="Field value (i.e; Simpson)" type="text" class="form-control" v-model="filter.value" @change="onFiltersChange">
-          <button class="btn btn-light" type="button" @click="removeSearchFilter(filter)" v-show="selectedFilters.length > 1">
-            <i class="fa fa-close"></i>
+          <input :name="'filterValue'+filterIndex" placeholder="Value (e.g. Simpson)" aria-label="Value" type="text" class="form-control" v-model="filter.value" @change="onFiltersChange">
+          <button class="btn btn-light" type="button" aria-label="Remove filter" @click="removeSearchFilter(filter)" v-show="selectedFilters.length > 1">
+            <i class="fa fa-close" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -122,29 +125,33 @@
         </button>
       </div>
      
-      <label
+      <button
+        type="button"
         v-show="searchMode == 'text' && (selectedTags.length || selectedTypes.length)"
         class="btn"
-        @click="changeSearchMode('tags')"
-        for="navbar_close-search">
-        <i class="fa fa-close"></i>
-      </label>
+        aria-label="Close search"
+        @click="changeSearchMode('tags')">
+        <i class="fa fa-close" aria-hidden="true"></i>
+      </button>
 
-      <label
+      <button
+        type="button"
         v-show="searchMode == 'tags' || searchMode == 'advanced'"
         class="btn"
-        @click="changeSearchMode('text')"
-        for="navbar_show-search">
-        <i class="fa fa-search"></i>
-      </label>
+        aria-label="Search"
+        @click="changeSearchMode('text')">
+        <i class="fa fa-search" aria-hidden="true"></i>
+      </button>
 
-       <label
+      <button
+        type="button"
         v-show="searchMode == 'text' || searchMode == 'tags'"
         class="btn"
-        @click="changeSearchMode('advanced')"
-        for="navbar_close-search">
-        <i class="fa fa-filter"></i>
-      </label>
+        aria-label="Filters"
+        :aria-pressed="searchMode == 'advanced' ? 'true' : 'false'"
+        @click="changeSearchMode('advanced')">
+        <i class="fa fa-filter" aria-hidden="true"></i>
+      </button>
     </div>
   </header>
 </template>
@@ -220,8 +227,9 @@ export default {
     localSearchQuery(newSearchQuery) {
         this.searchQuery = newSearchQuery; // This line helps to speed the query update on the input field
 
+        // replace, not push: Back should leave the search, not undo it one letter at a time
         if (this.$route.query.search != newSearchQuery) {
-          this.$router.push({
+          this.$router.replace({
             name: 'Home',
             query: {
               search: newSearchQuery,

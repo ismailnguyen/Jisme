@@ -1,44 +1,33 @@
 <template>
-    <div class="filtered-account-list container-fluid">
-        <div class="row">
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 placeholder-glow" v-show="isLoading">
-                <span class="placeholder col-2 me-3 mb-0"></span><br>
-            </div>
-
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 tags" v-show="!isLoading">
-                <h5 class="font-size-16 me-3 mb-0 " v-show="searchQuery">
-                    Results for <span class="fw-bold">{{ searchQuery }}</span>
-                </h5>
-            </div>
-
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 placeholder-glow" v-if="isLoading">
-                <span class="placeholder col-4 float-end"></span>
-            </div>
-            <div class="mb-3 col-6 col-xs-6 col-sm-6" v-else>
-                <span class="category-title float-end">{{ filteredAccounts.length }} out of {{ accounts.length }}</span>
-            </div>
+    <section class="filtered-account-list" aria-labelledby="results-title" aria-live="polite">
+        <div class="section-hd">
+            <h2 id="results-title">
+                <template v-if="searchQuery">Results for “{{ searchQuery }}”</template>
+                <template v-else>Filtered items</template>
+            </h2>
+            <span v-if="!isLoading">{{ filteredAccounts.length }} of {{ accounts.length }}</span>
         </div>
 
-        <div class="row" v-if="isLoading">
-            <LoadingAccountItem
-            v-for="index in 7"
-            v-bind:key="index" />
+        <div class="env-stack is-grid" v-if="isLoading">
+            <LoadingAccountItem v-for="index in 6" v-bind:key="index" />
         </div>
-        <div class="row" v-else-if="!filteredAccounts.length">
-            <p>No account yet for this query, woudld you like to create one?</p>
-            
-            <NewAccountItem  />
-        </div>
-        <div class="row" v-else>
+        <template v-else-if="!filteredAccounts.length">
+            <p class="list-empty">Nothing matches. Try fewer words, or save it as a new item.</p>
+            <div class="env-stack">
+                <NewAccountItem />
+            </div>
+        </template>
+        <div class="env-stack is-grid" v-else>
             <AccountItem
                 v-for="(account, accountIndex) in filteredAccounts"
                 v-bind:key="accountIndex"
                 :account="account" />
         </div>
-    </div>
+    </section>
 </template>
 
 <script>
+    import '../assets/accounts_pane.css'
     import {
         mapState,
         mapActions,

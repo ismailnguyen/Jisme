@@ -1,33 +1,29 @@
 <template>
-    <div class="tray-wrapper" :class="visible ? 'tray-wrapper-open' : ''">
+    <div class="tray-wrapper" :class="visible ? 'tray-wrapper-open' : ''" @keydown.esc="closeTray()">
         <div class="tray-overlay" @click="closeTray()"></div>
-        <div class="tray">
+        <div class="tray" role="dialog" aria-modal="true" aria-label="Menu">
             <div class="tray-header">
-                <div class="row">
-                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4" v-if="currentPanel == 'menu'">
-                        <img
-                            :src="user && user.avatarUrl"
-                            loading="lazy"
-                            :alt="user.email"
-                            :title="user.email"
-                            class="tray-icon" />
-                    </div>
-
-                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4" v-else>
-                        <button type="button" class="button--navigation" @click="goToPreviousPanel()">
-                            <i class="fa fa-chevron-left"></i>
-                        </button>
-                    </div>
-
-                    <div class="mb-3" :class="user && user.avatarUrl ? 'col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4' : 'col-xs-8 col-sm-8 col-8 col-md-8 col-lg-8'">
-                    </div>
-                    
-                    <div class="mb-3 col-xs-4 col-sm-4 col-4 col-md-4 col-lg-4 justify-content-end" v-if="user && user.avatarUrl">
-                        <button type="button" class="button--navigation" @click="closeTray()">
-                            <i class="fa fa-close"></i>
-                        </button>
-                    </div>
+                <button
+                    v-if="currentPanel != 'menu'"
+                    type="button"
+                    class="button--navigation"
+                    aria-label="Back"
+                    @click="goToPreviousPanel()">
+                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <div v-else class="tray-account">
+                    <span class="tray-avatar" aria-hidden="true">
+                        <img v-if="user && user.avatarUrl && !isAvatarBroken" :src="user.avatarUrl" alt="" @error="isAvatarBroken = true">
+                        <span v-else>{{ userInitial }}</span>
+                    </span>
+                    <span class="tray-account-text">
+                        <small>Signed in as</small>
+                        <b :title="user && user.email">{{ user && user.email }}</b>
+                    </span>
                 </div>
+                <button type="button" class="button--navigation" aria-label="Close menu" @click="closeTray()">
+                    <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                </button>
             </div>
 
             <div class="tray-body">
@@ -94,6 +90,7 @@
         data() {
             return {
                 currentPanel: 'menu',
+                isAvatarBroken: false,
             }
         },
         components: {
@@ -112,7 +109,12 @@
 
             ...mapState(useUiStore, [
                 'SIDEBAR'
-            ])
+            ]),
+
+            userInitial: function () {
+                const email = this.user && this.user.email || '';
+                return (email.trim()[0] || '?').toUpperCase();
+            }
         },
         methods: {
             ...mapActions(useUiStore, [

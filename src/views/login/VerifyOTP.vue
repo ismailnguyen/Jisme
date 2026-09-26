@@ -11,40 +11,46 @@
                         :user="user"
                         @usernameChanged="onChangeUsername" />
 
-                    <label for="inputOtp">Enter the code displayed in the authenticator app on your mobile device​​</label>
-                    <div class="otp-input-container">
+                    <label for="inputOtp" class="form-label otp-label">Enter the 6-digit code from your authenticator app</label>
+                    <div class="otp-field" :class="hasError ? 'shake' : ''">
                         <input
-                            v-for="(v, index) in totpToken"
-                            :key="index"
-                            :ref="'otpInput_' + index"
-                            @input="onOtpInput(index)"
-                            @keydown="onOtpKeydown(index, $event)"
-                            required="required"
-                            maxlength="1"
-                            step="1"
-                            min="0"
-                            max="9"
-                            autocomplete="no"
-                            pattern="\d*"
-                            type="text"
+                            id="inputOtp"
+                            ref="otpInput"
                             class="otp-input"
-                            :class="hasError ? 'shake' : ''"
-                            v-model="totpToken[index]">
+                            type="text"
+                            inputmode="numeric"
+                            autocomplete="one-time-code"
+                            pattern="[0-9]*"
+                            maxlength="6"
+                            required
+                            aria-describedby="otpHelp"
+                            :aria-invalid="hasError ? 'true' : 'false'"
+                            :value="totpToken"
+                            @input="onOtpInput"
+                            @paste="onOtpPaste">
+                        <div class="otp-slots" aria-hidden="true">
+                            <span
+                                v-for="index in 6"
+                                :key="index"
+                                class="otp-slot"
+                                :class="{ 'is-filled': totpToken.length >= index, 'is-active': totpToken.length === index - 1 }">
+                                {{ totpToken[index - 1] || '' }}
+                            </span>
+                        </div>
                     </div>
+                    <p id="otpHelp" class="form-text">It refreshes every 30 seconds. Paste works too.</p>
 
-                    <button 
-                        type="button"
+                    <button
+                        type="submit"
                         class="w-100 btn btn-lg"
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
-                        :disabled="!isOtpFilled"
-                        @click="onVerifyOtp"
-                        tabindex="7">
-                        {{ isLoading ? 'Verifying...' : 'Verify' }}
+                        :disabled="!isOtpFilled || isLoading">
+                        {{ isLoading ? 'Verifying…' : 'Verify' }}
                     </button>
 
                     <hr class="my-4 mt-5 mb-3">
 
-                    <p class="text-muted">Having trouble? <a class="link" @click="goBack()">Sign in another way</a></p>
+                    <p class="text-muted">Having trouble? <button type="button" class="btn btn-link link" @click="goBack()">Sign in another way</button></p>
                 </form>
             </div>
         </div>
@@ -69,7 +75,7 @@
     export default {
         data() {
             return {
-                totpToken: ['','','','','',''],
+                totpToken: '',
                 error: {
                     message: ''
                 },
@@ -96,7 +102,7 @@
             ...mapState(useUserStore, ['user']),
 
             isOtpFilled: function () {
-                return this.totpToken.filter(v => v).length == this.totpToken.length;
+                return /^\d{6}$/.test(this.totpToken);
             }
         },
         methods: {
@@ -117,7 +123,7 @@
             },
 
             focusOtpInput: function () {
-                this.$refs['otpInput_0'][0].focus();
+                this.$refs.otpInput && this.$refs.otpInput.focus();
             },
 
             onChangeUsername: async function () {
@@ -127,89 +133,29 @@
                 this.$router.push({ name: 'Login' });
             },
 
-            onOtpInput: function (index) {
-                // handling normal input
-                if (this.totpToken[index].length == 1 && index+1 < this.totpToken.length) {
-                    this.$refs['otpInput_' + (index + 1)][0].focus();
+            setOtp: function (value) {
+                // Keep digits only, so "123 456" or "123-456" paste cleanly
+                this.totpToken = String(value || '').replace(/\D/g, '').slice(0, 6);
+
+                if (this.$refs.otpInput && this.$refs.otpInput.value !== this.totpToken) {
+                    this.$refs.otpInput.value = this.totpToken;
                 }
 
-                // if a value is pasted, put each character to each of the next input
-                if (this.totpToken[index].length > 1) {
-                    // sanitise input
-                    if (isNaN(this.totpToken[index])) {
-                        this.totpToken[index] = "";
-                        return;
-                    }
-
-                    // split characters to array
-                    const chars = this.totpToken[index].split('');
-
-                    for (let pos = 0; pos < chars.length; pos++) {
-                        // if length exceeded the number of inputs, stop
-                        if (pos + index >= this.totpToken.length) break;
-
-                        // paste value
-                        this.totpToken[pos + index] = chars[pos];
-                    }
-
-                    // focus the input next to the last pasted character
-                    let focus_index = Math.min(this.totpToken.length - 1, index + chars.length);
-                    this.$refs['otpInput_' + focus_index][0].focus();
-                }
-
-                // If all inputs are filled, verify
-                if (this.isOtpFilled) {
+                if (this.isOtpFilled && !this.isLoading) {
                     this.onVerifyOtp();
                 }
             },
 
-            onOtpKeydown: function (index, event) {
-                // backspace button
-                if (event.keyCode == 8 && this.totpToken[index] == '' && index != 0) {
-                    // shift next values towards the left
-                    for (let pos = index; pos < this.totpToken.length - 1; pos++) {
-                        this.totpToken[pos] = this.totpToken[pos + 1];
-                    }
+            onOtpInput: function (event) {
+                this.setOtp(event.target.value);
+            },
 
-                    // clear previous box and focus on it
-                    this.totpToken[index - 1] = '';
-                    this.$refs['otpInput_' + (index - 1)][0].focus();
-                    
-                    return;
-                }
+            onOtpPaste: function (event) {
+                const pasted = event.clipboardData && event.clipboardData.getData('text');
 
-                // delete button
-                if (event.keyCode == 46 && index != this.totpToken.length - 1) {
-                    // shift next values towards the left
-                    for (let pos = index; pos < this.totpToken.length - 1; pos++) {
-                        this.totpToken[pos] = this.totpToken[pos + 1];
-                    }
-
-                    // clear the last box
-                    this.totpToken[this.totpToken.length - 1] = '';
-                    this.$refs['otpInput_' + index][0].select();
+                if (pasted) {
                     event.preventDefault();
-                    return;
-                }
-
-                // left button
-                if (event.keyCode == 37) {
-                    if (i > 0) {
-                        event.preventDefault();
-                        this.$refs['otpInput_' + (index - 1)][0].focus();
-                        this.$refs['otpInput_' + (index - 1)][0].select();
-                    }
-                    return;
-                }
-
-                // right button
-                if (event.keyCode == 39) {
-                    if (i+1 < this.totpToken.length) {
-                        event.preventDefault();
-                        this.$refs['otpInput_' + (index + 1)][0].focus();
-                        this.$refs['otpInput_' + (index + 1)][0].select();
-                    }
-                    return;
+                    this.setOtp(pasted);
                 }
             },
 
@@ -218,10 +164,10 @@
 
                 try {
                     await this.verifyMFA({
-                        totpToken: this.totpToken.join('')
+                        totpToken: this.totpToken
                     });
 
-                    this.$router.push({ name: 'Home' });
+                    this.$router.replace({ name: 'Home' });
                 }
                 catch(error) {
                     this.isLoading = false;
@@ -231,7 +177,9 @@
                     }
                     , 500);
 
-                    this.openAlert('Error', error.message, 'danger');
+                    this.totpToken = '';
+                    this.focusOtpInput();
+                    this.openAlert("That code didn't work", error.message || 'Check the code in your authenticator app and try again.', 'danger');
                 }
             }
         }
@@ -255,32 +203,46 @@
         margin-bottom: 10px;
     }
 
-    .otp-input-container {
+    .otp-field {
+        position: relative;
         width: 100%;
-        display: flex;
-        flex-direction: row;
-        gap: 10px;
-        align-items: center;
-        justify-content: center;
-        padding: 2rem;
+        max-width: 22rem;
+        margin: 1rem auto 0.5rem;
     }
 
+    /* The real input sits on top, transparent, so native autofill, paste and IME all work */
     .otp-input {
-        background-color: var(--color-background);
-        border-color: var(--color-text);
-        width: 40px;
-        height: 48px;
-        text-align: center;
-        border-radius: 7px;
-        caret-color: rgb(127, 129, 255);
-        color: var(--color-text);
-        outline: none;
-        font-weight: 600;
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        border: 0;
+        font-size: 16px;
+        z-index: 1;
     }
 
-    .otp-input:focus,
-    .otp-input:valid {
-        background-color: rgba(127, 129, 255, 0.199);
-        transition-duration: .3s;
+    .otp-slots {
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    .otp-slot {
+        display: grid;
+        place-items: center;
+        height: 52px;
+        border-radius: 10px;
+        border: 1px solid var(--tint);
+        background-color: var(--color-background);
+        color: var(--color-text);
+        font-size: 22px;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .otp-input:focus-visible + .otp-slots .otp-slot.is-active {
+        outline: 2px solid var(--ink);
+        outline-offset: 2px;
     }
 </style>

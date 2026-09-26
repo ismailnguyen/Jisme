@@ -1,36 +1,20 @@
 <template>
-    <div class="recent-accounts-list container-fluid">
-        <div class="row">
-            <div class="mb-3 col-12 col-xs-12 col-sm-6 placeholder-glow" v-show="isLoading">
-                <span class="placeholder col-4 me-3 mb-0"></span><br>
-            </div>
-            <div class="mb-3 col-12 col-xs-12 col-sm-6" v-show="!isLoading">
-                <h5 class="font-size-16 font-weight-light é me-3 mb-0">
-                    Recently viewed
-                </h5>
-            </div>
-
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 d-none d-sm-block placeholder-glow" v-if="isLoading">
-                <span class="placeholder col-4 float-end"></span>
-            </div>
-            <div class="mb-3 col-6 col-xs-6 col-sm-6 d-none d-sm-block" v-if="recentAccounts.length">
-                <span class="category-title float-end">
-                    {{ recentAccounts.length }} out of {{ accounts.length }}
-                </span>
-            </div>
+    <section class="recent-accounts-list" aria-labelledby="recent-title">
+        <div class="section-hd">
+            <h2 id="recent-title">Recently opened</h2>
+            <span v-if="recentAccounts.length && accounts.length">{{ recentAccounts.length }} of {{ accounts.length }}</span>
         </div>
-        <div class="row stacked-cards" v-if="isLoading">
-            <LoadingAccountItem
-                v-for="index in 3"
-                v-bind:key="index" />
+        <div class="env-stack is-grid" v-if="isLoading">
+            <LoadingAccountItem v-for="index in 4" v-bind:key="index" />
         </div>
-        <div class="row stacked-cards" v-if="recentAccounts.length">
+        <div class="env-stack is-grid" v-else-if="recentAccounts.length">
             <AccountItem
                 v-for="(account, index) in recentAccounts"
                 v-bind:key="index"
                 :account="account" />
         </div>
-    </div>
+        <p class="list-empty" v-else>Items you open show up here. Search above to find one.</p>
+    </section>
 </template>
 
 <script>
@@ -42,6 +26,7 @@
         useAccountsStore,
         useAlertStore,
      } from '@/store'
+    import '../assets/accounts_pane.css'
     import { SessionExpiredException } from '../utils/errors'
     import LoadingAccountItem from '../components/LoadingAccountItem.vue'
     import AccountItem from '../components/AccountItem.vue'
@@ -81,7 +66,7 @@
                         this.$router.go('/');
                     }
                     else {
-                        this.openAlert(error.name || 'Error while loading accounts', error.message, 'danger');
+                        this.openAlert(error.name || "Couldn't load recent items", error.message, 'danger');
                     }
                 }
             },
@@ -89,16 +74,3 @@
     }
 </script>
 
-<style scoped>
-    @media (max-width: 767.98px) {
-        .recent-accounts-list {
-            margin-top: 1.5rem;
-        }
-    }
-
-    @media (min-width: 767.98px) {
-        .recent-accounts-list {
-            margin-top: 3.5rem;
-        }
-    }
-</style>

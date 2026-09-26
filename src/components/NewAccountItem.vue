@@ -1,50 +1,18 @@
 <template>
-    <div class="card-wrapper col-12 col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xl-4">
-        <div class="card card-new clickable" :id="account._id" >
-            <div class="card-body" @click.prevent="onCardClick()">
-                <div class="row">
-                    <div class="col-12 tags">
-                        <div
-                            class="badge rounded-pill"
-                            v-for="tag in account.tags.split(',')"
-                            v-bind:key="tag">
-                            {{tag}}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-8 align-self-center">
-                        <h2 class=" card-title">
-                            {{ account.label }}
-                        </h2>
-                    </div>
-
-                    <div class="col-4 align-self-center">
-                        <img
-                            :src="account.icon"
-                            loading="lazy"
-                            :alt="account.label"
-                            :title="account.label"
-                            class="card-icon float-end" />
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12">
-                        <span class="small description">
-                            Click to her to create a new account with this label
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <article class="env is-new">
+        <button type="button" class="env-window win" @click="onCardClick()">
+            <span class="logo-sq" aria-hidden="true"><i class="fa-solid fa-plus"></i></span>
+            <span class="env-text">
+                <b><span class="env-title">{{ account.label ? `Save “${ account.label }”` : 'Save a new item' }}</span></b>
+                <small>Opens a new envelope with this name and filters filled in</small>
+            </span>
+        </button>
+    </article>
 </template>
 
 <script>
     import '../assets/card.css';
-    import { generateInitialIcon } from "../utils/icon.js";
+    import { generateInitialIcon, faviconUrl } from "../utils/icon.js";
   
     import { 
         mapState,
@@ -147,7 +115,7 @@
 
                 // If the account has a platform, set the icon accordingly, otherwise generate an initial icon from label
                 if (this.account.platform) {
-                    this.account.icon = "https://www.google.com/s2/favicons?domain=" + this.account.platform;
+                    this.account.icon = faviconUrl(this.account.platform);
                 }
                 else {
                     this.account.icon = generateInitialIcon(this.account.label);

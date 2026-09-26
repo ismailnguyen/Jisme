@@ -17,7 +17,6 @@
                         class="w-100 btn btn-lg"
                         :class="isLoading ? 'btn-secondary' : 'btn-primary'"
                         @click="onVerifyPasskey"
-                        tabindex="2"
                         v-show="isPasswordlessLoginBtnVisible">
                         <i class="fa fa-user-lock" aria-hidden="true"></i>
                         
@@ -116,7 +115,7 @@
                     // Then sign the challenge to be allowed to login without password
                     await this.verifyPasskey();
 
-                    this.$router.push({ name: 'Home' });
+                    this.$router.replace({ name: 'Home' });
                 }
                 catch (error) {
                     this.isLoading = false;

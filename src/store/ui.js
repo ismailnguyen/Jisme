@@ -20,6 +20,60 @@ const store = defineStore('ui', () => {
         EDIT_ACCOUNT: 'edit-account'
     };
 
+    // Sheets that the system Back button (Android, browser) should close
+    const HISTORY_SHEETS = [SIDEBAR.MENU, SIDEBAR.ADD_ACCOUNT, SIDEBAR.EDIT_ACCOUNT];
+    const SHEET_ELEMENT_IDS = {
+        [SIDEBAR.ADD_ACCOUNT]: 'add-account-bottom-sheet',
+        [SIDEBAR.EDIT_ACCOUNT]: 'edit-account-bottom-sheet'
+    };
+
+    // One history entry covers any stack of open sheets
+    let hasHistoryMarker = false;
+    let isHandlingPop = false;
+
+    const openHistorySheets = () => openedSidebarList.value.filter(name => HISTORY_SHEETS.includes(name));
+
+    const pushHistoryMarker = () => {
+        // Keep vue-router's own state fields so its navigation bookkeeping stays intact
+        history.pushState({ ...(history.state || {}), jismeSheet: true }, '');
+        hasHistoryMarker = true;
+    };
+
+    // Ask the component that owns the sheet to close itself, so it can reset its own state
+    const dismissSheet = (name) => {
+        const elementId = SHEET_ELEMENT_IDS[name];
+        const element = elementId && document.getElementById(elementId);
+
+        if (element) {
+            element.dispatchEvent(new CustomEvent('sheetdismiss'));
+        } else {
+            closeSidebar(name);
+        }
+    };
+
+    window.addEventListener('popstate', () => {
+        if (!hasHistoryMarker || (history.state && history.state.jismeSheet)) {
+            return;
+        }
+
+        hasHistoryMarker = false;
+
+        const openSheets = openHistorySheets();
+        const topSheet = openSheets[openSheets.length - 1];
+
+        if (!topSheet) {
+            return;
+        }
+
+        isHandlingPop = true;
+        dismissSheet(topSheet);
+        isHandlingPop = false;
+
+        if (openHistorySheets().length) {
+            pushHistoryMarker();
+        }
+    });
+
     const setCurrentAddingAccount = async (account) => {
         currentAddingAccount.value = account;
     }
@@ -80,9 +134,13 @@ const store = defineStore('ui', () => {
             const sheetContent = bottomSheet.querySelector(`#${ bottomSheetElementId }.bottom-sheet .content`);
             const sheetHeight = parseInt(sheetContent.style.height);
 
-            sheetHeight < 25 ? 
-                hideBottomSheet() : sheetHeight > 75 ? 
-                    updateSheetHeight(bottomSheetElementId, 100) : updateSheetHeight(bottomSheetElementId, 50);
+            if (sheetHeight < 25) {
+                // Dragged down past the threshold: dismiss the sheet, don't just unlock the page
+                bottomSheet.dispatchEvent(new CustomEvent('sheetdismiss'));
+                return;
+            }
+
+            updateSheetHeight(bottomSheetElementId, sheetHeight > 60 ? 100 : 50);
         }
 
         dragIcon.addEventListener('mousedown', (event) => dragStart(event, bottomSheetElementId));
@@ -95,11 +153,18 @@ const store = defineStore('ui', () => {
     }
 
     const openSidebar = (name) => {
-        openedSidebarList.value.push(name);
+        if (!openedSidebarList.value.includes(name)) {
+            openedSidebarList.value.push(name);
+        }
         disableBodyScroll();
 
-        if (name === SIDEBAR.EDIT_ACCOUNT) {
-            expandBottomSheet('edit-account-bottom-sheet');
+        // Both sheets open at full height: a half sheet hides its actions under the keyboard
+        if (SHEET_ELEMENT_IDS[name]) {
+            expandBottomSheet(SHEET_ELEMENT_IDS[name]);
+        }
+
+        if (HISTORY_SHEETS.includes(name) && !hasHistoryMarker) {
+            pushHistoryMarker();
         }
     }
 
@@ -126,7 +191,9 @@ const store = defineStore('ui', () => {
     }
 
     const hideBottomSheet = () => {
-        enableBodyScroll();
+        if (!openedSidebarList.value.length) {
+            enableBodyScroll();
+        }
     }
 
     const enableBodyScroll = () => {
@@ -141,10 +208,24 @@ const store = defineStore('ui', () => {
 
     const closeSidebar = (name) => {
         openedSidebarList.value = openedSidebarList.value.filter(item => item !== name);
-        enableBodyScroll();
+
+        if (!openedSidebarList.value.length) {
+            enableBodyScroll();
+        }
 
         if (name === SIDEBAR.EDIT_ACCOUNT || name === SIDEBAR.ADD_ACCOUNT) {
             hideBottomSheet();
+        }
+
+        // Closed from the UI: drop the history entry we pushed, unless another sheet
+        // opens in the same tick (e.g. Menu -> "Store a new account") and reuses it
+        if (!isHandlingPop && hasHistoryMarker && !openHistorySheets().length) {
+            setTimeout(() => {
+                if (hasHistoryMarker && !openHistorySheets().length && history.state && history.state.jismeSheet) {
+                    hasHistoryMarker = false;
+                    history.back();
+                }
+            }, 0);
         }
     }
 

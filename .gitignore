@@ -33,3 +33,7 @@ coverage
 # dotenv environment variables file
 .env
 .qodo
+
+# AI
+.claude
+.impeccable

@@ -260,15 +260,24 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value.passkeys = user.value.passkeys.filter(passkey => passkey.passkey.id !== passkeyToDelete.passkey.id);
     }
 
-    async function signOut(preserveCache = false) {
+    async function signOut(preserveCache = false, { title = 'Signed out', message = 'Your vault is locked on this device.' } = {}) {
         await userService.signOut(preserveCache);
 
-        alertStore.openAlert('Logged out', 'You have been successfully logged out.', 'info');
+        alertStore.openAlert(title, message, 'info');
 
         isLoggedIn.value = false;
         user.value = null;
 
         //location.reload();
+    }
+
+    // Lock the vault without wiping the offline cache: the user signs back in to decrypt
+    async function lock(reason = 'Locked after a period of inactivity.') {
+        if (!isLoggedIn.value) {
+            return;
+        }
+
+        await signOut(true, { title: 'Vault locked', message: reason });
     }
 
     async function maybeRefreshSession() {
@@ -350,6 +359,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         generatePasskey,
         removePasskey,
         signOut,
+        lock,
         setLastRememberedUsername
     }
 })

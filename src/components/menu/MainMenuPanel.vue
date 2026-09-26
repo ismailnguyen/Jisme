@@ -2,22 +2,22 @@
     <div class="row">
         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
             <button class="btn btn-action btn-light" type="button" @click="onOpenTagsList()">
-                <i class="fa fa-tags"></i>
+                <i class="fa fa-tags" aria-hidden="true"></i>
                 Tags
             </button>
         </div>
 
         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
             <button class="btn btn-action btn-light" type="button" @click="onOpenSettings()">
-                <i class="fa fa-gear"></i>
+                <i class="fa fa-gear" aria-hidden="true"></i>
                 Settings
             </button>
         </div>
 
         <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
             <button type="button" class="btn btn-action btn-cta" @click="onAddAccount()">
-                <i class="fa fa-plus"></i>
-                Store a new account
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                New item
             </button>
         </div>
     </div>

@@ -1,111 +1,110 @@
-
-
 <template>
-    <div class="col-xs-12 col-md-7 col-lg-7 px-4 text-center text-lg-start">
-        <img class="img-fluid rounded mb-4" :class="isLoading ? 'loader-animate' : ''" loading="lazy" src="../assets/logo_medium.png" alt="Jisme">
+    <header class="login-hero col-12 col-md-6 col-lg-6">
+        <div class="login-brand">
+            <span class="login-mark" :class="{ 'is-working': isLoading }">
+                <img src="../assets/logo_medium.png" alt="" width="34" height="34">
+            </span>
+            <span class="login-name">Jisme</span>
+            <span class="state-pill login-state" role="status">
+                <i class="fa-solid" :class="isLoading ? 'fa-rotate' : 'fa-lock'" aria-hidden="true"></i>
+                {{ isLoading ? 'Unlocking' : 'Locked' }}
+            </span>
+        </div>
 
-        <div class="sliding-item active">
-            <h1 class="display-4 fw-bold lh-1 mb-3">Protect your integrity.</h1>
-            <p class="col-lg-10 fs-4">
-                With Jisme, the open source password vault.
-            </p>
-            <p class="col-lg-10 fs-4">
-                Nothing to hide, everyhing in <a href="https://github.com/ismailnguyen/jisme" class="external-link" target="_blank">github.com/jisme</a>.
-            </p>
-            <div class="text-end d-none d-md-block">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">
-                    <path d="M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                </svg>
-            </div>
-            <div class="text-center d-sm-block d-md-none py-5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">
-                    <path d="M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                </svg>
-            </div>
-        </div>
-        <div class="sliding-item">
-            <h1 class="display-4 fw-bold lh-1 mb-3">Keep secrets safe.</h1>
-            <p class="col-lg-10 fs-4">
-                With Jisme, the open source password vault.
-            </p>
-            <p class="col-lg-10 fs-4">
-                Nothing to hide, everyhing in <a href="https://github.com/ismailnguyen/jisme" class="external-link" target="_blank">github.com/jisme</a>.
-            </p>
-            <div class="text-end d-none d-md-block">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">
-                    <path d="M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                </svg>
-            </div>
-            <div class="text-center d-sm-block d-md-none py-5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">
-                    <path d="M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                </svg>
-            </div>
-        </div>
-        <div class="sliding-item">
-            <h1 class="display-4 fw-bold lh-1 mb-3">End-to-end encryption enabled.</h1>
-            <p class="col-lg-10 fs-4">
-                With Jisme, the open source password vault.
-            </p>
-            <p class="col-lg-10 fs-4">
-                Nothing to hide, everyhing in <a href="https://github.com/ismailnguyen/jisme" class="external-link" target="_blank">github.com/jisme</a>.
-            </p>
-            <div class="text-end d-none d-md-block">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">
-                    <path d="M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                </svg>
-            </div>
-            <div class="text-center d-sm-block d-md-none py-5">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-grip-horizontal" viewBox="0 0 16 16">
-                    <path d="M2 8a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm3 3a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-                </svg>
-            </div>
-        </div>
-                
-
-    </div>
+        <h1 class="login-title">Your secrets, sealed on this device.</h1>
+        <p class="login-lede">
+            Every item is encrypted before it leaves your device. The code is open source, so you can
+            <a href="https://github.com/ismailnguyen/jisme" target="_blank" rel="noopener">read every line<span class="visually-hidden"> (opens GitHub)</span></a>.
+        </p>
+    </header>
 </template>
 
 <script>
     export default {
         props: {
             isLoading: Boolean
-        },
-        mounted() {
-            const slidingItems = document.querySelectorAll('.sliding-item');
-
-            let index = 0;
-            setInterval(() => {
-                slidingItems.forEach((item, i) => {
-                    if (i === index) {
-                        item.classList.add('active');
-                    } else {
-                        item.classList.remove('active');
-                    }
-                });
-
-                index = index === slidingItems.length - 1 ? 0 : index + 1;
-            }, 3000);
         }
     }
 </script>
 
 <style scoped>
-    a.external-link {
-        color: var(--color-text);
+.login-hero {
+    padding: 0 20px;
+}
+
+.login-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
+}
+
+.login-mark {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: var(--sheet);
+    box-shadow: 0 0 0 1px rgba(46, 58, 79, 0.1), var(--shadow-1);
+}
+
+.login-mark.is-working {
+    animation: breathe 1.4s var(--ease-out) infinite alternate;
+}
+
+.login-name {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.login-state {
+    margin-left: auto;
+}
+
+.login-state .fa-rotate {
+    animation: spin 1.4s linear infinite;
+}
+
+.login-title {
+    font-size: clamp(30px, 8.4vw, 52px);
+    font-weight: 800;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    max-width: 14ch;
+    margin-bottom: 14px;
+    text-wrap: balance;
+}
+
+.login-lede {
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 40ch;
+    margin: 0;
+}
+
+.login-lede a {
+    color: var(--ink);
+    font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+    .login-hero {
+        padding: calc(12px + env(safe-area-inset-top)) 16px 0;
     }
 
-    a.external-link:hover {
-        color: var(--color-background);
-        text-decoration: none;
-        background: var(--color-text);
+    .login-brand {
+        margin-bottom: 22px;
     }
+}
 
-    .sliding-item {
-        display: none;
-    }
+@keyframes breathe {
+    to { transform: scale(0.94); }
+}
 
-    .sliding-item.active {
-        display: block;
-    }
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
 </style>

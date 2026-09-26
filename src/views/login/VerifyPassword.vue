@@ -19,37 +19,40 @@
                             class="input form-control"
                             :class="hasError ? 'shake' : ''"
                             placeholder="Password"
+                            aria-label="Password"
                             v-model="password"
-                            @keyup.enter="onVerifyPassword"
                             autofocus
-                            tabindex="2"
+                            autocapitalize="off"
+                            autocorrect="off"
+                            spellcheck="false"
                             autocomplete="current-password"
                             required>
 
-                        <div class="input-group-append">
-                            <span class="input-group-text" @click="togglePasswordInput()">
-                                <i class="fas" :class="isPasswordRevealed ? 'fa-eye-slash': 'fa-eye'"></i>
-                            </span>
-                        </div>
+                        <button
+                            type="button"
+                            class="btn btn-light input-group-text"
+                            :aria-label="isPasswordRevealed ? 'Hide password' : 'Show password'"
+                            :aria-pressed="isPasswordRevealed ? 'true' : 'false'"
+                            @click="togglePasswordInput()">
+                            <i class="fas" :class="isPasswordRevealed ? 'fa-eye-slash': 'fa-eye'" aria-hidden="true"></i>
+                        </button>
                     </div>
                     
-                    <button 
-                        type="button"
+                    <button
+                        type="submit"
                         class="btn btn-lg"
                         :class="isLoading ? 'btn-outline-secondary' : 'btn-primary'"
-                        :disabled="!password"
-                        @click="onVerifyPassword"
-                        tabindex="3">
-                        {{ isLoading ? 'Signing in...' : 'Sign in' }}
+                        :disabled="!password || isLoading">
+                        {{ isLoading ? 'Unlocking…' : 'Unlock' }}
                     </button>
 
                     <hr class="my-4 mt-5 mb-3">
 
-                    <p class="text-muted" tabindex="3">
-                        <a class="link" @click="goBack()">
-                            <i class="fa fa-arrow-left"></i>
-                            Go back
-                        </a>
+                    <p class="text-muted">
+                        <button type="button" class="btn btn-link link" @click="goBack()">
+                            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                            Use a different account
+                        </button>
                     </p>
                 </form>
             </div>
@@ -116,11 +119,12 @@
                 this.isPasswordRevealed = !this.isPasswordRevealed;
                 this.$refs.inputPassword.focus(); // After reveal, unreveal, focus back to input
 
-                // if password was revelead, hide it after 2 seconds
+                // A revealed password hides itself again after a while
+                clearTimeout(this.revealTimer);
                 if (this.isPasswordRevealed) {
-                    setTimeout(() => {
+                    this.revealTimer = setTimeout(() => {
                         this.isPasswordRevealed = false;
-                    }, 2000);
+                    }, 15000);
                 }
             },
 
@@ -142,10 +146,10 @@
                     if (passwordVerification
                         && passwordVerification.next
                         && passwordVerification.next.step === 'verify_otp') {
-                        this.$router.push({ name: 'VerifyOTP' });
+                        this.$router.replace({ name: 'VerifyOTP' });
                     }
                     else {
-                        this.$router.push({ name: 'Home' });
+                        this.$router.replace({ name: 'Home' });
                     }
                 }
                 catch (error) {

@@ -1,74 +1,72 @@
 <template>
-    <div class="account-types-list-container container-fluid">
-        <div class="account-types-list" v-if="isLoading">
-            <div v-for="index in 5"
-                v-bind:key="index">
-                <div class="account-type-card card card-secondary">
-                    <div class="account-type-icon">
-                        <i class="fa fa-loading" aria-hidden="true"></i>
-                    </div>
-                    <div class="account-type-label placeholder col-4 me-3 mb-0"></div>
-                </div>
+    <nav class="type-counters" aria-label="Filter by type">
+        <template v-if="isLoading">
+            <div v-for="index in 4" :key="index" class="type-counter is-loading placeholder-glow" aria-hidden="true">
+                <span class="placeholder col-4"></span>
+                <span class="placeholder col-8"></span>
             </div>
-        </div>
-
-        <div class="account-types-list" v-else>
-            <div v-for="type in types"
-                    v-bind:key="type.key"
-                    @click.prevent="openAccountType(type.key)">
-                <div class="account-type-card card card-secondary">
-                    <div class="account-type-icon">
-                        <i :class="type.icon" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="account-type-label">{{ type.label }}</div>
-            </div>
-        </div>
-    </div>
+        </template>
+        <template v-else>
+            <button
+                v-for="type in types"
+                :key="type.key"
+                type="button"
+                class="type-counter"
+                :aria-pressed="isSelected(type.key) ? 'true' : 'false'"
+                :aria-label="`${ type.label }, ${ counts[type.key] || 0 } items`"
+                @click="openAccountType(type.key)">
+                <b><i :class="type.icon" aria-hidden="true"></i>{{ counts[type.key] || 0 }}</b>
+                <span>{{ type.label }}</span>
+            </button>
+        </template>
+    </nav>
 </template>
 
 <script>
+    import { mapState } from 'pinia'
+    import { useAccountsStore } from '@/store'
+
     export default {
         props: {
             isLoading: {
-            type: Boolean,
-            default: false
+                type: Boolean,
+                default: false
             }
         },
         data() {
             return {
                 types: [
-                        {
-                        key: 'account',
-                        label: 'Credentials',
-                        icon: 'fa fa-user-secret'
-                    },
-                    {
-                        key: 'card',
-                        label: 'Cards',
-                        icon: 'fa fa-credit-card'
-                    },
-                    {
-                        key: 'bank',
-                        label: 'Banks',
-                        icon: 'fa fa-building-columns'
-                    },
-                    {
-                        key: 'document',
-                        label: 'Documents',
-                        icon: 'fa fa-id-card'
-                    }
+                    { key: 'account', label: 'Credentials', icon: 'fa-solid fa-key' },
+                    { key: 'card', label: 'Cards', icon: 'fa-solid fa-credit-card' },
+                    { key: 'document', label: 'Documents', icon: 'fa-solid fa-file-lines' },
+                    { key: 'bank', label: 'Banks', icon: 'fa-solid fa-building-columns' }
                 ]
             };
         },
+        computed: {
+            ...mapState(useAccountsStore, ['accounts']),
+
+            counts: function () {
+                return this.accounts.reduce((counts, account) => {
+                    counts[account.type] = (counts[account.type] || 0) + 1;
+                    return counts;
+                }, {});
+            }
+        },
         methods: {
+            isSelected(type) {
+                const selected = this.$route.query.type ? this.$route.query.type.split(',').map(x => x.trim()) : [];
+                return selected.includes(type);
+            },
+
             openAccountType(type) {
                 this.$router.push({
                     name: 'Home',
                     query: {
                         search: this.$route.query.search,
                         tags: this.$route.query.tags,
-                        type: type
+                        // Tapping the selected type again clears it
+                        type: this.isSelected(type) ? undefined : type
                     }
                 });
             }
@@ -77,46 +75,90 @@
 </script>
 
 <style scoped>
-@media (min-width: 767px) {
-    .account-types-list-container {
-        padding-top: 1rem
+.type-counters {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+}
+
+@media (min-width: 768px) {
+    .type-counters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
-.account-types-list {
+
+.type-counter {
+    min-height: 56px;
+    padding: 8px 8px;
+    border-radius: var(--r-md);
+    background: var(--sheet);
+    border: 1px solid var(--rule);
+    color: var(--ink);
     display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    justify-content: flex-start;
+    flex-direction: column;
     align-items: flex-start;
-    padding-bottom: 1rem;
-}
-.account-type-card {
-    display: flex;
-    background: #fff;
-    border-radius: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    padding: 1.5rem 1.2rem 1rem 1.2rem;
-    min-width: 7rem;
-    text-align: center;
+    justify-content: center;
+    gap: 2px;
+    text-align: left;
     cursor: pointer;
-    position: relative;
-    transition: box-shadow 0.2s;
+    box-shadow: 0 1px 2px rgba(46, 58, 79, 0.06);
+    transition: border-color 0.15s, background-color 0.15s;
 }
-.account-type-card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+
+.type-counter:hover {
+    border-color: var(--tint);
+    background: #fff;
 }
-.account-type-icon {
-  position: relative;
-  margin-bottom: 0.5rem;
-  justify-content: center;
-  align-items: center;
+
+.type-counter b {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
-.account-type-label {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--color-text);
-  text-align: center;
-  margin-top: 0.2rem;
-  white-space: pre-line;
+
+.type-counter b i {
+    font-size: 11px;
+    color: var(--ink-3);
+}
+
+.type-counter span {
+    font-size: 11.5px;
+    letter-spacing: -0.01em;
+    font-weight: 500;
+    color: var(--ink-2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.type-counter[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+}
+
+.type-counter[aria-pressed="true"] span,
+.type-counter[aria-pressed="true"] b i {
+    color: rgba(255, 255, 255, 0.82);
+}
+
+.type-counter.is-loading {
+    cursor: default;
+    gap: 6px;
+}
+
+@media (max-width: 380px) {
+    .type-counters {
+        gap: 5px;
+    }
+
+    .type-counter span {
+        font-size: 11px;
+    }
 }
 </style>

@@ -1,643 +1,314 @@
 <template>
   <div
     id="add-account-bottom-sheet"
-    class="bottom-sheet"
+    class="bottom-sheet fullscreen"
     :class="visible ? 'show' : ''"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="addAccount_title"
+    @sheetdismiss="requestClose"
+    @keydown.esc="requestClose"
   >
-    <div class="sheet-overlay" @click="closeSidebar(SIDEBAR.ADD_ACCOUNT)"></div>
+    <div class="sheet-overlay" @click="requestClose"></div>
     <div class="content">
-      <div class="header row" :class="account.icon ? 'hasIcon' : ''">
+      <div class="header sheet-bar">
         <button
           type="button"
-          class="bottom-sheet-close"
-          aria-label="Close"
-          @click="closeSidebar(SIDEBAR.ADD_ACCOUNT)"
+          class="bar-text-btn"
+          @click="requestClose"
         >
-          <i class="fa fa-close" aria-hidden="true"></i>
+          Cancel
         </button>
-        <div class="drag-icon row justify-content-center"><span></span></div>
-
-        <div class="row justify-content-center">
-          <div class="text-center" v-show="account.icon">
-            <img
-              :src="account.icon"
-              loading="lazy"
-              :alt="account.label"
-              :title="account.label"
-              class="bottom-sheet-large-icon"
-            />
-          </div>
-        </div>
-        <div class="row justify-content-center">
-          <div class="col-12 text-center">
-            <h2 class="bottom-sheet-title" :title="account._id">
-              {{ account.label || 'New account' }}
-            </h2>
-          </div>
-        </div>
+        <div class="drag-icon"><span></span></div>
+        <h2 id="addAccount_title" class="bar-title">
+          {{ account.label || 'New item' }}
+        </h2>
       </div>
       <div class="body">
-        <form class="row">
+        <form class="row" @submit.prevent="add()">
 
-          <!-- region_start -- Main information -->
-          <div class="accordion">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-tag" aria-hidden="true"></i>
-                      Label
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
-                    class="form-control"
-                    placeholder="e.g. Pokemon"
-                    type="text"
-                    ref="label"
-                    v-model="account.label"
-                    required
-                  />
-
-                  <hr class="my-4" />
-
-                  <label class="form-label" for="addAccount_input_new_tag"
-                    ><i class="fa fa-tags" aria-hidden="true"></i> Tags</label
-                  >
-                  <div class="form-control tags tags-input" @click="focusTagInput()">
-                    <span
-                      class="badge rounded-pill"
-                      v-for="(tag, tagIndex) in account.tags.split(',')"
-                      v-bind:key="tagIndex"
-                      @click="removeTag(tag)"
-                    >
-                      {{ tag }}
-                      <i class="fa fa-close" v-if="tag"></i>
-                    </span>
-                  </div>
-                  <input
-                    ref="tags"
-                    id="addAccount_input_new_tag"
-                    class="form-control tags-new-input"
-                    placeholder="Tag"
-                    type="text"
-                    v-model="newTag"
-                    @keyup.enter="addTag()"
-                    required
-                  />
-
-                  <hr class="my-4" />
-
-                  <label class="form-label" for="addAccount_icon"
-                    ><i class="fa fa-image" aria-hidden="true"></i> Icon</label
-                  >
-                  <input
-                    id="addAccount_icon"
-                    class="form-control"
-                    placeholder="Icon URL"
-                    type="text"
-                    v-model="account.icon"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- region_end -- Main information -->
 
 
           <!-- region_start -- Account types -->
-          <div class="accordion">
-            <div
-              class="accordion-item"
-              :class="account.type == 'account' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="onTypeChange('account')"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      Credential
-                    </div>
-                    <span class="fw-lighter">
-                      Login, Wifi, Secret key
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+          <h3 class="form-step">What are you saving?</h3>
+          <div class="choice-grid is-two" role="group" aria-label="Item type">
+            <button
+              class="choice"
+              :class="account.type == 'account' ? 'is-active' : ''"
+              :aria-pressed="account.type == 'account' ? 'true' : 'false'"
+              @click="onTypeChange('account')"
+              type="button">
+              <b>Credential</b><small>Login, Wi-Fi, Secret key</small>
+            </button>
 
-            <div
-              class="accordion-item"
-              :class="account.type == 'card' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="onTypeChange('card')"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      Card
-                    </div>
-                    <span class="fw-lighter">
-                      Payment, Loyalty, Gift
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+            <button
+              class="choice"
+              :class="account.type == 'card' ? 'is-active' : ''"
+              :aria-pressed="account.type == 'card' ? 'true' : 'false'"
+              @click="onTypeChange('card')"
+              type="button">
+              <b>Card</b><small>Payment, Loyalty, Gift</small>
+            </button>
 
-            <div
-              class="accordion-item"
-              :class="account.type == 'document' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header ">
-                <button
-                  class="accordion-button collapsed"
-                  @click="onTypeChange('document')"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      Document
-                    </div>
-                    <span class="fw-lighter">
-                      ID, Passport
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+            <button
+              class="choice"
+              :class="account.type == 'document' ? 'is-active' : ''"
+              :aria-pressed="account.type == 'document' ? 'true' : 'false'"
+              @click="onTypeChange('document')"
+              type="button">
+              <b>Document</b><small>ID, Passport</small>
+            </button>
 
-            <div
-              class="accordion-item"
-              :class="account.type == 'bank' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="onTypeChange('bank')"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      Bank
-                    </div>
-                    <span class="fw-lighter">
-                      IBAN, SWIFT
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+            <button
+              class="choice"
+              :class="account.type == 'bank' ? 'is-active' : ''"
+              :aria-pressed="account.type == 'bank' ? 'true' : 'false'"
+              @click="onTypeChange('bank')"
+              type="button">
+              <b>Bank</b><small>IBAN, SWIFT</small>
+            </button>
           </div>
           <!-- region_end -- Account types -->
 
           <!-- region_start -- Account sub types for account type Credential (account) -->
-          <div class="accordion" v-if="account.type == 'account'">
-            <div
-              class="accordion-item"
-              :class="account.subtype == 'login' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="account.subtype = 'login'"
-                  type="button">
-                  <div>
-                    <span :class="account.subtype == 'login' ? 'fw-medium' : 'fw-lighter'">
-                      Login
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+          <div class="choice-grid is-three" role="group" aria-label="Kind of credential" v-if="account.type == 'account'">
+            <button
+              class="choice"
+              :class="account.subtype == 'login' ? 'is-active' : ''"
+              :aria-pressed="account.subtype == 'login' ? 'true' : 'false'"
+              @click="account.subtype = 'login'"
+              type="button">
+              <b>Login</b>
+            </button>
 
-            <div
-              class="accordion-item"
-              :class="account.subtype == 'wifi' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="account.subtype = 'wifi'"
-                  type="button">
-                  <div>
-                    <span :class="account.subtype == 'wifi' ? 'fw-medium' : 'fw-lighter'">
-                      Wifi
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+            <button
+              class="choice"
+              :class="account.subtype == 'wifi' ? 'is-active' : ''"
+              :aria-pressed="account.subtype == 'wifi' ? 'true' : 'false'"
+              @click="account.subtype = 'wifi'"
+              type="button">
+              <b>Wi-Fi</b>
+            </button>
 
-            <div
-              class="accordion-item"
-              :class="account.subtype == 'secret_key' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="account.subtype = 'secret_key'"
-                  type="button">
-                  <div>
-                    <span :class="account.subtype == 'secret_key' ? 'fw-medium' : 'fw-lighter'">
-                      Secret key
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+            <button
+              class="choice"
+              :class="account.subtype == 'secret_key' ? 'is-active' : ''"
+              :aria-pressed="account.subtype == 'secret_key' ? 'true' : 'false'"
+              @click="account.subtype = 'secret_key'"
+              type="button">
+              <b>Secret key</b>
+            </button>
           </div>
           <!-- region_end -- Account sub types for account type Credential (account) -->
 
           <!-- region_start -- Account sub types for account type Card -->
-          <div class="accordion" v-if="account.type == 'card'">
-            <div
-              class="accordion-item"
-              :class="account.subtype == 'payment' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="account.subtype = 'payment'"
-                  type="button">
-                  <div>
-                    <span :class="account.subtype == 'payment' ? 'fw-medium' : 'fw-lighter'">
-                      Payment
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+          <div class="choice-grid is-three" role="group" aria-label="Kind of card" v-if="account.type == 'card'">
+            <button
+              class="choice"
+              :class="account.subtype == 'payment' ? 'is-active' : ''"
+              :aria-pressed="account.subtype == 'payment' ? 'true' : 'false'"
+              @click="account.subtype = 'payment'"
+              type="button">
+              <b>Payment</b>
+            </button>
 
-            <div
-              class="accordion-item"
-              :class="account.subtype == 'loyalty' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="account.subtype = 'loyalty'"
-                  type="button">
-                  <div>
-                    <span :class="account.subtype == 'loyalty' ? 'fw-medium' : 'fw-lighter'">
-                      Loyalty card
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+            <button
+              class="choice"
+              :class="account.subtype == 'loyalty' ? 'is-active' : ''"
+              :aria-pressed="account.subtype == 'loyalty' ? 'true' : 'false'"
+              @click="account.subtype = 'loyalty'"
+              type="button">
+              <b>Loyalty card</b>
+            </button>
 
-            <div
-              class="accordion-item"
-              :class="account.subtype == 'gift' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="account.subtype = 'gift'"
-                  type="button">
-                  <div>
-                    <span :class="account.subtype == 'gift' ? 'fw-medium' : 'fw-lighter'">
-                      Gift card
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+            <button
+              class="choice"
+              :class="account.subtype == 'gift' ? 'is-active' : ''"
+              :aria-pressed="account.subtype == 'gift' ? 'true' : 'false'"
+              @click="account.subtype = 'gift'"
+              type="button">
+              <b>Gift card</b>
+            </button>
           </div>
           <!-- region_end -- Account sub types for account type Card -->
 
           <!-- region_start -- Card -->
-          <div class="accordion" v-if="account.type == 'card'">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-building-columns" aria-hidden="true"></i>
-                      Provider
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+          <div class="form-sheet" v-if="account.type == 'card'">
+            <div class="form-field" role="group" aria-labelledby="fl-add-1">
+              <span class="field-label" id="fl-add-1"><i class="fa fa-building-columns" aria-hidden="true"></i> Provider</span>
+                  <input aria-labelledby="fl-add-1"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="Provider name (e.g. HSBC bank)"
                     type="text"
                     v-model="account.platform"
                   />
-                </div>
-              </div>
             </div>
           </div>
 
-          <div class="accordion" v-if="account.type == 'card'">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-barcode" aria-hidden="true"></i>
-                      Number
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+          <div class="form-sheet" v-if="account.type == 'card'">
+            <div class="form-field" role="group" aria-labelledby="fl-add-2">
+              <span class="field-label" id="fl-add-2"><i class="fa fa-barcode" aria-hidden="true"></i> Number</span>
+                  <input aria-labelledby="fl-add-2"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="Card number"
                     type="text"
                     v-model="account.card_number"
                   />
-                </div>
-              </div>
             </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-key" aria-hidden="true"></i>
-                      PIN
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-3">
+              <span class="field-label" id="fl-add-3"><i class="fa fa-key" aria-hidden="true"></i> PIN</span>
+                  <input aria-labelledby="fl-add-3"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="PIN"
-                    type="text"
+                    type="password"
+                    inputmode="numeric"
+                    autocomplete="off"
                     v-model="account.card_pin"
                   />
-                </div>
-              </div>
             </div>
-            <div class="accordion-item" v-if="account.subtype == 'payment' || account.subtype == 'gift'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-calendar" aria-hidden="true"></i>
-                      Expiracy
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-4" v-if="account.subtype == 'payment' || account.subtype == 'gift'">
+              <span class="field-label" id="fl-add-4"><i class="fa fa-calendar" aria-hidden="true"></i> Expiracy</span>
+                  <input aria-labelledby="fl-add-4"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="MM/YYYY"
                     type="text"
                     v-model="account.card_expiracy"
                   />
-                </div>
-              </div>
             </div>
-            <div class="accordion-item" v-if="account.subtype == 'payment'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-lock" aria-hidden="true"></i>
-                      Cryptogram (CVV/CVC)
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-5" v-if="account.subtype == 'payment'">
+              <span class="field-label" id="fl-add-5"><i class="fa fa-lock" aria-hidden="true"></i> Cryptogram (CVV/CVC)</span>
+                  <input aria-labelledby="fl-add-5"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="CVC/CVV"
-                    type="text"
+                    type="password"
+                    inputmode="numeric"
+                    autocomplete="off"
                     v-model="account.card_cryptogram"
                   />
-                </div>
-              </div>
             </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-user" aria-hidden="true"></i>
-                      Name
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-6">
+              <span class="field-label" id="fl-add-6"><i class="fa fa-user" aria-hidden="true"></i> Name</span>
+                  <input aria-labelledby="fl-add-6"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="Name on card"
                     type="text"
                     v-model="account.card_name"
                   />
-                </div>
-              </div>
             </div>
           </div>
 
           <!-- region_start -- Card formats -->
-          <div class="accordion" v-if="account.type == 'card' && (account.subtype == 'loyalty' || account.subtype == 'gift')">
-            <div
-              class="accordion-item"
-              :class="account.card_format == 'qrcode' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="account.card_format = 'qrcode'"
-                  type="button">
-                  <div>
-                    <span :class="account.card_format == 'qrcode' ? 'fw-medium' : 'fw-lighter'">
-                      QR Code
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+          <div class="form-sheet" v-if="account.type == 'card' && (account.subtype == 'loyalty' || account.subtype == 'gift')">
+            <button
+              class="choice"
+              :class="account.card_format == 'qrcode' ? 'is-active' : ''"
+              @click="account.card_format = 'qrcode'"
+              type="button">
+              <b>QR Code</b>
+            </button>
 
-            <div
-              class="accordion-item"
-              :class="account.card_format == 'barcode' ? 'is-active' : 'accordion-item--without-body'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button collapsed"
-                  @click="account.card_format = 'barcode'"
-                  type="button">
-                  <div>
-                    <span :class="account.card_format == 'barcode' ? 'fw-medium' : 'fw-lighter'">
-                      Barcode
-                    </span>
-                  </div>
-                </button>
-              </h2>
-            </div>
+            <button
+              class="choice"
+              :class="account.card_format == 'barcode' ? 'is-active' : ''"
+              @click="account.card_format = 'barcode'"
+              type="button">
+              <b>Barcode</b>
+            </button>
           </div>
           <!-- region_end -- Card formats -->
           <!-- region_end -- Card -->
 
           <!-- region_start -- Document -->
-          <div class="accordion" v-if="account.type == 'document'">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-user" aria-hidden="true"></i>
-                      Name
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+          <div class="form-sheet" v-if="account.type == 'document'">
+            <div class="form-field" role="group" aria-labelledby="fl-add-7">
+              <span class="field-label" id="fl-add-7"><i class="fa fa-user" aria-hidden="true"></i> Name</span>
+                  <input aria-labelledby="fl-add-7"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="Name on card"
                     type="text"
                     v-model="account.card_name"
                   />
-                </div>
-              </div>
             </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-hashtag" aria-hidden="true"></i>
-                      Number
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-8">
+              <span class="field-label" id="fl-add-8"><i class="fa fa-hashtag" aria-hidden="true"></i> Number</span>
+                  <input aria-labelledby="fl-add-8"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="Card number"
                     type="text"
                     v-model="account.card_number"
                   />
-                </div>
-              </div>
             </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-calendar" aria-hidden="true"></i>
-                      Expiracy
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-9">
+              <span class="field-label" id="fl-add-9"><i class="fa fa-calendar" aria-hidden="true"></i> Expiracy</span>
+                  <input aria-labelledby="fl-add-9"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="DD/MM/YYYY"
                     type="text"
                     v-model="account.card_expiracy"
                   />
-                </div>
-              </div>
             </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-calendar" aria-hidden="true"></i>
-                      Issued date
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-10">
+              <span class="field-label" id="fl-add-10"><i class="fa fa-calendar" aria-hidden="true"></i> Issued date</span>
+                  <input aria-labelledby="fl-add-10"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="DD/MM/YYYY"
                     type="text"
                     v-model="account.card_issue_date"
                   />
-                </div>
-              </div>
             </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-building-columns" aria-hidden="true"></i>
-                      Issued by
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-11">
+              <span class="field-label" id="fl-add-11"><i class="fa fa-building-columns" aria-hidden="true"></i> Issued by</span>
+                  <input aria-labelledby="fl-add-11"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="Issued place / authority"
                     type="text"
                     v-model="account.platform"
                   />
-                </div>
-              </div>
             </div>
           </div>
           <!-- region_end -- Document -->
           
-          <div class="accordion" v-if="account.type == 'account'">
-            <div class="accordion-item" v-if="account.subtype == 'login' || account.subtype == 'secret_key'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-globe" aria-hidden="true"></i>
-                      Platform
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+          <div class="form-sheet" v-if="account.type == 'account'">
+            <div class="form-field" role="group" aria-labelledby="fl-add-12" v-if="account.subtype == 'login' || account.subtype == 'secret_key'">
+              <span class="field-label" id="fl-add-12"><i class="fa fa-globe" aria-hidden="true"></i> Platform</span>
+                  <input aria-labelledby="fl-add-12"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="e.g. bourg-palette.com"
                     type="text"
                     ref="platform"
@@ -645,183 +316,96 @@
                     v-model="account.platform"
                     required
                   />
-                </div>
-              </div>
             </div>
           
-            <div class="accordion-item" v-if="account.subtype == 'login'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-id-badge" aria-hidden="true"></i>
-                      Login
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-13" v-if="account.subtype == 'login'">
+              <span class="field-label" id="fl-add-13"><i class="fa fa-id-badge" aria-hidden="true"></i> Login</span>
+                  <input aria-labelledby="fl-add-13"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="Login"
                     type="text"
                     v-model="account.login"
                   />
-                </div>
-              </div>
             </div>
 
-            <div class="accordion-item" v-if="account.subtype == 'secret_key'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-hashtag" aria-hidden="true"></i>
-                      Key identifier
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-14" v-if="account.subtype == 'secret_key'">
+              <span class="field-label" id="fl-add-14"><i class="fa fa-hashtag" aria-hidden="true"></i> Key identifier</span>
+                  <input aria-labelledby="fl-add-14"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="Key ID (e.g. Org ID, Device ID, ...)"
                     type="text"
                     v-model="account.login"
                   />
-                </div>
-              </div>
             </div>
 
-            <div class="accordion-item" v-if="account.subtype == 'wifi'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-wifi" aria-hidden="true"></i>
-                      Network name (SSID)
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-15" v-if="account.subtype == 'wifi'">
+              <span class="field-label" id="fl-add-15"><i class="fa fa-wifi" aria-hidden="true"></i> Network name (SSID)</span>
+                  <input aria-labelledby="fl-add-15"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="SSID"
                     type="text"
                     v-model="account.login"
                   />
-                </div>
-              </div>
             </div>
           </div>
 
           <!-- region_start -- Bank -->
-          <div class="accordion" v-if="account.type == 'bank'">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-building-columns" aria-hidden="true"></i>
-                      BIC / SWIFT code
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+          <div class="form-sheet" v-if="account.type == 'bank'">
+            <div class="form-field" role="group" aria-labelledby="fl-add-16">
+              <span class="field-label" id="fl-add-16"><i class="fa fa-building-columns" aria-hidden="true"></i> BIC / SWIFT code</span>
+                  <input aria-labelledby="fl-add-16"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="e.g. BOUS FRPPAR"
                     type="text"
                     ref="platform"
                     v-model="account.platform"
                     required
                   />
-                </div>
-              </div>
             </div>
           
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-money-check" aria-hidden="true"></i>
-                      International Bank Account Number (IBAN)
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-17">
+              <span class="field-label" id="fl-add-17"><i class="fa fa-money-check" aria-hidden="true"></i> International Bank Account Number (IBAN)</span>
+                  <input aria-labelledby="fl-add-17"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="IBAN"
                     type="text"
                     v-model="account.password"
                   />
-                </div>
-              </div>
             </div>
 
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-id-badge" aria-hidden="true"></i>
-                      Account holder
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <input
+            <div class="form-field" role="group" aria-labelledby="fl-add-18">
+              <span class="field-label" id="fl-add-18"><i class="fa fa-id-badge" aria-hidden="true"></i> Account holder</span>
+                  <input aria-labelledby="fl-add-18"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="Account holder name"
                     type="text"
                     v-model="account.login"
                   />
-                </div>
-              </div>
             </div>
           </div>
           <!-- region_end -- Bank -->
 
-          <div class="accordion" v-if="account.type == 'account'">
-            <div class="accordion-item" v-if="account.subtype == 'login'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-lock" aria-hidden="true"></i>
-                      Password
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
+          <div class="form-sheet" v-if="account.type == 'account'">
+            <div class="form-field" role="group" aria-labelledby="fl-add-19" v-if="account.subtype == 'login'">
+              <span class="field-label" id="fl-add-19"><i class="fa fa-lock" aria-hidden="true"></i> Password</span>
                   <div class="btn-group" role="group" aria-label="Password type">
                     <input
                       type="radio"
@@ -863,8 +447,7 @@
                     id="addAccount_passwordLessHelp"
                     class="form-text text-muted"
                     v-show="account.is_password_less"
-                    >Password less generator will be available once the account will
-                    be created.</small
+                    >Jisme derives this password from your master password, so nothing is stored. Open the item after saving to reveal it.</small
                   >
 
                 <hr class="my-4" />
@@ -872,7 +455,12 @@
                 <div class="input-group" v-show="!account.is_password_less">
                     <input
                       class="form-control"
-                      type="text"
+                      autocapitalize="off"
+                      autocorrect="off"
+                      spellcheck="false"
+                      :type="isPasswordRevealed ? 'text' : 'password'"
+                      autocomplete="new-password"
+                      aria-label="Password"
                       aria-describedby="addAccount_passwordHelp"
                       v-model="account.password"
                       placeholder="Password"
@@ -880,16 +468,25 @@
                     <button
                       class="btn btn-light"
                       type="button"
-                      @click="account.generatePassword()"
+                      :aria-label="isPasswordRevealed ? 'Hide password' : 'Show password'"
+                      :aria-pressed="isPasswordRevealed ? 'true' : 'false'"
+                      @click="isPasswordRevealed = !isPasswordRevealed"
                     >
-                      <i class="fa fa-cogs"></i> Generate
+                      <i class="fa" :class="isPasswordRevealed ? 'fa-eye-slash' : 'fa-eye'" aria-hidden="true"></i>
+                    </button>
+                    <button
+                      class="btn btn-light"
+                      type="button"
+                      @click="onGeneratePassword()"
+                    >
+                      <i class="fa fa-wand-magic-sparkles" aria-hidden="true"></i> Generate
                     </button>
                 </div>
                 <small
                     id="addAccount_passwordHelp"
                     class="form-text text-muted"
                     v-show="!account.is_password_less"
-                    >Click button to generate password.</small>
+                    >Tap Generate for a strong random password.</small>
                 
                 <hr class="my-4" v-show="!account.is_password_less" />
 
@@ -904,6 +501,9 @@
                 <input
                   id="password_clue_input"
                   class="form-control"
+                  autocapitalize="off"
+                  autocorrect="off"
+                  spellcheck="false"
                   type="text"
                   v-model="account.password_clue"
                 />
@@ -916,31 +516,24 @@
                 <input
                   id="addAccount_social_login_input"
                   class="form-control"
+                  autocapitalize="off"
+                  autocorrect="off"
+                  spellcheck="false"
                   placeholder="Google, Facebook, LinkedIn, ..."
                   type="text"
                   v-model="account.social_login"/>
-                </div>
-              </div>
             </div>
 
-            <div class="accordion-item" v-if="account.subtype == 'wifi'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-lock" aria-hidden="true"></i>
-                      Password
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
+            <div class="form-field" role="group" aria-labelledby="fl-add-20" v-if="account.subtype == 'wifi'">
+              <span class="field-label" id="fl-add-20"><i class="fa fa-lock" aria-hidden="true"></i> Password</span>
                   <input
                     class="form-control"
-                    type="text"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
+                    :type="isPasswordRevealed ? 'text' : 'password'"
+                    autocomplete="new-password"
+                    aria-label="Wi-Fi password"
                     v-model="account.password"
                     placeholder="Password"
                   />
@@ -954,137 +547,158 @@
                   <input
                     id="password_security_mode_input"
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     type="text"
                     placeholder="WPA, WEP, None"
                     v-model="account.password_clue"
                   />
-                </div>
-              </div>
             </div>
 
-            <div class="accordion-item" v-if="account.subtype == 'secret_key'">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-key" aria-hidden="true"></i>
-                      Key
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
+            <div class="form-field" role="group" aria-labelledby="fl-add-21" v-if="account.subtype == 'secret_key'">
+              <span class="field-label" id="fl-add-21"><i class="fa fa-key" aria-hidden="true"></i> Key</span>
                   <input
                     class="form-control"
-                    type="text"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
+                    :type="isPasswordRevealed ? 'text' : 'password'"
+                    autocomplete="off"
+                    aria-label="Secret key"
                     v-model="account.password"
                     placeholder="Secret key"
                   />
-                </div>
-              </div>
             </div>
           </div>
 
-          <div class="accordion" v-if="account.type == 'account' && account.subtype == 'login'">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-qrcode" aria-hidden="true"></i>
-                      Verification code
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
+          <div class="form-sheet" v-if="account.type == 'account' && account.subtype == 'login'">
+            <div class="form-field" role="group" aria-labelledby="fl-add-22">
+              <span class="field-label" id="fl-add-22"><i class="fa fa-qrcode" aria-hidden="true"></i> Verification code</span>
                   <input
                     class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
                     placeholder="TOTP Secret"
-                    type="text"
+                    aria-label="TOTP secret"
+                    type="password"
+                    autocomplete="off"
                     v-model="account.totp_secret"
                   />
-                </div>
-              </div>
             </div>
           </div>
 
-          <div class="accordion">
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-message" aria-hidden="true"></i>
-                      Description
-                    </div>
+          <!-- region_start -- Main information -->
+          <div class="form-sheet">
+            <div class="form-field" role="group" aria-labelledby="fl-add-23">
+              <span class="field-label" id="fl-add-23"><i class="fa fa-tag" aria-hidden="true"></i> Name</span>
+                  <input
+                    id="addAccount_input_label"
+                    class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
+                    placeholder="e.g. Pokemon"
+                    aria-label="Name"
+                    aria-describedby="addAccount_labelHelp"
+                    type="text"
+                    ref="label"
+                    v-model="account.label"
+                    required
+                  />
+                  <small id="addAccount_labelHelp" class="form-text text-muted">Leave empty to use the platform's name.</small>
+
+                  <hr class="my-4" />
+
+                  <label class="form-label" for="addAccount_input_new_tag"
+                    ><i class="fa fa-tags" aria-hidden="true"></i> Tags</label
+                  >
+                  <div class="form-control tags tags-input" v-show="account.tags" @click="focusTagInput()">
+                    <button
+                      type="button"
+                      class="badge rounded-pill"
+                      v-for="(tag, tagIndex) in account.tags.split(',').filter(t => t)"
+                      v-bind:key="tagIndex"
+                      :aria-label="'Remove tag ' + tag"
+                      @click.stop="removeTag(tag)"
+                    >
+                      {{ tag }}
+                      <i class="fa fa-close" aria-hidden="true"></i>
+                    </button>
                   </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <textarea
+                  <input
+                    ref="tags"
+                    id="addAccount_input_new_tag"
+                    class="form-control tags-new-input"
+                    placeholder="Tag"
+                    type="text"
+                    v-model="newTag"
+                    enterkeyhint="done"
+                    @keyup.enter="addTag()"
+                    @blur="addTag()"
+                  />
+
+                  <hr class="my-4" />
+
+                  <label class="form-label" for="addAccount_icon"
+                    ><i class="fa fa-image" aria-hidden="true"></i> Icon</label
+                  >
+                  <input
+                    id="addAccount_icon"
+                    class="form-control"
+                    autocapitalize="off"
+                    autocorrect="off"
+                    spellcheck="false"
+                    placeholder="Icon URL"
+                    type="text"
+                    v-model="account.icon"
+                  />
+            </div>
+          </div>
+          <!-- region_end -- Main information -->
+
+          <div class="form-sheet">
+            <div class="form-field" role="group" aria-labelledby="fl-add-24">
+              <span class="field-label" id="fl-add-24"><i class="fa fa-message" aria-hidden="true"></i> Description</span>
+                  <textarea aria-labelledby="fl-add-24"
                     class="form-control"
                     type="text"
                     v-model="account.description"
                     rows="3"
                   ></textarea>
-                </div>
-              </div>
             </div>
 
-            <div class="accordion-item">
-              <h2 class="accordion-header">
-                <button
-                  class="accordion-button"
-                  type="button">
-                  <div>
-                    <div class="fw-medium">
-                      <i class="fa fa-marker" aria-hidden="true"></i>
-                      Notes
-                    </div>
-                  </div>
-                </button>
-              </h2>
-              <div class="accordion-collapse show">
-                <div class="accordion-body">
-                  <textarea
+            <div class="form-field" role="group" aria-labelledby="fl-add-25">
+              <span class="field-label" id="fl-add-25"><i class="fa fa-marker" aria-hidden="true"></i> Notes</span>
+                  <textarea aria-labelledby="fl-add-25"
                     class="form-control"
                     type="text"
                     v-model="account.notes"
                     rows="6"
                   ></textarea>
-                </div>
-              </div>
             </div>
           </div>
         </form>
 
-        <div class="row footer">
-          <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
+        <div class="footer is-pinned">
+          <div>
             <button
               class="btn btn-action btn-cta"
-              :class="isCreating ? 'btn-dark' : 'btn-light'"
+              :class="isCreating ? 'is-busy' : ''"
+              :disabled="isCreating"
               type="button"
               @click="add()"
             >
               <span
                 v-if="isCreating"
                 class="spinner-border spinner-border-sm"
-                role="status"
                 aria-hidden="true"
               ></span>
+              <span v-if="isCreating">Saving…</span>
               <span v-else
-                ><i class="fa fa-floppy-disk"></i>
-                {{ isCreating ? 'Storing ...' : 'Store' }}</span
+                ><i class="fa fa-lock" aria-hidden="true"></i>
+                Save to vault</span
               >
             </button>
           </div>
@@ -1095,6 +709,7 @@
 </template>
 
 <script>
+import { faviconUrl, displayIcon } from "../utils/icon.js";
 import "../assets/bottom_sheet.css";
 
 import {
@@ -1120,10 +735,22 @@ export default {
     return {
       isCreating: false,
       newTag: "",
+      isPasswordRevealed: false,
     };
   },
   mounted() {
     this.initBottomSheet("add-account-bottom-sheet");
+  },
+  watch: {
+    visible(isVisible) {
+      // Move focus into the dialog so Esc, screen readers and keyboards land inside it
+      if (isVisible) {
+        this.$nextTick(() => {
+          const cancel = this.$el.querySelector('.bar-text-btn');
+          cancel && cancel.focus({ preventScroll: true });
+        });
+      }
+    },
   },
   computed: {
     ...mapWritableState(useUiStore, {
@@ -1174,13 +801,45 @@ export default {
       // if no icon is set but platform is set, use icon from Google Favicon API
       // When there is no platform, the icon will be generated with label initials
       if (!this.account.icon && this.account.platform) {
-        this.account.icon = "https://www.google.com/s2/favicons?domain=" + this.account.platform;
+        this.account.icon = faviconUrl(this.account.platform);
       }
     },
 
+    // Anything typed that would be lost on close
+    isDirty: function () {
+      const fields = ['label', 'platform', 'login', 'password', 'totp_secret', 'card_number', 'card_pin', 'card_name', 'description', 'notes'];
+      return fields.some(field => this.account[field]) || !!this.newTag;
+    },
+
+    requestClose: function () {
+      if (!this.visible || this.isCreating) {
+        return;
+      }
+
+      if (this.isDirty() && !confirm("Discard this new item? What you typed will be lost.")) {
+        return;
+      }
+
+      this.isPasswordRevealed = false;
+      this.newTag = "";
+      this.closeSidebar(this.SIDEBAR.ADD_ACCOUNT);
+      this.resetCurrentAddingAccount();
+    },
+
+    onGeneratePassword: function () {
+      this.account.generatePassword();
+      // The user asked for it: show what was generated
+      this.isPasswordRevealed = true;
+    },
+
     add: async function () {
+      // Fill the label/icon from the platform before validating
+      this.onPlatformChange();
+      this.addTag();
+
       if (!this.account.isValid()) {
-        this.openAlert("Error", "Please fill all fields !", "danger");
+        this.openAlert("Name this item", "Add a name or a platform so you can find it again.", "danger");
+        this.$refs.label && this.$refs.label.focus();
         return;
       }
 
@@ -1192,7 +851,7 @@ export default {
         // If offline, message should reflect queued sync
         const isOffline = this.isOffline;
         this.openAlert(
-          isOffline ? 'Saved locally — will sync when back online.' : 'Created !',
+          isOffline ? 'Saved locally — will sync when back online.' : 'Saved to vault',
           this.account.label || 'Account',
           isOffline ? 'info' : 'success',
           this.account.icon
@@ -1215,6 +874,12 @@ export default {
     },
 
     addTag: function () {
+      if (!this.newTag || !this.newTag.trim()) {
+        this.newTag = "";
+        return;
+      }
+
+      this.newTag = this.newTag.trim();
       const tags = this.account.tags.split(",").map((t) => t.trim());
 
       // add the tag only if it wasn't already existing
@@ -1233,6 +898,7 @@ export default {
 
     updateUI: function () {
       this.isCreating = false;
+      this.isPasswordRevealed = false;
 
       this.closeSidebar(this.SIDEBAR.ADD_ACCOUNT);
 

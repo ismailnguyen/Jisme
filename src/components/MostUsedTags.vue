@@ -1,48 +1,32 @@
 <template>
-    <div class="most-used-tags-list-container container-fluid">
-        <div class="most-used-tags-list" v-if="isLoading">
-            <div v-for="index in 5"
-                v-bind:key="index">
-                <div class="tag-circle">
-                    <div class="tag-icon">
-                        <i class="fa fa-loading" aria-hidden="true"></i>
-                    </div>
-                    <div class="tag-label placeholder col-4 me-3 mb-0"></div>
-                </div>
-            </div>
+    <section class="tag-shelf" aria-labelledby="tag-shelf-title" v-if="isLoading || mostUsedTags.length">
+        <div class="section-hd">
+            <h2 id="tag-shelf-title"><i class="fa-solid fa-tags" aria-hidden="true"></i>Tags</h2>
         </div>
-
-        <div class="most-used-tags-list" v-else>
-            <div v-for="(tag, index) in mostUsedTags"
-                    v-bind:key="index"
-                    @click.prevent="selectTag(tag)">
-                <div class="tag-circle">
-                    <div class="tag-icon">
-                        <i class="fa fa-tag" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="tag-label">{{ tag.name || 'None' }}</div>
-            </div>
-
-            <div @click.prevent="showMore()" v-show="!isShowingMore">
-                <div class="tag-circle">
-                    <div class="tag-icon">
-                        <i class="fa fa-chevron-down" aria-hidden="true"></i>
-                    </div>
-                </div>
-                <div class="tag-label">More</div>
-            </div>
+        <div class="tag-row" v-if="isLoading" aria-hidden="true">
+            <span v-for="index in 4" :key="index" class="tag-pill placeholder-glow"><span class="placeholder col-12"></span></span>
         </div>
-    </div>
+        <div class="tag-row" v-else>
+            <button
+                v-for="(tag, index) in mostUsedTags"
+                :key="index"
+                type="button"
+                class="tag-pill"
+                :aria-label="'Filter by tag ' + (tag.name || 'untagged')"
+                @click="selectTag(tag)">
+                {{ tag.name || 'Untagged' }}
+            </button>
+            <button type="button" class="tag-pill is-more" @click="showMore()" v-show="canShowMore">
+                More
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+            </button>
+        </div>
+    </section>
 </template>
 
 <script>
-    import {
-        mapActions,
-    } from 'pinia'
-    import {
-        useAccountsStore,
-     } from '@/store'
+    import { mapActions } from 'pinia'
+    import { useAccountsStore } from '@/store'
 
     export default {
         props: {
@@ -54,26 +38,29 @@
         data() {
             return {
                 isShowingMore: false,
-                displayedTagsNb: 8 // Default show only 9 first tags
+                displayedTagsNb: 8
             }
         },
         computed: {
             mostUsedTags: function () {
                 return this.getMostUsedTags().slice(0, this.displayedTagsNb);
+            },
+
+            canShowMore: function () {
+                return !this.isShowingMore && this.getMostUsedTags().length > this.displayedTagsNb;
             }
         },
         methods: {
             ...mapActions(useAccountsStore, [
                 'getMostUsedTags'
             ]),
-            
+
             selectTag: function (tag) {
-                // Add the tag to the query parameters with existing tags
-                let existingTags = this.$route.query.tags ? 
-                    this.$route.query.tags.split(',').concat(tag.name) : 
+                let existingTags = this.$route.query.tags ?
+                    this.$route.query.tags.split(',').concat(tag.name) :
                     [tag.name];
 
-                let newTags = [...new Set(existingTags)].join(','); // Ensure unique tags
+                let newTags = [...new Set(existingTags)].join(',');
 
                 this.$router.push({
                     name: 'Home',
@@ -94,55 +81,70 @@
 </script>
 
 <style scoped>
-.most-used-tags-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem 1.2rem;
-  justify-content: flex-start;
-  align-items: flex-start;
-  padding-bottom: 1rem;
+.tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
 }
-@media (max-width: 767px) {
-    .most-used-tags-list {
+
+@media (max-width: 767.98px) {
+    .tag-row {
         flex-wrap: nowrap;
         overflow-x: auto;
+        margin: 0 -16px;
+        padding: 0 16px 2px;
+        scrollbar-width: none;
+    }
+
+    .tag-row::-webkit-scrollbar {
+        display: none;
     }
 }
-.tag-circle {
-  border-radius: 50%;
-  width: 4rem;
-  height: 4rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.5rem;
-  cursor: pointer;
-  background: var(--color-background-mute);
-  transition: box-shadow 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+
+.tag-pill {
+    flex: none;
+    min-height: 36px;
+    min-width: 44px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--rule);
+    background: var(--sheet);
+    color: var(--ink);
+    font-size: 13.5px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(46, 58, 79, 0.06);
 }
-.tag-circle:hover {
-    background: var(--color-background);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+
+.tag-pill:hover {
+    border-color: var(--tint);
+    background: #fff;
 }
-.tag-icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 0.3rem;
+
+.tag-pill.is-more {
+    color: var(--ink-2);
+    border-style: dashed;
 }
-.tag-icon img {
-  width: 36px;
-  height: 36px;
-  object-fit: contain;
+
+.tag-pill.is-more i {
+    font-size: 10px;
 }
-.tag-label {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: var(--color-text);
-  text-align: center;
-  margin-top: 0.2rem;
-  white-space: pre-line;
+
+.tag-pill .placeholder {
+    width: 48px;
+}
+
+/* 36px pill + the row's own padding keeps the hit area at 44px */
+.tag-pill::after {
+    content: "";
+    position: absolute;
+    inset: -4px 0;
+}
+
+.tag-pill {
+    position: relative;
 }
 </style>

@@ -16,7 +16,7 @@
     ></div>
   </div>
 
-  <main class="account-list-pane container-fluid" :class="{ 'summary-pane--expanded': isSummaryPaneExpanded, 'advanced-search--opened': isAdvancedSearchMode }">
+  <main class="account-list-pane" :class="{ 'summary-pane--expanded': isSummaryPaneExpanded, 'advanced-search--opened': isAdvancedSearchMode }">
     <NoAccounts v-if="!hasAccounts" />
 
     <FavoriteAccountList

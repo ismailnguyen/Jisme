@@ -23,33 +23,32 @@
                             placeholder="Username, email, or phone number"
                             aria-describedby="emailHelp"
                             v-model="username"
-                            @keyup.enter="onRequestLogin"
+                            autocapitalize="off"
+                            autocorrect="off"
+                            spellcheck="false"
                             autofocus
-                            tabindex="1"
                             required>
                         <label for="inputUsername">Username</label>
                     </div>
 
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="rememberMeCheckbox" v-model="remember" tabindex="2" @change="focusOtpInput">
+                        <input class="form-check-input" type="checkbox" id="rememberMeCheckbox" v-model="remember">
                         <label class="form-check-label" for="rememberMeCheckbox">
                             Remember me
                         </label>
                     </div>
                     
                     <button
-                        type="button"
+                        type="submit"
                         class="btn btn-lg"
                         :class="isLoading ? 'btn-outline-secondary' : 'btn-primary'"
-                        @click="onRequestLogin()"
-                        :disabled="!username"
-                        tabindex="2">
-                        {{ isLoading ? 'Authenticating...' : 'Continue' }}
+                        :disabled="!username || isLoading">
+                        {{ isLoading ? 'Checking…' : 'Continue' }}
                     </button>
 
                     <hr class="my-4 mt-5 mb-3 ">
 
-                    <p class="text-muted" tabindex="3">Don't have an account? <router-link to="/register">Sign up</router-link></p>
+                    <p class="text-muted">Don't have an account? <router-link to="/register">Sign up</router-link></p>
                 </form>
             </div>
         </div>
@@ -133,7 +132,7 @@
                     }
                     , 500);
                     
-                    this.openAlert('Error', 'Please fill username!', 'danger');
+                    this.openAlert('Enter your username', 'Use the email or username you signed up with.', 'danger');
 
                     return;
                 }
@@ -147,21 +146,21 @@
                     });
 
                     if (next.step === 'verify_passkey') {
-                        this.$router.push({ name: 'VerifyPasskey' });
+                        this.$router.replace({ name: 'VerifyPasskey' });
                     }
                     else if (next.step === 'verify_password') {
-                        this.$router.push({ name: 'VerifyPassword' });
+                        this.$router.replace({ name: 'VerifyPassword' });
                     }
                     else if (next.step === 'verify_otp') {
-                        this.$router.push({ name: 'VerifyOTP' });
+                        this.$router.replace({ name: 'VerifyOTP' });
                     }
                     else {
-                        this.$router.push({ name: 'Home' });
+                        this.$router.replace({ name: 'Home' });
                     }
                 }
                 catch (error) {
                     this.isLoading = false;
-                    this.openAlert(error.reason ? error.reason : 'Error', error.message || error.reason, 'danger');
+                    this.openAlert(error.reason ? error.reason : "Couldn't sign in", error.message || error.reason || 'Check your connection and try again.', 'danger');
                 }
             }
         }

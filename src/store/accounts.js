@@ -151,11 +151,21 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         const service = accountsService;
 
         // Pre fill the store with the cached accounts
-        recentAccounts.value = await service.getRecentsCached();
-        accounts.value = await service.getAllCached();
+        const cachedRecents = await service.getRecentsCached();
+        const cachedAccounts = await service.getAllCached();
 
-        // After loading accounts from cache update the areAccountsLoaded value
-        areAccountsLoaded.value = accounts.value.length > 0;
+        // The server fetch runs in parallel and may finish first:
+        // never replace fresher server data with the (possibly empty) cache
+        if (!recentAccounts.value.length) {
+            recentAccounts.value = cachedRecents;
+        }
+
+        if (!totalFetchedAccounts.value) {
+            accounts.value = cachedAccounts;
+
+            // After loading accounts from cache update the areAccountsLoaded value
+            areAccountsLoaded.value = accounts.value.length > 0;
+        }
 
         _filteredAccounts.value = accounts.value;
     }
@@ -314,12 +324,10 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
                             // Update only accounts where last_modified_date is greater than the one in the store
                             if (new Date(account.last_modified_date) > new Date(accounts.value[index].last_modified_date)) {
                                 accounts.value[index] = account;
-                                console.log('Updated account retrieved')//, account);
                             }
                         }
                         else {
                             accounts.value.push(account);
-                            console.log('New account retrieved')//, account);
                         }
                     });
 
@@ -475,6 +483,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
         totalAccounts,
         areAccountsLoaded,
         outbox,
+        isSyncing,
 
         searchQuery,
         selectedTypes,
