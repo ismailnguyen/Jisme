@@ -49,6 +49,8 @@
                     <hr class="my-4 mt-5 mb-3 ">
 
                     <p class="text-muted">Don't have an account? <router-link to="/register">Sign up</router-link></p>
+
+                    <p class="text-muted mt-2">Just looking? <button type="button" class="btn btn-link p-0 align-baseline" @click="onStartDemo()">Try the demo</button>, no account needed.</p>
                 </form>
             </div>
         </div>
@@ -114,8 +116,14 @@
 
             ...mapActions(useUserStore, [
                 'requestLogin',
-                'setAutoLogin'
+                'setAutoLogin',
+                'startDemo'
             ]),
+
+            onStartDemo: async function () {
+                await this.startDemo();
+                this.$router.replace({ name: 'Home' });
+            },
 
             onChangeUsername: async function () {
                 // Disable auto login to allow user to change username from login page

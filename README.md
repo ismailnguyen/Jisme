@@ -141,6 +141,14 @@ VITE_PASSKEY_RP_NAME=Jisme
 VITE_API_BASE_URL=https://your-api-server.com/api
 ```
 
+### Demo Mode
+Anyone can try the app, in any build including production, without an account or an API server. The demo opens a sample vault that lives only in memory: you can add, edit and delete items, nothing is sent to the API or written to the device storage, and everything resets when the demo ends (sign out, auto-lock or closing the tab).
+
+- **From the sign-in page**: click *Try the demo*.
+- **From a link**: open `/?demo` (e.g. https://jisme.app/?demo). Handy for local development without the mock server.
+
+A real vault cached on the same device is never read or changed by the demo.
+
 ## 🔒 Security Implementation
 
 ### Encryption Flow

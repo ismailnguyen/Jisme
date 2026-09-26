@@ -22,7 +22,7 @@ export default {
     computed: {
         ...mapState(useNetworkStore, ['isOffline']),
         ...mapState(useAccountsStore, ['isSyncing', 'outbox', 'areAccountsLoaded']),
-        ...mapState(useUserStore, ['isLoggedIn']),
+        ...mapState(useUserStore, ['isLoggedIn', 'isDemo']),
 
         pendingChanges: function () {
             return Array.isArray(this.outbox) ? this.outbox.length : 0;
@@ -30,6 +30,7 @@ export default {
 
         state: function () {
             if (!this.isLoggedIn) return 'locked';
+            if (this.isDemo) return 'demo';
             if (this.isOffline) return 'offline';
             if (this.isSyncing || !this.areAccountsLoaded || this.pendingChanges) return 'syncing';
             return 'synced';
@@ -42,6 +43,7 @@ export default {
         icon: function () {
             return {
                 locked: 'fa-lock',
+                demo: 'fa-flask',
                 offline: 'fa-cloud-arrow-up',
                 syncing: 'fa-rotate',
                 synced: 'fa-lock-open',
@@ -51,6 +53,7 @@ export default {
         primary: function () {
             return {
                 locked: 'Locked',
+                demo: 'Demo',
                 offline: 'Offline',
                 syncing: 'Unlocked',
                 synced: 'Unlocked',
@@ -63,6 +66,7 @@ export default {
                     ? `${ this.pendingChanges } change${ this.pendingChanges > 1 ? 's' : '' } held`
                     : 'works offline';
             }
+            if (this.state === 'demo') return 'nothing is saved';
             if (this.state === 'syncing') return 'syncing';
             if (this.state === 'synced') return 'synced';
             return '';
@@ -76,6 +80,12 @@ export default {
 </script>
 
 <style scoped>
+/* Dashed edge: a sandbox, not a sealed vault */
+.vault-status.is-demo {
+    border-style: dashed;
+    border-color: var(--ink-2);
+}
+
 .vault-status.is-syncing .fa-rotate {
     animation: spin 1.6s linear infinite;
 }

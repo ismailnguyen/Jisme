@@ -14,6 +14,9 @@ import { defineStore } from 'pinia'
 import { useAlertStore } from '@/store';
 import { APP_USER_STORE } from '../utils/store'
 import UserService from '../services/UserService'
+import DemoUserService from '../services/demo/DemoUserService'
+import demoVault from '../services/demo/demoVault'
+import { isDemoRequested, setDemoSession } from '../utils/demo'
 import { SessionExpiredException } from '../utils/errors'
 
 const SESSION_REFRESH_BUFFER_MS = 15 * 60 * 1000; // Refresh when less than 15 minutes remain
@@ -22,7 +25,9 @@ const MIN_REFRESH_INTERVAL_MS = 5 * 60 * 1000; // Avoid refreshing more than onc
 const useUserStore = defineStore(APP_USER_STORE, () => {
     const user = ref({});
     const isLoggedIn = ref(false);
-    const userService = new UserService();
+    const isDemo = ref(false);
+    const realUserService = new UserService();
+    let userService = realUserService;
     const isExtendedSession = ref(false);
     const alertStore = useAlertStore();
 
@@ -143,6 +148,11 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     const init = async () => {
+        if (isDemoRequested()) {
+            await startDemo();
+            return;
+        }
+
         user.value = await userService.getCachedUser();
         // User's uuid is only filled when logged in successfully
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
@@ -260,8 +270,35 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value.passkeys = user.value.passkeys.filter(passkey => passkey.passkey.id !== passkeyToDelete.passkey.id);
     }
 
+    // Demo: sign in to an in-memory vault. Any real vault cached on this device is left untouched
+    async function startDemo() {
+        demoVault.reset();
+        setDemoSession(true);
+
+        userService = new DemoUserService();
+        isDemo.value = true;
+
+        user.value = await userService.getCachedUser();
+        isLoggedIn.value = true;
+    }
+
+    async function endDemo() {
+        await userService.signOut();
+        setDemoSession(false);
+
+        userService = realUserService;
+        isDemo.value = false;
+    }
+
     async function signOut(preserveCache = false, { title = 'Signed out', message = 'Your vault is locked on this device.' } = {}) {
-        await userService.signOut(preserveCache);
+        if (isDemo.value) {
+            await endDemo();
+
+            title = 'Demo ended';
+            message = 'Your demo changes were discarded.';
+        } else {
+            await userService.signOut(preserveCache);
+        }
 
         alertStore.openAlert(title, message, 'info');
 
@@ -337,6 +374,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user,
 
         isLoggedIn,
+        isDemo,
         lastRememberedUsername,
 
         isAutoLoginEnabled,
@@ -360,6 +398,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         removePasskey,
         signOut,
         lock,
+        startDemo,
         setLastRememberedUsername
     }
 })

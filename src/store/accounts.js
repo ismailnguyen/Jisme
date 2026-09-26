@@ -7,6 +7,7 @@ import localforage from 'localforage'
 import { LOCAL_STORAGE_OUTBOX_KEY } from '../utils/storage'
 
 import AccountsService from '../services/AccountsService';
+import DemoAccountsService from '../services/demo/DemoAccountsService';
 import { parseAccount } from '../utils/account';
 import FilterService from '../services/FilterService';
 
@@ -34,9 +35,30 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     const selectedFilters = ref([]);
 
     let accountsService = null;
+    let isDemoService = false;
+
+    // Entering or leaving the demo must not mix demo items with a real vault (and its cache)
+    const resetAccounts = () => {
+        areAccountsLoaded.value = false;
+        totalAccounts.value = 0;
+        totalFetchedAccounts.value = 0;
+        recentAccounts.value = [];
+        accounts.value = [];
+        _filteredAccounts.value = [];
+    };
 
     const refreshAccountsService = (currentUser) => {
-        accountsService = currentUser ? new AccountsService(currentUser) : null;
+        if (userStore.isDemo !== isDemoService) {
+            isDemoService = userStore.isDemo;
+            resetAccounts();
+        }
+
+        if (!currentUser) {
+            accountsService = null;
+            return;
+        }
+
+        accountsService = isDemoService ? new DemoAccountsService(currentUser) : new AccountsService(currentUser);
     };
 
     watch(user, (newUser) => {
@@ -198,6 +220,8 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     // Process queued offline operations when back online
     async function processOutbox() {
         if (isSyncing.value) return;
+        // The outbox belongs to the real vault: never replay it into the demo
+        if (userStore.isDemo) return;
         if (networkStore.isOffline) return;
         if (!user.value || !user.value.token) return;
 
@@ -275,7 +299,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
     function initSyncListeners() {
         // Subscribe to network store to trigger sync and refresh when going online
         const unsub = networkStore.$subscribe(async (mutation, state) => {
-            if (state.isOnline) {
+            if (state.isOnline && !userStore.isDemo) {
                 await processOutbox();
                 try {
                     await fetchAccounts();
@@ -376,7 +400,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             }
 
             // Offline: create a temporary account locally and enqueue
-            if (networkStore.isOffline) {
+            if (networkStore.isOffline && !userStore.isDemo) {
                 const tempId = `tmp_${Date.now()}`;
                 const tempAccount = parseAccount({ ...account, _id: tempId, created_date: new Date(), last_modified_date: new Date(), last_opened_date: new Date(), opened_count: account.opened_count || 0 });
                 accounts.value.push(tempAccount);
@@ -412,7 +436,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             }
 
             // Offline: update locally and enqueue
-            if (networkStore.isOffline) {
+            if (networkStore.isOffline && !userStore.isDemo) {
                 const index = accounts.value.findIndex(a => a._id === account._id);
                 if (index !== -1) {
                     accounts.value[index] = parseAccount({ ...account });
@@ -445,7 +469,7 @@ const store = defineStore(APP_ACCOUNTS_STORE, () => {
             }
 
             // Offline: remove locally and enqueue
-            if (networkStore.isOffline) {
+            if (networkStore.isOffline && !userStore.isDemo) {
                 const indexToRemove = accounts.value.findIndex(a => a._id === account._id);
                 if (indexToRemove !== -1) {
                     accounts.value.splice(indexToRemove, 1);
