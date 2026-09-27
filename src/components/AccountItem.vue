@@ -115,13 +115,17 @@
                     return a.login || a.social_login || '';
                 }
 
+                // The holder leads: a family keeps one passport (or card) per person,
+                // so whose it is decides which envelope to open
+                const withHolder = (holder, rest) => [holder, rest].filter(x => x).join(' · ');
+
                 if (a.type === 'card') {
-                    if (a.subtype === 'payment') return a.card_number ? maskSecret(a.card_number, 4) : 'Payment card';
-                    return a.subtype === 'gift' ? 'Gift card' : 'Loyalty card';
+                    if (a.subtype === 'payment') return withHolder(a.card_name, a.card_number ? maskSecret(a.card_number, 4) : '') || 'Payment card';
+                    return a.card_name || (a.subtype === 'gift' ? 'Gift card' : 'Loyalty card');
                 }
 
-                if (a.type === 'bank') return a.password ? maskSecret(a.password, 4) : 'Bank account';
-                if (a.type === 'document') return a.card_number ? maskSecret(a.card_number, 3) : (a.card_name || 'Document');
+                if (a.type === 'bank') return withHolder(a.login, a.password ? maskSecret(a.password, 4) : '') || 'Bank account';
+                if (a.type === 'document') return withHolder(a.card_name, a.card_number ? maskSecret(a.card_number, 3) : '') || 'Document';
 
                 return a.description || '';
             },

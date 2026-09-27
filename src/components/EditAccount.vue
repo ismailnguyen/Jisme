@@ -146,13 +146,24 @@
             </div>
 
             <div class="q-row" v-if="!account.is_password_less && account.password">
-              <div class="q-field"><span class="q-label">Password</span><SecretStrip :value="account.password" label="password" /></div>
+              <div class="q-field">
+                <span class="q-label">Password</span>
+                <p class="pw-clue" v-if="account.password_clue">
+                  <span class="pw-clue-label"><i class="fa-regular fa-lightbulb" aria-hidden="true"></i>Clue</span>
+                  <span class="carbon">{{ account.password_clue }}</span>
+                </p>
+                <SecretStrip :value="account.password" label="password" />
+              </div>
               <button type="button" class="ibtn" aria-label="Copy password" @click="copyValue(account.password, 'Password')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
             </div>
 
             <div class="q-row" v-else-if="account.is_password_less && !account.social_login">
               <div class="q-field">
                 <span class="q-label">Password <span class="q-note">derived on this device</span></span>
+                <p class="pw-clue" v-if="account.password_clue">
+                  <span class="pw-clue-label"><i class="fa-regular fa-lightbulb" aria-hidden="true"></i>Clue</span>
+                  <span class="carbon">{{ account.password_clue }}</span>
+                </p>
                 <SecretStrip v-if="passwordLess.generatedPassword" :value="passwordLess.generatedPassword" label="password" />
                 <form v-else class="derive-form" @submit.prevent="generatePasswordLess()">
                   <input
@@ -174,11 +185,18 @@
             </div>
 
             <div class="q-row" v-else-if="!account.is_password_less && account.password_clue">
-              <div class="q-field"><span class="q-label">Password <span class="q-note">not saved, clue only</span></span><div class="q-value">{{ account.password_clue }}</div></div>
+              <div class="q-field"><span class="q-label">Password clue</span><div class="q-value carbon">{{ account.password_clue }}</div></div>
             </div>
 
             <div class="q-row" v-else-if="account.social_login">
-              <div class="q-field"><span class="q-label">Signs in with</span><div class="q-value">{{ account.social_login.split(',').join(', ') }}</div></div>
+              <div class="q-field">
+                <span class="q-label">Signs in with</span>
+                <p class="pw-clue" v-if="account.password_clue">
+                  <span class="pw-clue-label"><i class="fa-regular fa-lightbulb" aria-hidden="true"></i>Clue</span>
+                  <span class="carbon">{{ account.password_clue }}</span>
+                </p>
+                <div class="q-value">{{ account.social_login.split(',').join(', ') }}</div>
+              </div>
             </div>
 
             <div class="q-row" v-if="account.totp_secret">
@@ -202,9 +220,9 @@
               <div class="q-field"><span class="q-label">Network (SSID)</span><div class="q-value carbon">{{ account.login }}</div></div>
               <button type="button" class="ibtn" aria-label="Copy network name" @click="copyValue(account.login, 'Network name')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
             </div>
-            <div class="q-row">
+            <div class="q-row" v-if="account.password">
               <div class="q-field"><span class="q-label">Password</span><SecretStrip :value="account.password" label="Wi-Fi password" /></div>
-              <button type="button" class="ibtn" aria-label="Copy Wi-Fi password"  v-if="account.password" @click="copyValue(account.password, 'Wi-Fi password')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy Wi-Fi password" @click="copyValue(account.password, 'Wi-Fi password')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
             </div>
           </template>
 
@@ -214,9 +232,9 @@
               <div class="q-field"><span class="q-label">Key identifier</span><div class="q-value carbon">{{ account.login }}</div></div>
               <button type="button" class="ibtn" aria-label="Copy key identifier" @click="copyValue(account.login, 'Key identifier')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
             </div>
-            <div class="q-row">
+            <div class="q-row" v-if="account.password">
               <div class="q-field"><span class="q-label">Key</span><SecretStrip :value="account.password" label="key" /></div>
-              <button type="button" class="ibtn" aria-label="Copy key" v-if="account.password" @click="copyValue(account.password, 'Key')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy key" @click="copyValue(account.password, 'Key')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
             </div>
           </template>
 

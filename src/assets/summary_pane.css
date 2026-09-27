@@ -12,6 +12,8 @@
     max-height: 100dvh;
     overflow-y: auto;
     padding-top: 28px;
+    /* the dock is anchored under this pane; keep the tags clear of it */
+    padding-bottom: calc(100px + env(safe-area-inset-bottom));
   }
 
   .summary-pane.summary-pane--expanded {

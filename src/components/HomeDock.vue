@@ -63,7 +63,7 @@ export default {
 
 @media (min-width: 768px) {
     .home-dock {
-        left: max(24px, calc((100vw - 1280px) / 2 + 24px));
+        left: max(24px, calc((100vw - 1760px) / 2 + 24px));
         width: 332px;
         transform: none;
     }

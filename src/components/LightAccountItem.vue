@@ -3,7 +3,10 @@
         <button type="button" class="win" :aria-label="'Open ' + title" @click="onCardClick()">
             <img v-if="hasIcon" class="mini-icon" :src="displayIcon(account.icon)" loading="lazy" alt="" @error="isIconBroken = true">
             <span v-else class="initial" aria-hidden="true">{{ initial }}</span>
-            <b>{{ title }}</b>
+            <span class="mini-text">
+                <b :class="{ 'is-single': holder }">{{ title }}</b>
+                <small v-if="holder" class="carbon">{{ holder }}</small>
+            </span>
         </button>
     </div>
 </template>
@@ -34,6 +37,14 @@
 
             initial: function () {
                 return (this.title.trim()[0] || '?').toUpperCase();
+            },
+
+            // Whose document or card it is, so family members' items tell apart
+            holder: function () {
+                const a = this.account;
+                if (a.type === 'document' || a.type === 'card') return a.card_name || '';
+                if (a.type === 'bank') return a.login || '';
+                return '';
             },
 
             hasIcon: function () {

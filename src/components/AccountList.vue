@@ -27,6 +27,10 @@
       v-if="hasAccounts && !isSearching"
       :isLoading="!areAccountsLoaded"  />
 
+    <AllAccountList
+      v-if="hasAccounts && !isSearching && isDesktop"
+      :isLoading="!areAccountsLoaded" />
+
     <FilteredAccountList
       :searchQuery="searchQuery"
       :filteredAccounts="filteredAccounts"
@@ -57,8 +61,12 @@ import AccountItem from "../components/AccountItem.vue";
 import RecentAccountList from "../components/RecentAccountList.vue";
 import FavoriteAccountList from "../components/FavoriteAccountList.vue";
 import FilteredAccountList from "../components/FilteredAccountList.vue";
+import AllAccountList from "../components/AllAccountList.vue";
 import NoAccounts from "../components/NoAccounts.vue";
 import SearchBar from "../components/SearchBar.vue";
+
+// The whole vault is laid out only where there is room for it
+const desktopQuery = window.matchMedia('(min-width: 768px)');
 
 export default {
   emits: ['menuOpened'],
@@ -68,11 +76,13 @@ export default {
     RecentAccountList,
     FavoriteAccountList,
     FilteredAccountList,
+    AllAccountList,
     NoAccounts,
     SearchBar
   },
   data() {
     return {
+      isDesktop: desktopQuery.matches,
       accountsFetchingProgression: {
         isFetching: false,
         totalFetched: 0,
@@ -86,7 +96,12 @@ export default {
     this.accountsStore.$subscribe(this.onAccountsLoaded);
   },
   async mounted() {
+    desktopQuery.addEventListener('change', this.onDesktopChange);
+
     await this.fetchLatestAccounts();
+  },
+  beforeUnmount() {
+    desktopQuery.removeEventListener('change', this.onDesktopChange);
   },
   computed: {
     ...mapStores(useAccountsStore),
@@ -124,6 +139,10 @@ export default {
     ]),
 
     ...mapActions(useAlertStore, ["openAlert"]),
+
+    onDesktopChange: function (event) {
+      this.isDesktop = event.matches;
+    },
 
     onMenuOpened: function () {
       this.$emit('menuOpened');

@@ -1,11 +1,11 @@
 <template>
   <header class="search-input-container justify-content-center">
     <div class="btn-group" role="group">
-      <i class="fa-solid fa-magnifying-glass search-glyph" aria-hidden="true" v-show="searchMode == 'text'"></i>
+      <i class="fa-solid fa-magnifying-glass search-glyph" aria-hidden="true" v-show="searchMode != 'advanced'"></i>
 
       <button
         type="button"
-        v-show="searchMode == 'tags'"
+        v-show="searchMode != 'advanced'"
         class="btn active"
         v-for="(tag, tagIndex) in selectedTags"
         :key="tagIndex"
@@ -17,7 +17,7 @@
 
       <button
         type="button"
-        v-show="searchMode == 'tags'"
+        v-show="searchMode != 'advanced'"
         class="btn btn-secondary active"
         v-for="(type, typeIndex) in selectedTypes"
         :key="typeIndex"
@@ -36,14 +36,14 @@
         type="search"
         name="search"
         v-model="localSearchQuery"
-        placeholder="Search"
+        :placeholder="searchPlaceholder"
         aria-label="Search your vault"
         autocapitalize="off"
         autocorrect="off"
         spellcheck="false"
         enterkeyhint="search"
         :disabled="!areAccountsLoaded"
-        v-show="searchMode == 'text'"
+        v-show="searchMode != 'advanced'"
       />
 
       <div class="search-filters-container" v-show="searchMode == 'advanced'">
@@ -127,25 +127,25 @@
      
       <button
         type="button"
-        v-show="searchMode == 'text' && (selectedTags.length || selectedTypes.length)"
+        v-show="searchMode != 'advanced' && (localSearchQuery || selectedTags.length || selectedTypes.length)"
         class="btn"
-        aria-label="Close search"
-        @click="changeSearchMode('tags')">
+        aria-label="Clear search and filters"
+        @click="clearSearch()">
         <i class="fa fa-close" aria-hidden="true"></i>
       </button>
 
       <button
         type="button"
-        v-show="searchMode == 'tags' || searchMode == 'advanced'"
+        v-show="searchMode == 'advanced'"
         class="btn"
-        aria-label="Search"
+        aria-label="Back to simple search"
         @click="changeSearchMode('text')">
         <i class="fa fa-search" aria-hidden="true"></i>
       </button>
 
       <button
         type="button"
-        v-show="searchMode == 'text' || searchMode == 'tags'"
+        v-show="searchMode != 'advanced'"
         class="btn"
         aria-label="Filters"
         :aria-pressed="searchMode == 'advanced' ? 'true' : 'false'"
@@ -190,13 +190,6 @@ export default {
             ? newTags.split(",").map((x) => x.trim())
             : [];
 
-        if (this.selectedTags.length && this.selectedTags.length < 3) {
-          this.changeSearchMode('tags');
-        }
-        else if (this.selectedTags.length && this.selectedTags.length > 2) {
-          this.changeSearchMode('advanced');
-        }
-
         this.updateFilteredAccounts(this.isSearching);
       },
       {
@@ -211,10 +204,6 @@ export default {
           newTypes && newTypes.length
             ? newTypes.split(",").map((x) => x.trim())
             : [];
-
-        if (this.selectedTypes.length) {
-          this.changeSearchMode('tags');
-        }
 
         this.updateFilteredAccounts(this.isSearching);
       },
@@ -281,7 +270,17 @@ export default {
     ...mapState(useUiStore, [
       'isSidebarOpen',
       'SIDEBAR'
-    ])
+    ]),
+
+    searchPlaceholder() {
+      const names = { account: 'credentials', card: 'cards', document: 'documents', bank: 'banks' };
+
+      if (this.selectedTypes.length === 1 && names[this.selectedTypes[0]]) {
+        return 'Search ' + names[this.selectedTypes[0]];
+      }
+
+      return (this.selectedTypes.length || this.selectedTags.length) ? 'Search within filters' : 'Search';
+    }
   },
   methods: {
     ...mapActions(useAlertStore, ['openAlert']),
@@ -313,6 +312,12 @@ export default {
             search: this.$route.query.search,
             tags: this.$route.query.tags
         } });
+    },
+
+    clearSearch: function () {
+      this.localSearchQuery = '';
+
+      this.$router.push({ name: 'Home', query: {} });
     },
 
     changeSearchMode: function (mode) {

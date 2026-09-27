@@ -4,7 +4,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 const daysAgo = (days) => new Date(Date.now() - days * DAY_MS);
 
-function login ({ id, label, platform, login, password = '', is_password_less = false, tags = '', notes = '', totp_secret = '', isPinned = false, opened, openedCount = 0, created = 120 }) {
+function login ({ id, label, platform, login, password = '', is_password_less = false, password_clue = '', tags = '', notes = '', totp_secret = '', isPinned = false, opened, openedCount = 0, created = 120 }) {
     return {
         _id: id,
         type: 'account',
@@ -15,6 +15,7 @@ function login ({ id, label, platform, login, password = '', is_password_less = 
         login,
         password,
         is_password_less,
+        password_clue,
         tags,
         notes,
         totp_secret,
@@ -30,7 +31,7 @@ function login ({ id, label, platform, login, password = '', is_password_less = 
 export function createDemoAccounts () {
     return [
         login({ id: 'demo_github', label: 'GitHub', platform: 'github.com', login: 'alex.martin@example.com', password: 'c0rrect-Horse-battery', tags: 'dev, work', totp_secret: 'JBSWY3DPEHPK3PXP', isPinned: true, opened: 0, openedCount: 42, notes: 'Recovery codes are in the safe.' }),
-        login({ id: 'demo_google', label: 'Google', platform: 'accounts.google.com', login: 'alex.martin@example.com', is_password_less: true, tags: 'personal, email', isPinned: true, opened: 1, openedCount: 31 }),
+        login({ id: 'demo_google', label: 'Google', platform: 'accounts.google.com', login: 'alex.martin@example.com', is_password_less: true, password_clue: 'Usual phrase, first pet, + site year', tags: 'personal, email', isPinned: true, opened: 1, openedCount: 31 }),
         login({ id: 'demo_netflix', label: 'Netflix', platform: 'netflix.com', login: 'alex.martin@example.com', password: 'Popcorn&Sofa2024', tags: 'streaming, family', opened: 3, openedCount: 12 }),
         login({ id: 'demo_spotify', label: 'Spotify', platform: 'spotify.com', login: 'alexmartin', password: 'b4ssline!Loud', tags: 'streaming, music', opened: 5, openedCount: 9 }),
         login({ id: 'demo_amazon', label: 'Amazon', platform: 'amazon.com', login: 'alex.martin@example.com', is_password_less: true, tags: 'shopping', opened: 8, openedCount: 7 }),
@@ -129,12 +130,28 @@ export function createDemoAccounts () {
             opened_count: 5
         },
         {
+            _id: 'demo_passport_sam',
+            type: 'document',
+            subtype: 'identity',
+            label: 'Passport',
+            card_name: 'Sam Martin',
+            card_number: '21CD67890',
+            card_expiracy: '02/09/2029',
+            card_issue_date: '03/09/2024',
+            platform: 'Préfecture de Paris',
+            tags: 'identity, travel, family',
+            created_date: daysAgo(380),
+            last_modified_date: daysAgo(60),
+            last_opened_date: daysAgo(60),
+            opened_count: 2
+        },
+        {
             _id: 'demo_iban',
             type: 'bank',
             subtype: 'iban',
             label: 'Main bank account',
-            card_name: 'Alex Martin',
-            card_number: 'FR14 2004 1010 0505 0001 3M02 606',
+            login: 'Alex Martin',
+            password: 'FR14 2004 1010 0505 0001 3M02 606',
             platform: 'examplebank.com',
             tags: 'finance',
             created_date: daysAgo(500),

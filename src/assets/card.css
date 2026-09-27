@@ -160,6 +160,25 @@
   word-break: break-word;
 }
 
+.mini-env .mini-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.mini-env b.is-single {
+  -webkit-line-clamp: 1;
+}
+
+.mini-env small {
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .mini-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
