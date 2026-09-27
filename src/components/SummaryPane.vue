@@ -8,10 +8,18 @@
         <header class="summary-header">
             <div class="brand-row">
                 <h1 class="brand">
-                    <img src="../assets/logo_medium.png" alt="" width="30" height="30">
+                    <img src="../assets/logo_medium.png" alt="" width="34" height="34">
                     {{ app_name }}
                 </h1>
-                <VaultStatus />
+                <button
+                    type="button"
+                    class="avatar-btn"
+                    aria-label="Account and settings"
+                    :aria-expanded="isSidebarOpen(SIDEBAR.MENU) ? 'true' : 'false'"
+                    @click="onMenuOpened">
+                    <img v-if="user && user.avatarUrl && !isAvatarBroken" :src="user.avatarUrl" alt="" @error="isAvatarBroken = true">
+                    <span v-else aria-hidden="true">{{ userInitial }}</span>
+                </button>
             </div>
 
             <SearchBar
@@ -46,28 +54,39 @@ import {
 import AccountTypesList from "../components/AccountTypesList.vue";
 import MostUsedTags from "../components/MostUsedTags.vue";
 import SearchBar from "../components/SearchBar.vue";
-import VaultStatus from "../components/VaultStatus.vue";
 
 export default {
     emits: ['menuOpened'],
   components: {
     AccountTypesList,
     MostUsedTags,
-    SearchBar,
-    VaultStatus
+    SearchBar
+  },
+  data() {
+    return {
+      isAvatarBroken: false
+    };
   },
   computed: {
     ...mapState(useNetworkStore, [
       'isOffline'
     ]),
     ...mapState(useUserStore, [
-      'hasAccounts'
+      'hasAccounts',
+      'user'
     ]),
     ...mapState(useUiStore, [
       'isSummaryPaneExpanded',
       'isAdvancedSearchMode',
-      'isSummaryShortcutsEnabled'
+      'isSummaryShortcutsEnabled',
+      'isSidebarOpen',
+      'SIDEBAR'
     ]),
+
+    userInitial: function () {
+      const email = this.user && this.user.email || '';
+      return (email.trim()[0] || '?').toUpperCase();
+    },
     ...mapState(useAccountsStore, [
       'areAccountsLoaded',
       'isSearching'

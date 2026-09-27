@@ -1,43 +1,194 @@
-/* Home: a desk of paper. Summary (brand, search, types, tags) then the envelope stack. */
+/* Home: one column on phones; a split view from 768px.
+   768–1099: navigation column (title, search, tiles, lists) | detail
+   ≥1100:    sidebar | item list | detail */
+
+:root {
+  --toolbar-h: 49px;
+  --nav-col: 0px;       /* width taken by the columns left of the detail pane */
+  --sidebar-w: 100%;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --nav-col: 360px;
+    --sidebar-w: 360px;
+  }
+}
+
+@media (min-width: 1100px) {
+  :root {
+    --nav-col: 720px;
+    --sidebar-w: 320px;
+  }
+}
 
 .home-layout {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   min-height: 100dvh;
-  max-width: 1760px;
-  margin: 0 auto;
 }
 
 .account-list-pane {
-  flex: 1;
   min-width: 0;
-  padding: 18px 32px calc(40px + env(safe-area-inset-bottom)) 8px;
+  padding: 0 16px calc(var(--toolbar-h) + 32px + env(safe-area-inset-bottom));
 }
+
+/* ---------- phone: navigation push and modal card ---------- */
 
 @media (max-width: 767.98px) {
   .home-layout {
-    flex-direction: column;
-  }
-
-  .account-list-pane {
-    padding: 0 16px calc(110px + env(safe-area-inset-bottom));
-  }
-}
-
-/* Behind an open sheet, the desk settles back a little */
-@media (max-width: 767.98px) {
-  .home-layout {
-    transition: transform 0.35s var(--ease-out), filter 0.35s var(--ease-out);
+    transition: transform 0.5s var(--ease-out), filter 0.5s var(--ease-out), border-radius 0.5s var(--ease-out);
     transform-origin: 50% 0;
   }
 
-  .bottom-sheet.show ~ .home-layout {
-    transform: scale(0.96);
-    filter: saturate(0.9);
+  /* opening an item pushes it in from the right; the list slides a third behind */
+  #edit-account-bottom-sheet.show ~ .home-layout {
+    transform: translateX(-30%);
+    filter: brightness(0.9);
+  }
+
+  /* a new item rises as a card; the page settles back behind it */
+  #add-account-bottom-sheet.show ~ .home-layout {
+    transform: scale(0.94);
+    border-radius: 12px;
+    overflow: hidden;
+    filter: brightness(0.9);
+  }
+
+  .detail-empty {
+    display: none;
+  }
+
+  /* first viewport: title, search, tiles, favourites and recents; tags come after the lists */
+  .home-layout {
+    padding-bottom: calc(var(--toolbar-h) + 24px + env(safe-area-inset-bottom));
+  }
+
+  .home-layout > .summary-pane {
+    display: contents;
+  }
+
+  .summary-pane > * {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  .summary-pane > .summary-header {
+    padding-top: calc(6px + env(safe-area-inset-top));
+  }
+
+  .home-layout .account-list-pane {
+    order: 1;
+    padding-bottom: 0;
+  }
+
+  .summary-pane > .tag-shelf {
+    order: 2;
   }
 }
 
-/* An open sheet owns the screen; the dock steps away instead of peeking out */
-body:has(.bottom-sheet.show) .home-dock {
-  visibility: hidden;
+/* An open sheet owns the phone screen; the toolbar steps away */
+@media (max-width: 767.98px) {
+  body:has(.bottom-sheet.show) .home-dock {
+    visibility: hidden;
+  }
+}
+
+/* ---------- split view ---------- */
+
+@media (min-width: 768px) {
+  .home-layout {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: var(--nav-col);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-right: var(--hair) solid var(--sep);
+    padding-bottom: calc(var(--toolbar-h) + env(safe-area-inset-bottom));
+  }
+
+  .account-list-pane {
+    padding-bottom: 32px;
+  }
+
+  .detail-empty {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: var(--nav-col);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px;
+    background: var(--bg);
+    color: var(--label-2);
+    text-align: center;
+  }
+
+  .detail-empty img {
+    opacity: 0.35;
+    filter: grayscale(1);
+  }
+
+  .detail-empty p {
+    margin: 0;
+    font-size: 17px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .home-layout {
+    display: grid;
+    grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+    overflow: hidden;
+    padding-bottom: 0;
+  }
+
+  .home-layout > .summary-pane,
+  .home-layout > .account-list-pane {
+    height: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .home-layout > .summary-pane {
+    padding-bottom: calc(var(--toolbar-h) + 24px + env(safe-area-inset-bottom));
+  }
+
+  /* the middle column is a plain list on the cell colour, as on iPad */
+  .home-layout > .account-list-pane {
+    background: var(--bg-2);
+    border-left: var(--hair) solid var(--sep);
+    padding: 12px 0 32px;
+  }
+
+  .account-list-pane .section-hd {
+    margin: 18px 16px 6px;
+  }
+
+  .account-list-pane .ios-list,
+  .account-list-pane .mini-grid,
+  .account-list-pane .list-empty {
+    border-radius: 0;
+  }
+
+  .account-list-pane .ios-list {
+    border-top: var(--hair) solid var(--sep);
+    border-bottom: var(--hair) solid var(--sep);
+  }
+
+  .account-list-pane .list-empty {
+    padding: 4px 16px 10px;
+  }
+
+  .account-list-pane .list-more {
+    width: calc(100% - 32px);
+    margin: 12px 16px 0;
+  }
 }

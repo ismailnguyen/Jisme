@@ -80,81 +80,83 @@
 </script>
 
 <style scoped>
+/* An iOS banner: a blurred capsule that drops in at the top, the same on every size */
 .toast-slip {
     position: fixed;
     z-index: 9999;
     top: calc(10px + env(safe-area-inset-top));
     left: 50%;
     width: max-content;
+    min-width: min(260px, calc(100% - 24px));
     max-width: min(440px, calc(100% - 24px));
-    min-height: 48px;
-    padding: 6px 4px 6px 8px;
-    border-radius: 24px;
+    min-height: 56px;
+    padding: 8px 6px 8px 10px;
+    border-radius: 28px;
     display: flex;
     align-items: center;
     gap: 10px;
-    background: var(--ink);
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(20, 28, 40, 0.25), 0 12px 24px rgba(20, 28, 40, 0.2);
+    background: var(--material);
+    -webkit-backdrop-filter: saturate(180%) blur(24px);
+    backdrop-filter: saturate(180%) blur(24px);
+    color: var(--label);
+    box-shadow: var(--shadow-pop);
     transform: translateX(-50%);
-    animation: slip-in 0.35s var(--ease-out) both;
-}
-
-@media (min-width: 768px) {
-    .toast-slip {
-        top: auto;
-        bottom: 24px;
-        left: auto;
-        right: 24px;
-        transform: none;
-        animation-name: slip-up;
-    }
-}
-
-.toast-slip.is-danger {
-    background: var(--red);
+    animation: banner-in 0.5s var(--ease-out) both;
 }
 
 .toast-mark {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
     flex: none;
     border-radius: 50%;
-    background: #fff;
-    color: var(--ink);
+    background: var(--green);
+    color: #fff;
     display: grid;
     place-items: center;
-    font-size: 12px;
+    font-size: 15px;
     overflow: hidden;
 }
 
+.toast-mark:has(img) {
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: inset 0 0 0 var(--hair) rgba(0, 0, 0, 0.14);
+}
+
 .toast-slip.is-danger .toast-mark {
-    color: var(--red);
+    background: var(--red);
+}
+
+.toast-slip.is-warning .toast-mark {
+    background: var(--orange);
 }
 
 .toast-mark img {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
     object-fit: contain;
 }
 
 .toast-text {
     min-width: 0;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 2px 0;
+    padding: 1px 0;
 }
 
 .toast-text b {
-    font-size: 14.5px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
     line-height: 1.3;
 }
 
 .toast-text small {
     font-size: 13px;
-    line-height: 1.35;
-    color: rgba(255, 255, 255, 0.84);
+    letter-spacing: -0.005em;
+    line-height: 1.3;
+    color: var(--label-2);
     overflow-wrap: anywhere;
 }
 
@@ -165,28 +167,19 @@
     border: 0;
     border-radius: 50%;
     background: none;
-    color: rgba(255, 255, 255, 0.84);
+    color: var(--label-3);
     display: grid;
     place-items: center;
     cursor: pointer;
 }
 
 .toast-close:hover {
-    background: rgba(255, 255, 255, 0.12);
-    color: #fff;
+    background: var(--fill-4);
+    color: var(--label-2);
 }
 
-.toast-close:focus-visible {
-    outline-color: #fff;
-}
-
-@keyframes slip-in {
-    from { opacity: 0; transform: translate(-50%, -12px); }
+@keyframes banner-in {
+    from { opacity: 0; transform: translate(-50%, -24px) scale(0.96); }
     to { opacity: 1; transform: translate(-50%, 0); }
-}
-
-@keyframes slip-up {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: none; }
 }
 </style>

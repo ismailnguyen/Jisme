@@ -28,6 +28,7 @@
 </script>
 
 <style scoped>
+/* The app icon, the name, a large title: the first screen of an iOS app */
 .login-hero {
     padding: 0 20px;
 }
@@ -35,32 +36,39 @@
 .login-brand {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
     margin-bottom: 28px;
 }
 
 .login-mark {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
+    width: 64px;
+    height: 64px;
+    border-radius: 15px;
     display: grid;
     place-items: center;
-    background: var(--sheet);
-    box-shadow: 0 0 0 1px rgba(46, 58, 79, 0.1), var(--shadow-1);
+    background: var(--bg-2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.login-mark img {
+    width: 42px;
+    height: 42px;
 }
 
 .login-mark.is-working {
-    animation: breathe 1.4s var(--ease-out) infinite alternate;
+    animation: breathe 1.2s var(--ease-out) infinite alternate;
 }
 
 .login-name {
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0.01em;
 }
 
 .login-state {
     margin-left: auto;
+    font-size: 13px;
 }
 
 .login-state .fa-rotate {
@@ -68,35 +76,30 @@
 }
 
 .login-title {
-    font-size: clamp(30px, 8.4vw, 52px);
-    font-weight: 800;
-    line-height: 1.04;
-    letter-spacing: -0.035em;
+    font-size: clamp(34px, 9vw, 52px);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
     max-width: 14ch;
     margin-bottom: 14px;
     text-wrap: balance;
 }
 
 .login-lede {
-    font-size: 16px;
-    line-height: 1.55;
-    color: var(--ink-2);
+    font-size: 17px;
+    line-height: 1.45;
+    color: var(--label-2);
     max-width: 40ch;
     margin: 0;
 }
 
-.login-lede a {
-    color: var(--ink);
-    font-weight: 600;
-}
-
 @media (max-width: 767.98px) {
     .login-hero {
-        padding: calc(12px + env(safe-area-inset-top)) 16px 0;
+        padding: calc(16px + env(safe-area-inset-top)) 16px 0;
     }
 
     .login-brand {
-        margin-bottom: 22px;
+        margin-bottom: 24px;
     }
 }
 

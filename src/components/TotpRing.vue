@@ -1,7 +1,7 @@
 <template>
     <div class="totp-ring" :class="{ 'is-ending': remaining <= 5 }" role="timer" :aria-label="`${ remaining } seconds until a new code`">
         <svg viewBox="0 0 44 44" aria-hidden="true">
-            <circle cx="22" cy="22" r="18" fill="none" stroke="var(--rule)" stroke-width="3.5" />
+            <circle cx="22" cy="22" r="18" fill="none" stroke="var(--fill-3)" stroke-width="3" />
             <circle
                 class="arc"
                 cx="22"
@@ -9,7 +9,7 @@
                 r="18"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="3.5"
+                stroke-width="3"
                 stroke-linecap="round"
                 :stroke-dasharray="`${ dash } ${ CIRCUMFERENCE }`" />
         </svg>
@@ -42,7 +42,7 @@ export default {
     width: 44px;
     height: 44px;
     flex: none;
-    color: var(--ink);
+    color: var(--accent);
 }
 
 .totp-ring svg {
@@ -61,11 +61,12 @@ export default {
     display: grid;
     place-items: center;
     font-size: 12px;
-    font-weight: 700;
+    font-weight: 600;
+    color: var(--label-2);
     font-variant-numeric: tabular-nums;
 }
 
 .totp-ring.is-ending {
-    color: var(--ink-3);
+    color: var(--red);
 }
 </style>

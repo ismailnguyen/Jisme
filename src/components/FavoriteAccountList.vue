@@ -1,11 +1,11 @@
 <template>
     <section class="favorite-accounts-list" aria-labelledby="favorites-title">
         <div class="section-hd">
-            <h2 id="favorites-title"><i class="fa-solid fa-star" aria-hidden="true"></i>Favorites</h2>
+            <h2 id="favorites-title">Favorites</h2>
             <span v-if="favoriteAccounts.length">{{ favoriteAccounts.length }}</span>
         </div>
         <div class="mini-grid" v-if="isLoading" aria-hidden="true">
-            <div class="mini-env placeholder-glow" v-for="index in 3" :key="index"><span class="placeholder col-12" style="height: 44px; border-radius: 5px;"></span></div>
+            <div class="mini-env placeholder-glow" v-for="index in 4" :key="index"><span class="placeholder mini-logo"></span><span class="placeholder col-8"></span></div>
         </div>
         <div class="mini-grid" v-else-if="favoriteAccounts.length">
             <LightAccountItem

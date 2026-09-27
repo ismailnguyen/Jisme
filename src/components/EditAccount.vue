@@ -15,11 +15,13 @@
         <button
           type="button"
           class="bottom-sheet-close bottom-sheet-back"
-          aria-label="Back"
+          aria-label="Back to Jisme"
           @click="closeAccountEditing"
         >
-          <i class="fa fa-arrow-left" aria-hidden="true"></i>
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+          <span>Jisme</span>
         </button>
+        <VaultStatus class="bar-status" />
         <div
           class="bottom-sheet-action-menu"
           ref="actionMenu"
@@ -32,7 +34,7 @@
             aria-label="Account options"
             @click.stop="toggleActionMenu"
           >
-            <i class="fa fa-ellipsis-h" aria-hidden="true"></i>
+            <span class="ellipsis-circle" aria-hidden="true"><i class="fa-solid fa-ellipsis"></i></span>
           </button>
           <transition name="fade">
             <ul
@@ -82,21 +84,37 @@
         <div class="drag-icon"><span></span></div>
       </div>
       <div class="body">
-        <section class="hero-env" aria-labelledby="editAccount_title">
-          <div class="hero-return">
-            <img src="../assets/logo_medium.png" alt="" width="16" height="16">
-            Jisme vault
+        <section class="item-hero" aria-labelledby="editAccount_title">
+          <!-- Cards, documents and bank accounts open as a Wallet card -->
+          <div v-if="walletCard" class="wallet-card" :class="'is-' + account.type" :style="{ '--card-a': walletCard.colors[0], '--card-b': walletCard.colors[1] }">
+            <div class="wc-top">
+              <span class="logo-sq wc-logo" aria-hidden="true">
+                <img v-if="account.icon && !isIconBroken" :src="displayIcon(account.icon)" alt="" @error="isIconBroken = true">
+                <span v-else class="initial">{{ heroTitle.trim().charAt(0).toUpperCase() }}</span>
+              </span>
+              <span class="wc-kind">{{ account.displaySubtype }}</span>
+            </div>
+            <h2 id="editAccount_title" class="bottom-sheet-title wc-name">{{ heroTitle }}</h2>
+            <p class="wc-number mono" v-if="walletCard.number">{{ walletCard.number }}</p>
+            <div class="wc-foot">
+              <span class="wc-field">
+                <small>{{ walletCard.holderLabel }}</small>
+                <b>{{ walletCard.holder || 'Not set' }}</b>
+              </span>
+              <span class="wc-field is-end" v-if="walletCard.expiry">
+                <small>Expires</small>
+                <b>{{ walletCard.expiry }}</b>
+              </span>
+            </div>
           </div>
-          <VaultStatus class="hero-state" />
-          <div class="hero-win win">
+
+          <div v-else class="item-head">
             <span class="logo-sq hero-logo" aria-hidden="true">
               <img v-if="account.icon && !isIconBroken" :src="displayIcon(account.icon)" alt="" @error="isIconBroken = true">
-              <span v-else class="initial">{{ (account.label || '?').trim().charAt(0).toUpperCase() }}</span>
+              <span v-else class="initial">{{ heroTitle.trim().charAt(0).toUpperCase() }}</span>
             </span>
-            <div class="hero-text">
-              <h2 id="editAccount_title" class="bottom-sheet-title">{{ account.label || account.displayPlatform || 'Untitled' }}</h2>
-              <small class="carbon">{{ account.displayType }} · {{ account.displaySubtype }}</small>
-            </div>
+            <h2 id="editAccount_title" class="bottom-sheet-title">{{ heroTitle }}</h2>
+            <p class="item-kind">{{ account.displayType }} · {{ account.displaySubtype }}</p>
           </div>
         </section>
 
@@ -142,7 +160,7 @@
           <template v-if="account.type == 'account' && account.subtype == 'login'">
             <div class="q-row" v-if="account.login">
               <div class="q-field"><span class="q-label">Login</span><div class="q-value carbon">{{ account.login }}</div></div>
-              <button type="button" class="ibtn" aria-label="Copy login" @click="copyValue(account.login, 'Login')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy login" @click="copyValue(account.login, 'Login')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
 
             <div class="q-row" v-if="!account.is_password_less && account.password">
@@ -154,7 +172,7 @@
                 </p>
                 <SecretStrip :value="account.password" label="password" />
               </div>
-              <button type="button" class="ibtn" aria-label="Copy password" @click="copyValue(account.password, 'Password')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy password" @click="copyValue(account.password, 'Password')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
 
             <div class="q-row" v-else-if="account.is_password_less && !account.social_login">
@@ -181,7 +199,7 @@
                   </button>
                 </form>
               </div>
-              <button v-if="passwordLess.generatedPassword" type="button" class="ibtn" aria-label="Copy password" @click="copyValue(passwordLess.generatedPassword, 'Password')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button v-if="passwordLess.generatedPassword" type="button" class="ibtn" aria-label="Copy password" @click="copyValue(passwordLess.generatedPassword, 'Password')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
 
             <div class="q-row" v-else-if="!account.is_password_less && account.password_clue">
@@ -205,12 +223,12 @@
                 <div class="q-code carbon" :class="{ 'is-invalid': !hasValidTotp }">{{ formattedTotpToken }}</div>
               </div>
               <TotpRing v-if="hasValidTotp" :remaining="totpSecondsRemaining" />
-              <button type="button" class="ibtn" aria-label="Copy verification code" :disabled="!hasValidTotp" @click="copyValue(totpToken, 'Verification code')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy verification code" :disabled="!hasValidTotp" @click="copyValue(totpToken, 'Verification code')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
 
             <div class="q-row" v-if="account.platform">
               <div class="q-field"><span class="q-label">Platform</span><div class="q-value carbon">{{ account.platform }}</div></div>
-              <button type="button" class="ibtn" :aria-label="'Open ' + account.platform" @click="openLink(account.platform)"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" :aria-label="'Open ' + account.platform" @click="openLink(account.platform)"><i class="fa-regular fa-share-from-square" aria-hidden="true"></i></button>
             </div>
           </template>
 
@@ -218,11 +236,11 @@
           <template v-if="account.type == 'account' && account.subtype == 'wifi'">
             <div class="q-row" v-if="account.login">
               <div class="q-field"><span class="q-label">Network (SSID)</span><div class="q-value carbon">{{ account.login }}</div></div>
-              <button type="button" class="ibtn" aria-label="Copy network name" @click="copyValue(account.login, 'Network name')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy network name" @click="copyValue(account.login, 'Network name')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
             <div class="q-row" v-if="account.password">
               <div class="q-field"><span class="q-label">Password</span><SecretStrip :value="account.password" label="Wi-Fi password" /></div>
-              <button type="button" class="ibtn" aria-label="Copy Wi-Fi password" @click="copyValue(account.password, 'Wi-Fi password')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy Wi-Fi password" @click="copyValue(account.password, 'Wi-Fi password')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
           </template>
 
@@ -230,11 +248,11 @@
           <template v-if="account.type == 'account' && account.subtype == 'secret_key'">
             <div class="q-row" v-if="account.login">
               <div class="q-field"><span class="q-label">Key identifier</span><div class="q-value carbon">{{ account.login }}</div></div>
-              <button type="button" class="ibtn" aria-label="Copy key identifier" @click="copyValue(account.login, 'Key identifier')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy key identifier" @click="copyValue(account.login, 'Key identifier')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
             <div class="q-row" v-if="account.password">
               <div class="q-field"><span class="q-label">Key</span><SecretStrip :value="account.password" label="key" /></div>
-              <button type="button" class="ibtn" aria-label="Copy key" @click="copyValue(account.password, 'Key')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy key" @click="copyValue(account.password, 'Key')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
           </template>
 
@@ -246,14 +264,15 @@
                 <SecretStrip v-if="account.subtype == 'payment'" :value="account.card_number" label="card number" :hint="mask(account.card_number, 4)" />
                 <div v-else class="q-value carbon">{{ account.card_number }}</div>
               </div>
-              <button type="button" class="ibtn" aria-label="Copy card number" @click="copyValue(account.card_number, 'Card number')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy card number" @click="copyValue(account.card_number, 'Card number')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
             <div class="q-pair" v-if="account.subtype == 'payment' && (account.card_expiracy || account.card_cryptogram)">
               <div class="q-row" v-if="account.card_expiracy">
                 <div class="q-field"><span class="q-label">Expires</span><div class="q-value carbon">{{ account.card_expiracy }}</div></div>
               </div>
               <div class="q-row" v-if="account.card_cryptogram">
-                <div class="q-field"><span class="q-label">CVV</span><SecretStrip :value="account.card_cryptogram" label="CVV" hint="Hold" /></div>
+                <div class="q-field"><span class="q-label">CVV</span><SecretStrip :value="account.card_cryptogram" label="CVV" hint="•••" /></div>
+                <button type="button" class="ibtn" aria-label="Copy CVV" @click="copyValue(account.card_cryptogram, 'CVV')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
               </div>
             </div>
             <div class="q-row" v-if="account.card_pin">
@@ -268,11 +287,11 @@
           <template v-if="account.type == 'bank'">
             <div class="q-row">
               <div class="q-field"><span class="q-label">IBAN</span><SecretStrip :value="account.password" label="IBAN" :hint="account.password ? mask(account.password, 4) : ''" /></div>
-              <button type="button" class="ibtn" aria-label="Copy IBAN" v-if="account.password" @click="copyValue(account.password.replace(/\s+/g, ''), 'IBAN')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy IBAN" v-if="account.password" @click="copyValue(account.password.replace(/\s+/g, ''), 'IBAN')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
             <div class="q-row" v-if="account.platform">
               <div class="q-field"><span class="q-label">BIC / SWIFT</span><div class="q-value carbon">{{ account.platform }}</div></div>
-              <button type="button" class="ibtn" aria-label="Copy BIC" @click="copyValue(account.platform, 'BIC')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy BIC" @click="copyValue(account.platform, 'BIC')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
             <div class="q-row" v-if="account.login">
               <div class="q-field"><span class="q-label">Account holder</span><div class="q-value carbon">{{ account.login }}</div></div>
@@ -283,7 +302,7 @@
           <template v-if="account.type == 'document'">
             <div class="q-row" v-if="account.card_number">
               <div class="q-field"><span class="q-label">Document number</span><SecretStrip :value="account.card_number" label="document number" :hint="mask(account.card_number, 3)" /></div>
-              <button type="button" class="ibtn" aria-label="Copy document number" @click="copyValue(account.card_number, 'Document number')"><i class="fa-solid fa-copy" aria-hidden="true"></i></button>
+              <button type="button" class="ibtn" aria-label="Copy document number" @click="copyValue(account.card_number, 'Document number')"><i class="fa-regular fa-copy" aria-hidden="true"></i></button>
             </div>
             <div class="q-row" v-if="account.card_name">
               <div class="q-field"><span class="q-label">Name</span><div class="q-value carbon">{{ account.card_name }}</div></div>
@@ -292,6 +311,9 @@
               <div class="q-field"><span class="q-label">Expires</span><div class="q-value carbon">{{ account.card_expiracy }}</div></div>
             </div>
           </template>
+          <div class="q-row" v-if="account.notes">
+            <div class="q-field"><span class="q-label">Notes</span><div class="q-value q-notes">{{ account.notes }}</div></div>
+          </div>
         </section>
 
         <button
@@ -303,8 +325,7 @@
           <span class="details-text">
             <b>Details &amp; edit</b>
             <span class="details-sum">
-              <template v-if="account.notes">Notes ·</template>
-              <span class="chip" v-for="tag in account.tags.split(',').filter(t => t).slice(0, 3)" :key="tag">{{ tag }}</span>
+                            <span class="chip" v-for="tag in account.tags.split(',').filter(t => t).slice(0, 3)" :key="tag">{{ tag }}</span>
               <template v-if="account.tags">·</template>
               Created {{ createdDate }}
             </span>
@@ -547,7 +568,7 @@
                         autocapitalize="off"
                         autocorrect="off"
                         spellcheck="false"
-                        placeholder="Login"
+                        placeholder="name@example.com"
                         type="text"
                         autocomplete="username"
                         v-model="account.login"
@@ -636,7 +657,7 @@
                         :class="account.is_password_less ? 'active' : ''"
                       >
                         <i class="fa fa-bolt" aria-hidden="true"></i>
-                        Password less
+                        Passwordless
                       </label>
                       
                       <input
@@ -1477,6 +1498,53 @@ export default {
       account: "currentEditingAccount",
       SIDEBAR: "SIDEBAR",
     }),
+
+    heroTitle: function () {
+      return this.account.label || this.account.displayPlatform || 'Untitled';
+    },
+
+    // The face of a Wallet card: colour picked from the name, so each card keeps its own
+    walletCard: function () {
+      const a = this.account;
+
+      if (!['card', 'document', 'bank'].includes(a.type)) {
+        return null;
+      }
+
+      const palette = [
+        ['#1d3f7a', '#0d2350'],
+        ['#1e6b43', '#0c3a22'],
+        ['#7a1f33', '#43101c'],
+        ['#4a3486', '#261a52'],
+        ['#1c5a6b', '#0b3139'],
+        ['#3a3a3c', '#141416'],
+        ['#8a4516', '#4b2308'],
+      ];
+      const seed = [...(this.heroTitle + a.type)].reduce((sum, c) => (sum * 31 + c.charCodeAt(0)) >>> 0, 7);
+
+      let number = '';
+      let holder = a.card_name;
+      let holderLabel = 'Name on card';
+
+      if (a.type === 'card') {
+        number = a.subtype === 'payment' ? this.mask(a.card_number, 4) : a.card_number;
+      } else if (a.type === 'document') {
+        number = this.mask(a.card_number, 3);
+        holderLabel = 'Holder';
+      } else if (a.type === 'bank') {
+        number = this.mask(a.password, 4);
+        holder = a.login;
+        holderLabel = 'Account holder';
+      }
+
+      return {
+        colors: palette[seed % palette.length],
+        number,
+        holder,
+        holderLabel,
+        expiry: a.type === 'bank' ? '' : a.card_expiracy,
+      };
+    },
     ...mapState(useNetworkStore, [
       'isOffline'
     ]),

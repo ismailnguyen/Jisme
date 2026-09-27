@@ -1,52 +1,72 @@
+/* The navigation column: large title, search, category tiles, tags */
+
 .summary-pane {
-  width: 380px;
-  flex: none;
-  padding: calc(12px + env(safe-area-inset-top)) 24px 8px;
+  padding: calc(6px + env(safe-area-inset-top)) 16px 4px;
 }
 
 @media (min-width: 768px) {
   .summary-pane {
-    position: sticky;
-    top: 0;
-    align-self: flex-start;
-    max-height: 100dvh;
-    overflow-y: auto;
-    padding-top: 28px;
-    /* the dock is anchored under this pane; keep the tags clear of it */
-    padding-bottom: calc(100px + env(safe-area-inset-bottom));
-  }
-
-  .summary-pane.summary-pane--expanded {
-    width: 480px;
-  }
-}
-
-@media (max-width: 767.98px) {
-  .summary-pane {
-    width: 100%;
-    padding: calc(8px + env(safe-area-inset-top)) 16px 0;
+    padding-top: 18px;
   }
 }
 
 .brand-row {
-  min-height: 56px;
+  min-height: 52px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  margin: 6px 0 8px;
 }
 
+/* the iOS large title, with the Jisme mark */
 .brand {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   margin: 0;
-  font-size: 22px;
-  font-weight: 800;
-  letter-spacing: -0.02em;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 0.012em;
+  line-height: 1.2;
 }
 
 .brand img {
-  width: 30px;
-  height: 30px;
+  width: 34px;
+  height: 34px;
+}
+
+.avatar-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #a5abb8, #858a96);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+
+.avatar-btn::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+
+.avatar-btn img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.avatar-btn[aria-expanded="true"] {
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--accent);
 }

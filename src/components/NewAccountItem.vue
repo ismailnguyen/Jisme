@@ -1,10 +1,10 @@
 <template>
-    <article class="env is-new">
-        <button type="button" class="env-window win" @click="onCardClick()">
-            <span class="logo-sq" aria-hidden="true"><i class="fa-solid fa-plus"></i></span>
-            <span class="env-text">
-                <b><span class="env-title">{{ account.label ? `Save “${ account.label }”` : 'Save a new item' }}</span></b>
-                <small>Opens a new envelope with this name and filters filled in</small>
+    <article class="cell is-new">
+        <button type="button" class="cell-main" @click="onCardClick()">
+            <span class="logo-sq new-plus" aria-hidden="true"><i class="fa-solid fa-plus"></i></span>
+            <span class="cell-text">
+                <span class="cell-title"><span class="cell-title-text">{{ account.label ? `Save “${ account.label }”` : 'Save a new item' }}</span></span>
+                <span class="cell-sub">Starts a new item with this name and filters filled in</span>
             </span>
         </button>
     </article>

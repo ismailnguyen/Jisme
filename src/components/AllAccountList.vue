@@ -4,11 +4,11 @@
             <h2 id="all-title">All items</h2>
             <span v-if="!isLoading && sortedAccounts.length">{{ sortedAccounts.length }}</span>
         </div>
-        <div class="env-stack is-grid" v-if="isLoading">
+        <div class="ios-list" v-if="isLoading">
             <LoadingAccountItem v-for="index in 9" v-bind:key="index" />
         </div>
         <template v-else-if="sortedAccounts.length">
-            <div class="env-stack is-grid">
+            <div class="ios-list">
                 <AccountItem
                     v-for="account in visibleAccounts"
                     v-bind:key="account._id"

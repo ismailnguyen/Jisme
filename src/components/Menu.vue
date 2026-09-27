@@ -11,6 +11,7 @@
                     @click="goToPreviousPanel()">
                     <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
                 </button>
+                <h2 v-if="currentPanel != 'menu'" class="tray-title">{{ panelTitle }}</h2>
                 <div v-else class="tray-account">
                     <span class="tray-avatar" aria-hidden="true">
                         <img v-if="user && user.avatarUrl && !isAvatarBroken" :src="user.avatarUrl" alt="" @error="isAvatarBroken = true">
@@ -110,6 +111,17 @@
             ...mapState(useUiStore, [
                 'SIDEBAR'
             ]),
+
+            panelTitle: function () {
+                return {
+                    'tags-list': 'Tags',
+                    'settings': 'Settings',
+                    'settings-profile': 'Profile',
+                    'settings-security': 'Security',
+                    'settings-activities': 'Recent activities',
+                    'settings-about': 'About',
+                }[this.currentPanel] || '';
+            },
 
             userInitial: function () {
                 const email = this.user && this.user.email || '';

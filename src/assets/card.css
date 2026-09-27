@@ -1,229 +1,218 @@
-/* Window envelopes: identity through the glassine, secrets under the tint seal */
+/* List cells: app icon, name over detail, a copy glyph or chevron at the trailing edge */
 
-.env {
+.cell {
   position: relative;
   display: flex;
-  align-items: stretch;
-  min-height: 68px;
-  border-radius: var(--r-sm);
-  background: var(--sheet);
-  box-shadow: 0 -1px 0 rgba(46, 58, 79, 0.07), 0 -3px 6px rgba(46, 58, 79, 0.06), 0 1px 2px rgba(46, 58, 79, 0.12);
+  align-items: center;
+  min-height: 60px;
+  background: var(--bg-2);
+  transition: background-color 0.2s;
 }
 
-.env-window {
+.cell-main {
   flex: 1;
   min-width: 0;
-  margin: 8px 0 14px 9px;
-  min-height: 46px;
-  padding: 0 10px;
+  min-height: 60px;
+  padding: 8px 12px 8px 16px;
+  border: 0;
+  background: none;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   text-align: left;
-  color: var(--ink);
+  color: var(--label);
   cursor: pointer;
-  transition: background-color 0.15s;
 }
 
-.env-window:hover {
-  background:
-    linear-gradient(112deg, rgba(255, 255, 255, 0) 22%, rgba(255, 255, 255, 0.85) 30%, rgba(255, 255, 255, 0) 40%),
-    linear-gradient(180deg, rgba(232, 236, 242, 0.7), rgba(220, 226, 235, 0.6));
+.cell-main:focus-visible {
+  outline-offset: -2px;
+  border-radius: var(--r-md);
 }
 
-.env-window:focus-visible {
-  outline-offset: 1px;
+.cell:has(.cell-main:hover) {
+  background: color-mix(in srgb, var(--bg-2), var(--label) 4%);
 }
 
-.env .initial {
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--ink-2);
+.cell:has(.cell-main:active) {
+  background: color-mix(in srgb, var(--bg-2), var(--label) 10%);
 }
 
-.env-text {
+.cell-text {
+  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 1px;
 }
 
-.env-text b {
+.cell-title {
   display: flex;
   align-items: center;
   gap: 6px;
   min-width: 0;
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.cell-title-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cell-sub {
   font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-
-.env-title {
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+  color: var(--label-2);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.env-text small {
-  font-size: 13.5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* the seal: a perforated strip on the right edge */
-.env-seal {
-  position: relative;
+.cell-chevron {
   flex: none;
-  width: 70px;
-  margin-bottom: 6px;
-  border-radius: 0 var(--r-sm) 0 0;
-  display: grid;
-  place-items: center;
+  font-size: 13px;
+  color: var(--label-4);
+  margin-right: 4px;
 }
 
-.env-seal::before {
-  content: "";
-  position: absolute;
-  left: -1px;
-  top: 4px;
-  bottom: 0;
-  width: 3px;
-  background: radial-gradient(circle, var(--sheet) 1px, transparent 1.3px) 50% 0 / 3px 5px repeat-y;
+.cell-accessory {
+  margin-right: 6px;
 }
 
-.env-seal.is-plain {
-  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(46, 58, 79, 0.035) 3px 4px);
-}
-
-.env-seal.is-plain::before {
-  background: radial-gradient(circle, rgba(46, 58, 79, 0.22) 1px, transparent 1.3px) 50% 0 / 3px 5px repeat-y;
-}
-
-.env-seal .ibtn {
-  box-shadow: 0 1px 0 #fff inset, 0 1px 2px rgba(46, 58, 79, 0.25), 0 4px 8px rgba(46, 58, 79, 0.14);
-}
-
-.env-seal .ibtn.is-quiet {
-  box-shadow: none;
-}
-
-/* ---------- mini envelope (favorites) ---------- */
-
-.mini-env {
-  position: relative;
-  min-height: 58px;
-  padding: 7px;
-  border-radius: var(--r-sm);
-  background: var(--sheet);
-  box-shadow: 0 1px 2px rgba(46, 58, 79, 0.12), 0 4px 10px rgba(46, 58, 79, 0.07);
-}
-
-.mini-env .win {
-  width: 100%;
-  height: 100%;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 0 7px;
-  color: var(--ink);
-  text-align: left;
-  cursor: pointer;
-}
-
-.mini-env .mini-icon {
-  width: 18px;
-  height: 18px;
-  flex: none;
-  border-radius: 4px;
-  object-fit: contain;
-}
-
-.mini-env .initial {
-  width: 18px;
-  flex: none;
-  text-align: center;
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--ink-2);
-}
-
-.mini-env b {
-  font-size: 12.5px;
-  font-weight: 600;
-  line-height: 1.15;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  word-break: break-word;
-}
-
-.mini-env .mini-text {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.mini-env b.is-single {
-  -webkit-line-clamp: 1;
-}
-
-.mini-env small {
-  font-size: 12px;
-  line-height: 1.2;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mini-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
+/* the item open in the detail pane (split view only) */
 @media (min-width: 768px) {
-  .mini-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  .cell.is-selected {
+    background: var(--accent);
+  }
+
+  .cell.is-selected .cell-main,
+  .cell.is-selected .cell-sub,
+  .cell.is-selected .cell-chevron,
+  .cell.is-selected .cell-accessory {
+    color: #fff;
+  }
+
+  .cell.is-selected .code-tag {
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
+  }
+
+  .cell.is-selected + .cell::before,
+  .cell + .cell.is-selected::before {
+    opacity: 0;
   }
 }
 
-/* ---------- loading envelope ---------- */
+/* ---------- favourites: an app-icon grid ---------- */
 
-.env.is-loading .env-window {
-  cursor: default;
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px 8px;
+  padding: 14px 8px 12px;
+  border-radius: var(--r-md);
+  background: var(--bg-2);
 }
 
-.env.is-loading .placeholder {
-  display: block;
-  height: 12px;
-  border-radius: 3px;
+.mini-env {
+  min-width: 0;
 }
 
-.env.is-loading .env-text {
-  flex: 1;
+.mini-btn {
+  width: 100%;
+  min-height: 44px;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--label);
+  cursor: pointer;
+  transition: transform 0.2s var(--ease-out);
+}
+
+.mini-btn:active {
+  transform: scale(0.94);
+}
+
+.mini-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 13px;
+}
+
+.mini-logo .initial {
+  font-size: 24px;
+}
+
+.mini-text {
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.mini-text b {
+  max-width: 100%;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-text small {
+  max-width: 100%;
+  font-size: 11px;
+  letter-spacing: 0;
+  color: var(--label-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-grid .placeholder-glow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 8px;
 }
 
-/* ---------- new item from search ---------- */
+/* ---------- loading and "save new" cells ---------- */
 
-.env.is-new {
-  background: transparent;
-  box-shadow: none;
-  border: 1.5px dashed var(--mute);
+.cell.is-loading .cell-main {
+  cursor: default;
 }
 
-.env.is-new .env-window {
-  background: none;
-  border-color: transparent;
+.cell.is-loading .logo-sq {
+  background: var(--fill-3);
   box-shadow: none;
 }
 
-.env.is-new .logo-sq {
-  background: var(--ink);
+.cell.is-loading .placeholder {
+  display: block;
+  height: 12px;
+}
+
+.cell.is-loading .cell-text {
+  gap: 8px;
+}
+
+.cell.is-new .new-plus {
+  background: var(--accent);
   color: #fff;
   box-shadow: none;
+  font-size: 15px;
+}
+
+.cell.is-new .cell-title {
+  color: var(--accent);
 }

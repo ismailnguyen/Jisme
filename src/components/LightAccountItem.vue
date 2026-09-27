@@ -1,11 +1,13 @@
 <template>
     <div class="mini-env" :id="account._id">
-        <button type="button" class="win" :aria-label="'Open ' + title" @click="onCardClick()">
-            <img v-if="hasIcon" class="mini-icon" :src="displayIcon(account.icon)" loading="lazy" alt="" @error="isIconBroken = true">
-            <span v-else class="initial" aria-hidden="true">{{ initial }}</span>
-            <span class="mini-text">
-                <b :class="{ 'is-single': holder }">{{ title }}</b>
-                <small v-if="holder" class="carbon">{{ holder }}</small>
+        <button type="button" class="mini-btn" :aria-label="'Open ' + title + (holder ? ', ' + holder : '')" @click="onCardClick()">
+            <span class="logo-sq mini-logo" aria-hidden="true">
+                <img v-if="hasIcon" :src="displayIcon(account.icon)" loading="lazy" alt="" @error="isIconBroken = true">
+                <span v-else class="initial">{{ initial }}</span>
+            </span>
+            <span class="mini-text" aria-hidden="true">
+                <b>{{ title }}</b>
+                <small v-if="holder">{{ holder }}</small>
             </span>
         </button>
     </div>

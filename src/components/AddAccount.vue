@@ -23,6 +23,14 @@
         <h2 id="addAccount_title" class="bar-title">
           {{ account.label || 'New item' }}
         </h2>
+        <button
+          type="button"
+          class="bar-text-btn is-strong"
+          :disabled="isCreating"
+          @click="add()"
+        >
+          {{ isCreating ? 'Adding…' : 'Add' }}
+        </button>
       </div>
       <div class="body">
         <form class="row" @submit.prevent="add()">
@@ -325,7 +333,7 @@
                     autocapitalize="off"
                     autocorrect="off"
                     spellcheck="false"
-                    placeholder="Login"
+                    placeholder="name@example.com"
                     type="text"
                     v-model="account.login"
                   />
@@ -421,7 +429,7 @@
                       :class="account.is_password_less ? 'active' : ''"
                     >
                       <i class="fa fa-bolt" aria-hidden="true"></i>
-                      Password less
+                      Passwordless
                     </label>
                     
                     <input
@@ -505,6 +513,7 @@
                   autocorrect="off"
                   spellcheck="false"
                   type="text"
+                  placeholder="A hint only you understand"
                   v-model="account.password_clue"
                 />
 

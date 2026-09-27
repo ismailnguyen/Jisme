@@ -80,10 +80,12 @@ export default {
 </script>
 
 <style scoped>
-/* Dashed edge: a sandbox, not a sealed vault */
 .vault-status.is-demo {
-    border-style: dashed;
-    border-color: var(--ink-2);
+    color: var(--orange);
+}
+
+.vault-status.is-demo .sep {
+    color: var(--orange);
 }
 
 .vault-status.is-syncing .fa-rotate {

@@ -1,13 +1,12 @@
 <template>
-    <div class="env is-loading placeholder-glow" aria-hidden="true">
-        <div class="env-window win">
+    <div class="cell is-loading placeholder-glow" aria-hidden="true">
+        <div class="cell-main">
             <span class="logo-sq"></span>
-            <span class="env-text">
+            <span class="cell-text">
                 <span class="placeholder col-6"></span>
                 <span class="placeholder col-9"></span>
             </span>
         </div>
-        <div class="env-seal tint"></div>
     </div>
 </template>
 

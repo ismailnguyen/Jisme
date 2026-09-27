@@ -8,16 +8,16 @@
             <span v-if="!isLoading">{{ filteredAccounts.length }} of {{ accounts.length }}</span>
         </div>
 
-        <div class="env-stack is-grid" v-if="isLoading">
+        <div class="ios-list" v-if="isLoading">
             <LoadingAccountItem v-for="index in 6" v-bind:key="index" />
         </div>
         <template v-else-if="!filteredAccounts.length">
             <p class="list-empty">Nothing matches. Try fewer words, or save it as a new item.</p>
-            <div class="env-stack">
+            <div class="ios-list">
                 <NewAccountItem />
             </div>
         </template>
-        <div class="env-stack is-grid" v-else>
+        <div class="ios-list" v-else>
             <AccountItem
                 v-for="(account, accountIndex) in filteredAccounts"
                 v-bind:key="accountIndex"

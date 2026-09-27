@@ -1,69 +1,69 @@
-/* Search: a bright sheet slot on the paper */
+/* Search: the iOS search field, with type and tag filters as search tokens */
 .search-input-container {
-  margin: 8px 0 0;
-  border-radius: 12px;
-  background: var(--sheet);
-  border: 1px solid var(--tint);
-  box-shadow: inset 0 1px 2px rgba(46, 58, 79, 0.07);
-  transition: border-color 0.15s, box-shadow 0.15s;
+  margin: 0;
+  border-radius: var(--r-md);
+  background: var(--fill-3);
+  transition: box-shadow 0.2s;
 }
 
 .search-input-container:focus-within {
-  border-color: var(--ink);
-  box-shadow: 0 0 0 3px rgba(46, 58, 79, 0.15);
+  box-shadow: 0 0 0 2px var(--accent);
 }
 
 .search-input-container .btn-group {
   width: 100%;
-  min-height: 48px;
-  padding: 2px 2px 2px 14px;
-  gap: 2px;
+  min-height: 40px;
+  padding: 2px 2px 2px 10px;
+  gap: 4px;
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   background: none;
   border: 0;
-  border-radius: 12px;
+  border-radius: var(--r-md);
 }
 
 .search-glyph {
-  color: var(--ink-2);
+  color: var(--label-2);
   font-size: 15px;
-  margin-right: 4px;
+  margin-right: 2px;
 }
 
 .search-input,
 .search-input.form-control {
   flex: 1 1 4rem;
   min-width: 0;
-  min-height: 44px;
+  min-height: 36px;
   padding: 0 4px;
   border: 0 !important;
-  background: transparent;
+  border-radius: 0;
+  background: transparent !important;
   box-shadow: none !important;
-  font-size: 16px;
-  color: var(--ink);
+  font-size: 17px;
+  color: var(--label);
 }
 
 .search-input::placeholder {
-  color: var(--ink-3);
+  color: var(--label-2);
 }
 
 .search-input::-webkit-search-cancel-button {
   -webkit-appearance: none;
 }
 
-/* the icon buttons inside the slot */
+/* the glyph buttons inside the field */
 .search-input-container .btn-group > .btn {
+  position: relative;
   flex: none;
-  min-width: 44px;
-  min-height: 44px;
-  padding: 0 10px;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 0 8px;
   border: 0;
-  border-radius: 10px !important;
+  border-radius: 8px !important;
   background: none;
-  color: var(--ink);
-  font-weight: 600;
+  color: var(--label-2);
+  font-size: 15px;
+  font-weight: 400;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -72,37 +72,57 @@
 }
 
 .search-input-container .btn-group > .btn:hover {
-  background: var(--field);
+  background: var(--fill-3);
 }
 
-/* selected tag/type filters read as printed chips */
+/* 36px glyph buttons keep a 44px hit area */
+.search-input-container .btn-group > .btn:not(.active)::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+}
+
+/* selected tags and types: search tokens */
 .search-input-container .btn-group > .btn.active {
-  min-height: 34px;
-  margin: 5px 2px;
-  padding: 0 10px;
-  background: #eef1f4;
-  border: 1px solid var(--rule);
-  font-size: 13px;
+  min-height: 28px;
+  margin: 4px 0;
+  padding: 0 8px;
+  border-radius: 6px !important;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: -0.015em;
   text-transform: capitalize;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-.search-input-container .btn-group > .btn.active .fa-close {
-  font-size: 11px;
-  color: var(--ink-2);
+.search-input-container .btn-group > .btn.active i {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.search-input-container .btn-group > .btn.active:hover {
+  background: var(--accent-press);
 }
 
 .search-input-container .btn-group > .btn[aria-pressed="true"] {
-  background: var(--ink);
-  color: #fff;
+  color: var(--accent);
 }
 
 /* advanced filters */
+.search-input-container .btn-group:has(.search-filters-container:not([style*="none"])) {
+  flex-wrap: wrap;
+}
+
 .search-filters-container {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 8px;
-  padding: 6px 10px 10px 0;
+  padding: 6px 8px 10px 0;
 }
 
 .search-filters-container .filter.input-group {
@@ -114,30 +134,30 @@
 .search-filters-container .filter .form-control,
 .search-filters-container .filter .custom-select {
   flex: 1 1 8rem;
-  min-height: 44px;
-  border-radius: var(--r-md) !important;
+  min-height: 40px;
+  background-color: var(--bg-2);
+  border-radius: 8px !important;
   margin: 0 !important;
 }
 
 .search-filters-container .filter .btn {
-  border-radius: var(--r-md) !important;
+  border-radius: 8px !important;
 }
 
 .search-filters-container .btn-filter {
   align-self: flex-start;
-  min-height: 44px;
-  padding: 0 14px;
-  border: 1px dashed var(--mute);
-  border-radius: var(--r-md);
+  min-height: 40px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
   background: none;
-  color: var(--ink);
-  font-weight: 600;
+  color: var(--accent);
+  font-weight: 400;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .search-filters-container .btn-filter:hover {
-  border-style: solid;
-  border-color: var(--ink);
+  background: var(--fill-3);
 }

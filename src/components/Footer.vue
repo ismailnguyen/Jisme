@@ -22,15 +22,13 @@
     align-items: center;
     justify-content: space-between;
     font-size: 13px;
-    color: var(--ink-2);
-    background: radial-gradient(circle, rgba(46, 58, 79, 0.24) 1px, transparent 1.4px) 0 0 / 6px 3px repeat-x;
+    color: var(--label-2);
 }
 
 .paper-footer a {
     min-height: 44px;
     display: inline-flex;
     align-items: center;
-    font-weight: 600;
-    color: var(--ink);
+    color: var(--accent);
 }
 </style>

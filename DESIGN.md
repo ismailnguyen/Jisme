@@ -1,620 +1,386 @@
 ---
 name: Jisme
-description: A client-side-encrypted vault where every item is a sealed window envelope on fibre-flecked paper.
+description: A client-side-encrypted vault that reads as if it shipped with the iPhone, Apple Passwords for lists and reveal, Wallet for cards and IDs.
 colors:
-  paper: "#f7f8f6"
-  sheet: "#fdfdfb"
-  white: "#ffffff"
-  field: "#f1f3f6"
-  chip-fill: "#eef1f4"
-  rule: "#dfe3e9"
-  tint: "#c9d1dc"
-  edge: "#bfc8d4"
-  code-edge: "#aab4c3"
-  mute: "#8a96a8"
-  ink-3: "#66728a"
-  ink-2: "#4f5c72"
-  ink: "#2e3a4f"
-  carbon-ink: "#27344a"
-  ink-deep: "#243044"
-  overlay-ink: "#1e2634"
-  slip-shadow-ink: "#141c28"
-  red: "#b3261e"
-  red-edge: "#efcfcc"
-  red-wash: "#fbeceb"
+  system-blue: "#0071e3"
+  system-blue-pressed: "#0058b0"
+  system-blue-fill: "rgba(0, 113, 227, 0.12)"
+  system-blue-dark: "#0a84ff"
+  system-red: "#d70015"
+  system-red-fill: "rgba(215, 0, 21, 0.1)"
+  system-red-dark: "#ff453a"
+  system-green: "#248a3d"
+  system-green-dark: "#30d158"
+  system-orange: "#c93400"
+  system-orange-dark: "#ff9f0a"
+  category-document: "#d15d00"
+  category-document-dark: "#c94f00"
+  category-bank: "#5856d6"
+  category-bank-dark: "#5e5ce6"
+  grouped-background: "#f2f2f7"
+  cell: "#ffffff"
+  label: "#000000"
+  label-secondary: "#6c6c70"
+  label-tertiary: "#737378"
+  label-quaternary: "#c7c7cc"
+  separator: "rgba(60, 60, 67, 0.29)"
+  fill: "rgba(120, 120, 128, 0.2)"
+  fill-secondary: "rgba(120, 120, 128, 0.16)"
+  fill-tertiary: "rgba(118, 118, 128, 0.12)"
+  fill-quaternary: "rgba(116, 116, 128, 0.08)"
+  bar-material: "rgba(249, 249, 249, 0.86)"
+  bar-material-thick: "rgba(242, 242, 247, 0.92)"
+  menu-material: "rgba(237, 237, 237, 0.86)"
+  scrim: "rgba(0, 0, 0, 0.3)"
+  grouped-background-dark: "#000000"
+  cell-dark: "#1c1c1e"
+  cell-dark-raised: "#2c2c2e"
+  label-dark: "#ffffff"
+  label-secondary-dark: "#aeaeb2"
+  label-tertiary-dark: "#98989f"
+  label-quaternary-dark: "#48484a"
+  separator-dark: "rgba(84, 84, 88, 0.65)"
+  bar-material-dark: "rgba(22, 22, 23, 0.84)"
+  monogram-grey: "#858a96"
 typography:
-  display:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "clamp(30px, 8.4vw, 52px)"
-    fontWeight: 800
-    lineHeight: 1.04
-    letterSpacing: "-0.035em"
-  headline:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "24px"
-    fontWeight: 800
-    lineHeight: 1.1
-    letterSpacing: "-0.025em"
-  headline-sm:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "22px"
-    fontWeight: 800
-    letterSpacing: "-0.02em"
-  title-lg:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "20px"
-    fontWeight: 800
-  title-step:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "18px"
-    fontWeight: 800
-    letterSpacing: "-0.015em"
-  body:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "16px"
-    fontWeight: 400
-    lineHeight: 1.55
-    fontFeature: "tnum"
-  title:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "15px"
+  large-title:
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"SF Pro Display\", \"Helvetica Neue\", \"Segoe UI\", Roboto, system-ui, sans-serif"
+    fontSize: "34px"
     fontWeight: 700
-    letterSpacing: "-0.01em"
-  body-compact:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "14.5px"
-    fontWeight: 400
-    lineHeight: 1.45
-  body-sm:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "14px"
-    fontWeight: 400
-    lineHeight: 1.5
-  label-lg:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "13.5px"
-    fontWeight: 600
-  caption:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "13px"
-    fontWeight: 500
-    lineHeight: 1.45
-  label:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "12.5px"
-    fontWeight: 600
-  label-sm:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "12px"
-    fontWeight: 600
-  chip:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "11.5px"
-    fontWeight: 600
-    lineHeight: 1.5
-  caption-xs:
-    fontFamily: "Public Sans, -apple-system, BlinkMacSystemFont, Segoe UI, system-ui, sans-serif"
-    fontSize: "11px"
-    fontWeight: 500
-  carbon-code:
-    fontFamily: "Courier Prime, ui-monospace, SFMono-Regular, Menlo, monospace"
+    lineHeight: 1.2
+    letterSpacing: "0.012em"
+  title-1:
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"SF Pro Display\", \"Helvetica Neue\", \"Segoe UI\", Roboto, system-ui, sans-serif"
     fontSize: "28px"
     fontWeight: 700
-    lineHeight: 1.1
-    letterSpacing: "0.06em"
-  carbon-value:
-    fontFamily: "Courier Prime, ui-monospace, SFMono-Regular, Menlo, monospace"
-    fontSize: "17.5px"
-    fontWeight: 400
-    lineHeight: 1.25
-    fontFeature: "tnum"
-  carbon-strip:
-    fontFamily: "Courier Prime, ui-monospace, SFMono-Regular, Menlo, monospace"
+    lineHeight: 1.15
+    letterSpacing: "0.01em"
+  title-3:
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"SF Pro Display\", \"Helvetica Neue\", \"Segoe UI\", Roboto, system-ui, sans-serif"
+    fontSize: "20px"
+    fontWeight: 700
+    letterSpacing: "-0.02em"
+  headline:
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"Helvetica Neue\", \"Segoe UI\", Roboto, system-ui, sans-serif"
+    fontSize: "17px"
+    fontWeight: 600
+    letterSpacing: "-0.022em"
+  body:
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"Helvetica Neue\", \"Segoe UI\", Roboto, system-ui, sans-serif"
     fontSize: "17px"
     fontWeight: 400
-    fontFeature: "tnum"
-  carbon-field:
-    fontFamily: "Courier Prime, ui-monospace, SFMono-Regular, Menlo, monospace"
-    fontSize: "16px"
+    lineHeight: 1.3
+    letterSpacing: "-0.022em"
+  subheadline:
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"Helvetica Neue\", \"Segoe UI\", Roboto, system-ui, sans-serif"
+    fontSize: "15px"
     fontWeight: 400
-  carbon-small:
-    fontFamily: "Courier Prime, ui-monospace, SFMono-Regular, Menlo, monospace"
-    fontSize: "13.5px"
+    lineHeight: 1.3
+    letterSpacing: "-0.015em"
+  footnote:
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"Helvetica Neue\", \"Segoe UI\", Roboto, system-ui, sans-serif"
+    fontSize: "13px"
     fontWeight: 400
-  carbon-id:
-    fontFamily: "Courier Prime, ui-monospace, SFMono-Regular, Menlo, monospace"
+    letterSpacing: "-0.005em"
+  caption:
+    fontFamily: "-apple-system, BlinkMacSystemFont, \"SF Pro Text\", \"Helvetica Neue\", \"Segoe UI\", Roboto, system-ui, sans-serif"
     fontSize: "12px"
+    fontWeight: 500
+    letterSpacing: "0"
+  code:
+    fontFamily: "ui-monospace, \"SF Mono\", SFMono-Regular, Menlo, Consolas, monospace"
+    fontSize: "30px"
+    fontWeight: 500
+    lineHeight: 1.1
+    letterSpacing: "0.04em"
+    fontFeature: "\"tnum\""
+  secret:
+    fontFamily: "ui-monospace, \"SF Mono\", SFMono-Regular, Menlo, Consolas, monospace"
+    fontSize: "17px"
     fontWeight: 400
+    lineHeight: 1.35
+    letterSpacing: "0"
+    fontFeature: "\"tnum\""
 rounded:
-  hairline: "3px"
-  tag: "4px"
-  window: "5px"
-  sm: "6px"
-  plate: "8px"
-  segment: "9px"
+  sm: "7px"
   md: "10px"
-  control: "12px"
-  lg: "14px"
-  sheet-top: "16px"
-  xl: "20px"
-  slip: "24px"
-  pill: "999px"
+  lg: "12px"
+  xl: "14px"
+  card: "16px"
+  icon-small: "7.5px"
+  icon-grid: "13px"
+  capsule: "999px"
 spacing:
-  2xs: "4px"
-  xs: "6px"
+  hairline: "1px"
+  xs: "4px"
   sm: "8px"
-  sm-md: "10px"
   md: "12px"
-  md-lg: "14px"
-  lg: "16px"
-  xl: "24px"
+  gutter: "16px"
+  section: "26px"
+  hit-target: "44px"
+  toolbar: "49px"
+  cell-height: "60px"
 components:
-  button-primary:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.white}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    height: "52px"
-  button-primary-hover:
-    backgroundColor: "{colors.ink-deep}"
-    textColor: "{colors.white}"
-  button-primary-disabled:
-    backgroundColor: "{colors.mute}"
-    textColor: "{colors.white}"
-  button-primary-footer:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.white}"
-    rounded: "{rounded.sheet-top}"
-    height: "56px"
-  button-outline:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.lg}"
-    height: "44px"
-  button-outline-hover:
-    backgroundColor: "{colors.white}"
-    textColor: "{colors.ink}"
-  action-row:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.lg}"
-    height: "52px"
-  action-row-danger:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.red}"
-  action-row-danger-hover:
-    backgroundColor: "{colors.red-wash}"
-    textColor: "{colors.red}"
-  text-button:
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
-    height: "44px"
-    padding: "0 12px"
-  text-button-hover:
-    backgroundColor: "{colors.field}"
-  icon-button:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.control}"
-    size: "44px"
-  icon-button-done:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.white}"
-  round-button:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.pill}"
-    size: "44px"
-  input-field:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    typography: "{typography.body}"
-    rounded: "{rounded.md}"
-    height: "48px"
-    padding: "10px 14px"
-  input-field-focus:
-    backgroundColor: "{colors.white}"
-    textColor: "{colors.ink}"
-  input-field-readonly:
-    backgroundColor: "{colors.field}"
-  segmented-track:
-    backgroundColor: "{colors.field}"
-    rounded: "{rounded.control}"
-    padding: "3px"
-  segmented-option-active:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.segment}"
-    height: "40px"
-  search-slot:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.control}"
-    height: "48px"
-  envelope-row:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.sm}"
-    height: "68px"
-  envelope-seal:
-    rounded: "{rounded.sm}"
-    width: "70px"
-  envelope-window:
-    rounded: "{rounded.window}"
-    height: "46px"
-  mini-envelope:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    typography: "{typography.label}"
-    rounded: "{rounded.sm}"
-    height: "58px"
-  hero-envelope:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
+  button-filled:
+    backgroundColor: "{colors.system-blue}"
+    textColor: "{colors.cell}"
     typography: "{typography.headline}"
-    rounded: "{rounded.plate}"
-    padding: "46px 14px 14px"
-  secret-strip:
-    backgroundColor: "{colors.white}"
-    textColor: "{colors.carbon-ink}"
-    typography: "{typography.carbon-strip}"
-    rounded: "{rounded.sm}"
+    rounded: "{rounded.lg}"
+    height: "50px"
+  button-filled-pressed:
+    backgroundColor: "{colors.system-blue-pressed}"
+    textColor: "{colors.cell}"
+  button-gray:
+    backgroundColor: "{colors.fill-tertiary}"
+    textColor: "{colors.system-blue}"
+    rounded: "{rounded.md}"
     height: "44px"
-  secret-strip-label:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    typography: "{typography.label-lg}"
-    rounded: "{rounded.pill}"
-  secret-strip-empty:
-    backgroundColor: "{colors.field}"
-    textColor: "{colors.ink-3}"
-  quick-sheet-row:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    typography: "{typography.carbon-value}"
+  button-bar-text:
+    textColor: "{colors.system-blue}"
+    typography: "{typography.body}"
+    height: "44px"
+    padding: "0 10px"
+  list-cell:
+    backgroundColor: "{colors.cell}"
+    textColor: "{colors.label}"
+    typography: "{typography.body}"
+    height: "60px"
+    padding: "8px 12px 8px 16px"
+  list-cell-selected:
+    backgroundColor: "{colors.system-blue}"
+    textColor: "{colors.cell}"
+  category-tile:
+    backgroundColor: "{colors.cell}"
+    textColor: "{colors.label}"
+    rounded: "{rounded.lg}"
+    height: "80px"
+    padding: "10px 12px 9px"
+  search-field:
+    backgroundColor: "{colors.fill-tertiary}"
+    textColor: "{colors.label}"
+    typography: "{typography.body}"
     rounded: "{rounded.md}"
-    height: "76px"
-    padding: "12px 12px 12px 16px"
-  form-sheet:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.md}"
-  form-field:
-    padding: "14px 16px 16px"
-  field-label:
-    textColor: "{colors.ink-2}"
-    typography: "{typography.label}"
-  form-step:
-    textColor: "{colors.ink}"
-    typography: "{typography.title-step}"
-  choice:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    typography: "{typography.title}"
-    rounded: "{rounded.md}"
-    height: "64px"
-    padding: "10px 12px"
-  choice-compact:
-    typography: "{typography.body-sm}"
-    height: "48px"
-  record-line:
-    textColor: "{colors.ink-2}"
-    typography: "{typography.label}"
-  details-toggle:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    typography: "{typography.title}"
-    rounded: "{rounded.md}"
-    height: "70px"
-  state-pill:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.pill}"
-    height: "32px"
-    padding: "0 12px 0 10px"
-  state-pill-offline:
-    backgroundColor: "{colors.red-wash}"
-    textColor: "{colors.red}"
-  chip:
-    backgroundColor: "{colors.chip-fill}"
-    textColor: "{colors.ink}"
-    typography: "{typography.chip}"
-    rounded: "{rounded.tag}"
-    padding: "1px 6px"
-  badge-danger:
-    backgroundColor: "{colors.red-wash}"
-    textColor: "{colors.red}"
-    rounded: "{rounded.tag}"
+    height: "40px"
+  search-token:
+    backgroundColor: "{colors.system-blue}"
+    textColor: "{colors.cell}"
+    typography: "{typography.subheadline}"
+    rounded: "6px"
+    height: "28px"
+    padding: "0 8px"
   tag-pill:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    typography: "{typography.label-lg}"
-    rounded: "{rounded.pill}"
-    height: "36px"
-    padding: "0 12px"
-  type-counter:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.cell}"
+    textColor: "{colors.label}"
+    typography: "{typography.subheadline}"
+    rounded: "{rounded.capsule}"
+    height: "34px"
+    padding: "0 14px"
+  text-field:
+    backgroundColor: "{colors.fill-tertiary}"
+    textColor: "{colors.label}"
+    typography: "{typography.body}"
     rounded: "{rounded.md}"
-    height: "56px"
-    padding: "8px"
-  type-counter-active:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.white}"
-  home-dock:
-    backgroundColor: "{colors.sheet}"
-    rounded: "{rounded.xl}"
-    height: "68px"
-  home-dock-new:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.white}"
-    rounded: "{rounded.lg}"
-    height: "52px"
-  home-dock-side:
-    textColor: "{colors.ink}"
-    typography: "{typography.label-sm}"
-    rounded: "{rounded.lg}"
-    width: "64px"
-    height: "56px"
-  sheet-bar:
-    height: "64px"
-    padding: "10px 12px"
-  action-menu:
-    backgroundColor: "{colors.sheet}"
-    rounded: "{rounded.lg}"
-    padding: "6px"
-  action-menu-item:
-    textColor: "{colors.ink}"
-    typography: "{typography.title}"
-    rounded: "{rounded.md}"
-    height: "48px"
-  menu-tray:
-    backgroundColor: "{colors.paper}"
-    rounded: "{rounded.xl}"
-    padding: "12px"
-  sign-in-card:
-    backgroundColor: "{colors.sheet}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.control}"
-    padding: "26px 20px 20px"
-  toast-slip:
-    backgroundColor: "{colors.ink}"
-    textColor: "{colors.white}"
-    rounded: "{rounded.slip}"
-    height: "48px"
-  toast-slip-danger:
-    backgroundColor: "{colors.red}"
-    textColor: "{colors.white}"
+    height: "44px"
+    padding: "10px 14px"
+  switch:
+    backgroundColor: "{colors.fill}"
+    rounded: "16px"
+    width: "51px"
+    height: "31px"
+  switch-on:
+    backgroundColor: "{colors.system-green}"
+  wallet-card:
+    textColor: "{colors.cell}"
+    rounded: "{rounded.card}"
+    padding: "16px 18px"
+    width: "400px"
+  code-chip:
+    backgroundColor: "{colors.fill-tertiary}"
+    textColor: "{colors.label-secondary}"
+    rounded: "{rounded.capsule}"
+    height: "18px"
+    padding: "0 6px"
 ---
 
 # Design System: Jisme
 
 ## Overview
 
-**Creative North Star: "The Security Envelope"**
+**Creative North Star: "Shipped With the iPhone"**
 
-Every item in the vault is a sealed window envelope. Its identity (logo, name, login) shows through a glassine window on the left; its secret stays under a blue-grey security-tint seal on the right, divided from the window by a perforation. Revealing a secret peels the tint away, and it slides back on its own. The world is office stationery for secrets: fibre-flecked paper, bright sheets, ink, carbon-printed values, and one red that means "out in the open".
+Jisme plays the iOS canon straight: Apple Passwords for lists, detail and reveal; Wallet for cards, documents and bank accounts. There is no bespoke metaphor. Grouped backgrounds carry inset cells with hairline separators, the system font does all the talking, one accessible system blue is the only tint, and a single system red means "exposed, destructive, failed or offline". It follows the system appearance, light or dark, with the iOS dark ramp (black page, #1c1c1e cells, #2c2c2e raised cells).
 
-Density is phone-first and thumb-led: 68px envelope rows stacked with a 6px overlap like a pile on a desk, 44px targets everywhere, a floating dock in the thumb zone. Colour stays almost entirely in the ink-on-paper range; the primary action is ink-filled, not a hue. Depth comes from paper physics (raised sheets, recessed windows and fields), always shadowed in ink blue-grey, never black. Editing is a printed form on the same paper: ruled form sheets, labelled fields, tick-box choices, and a perforated tear line where the envelope opens. The world refuses the category default of a white favicon list, a blue button and a shield.
+Density is Apple's: 17px body, 60px list cells, 44px minimum targets, 16px gutters. Secrets sit behind dots until asked for, then show in SF Mono with a visible countdown before hiding themselves again. Every iOS system colour is taken in its higher-contrast variant wherever it carries text, so labels clear WCAG AA on both appearances; the canon is matched by eye, not by pixel.
 
-The system ships light only (`color-scheme: light`). Dark mode is not a brand commitment and has not been designed.
+Structure follows device class the way iOS and iPadOS do: a single navigation stack on phones (items push in from the right, a new item rises as a modal card), a two-column split view from 768px and a three-column sidebar | list | detail from 1100px, where the detail pane hosts both the open item and the new-item form.
 
 **Key Characteristics:**
-- Window envelopes: glassine window for identity, tinted perforated seal for the secret.
-- Ink-on-paper palette; the only hue is one red, reserved for revealed, delete and error.
-- Two voices: Public Sans for the interface, Courier Prime "carbon copy" for every stored value.
-- Paper depth: raised sheets, recessed fields, all shadows tinted with ink.
-- Hold or tap to reveal, auto-reseal; the verification code rides a 30-second ring.
-- Editing is a printed form: ruled sheets, tick-box choices, a perforated tear line.
+- Inset grouped lists on a grouped background; hairline separators inset past the leading icon.
+- The system font stack everywhere; SF Mono only for machine strings (revealed secrets, one-time codes, card numbers, record IDs).
+- One tint (system blue); red reserved for revealed, destructive, error and offline.
+- Category colour as a white-glyph circle; favicons as app-icon squircles.
+- Translucent, blurred bars and menus; shadows only on things that float.
+- Wallet card faces with deep, hash-picked gradients for cards, documents and bank accounts.
+- The iOS spring, approximated as one easing curve (cubic-bezier(0.32, 0.72, 0, 1)).
 
 ## Colors
 
-A cool ink-and-paper stationery palette with a single red used as an exposure signal.
+The iOS system palette, lifted to its higher-contrast variants where it carries text, with the matching iOS dark values swapped in under `prefers-color-scheme: dark`.
 
 ### Primary
-- **Envelope Ink** (`ink`): the one voice of the system. Body text, headings, focus outlines, primary buttons, the dock's New item button, the selected type counter and choice, the copied state of an icon button, the TOTP arc, the progress bar. Hover and pressed deepen to **Pressed Ink** (`ink-deep`). Ink at low alpha is the only shadow, selection and hairline tint in the product.
-- **Carbon Ink** (`carbon-ink`): the slightly darker ink used only by carbon-printed values (Courier Prime), with a faint offset text-shadow of itself so values look typed onto paper.
+- **System Blue** (`system-blue`; dark `system-blue-dark`): the single tint. Links, bar buttons, glyph buttons, the filled button, the caret, focus rings (2px), the selected list cell in split view, search tokens, live TOTP codes and their ring, the checked radio. Its pressed state is `system-blue-pressed`; its wash (`system-blue-fill`) marks selection and active gray buttons.
 
 ### Secondary
-- **Exposure Red** (`red`): the only hue. It marks a secret that is currently visible (the strip's 1.5px red inset outline and the "Visible · reseals in Ns" timer), destructive actions (Delete in the action menu, the red action row), errors (invalid code, danger toast) and the Offline vault state. Paired with **Red Wash** (`red-wash`) as its background and **Red Edge** (`red-edge`) as its border.
+- **System Red** (`system-red`; dark `system-red-dark`): one red with four jobs: a revealed secret's "Visible · hides in Ns" line, destructive actions (Delete, Sign out), errors and the offline vault state. Its wash (`system-red-fill`) backs red badges and the danger button.
+- **System Green** (`system-green`; dark `system-green-dark`): the on-state of switches, the success banner mark, the Cards category.
+- **System Orange** (`system-orange`; dark `system-orange-dark`): cautions that are not failures: the demo-vault status, the password clue label, the warning banner mark.
+
+### Tertiary
+- **Category colours**: each category tile carries a white glyph on a colour circle, every pair at least 3:1. Credentials use System Blue, Cards System Green, Documents `category-document`, Banks `category-bank` (dark variants alongside). The same colours fill the Settings-style icon squares in the menu.
 
 ### Neutral
-- **Fibre Paper** (`paper`): the desk. Page, sheet and tray backgrounds, always layered under an 8.5%-opacity ink-coloured fractal-noise fleck.
-- **Bright Sheet** (`sheet`): anything picked up off the desk. Envelopes, form sheets, fields, buttons, pills, choices, the dock, the quick-copy sheet.
-- **Plate White** (`white`): the brightest surface. Hovered controls, focused fields, the secret-strip face, the barcode plate, text on ink.
-- **Field Grey** (`field`): quiet fills. Hover wash on text buttons, menu items and dock sides; segmented-control track; read-only fields; the empty strip seal; tray icon discs.
-- **Chip Grey** (`chip-fill`): printed tags, badges and active search filters.
-- **Hairline Rule** (`rule`): dividers between rows and form fields, pill, choice and counter borders.
-- **Tint Border** (`tint`): field and search borders, hover border on choices and tag pills, drag handle, loading placeholders, scrollbar thumb.
-- **Control Edge** (`edge`): the harder edge of raised controls (icon buttons, outline and light buttons). **Code Edge** (`code-edge`) outlines the small "Code" tag.
-- **Secondary Ink** (`ink-2`, 6.4:1 on paper): labels, secondary text, icons inside actions.
-- **Tertiary Ink** (`ink-3`, 4.6:1 on sheet): placeholders, notes, the ending TOTP ring, disabled button text.
-- **Mute** (`mute`): dashed "not yet made" borders, checkbox strokes and the disabled primary fill. Never text.
-- **Overlay Ink** (`overlay-ink`): the darker ink used at alpha for scrims (32%) and for the long drop under sheets and the tray (18–25%).
-- **Slip Shadow Ink** (`slip-shadow-ink`): the deepest ink, used at 20–25% only for the shadow under the dark toast slip, so an ink object still casts an ink shadow rather than a black one.
+- **Grouped Background** (`grouped-background`; dark `grouped-background-dark`): the page behind every list, and the page of sheets and the menu.
+- **Cell** (`cell`; dark `cell-dark`): inset grouped cells, tiles, the favourites grid, form groups. Sheets and the menu in dark mode step up one level: `cell-dark` page, `cell-dark-raised` cells.
+- **Labels** (`label`, `label-secondary`, `label-tertiary`, `label-quaternary`, with dark variants): primary text; secondary text raised to 5:1 (`#6c6c70` instead of iOS `#8e8e93`); placeholders and notes at 4.6:1; quaternary for chevrons and disclosure glyphs only, never text.
+- **Separator** (`separator`; dark `separator-dark`): hairlines between cells and under bars, 0.5px on 2x screens.
+- **Fills** (`fill` to `fill-quaternary`): text fields, the search field, gray buttons, segmented-control tracks, chips, hover washes, the off switch.
+- **Materials** (`bar-material`, `bar-material-thick`, `menu-material`; dark `bar-material-dark`): translucent backgrounds for the toolbar, navigation bars and context menus, always with `saturate(180%) blur(20–30px)`.
+- **Monogram Grey** (`monogram-grey`, bottom of a #a5abb8 → #858a96 gradient): the Contacts-style monogram behind an item without a favicon and behind the avatar.
 
 ### Named Rules
-**The Sealed-Only Tint Rule.** The security tint (a 28×7 ink wave over a blue-grey crosshatch) appears only where a secret is sealed: the seal of an envelope that holds a copyable secret, and the face of the Secret Strip. An envelope with nothing to copy gets a plain ruled seal instead (faint 4px ruled lines, ink-dotted perforation). If it is tinted, there is a secret under it.
+**The One Tint Rule.** System blue is the only interactive colour. Nothing else reads as a link, a button label or a selection.
 
-**The One Red Rule.** Red (`red`) means exposed, destructive or broken: a revealed secret, a delete, an error, the offline state. It never decorates, never marks a brand moment, never serves as a hover colour.
+**The One Red Rule.** Red means exactly one of: revealed, destructive, error, offline. It never decorates.
 
-**The Ink, Not Blue Rule.** The primary action is ink-filled with an ink-tinted lift shadow. No hue accent, no blue button, no blue focus ring.
+**The Text-Safe Variant Rule.** Any system colour that carries text or a glyph on white uses its higher-contrast variant (blue #0071e3, red #d70015, green #248a3d, orange #c93400, secondary label #6c6c70). iOS's brighter canonical values are for dark mode only.
 
 ## Typography
 
-**Display Font:** Public Sans (variable 400–800, self-hosted, OFL), falling back to the system UI stack
-**Body Font:** Public Sans
-**Label/Mono Font:** Courier Prime (400 and 700, self-hosted, OFL), falling back to ui-monospace
+**Display Font:** SF Pro Display via `-apple-system` (with Helvetica Neue, Segoe UI, Roboto, system-ui)
+**Body Font:** SF Pro Text via `-apple-system` (same fallbacks)
+**Label/Mono Font:** SF Mono via `ui-monospace` (with SFMono-Regular, Menlo, Consolas)
 
-**Character:** a plain, sturdy civic sans runs the interface; a typewriter face prints the stored data, so chrome and content can be told apart at a glance. Tabular numerals are on across the body. Headings default to 700 at −0.015em.
+**Character:** the system face, set at Apple's Dynamic Type default sizes with Apple's tracking (negative at 15–17px, slightly positive at display sizes). It never announces itself; the stored values read in the same face as the labels, exactly like Passwords.
 
 ### Hierarchy
-The ramp is dense and phone-scaled; every step below is in use, and a new size must land on one of them.
-- **Display** (800, clamp(30px, 8.4vw, 52px), 1.04, −0.035em, max 14ch, balanced wrap): the sign-in headline only.
-- **Headline** (800, 24px, 1.1, −0.025em): the item name in the hero envelope.
-- **Headline small** (800, 22px, −0.02em): the sign-in card title, the sign-in wordmark and the one-time-code digits.
-- **Title large** (800, 20px): the empty-vault title and the letter initial in a hero logo plate.
-- **Step title** (800, 18px, −0.015em): form step titles ("What is it?"); the type-counter count uses the same size at 700.
-- **Body** (400, 16px, 1.55, max 40ch for prose): lede text, inputs (always 16px so iOS does not zoom), text buttons and action rows (16px 600–700), round-button icons.
-- **Title** (700, 15px, −0.01em): envelope names, the Details toggle, choice names, action-menu items (600), the search input.
-- **Body compact** (400, 14.5px, 1.45): the toast title (600), menu-tray rows, the empty-vault lede, the hero subtitle.
-- **Body small** (400, 14px, 1.5): the sign-in lede, the empty-list note, three-across choice names (600), section heads (700, −0.005em).
-- **Label large** (600, 13.5px): tag pills and the strip's "Hold to reveal" label.
-- **Caption** (500, 13px, 1.45): helper text under fields, the state pill (600), section counts, the toast message, filter chips, footer links.
-- **Label** (600, 12.5px, `ink-2`): field labels, quick-row labels, the details summary, the record line, choice captions (400), mini-envelope names, the reseal timer.
-- **Label small** (600, 12px): dock labels, the TOTP seconds (700, tabular), tray meta, toast mark.
-- **Chip** (600, 11.5px, 1.5): chips, badges, counter captions (500), the hero return address.
-- **Caption extra-small** (500, 11px): counter captions on screens narrower than 381px. This is the floor for any text.
-- **Carbon code** (Courier Prime 700, 28px, 1.1, 0.06em): the live verification code, grouped in threes.
-- **Carbon value** (Courier Prime 400, 17.5px, 1.25): logins, URLs and other values in quick-copy rows.
-- **Carbon strip** (Courier Prime 400, 17px): a revealed secret on the strip.
-- **Carbon field** (Courier Prime 400, 16px): values in the expanded detail accordions.
-- **Carbon small** (Courier Prime 400, 13.5px): envelope subtitles (the login under a name).
-- **Carbon id** (Courier Prime 400, 12px): the account id at the foot of an item.
-
-Icon glyphs are sized with `font-size` but are not type: 8–11px inside discs and tags, 14px chevrons, 16–20px in buttons. They follow the icon's container, not the ramp.
+- **Large Title** (700, 34px, 1.2, +0.012em): "Jisme" at the top of the navigation column, beside the logo.
+- **Title 1** (700, 28px, 1.15, +0.01em): the item title under its icon in the detail view, and sign-in headings. The sign-in hero title scales `clamp(34px, 9vw, 52px)`.
+- **Title 3** (700, 20px, −0.02em): section headers ("Favorites", "Recently opened", "Tags"), with a 15px secondary count trailing on the baseline. Wallet card names use 22px/700.
+- **Headline** (600, 17px): navigation bar titles, filled buttons, the menu title.
+- **Body** (400, 17px, −0.022em): cell titles, field values, text fields, bar text buttons.
+- **Subheadline** (400, 15px, −0.015em): cell subtitles, search tokens, tag pills, category names (600).
+- **Footnote** (400, 13px): field labels over values, form labels, helper text, the countdown line.
+- **Caption** (500, 12px): vault status, chips, favourite names (400); 11px for the code chip and Wallet field labels.
+- **Code** (SF Mono 500, 30px, +0.04em, tabular): the live TOTP code, in system blue.
+- **Secret** (SF Mono 400, 17px, tabular): a revealed secret.
 
 ### Named Rules
-**The Carbon Copy Rule.** Every value the user stored is printed in Courier Prime with the carbon text-shadow; every piece of interface is in Public Sans. Never set a label, a button or a heading in the carbon face, and never set a stored value in the UI face (the one exception is an error message in a value slot, which switches to Public Sans 15px in red).
+**The Mono Is For Machines Rule.** SF Mono appears only on machine strings: a revealed secret, a one-time code, the number line of a Wallet card, the record ID footnote. Stored usernames, URLs and notes stay in the system face.
 
-**The Sentence Case Rule.** Labels, section heads and buttons are sentence case at their natural tracking. The build carries no uppercase labels and no eyebrows above headings.
-
-**The 11px Floor Rule.** No text below 11px. Anything smaller is an icon or it is a defect.
+**The Dynamic Type Rule.** Sizes come from the iOS text-style ladder (34 / 28 / 22 / 20 / 17 / 15 / 13 / 12 / 11). No in-between sizes.
 
 ## Layout
 
-Phone first at 390px; desktop inherits the same pieces rearranged, never a different product.
+A single column on phones; a split view from 768px, matching iPadOS.
 
-- **Phone (<768px):** one column with 16px side gutters. Summary (brand row 56px, 48px search, a row of four type counters, a horizontally scrolling tag row, three mini envelopes for favourites), then the envelope stack. The list keeps 110px plus the safe-area inset free at the bottom for the floating dock (68px tall, 14px above the safe area, max 420px wide). Sheets rise from the bottom to full height minus 8px, with 16px top corners and a drag handle; the page behind scales to 0.96 and desaturates slightly, and the dock hides while a sheet is open. The menu is a short paper tray 12px from the screen edges.
-- **Narrow phone (≤380px):** the counter row tightens to a 5px gap and captions drop to 11px.
-- **Desktop (≥768px):** a 1760px desk. A sticky 380px summary pane on the left (types drop to a 2×2 grid; the pane keeps 100px clear at the bottom for the dock), the stack on the right with 32px padding. Below Favourites and Recently opened, desktop adds **All items**: the whole vault A to Z, 60 at a time with a full-width "Show more" button. Envelope stacks become a grid with as many 300px-minimum columns as fit (14px column gap, 10px row gap) with no overlap. Sheets slide in from the right at min(560px, 100%); the menu becomes a 380px left rail with 20px right corners; the dock anchors under the summary pane at 332px.
-- **Sign-in:** a single 420px sheet card centred on the paper, 26px top and 20px side padding.
-- **Rhythm:** 4 / 6 / 8 / 10 / 12 / 14 / 16 / 24px. 6–8px between siblings in a group (counters, tags, mini envelopes, choices, tray rows), 12px between form rows and from sheet to sheet, 14px inside the hero envelope and above plates, 18px above a section head and 8px below it.
-- **The stack:** envelopes overlap by 6px (−6px top margin), each with a slight upward shadow so the one below appears tucked under.
-- **Form sheets:** a form sheet groups related fields; each field is padded 14px 16px 16px with an 8px gap between label and control, and fields are divided by hairline rules. Choices sit two across (three across for short options) with an 8px gap.
-- **Touch:** every interactive element is at least 44×44px; 36px tag pills extend their hit area with the row's padding.
+- **Below 768px:** one navigation stack with 16px gutters. First viewport: large title with the avatar button (menu) top right; a 40px search field; a 2 × 2 grid of category tiles (12px gap); Favorites as a four-across app-icon grid; Recently opened as an inset grouped list; tags last, as a horizontally scrolling row. A translucent 49px toolbar is pinned to the bottom: Lock left, vault status centred, New item right. Opening an item pushes it in from the right while the list slides 30% left and dims to 90% brightness; a new item rises as a modal card 10px below the safe area while the page behind scales to 0.94 with 12px corners. An open sheet hides the toolbar.
+- **768–1099px:** a 360px navigation column (title, search, tiles, lists, toolbar) with a hairline right edge | the detail pane.
+- **1100px and up:** a 320px sidebar (title, search, tiles, tags, toolbar) | the item list on the cell colour, flush-edged with hairline top and bottom, as on iPad | the detail pane. Together the two left columns take 720px.
+- **Detail pane:** content centred at a 640px measure with at least 20px gutters; it hosts both the open item and the New item form. With nothing open it shows a centred, greyscale empty state.
+- **Rhythm:** 16px gutters and cell insets; section headers 26px above, 8px below; 22px between the item hero, its field group and the "Details & edit" row; 16px between form groups. Cells are at least 60px; every target is at least 44px (36px round buttons carry a 4px invisible halo).
+- Safe-area insets are honoured on every fixed bar and sheet.
 
 ## Elevation & Depth
 
-A paper hybrid: sheets are raised with soft, layered, ink-tinted shadows, while anything you look into or type into (windows, fields, the strip face, the search slot) is recessed with an inset shadow. Every shadow uses ink (`ink`) at alpha, or the darker `overlay-ink` and `slip-shadow-ink` for the longest drops; none are black and none are hard offsets. Overlays dim the desk with `overlay-ink` at 32%.
+Flat by default, layered the iOS way. Cells sit on the grouped background with no shadow; separation comes from tone (cell on grouped background) and hairlines. Translucent material plus backdrop blur marks chrome (toolbar, navigation bars, pinned footers, context menus, the banner). Shadows are reserved for things that float above the page. In dark mode the ambient shadows deepen and gain a faint white hairline ring, and inline cell shadows drop away.
 
 ### Shadow Vocabulary
-- **Rest** (`box-shadow: 0 1px 2px rgba(46, 58, 79, 0.12)`): round header buttons, sheet close, the active segment.
-- **Sheet** (`box-shadow: 0 0 0 1px rgba(46, 58, 79, 0.07), 0 1px 2px rgba(46, 58, 79, 0.1), 0 6px 16px rgba(46, 58, 79, 0.06)`): form sheets, quick-copy sheet, details toggle, accordions, action rows, barcode plate.
-- **Float** (`box-shadow: 0 0 0 1px rgba(46, 58, 79, 0.08), 0 -2px 8px rgba(46, 58, 79, 0.06), 0 10px 24px rgba(46, 58, 79, 0.16)`): the floating dock.
-- **Ink lift** (`box-shadow: 0 1px 0 rgba(255, 255, 255, 0.15) inset, 0 2px 4px rgba(46, 58, 79, 0.3), 0 8px 16px rgba(46, 58, 79, 0.22)`): primary ink buttons.
-- **Popover** (`box-shadow: 0 0 0 1px rgba(46, 58, 79, 0.08), 0 4px 10px rgba(46, 58, 79, 0.12), 0 16px 32px rgba(46, 58, 79, 0.16)`): the ⋯ action menu.
-- **Envelope in stack** (`box-shadow: 0 -1px 0 rgba(46, 58, 79, 0.07), 0 -3px 6px rgba(46, 58, 79, 0.06), 0 1px 2px rgba(46, 58, 79, 0.12)`): the row sits partly under its neighbour.
-- **Sheet drop** (`box-shadow: 0 -8px 30px rgba(30, 38, 52, 0.18)`) and **Tray drop** (`0 0 0 1px rgba(46, 58, 79, 0.08), 0 10px 30px rgba(30, 38, 52, 0.25)`): full sheets and the menu tray.
-- **Slip drop** (`box-shadow: 0 4px 10px rgba(20, 28, 40, 0.25), 0 12px 24px rgba(20, 28, 40, 0.2)`): the toast slip only.
-- **Recess**: fields and search (`inset 0 1px 2px rgba(46, 58, 79, 0.07)`), glassine windows (`inset 0 1px 2px rgba(46, 58, 79, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.8)`), the strip face (`inset 0 0 0 1px rgba(46, 58, 79, 0.22), inset 0 1px 3px rgba(46, 58, 79, 0.18)`).
-- **Raised control**: icon buttons carry a white top highlight and a two-step drop; on press they move 1px down and the drop collapses.
+- **Pop** (`0 10px 38px rgba(0,0,0,0.18), 0 0 0 hairline rgba(0,0,0,0.06)`): context menus, the desktop menu form sheet, the banner toast.
+- **Wallet card** (`0 1px 1px rgba(0,0,0,0.08), 0 12px 28px rgba(0,0,0,0.22)`): the card face only.
+- **Push edge** (`-8px 0 24px rgba(0,0,0,0.12)`): the leading edge of an item pushed in on phones.
+- **Segment thumb** (`0 3px 8px rgba(0,0,0,0.12), 0 3px 1px rgba(0,0,0,0.04)`): the selected segment of a segmented control.
+- **App icon ring** (`inset 0 0 0 hairline rgba(0,0,0,0.14)`): the edge of a white favicon squircle.
 
 ### Named Rules
-**The Ink Shadow Rule.** Shadows are tinted with ink and soft. A black or hard-offset shadow is foreign to the world.
+**The Only Floaters Cast Rule.** A shadow means the element floats over the page (menu, sheet, banner, Wallet card, pushed view). Cells, tiles, fields and buttons never cast.
 
-**The Pressed-In Rule.** Surfaces that hold or reveal content are recessed; surfaces you act on are raised. A field never floats, and a button is never inset.
+**The Material Chrome Rule.** Bars and menus are translucent material with `saturate(180%) blur(20px)` (30px for menus, 24px for the banner) and a hairline edge, never an opaque slab.
 
 ## Shapes
 
-Stationery corners: small on paper, larger on the hands-on controls, round only for state and tags.
-
-- Loading placeholder bars are 3px; printed chips, tags and favourite icons are 4px; glassine windows are 5px; envelope rows, mini envelopes and the Secret Strip are 6px.
-- The hero envelope and logo plates are 8px; the checked segment inside a 12px segmented track is 9px (concentric with the 3px track padding); fields, counters, choices, form sheets, quick sheets and menu items are 10px; icon buttons, the search slot, hero logo and the sign-in card are 12px; buttons, action rows, dock buttons and the action menu are 14px; sheets are 16px at the top and sheet-footer primaries 16px all round; the dock and tray are 20px; the toast slip is 24px.
-- State pills, tag pills, strip labels, the drag handle and round header buttons are full pills or circles.
-- **Envelope devices:** the perforation (a 3px column of 1px dots on a 5px repeat) divides window from seal; the tear line (a 3px row of 1px ink dots on a 6px repeat, 8px in from each side) marks where an item's Details & edit opens; a hairline flap crease (two faint diagonals meeting under the top edge) marks the hero envelope and the sign-in card; a 1.5px dashed `mute` border marks something not yet made (the new-item envelope from search, "more" tags, the add-filter button). Inside a form field, a dashed hairline rule separates a secondary group (such as extra fields under a password).
+Continuous-feeling rounded rectangles at Apple's radii, plus circles and capsules. Inset grouped lists, fields, the search field and the detail groups use 10px; tiles, filled buttons and the type-picker tiles 12px; the desktop menu sheet 14px; the Wallet card 16px; phone sheets and the menu 12px on their top corners only. App-icon squircles scale their radius with size (7.5px at 32px, 9px at 36px, 13px at 56px, 16px at 72px, 15px for the 64px sign-in mark). Category glyphs, avatars, round header buttons and banner marks are circles; chips, badges, tag pills, the banner and code chips are capsules. The segmented control is a 9px track with 7px thumbs; the search token 6px. Separators are hairlines (1px, 0.5px on 2x screens), inset 60px past the list icon or 16px in field groups.
 
 ## Components
 
 ### Buttons
-Tactile stationery: ink for the one thing to do, raised paper for everything else.
-- **Shape:** 14px corners; icon buttons 12px; header buttons circular.
-- **Primary:** ink fill, white text, 600–700 weight, ink-lift shadow; hover and press go to Pressed Ink. Full-width primaries are 52px tall (56px with 16px corners in sheet footers, which pin to the bottom over a paper fade).
-- **Outline / Light:** sheet fill, 1px Control Edge, ink text; hover goes to white with an ink border.
-- **Action row:** a full-width 52px sheet row with a 20px icon column in `ink-2`, 16px 700 text, Sheet shadow. The red variant keeps the sheet fill with red text and icon and washes red on hover.
-- **Icon button (44px):** raised sheet square with a white highlight; the quiet variant drops to transparent in `ink-2`; after a copy it flips to ink fill with a check.
-- **Text button:** transparent, 44px tall, 16px 600, Field Grey on hover; link buttons are underlined at a 3px offset.
-- **Focus:** a 2px ink outline at 2px offset on every control.
+Quiet, tinted and Apple-exact.
+- **Shape:** 12px radius for filled buttons (`rounded.lg`), 10px for gray buttons in forms.
+- **Filled:** system blue with white 17px/600 text, 50px tall, full width in forms and sign-in. Pressed: `system-blue-pressed`, scale 0.98. Disabled: tertiary fill with tertiary label.
+- **Gray:** tertiary fill with a system-blue label (iOS "gray" style); hover steps to the secondary fill; active state takes the blue wash.
+- **Bar buttons:** plain system-blue text or glyphs, 44px targets, no chrome; opacity 0.4 while pressed. The confirming action ("Add", "Done") is 600 weight.
+- **Glyph buttons:** 44px circles in system blue (copy, reveal), with a quaternary-fill hover and a 0.94 press scale; a copy that succeeded turns green.
+- **Round header button:** 36px circle on the tertiary fill with a secondary-label glyph.
+- **Action rows:** full-width Settings rows (48px, 17px/400) with a leading glyph; destructive rows are centred red text.
 
 ### Chips
-- **Printed chip / badge:** Chip Grey fill, hairline rule border, 4px corners, 11.5px 600. The danger badge uses Red Wash, Red Edge and red text.
-- **Code tag:** an outlined tag (Code Edge) with a clock icon, next to an envelope name when the item has a verification code.
-- **Tag pill:** a 36px sheet pill with a hairline border, 13.5px 600; "more" is dashed in `ink-2`.
-- **State pill:** a 32px sheet pill, always an icon plus a word ("Unlocked · synced", "Syncing", "Offline"); the synced check sits in a 16px ink disc; Offline turns the pill red.
+- **Code chip:** an 18px secondary-label capsule on the tertiary fill that marks items with a one-time code.
+- **Tag pill:** a 34px capsule in the cell colour, 15px label; "More" is plain blue text. Scale 0.95 on press.
+- **Badges:** 13px/500 capsules on the tertiary fill; red badges use the red wash.
 
 ### Cards / Containers
-- **Envelope row:** see the signature component below.
-- **Mini envelope (favourites):** a 58px sheet with a full glassine window, 18px icon and a two-line 12.5px name; three per row on phones.
-- **Type counter:** a 56px sheet tile with a hairline border, 18px 700 count and an 11.5px caption; the selected tile goes ink-filled with white text.
-- **Quick-copy sheet (copy-first rows):** a 10px sheet of 76px rows divided by hairline rules. Each row has a label, a carbon value and an icon button on the right; the pair variant splits into two columns with a vertical rule. It sits directly under the hero envelope, before any editing.
-- **Hero envelope:** an 8px sheet with the flap crease, a small logo-and-name return address top left, the state pill top right, and a large glassine window with a 48px logo plate and the 24px item name.
-- **Barcode plate:** white, 10px, Sheet shadow, 12.5px hint beneath.
-- **Details toggle:** a 70px sheet (15px 700 "Details & edit" plus a 12.5px summary of chips and dates) with a rotating chevron; when open it squares its bottom corners and the tear line appears beneath it.
-
-### Form Sheets
-Editing and adding are a printed form on the envelope's paper.
-- **Form step:** an 18px 800 title above each group ("What is it?", "Sign-in details").
-- **Form sheet:** a 10px sheet with the Sheet shadow holding one or more fields separated by hairline rules.
-- **Field:** a 12.5px 600 `ink-2` label with a 14px-wide icon, then the control 8px below.
-- **Choice grid:** tick-box choices two across (64px, 15px 700 name, 12.5px caption) or three across for short options (48px, 14px 600, centred). Hover raises the border to Tint; the chosen one takes an ink border doubled with a 1px ink ring.
-- **Record line:** a centred 12.5px line under the form recording when the item was created and last changed.
+- **Inset grouped list:** 10px radius, cell background, overflow clipped, a hairline between cells inset 60px (past the icon). Hover washes 4% label into the cell; press 10%. In split view the open item's cell fills system blue with white text and hides its adjoining separators.
+- **Category tile:** 80px, 12px radius, cell colour; a 30px colour circle with a white glyph top left, a 26px/700 tabular count top right, the name in 15px/600 secondary label at the foot. The chosen category fills with its colour and inverts the circle. Scale 0.97 on press.
+- **Favourites grid:** four columns of 56px app-icon squircles with 12px names and 11px secondary lines, inside one cell-coloured group.
+- **Empty state:** a centred cell group with a 64px blue glyph circle, a 22px/700 title, one 15px line and one filled button.
 
 ### Inputs / Fields
-- **Style:** 48px sheet field, 1px Tint Border, 10px corners, 16px text, inset recess; placeholders in `ink-3`; labels 12.5px 600 `ink-2` above; helper text 13px `ink-2` below.
-- **Focus:** the border turns ink, the background goes white, and a 3px ink ring at 15% appears.
-- **Read-only:** Field Grey fill.
-- **Search slot:** a 12px sheet slot with the same focus ring on `:focus-within`; its icon buttons have no chrome until hovered; active type and tag filters print as chips inside it, in front of the text input, which never hides (the placeholder names the selected type, e.g. "Search documents"). A clear button resets the words and the filters together.
-- **Segmented control:** a Field Grey track with 3px padding; the checked segment is a raised sheet in ink, the others `ink-2`.
-- **Checkbox:** 22px, 5px corners, 1.5px Mute stroke, ink when checked.
-- **One-time code:** six 52px slots in a row (10px corners, 22px 600 tabular digits); the active slot takes the ink focus outline.
+- **Text field:** borderless, the tertiary fill, 10px radius, 44px min height, 17px text, tertiary-label placeholder. Focus: a 2px system-blue ring.
+- **Form groups:** fields inside a cell-coloured group, each a 13px secondary label over a transparent, borderless field, separated by hairlines inset 16px. The label turns blue while its field has focus.
+- **Switch:** every checkbox is a 51 × 31 iOS switch: `fill` off, system green on, a white 27px knob that slides on the spring. Radios are 22px circles that fill blue with a cell-colour inner ring.
+- **Segmented control:** tertiary-fill track, cell-colour thumb (#636366 in dark) with the segment-thumb shadow, 13px/500 labels, 600 when selected.
+- **Type picker:** a 2 × 2 grid of 68px cell tiles; the chosen one gets a 2px inset blue ring and a blue check glyph.
+- **Sign-in:** floating-label fields as 60px cells, "Remember me" as a Settings row with a switch, one filled button.
 
 ### Navigation
-- **Home dock:** a 68px floating sheet (20px corners, Float shadow) holding Menu and Lock as 64×56 icon-over-label side buttons (12px 600) around a flexible 52px ink New item button. The expanded side button takes a Field Grey wash.
-- **Menu tray:** a paper tray with a 40px avatar header and action rows whose icons sit in 32px Field Grey discs; bottom sheet on phones, left rail on desktop; slides in over 0.42s.
-- **Sheet bar:** a 64px bar with a circular back or close button, a centred 16px 700 title, and a ⋯ action menu (a 14px sheet popover with 48px rows; Delete in red).
-- **Back behaviour:** the system Back gesture closes the open sheet or tray before it leaves the page, and sign-in steps replace history, so Back never lands on a half-finished sign-in step.
+- **Toolbar:** a full-width translucent bar, 49px plus safe area, hairline top edge. Lock (left) and New item (right) as 21px blue glyphs; the vault status centred as caption text with a glyph (secondary label; orange for demo; red for offline). From 768px it spans the sidebar only.
+- **Navigation bar (sheets):** thick material, 52px, hairline bottom edge; Back chevron or Cancel left, a 17px/600 centred title, text or ⋯ button right. The ⋯ opens an iOS context menu: blurred menu material, 13px radius, pop shadow, trailing glyphs, the destructive row in red.
+- **Search:** the iOS search field (tertiary fill, 10px radius, 40px) with a leading magnifier and trailing glyph buttons. A selected category or tag appears inside the field as a blue search token with a white glyph, while the typed term stays beside it. The filter panel expands inside the same field.
+- **Menu:** a Settings-style sheet on the grouped background: an account cell with a 52px monogram avatar, then grouped rows with 29px coloured icon squares (7px radius, white glyph) and trailing chevrons; New item and Sign out stand as their own groups. Bottom sheet on phones; a centred 480px form sheet with the pop shadow from 768px.
 
-### Toast Slip
-A dark ink slip (24px radius, 48px tall, white text) with a 28px white disc for the mark, a 14.5px title and a 13px message; red for danger. It drops in from the top on phones and rises at the bottom right on desktop. It confirms an action ("Password copied"); it never carries a secret value.
+### Secret reveal (signature)
+A field shows dots and a tertiary eye glyph. A tap (under 300ms) reveals the value in SF Mono for 20 seconds, fading in from a 4px blur; a red footnote line reads "Visible · hides in Ns" with a blue "Hide" action. Holding the dots reveals only while held and hides again on release, with no countdown. A saved password clue is always in view when filled: an inset quaternary-fill strip with an orange lightbulb "Clue" label, read in the system face.
 
-### Secret Strip (signature)
-The reveal field. A 44px recessed white face, 6px corners, holds the carbon value under an absolutely positioned security-tint seal. On the seal, a floating sheet pill reads "Hold to reveal" with a fingerprint icon. A press longer than 300ms reveals only while held; a tap (or Enter/Space) reveals for 20 seconds. Either way the seal clips off to the right over 0.42s on the brand ease and the face gains a 1.5px red inset outline; for a tap reveal a red "Visible · reseals in Ns" timer with an underlined "Reseal now" appears below. On release or at zero the tint slides back. With no value saved, the seal becomes a Field Grey fill with "No password saved" in `ink-3`.
+### TOTP code (signature)
+The live code in SF Mono 30px/500 system blue, beside a 44px ring that drains around it with the seconds left as a 12px tabular figure. The ring turns red as the code nears rollover.
 
-### Envelope Row (signature)
-A 68px sheet with 6px corners. On the left is a glassine window (5px, a translucent blue-grey gradient with a diagonal sheen and an inset recess) holding a 30px logo plate, the 15px 700 name, an optional Code tag and a 13.5px carbon subtitle (for documents, cards and bank accounts the holder's name leads, then the masked number, so family members' passports tell apart without opening); the window brightens its sheen on hover. On the right is a 70px seal behind a dotted perforation. It is tinted, with a raised 44px copy button, when the item has a copyable secret; otherwise it is plainly ruled with a quiet chevron or barcode button. The loading variant uses Tint placeholder bars; the "new item" variant is a dashed outline with an ink logo plate.
+### Wallet card (signature)
+Cards, documents and bank accounts open as a Wallet pass: max 400px wide at a 1.586 aspect, 16px radius, white text on a 155° two-stop gradient picked from a fixed seven-pair palette by a hash of title and type (navy, green, burgundy, violet, teal, graphite, bronze), under a soft top-right radial sheen and a white hairline rim. Top: the item's squircle icon and its subtype. Then the name (22px/700), the masked number in SF Mono at the foot, and a row with the holder name ("Name on card", "Holder" or "Account holder") and expiry. Barcodes and QR codes follow on a white plate.
 
-### TOTP Ring
-A 44px ring: a 3.5px Hairline Rule track with an ink arc that empties over 30 seconds (0.9s linear steps), the remaining seconds printed at the centre (12px 700 tabular). For the last 5 seconds it fades to `ink-3`, never red.
+### Banner toast
+An iOS banner that drops from the top at every size: a 56px blurred capsule (28px radius) with the pop shadow, a 34px round mark (green success, red danger, orange warning, or the item's favicon squircle), a 15px/600 title over a 13px secondary line, and a close glyph.
 
 ### Motion
-One ease-out, cubic-bezier(0.16, 1, 0.3, 1): 0.15s for press and hover, 0.2–0.25s for overlays and the details chevron, 0.35s for toasts and the desk scale, 0.42s for sheets, the tray and the strip peel. Errors shake 10px sideways over 0.3s. `prefers-reduced-motion` collapses every animation and transition.
-
-### Locking
-The vault locks itself after 5 minutes in the background or 10 minutes idle, and the Lock button in the dock is always one tap away. The state pill shows the result; nothing is left inferred.
+One curve, the iOS spring approximated as `cubic-bezier(0.32, 0.72, 0, 1)`: 0.5s for pushes, modal cards and sheets, 0.4s for scrims, 0.2–0.25s for presses and switches. Presses scale (0.94–0.98). Everything collapses to near zero under `prefers-reduced-motion`.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** put identity in a glassine window and the secret under a tinted, perforated seal; that division is the unit of the whole system.
-- **Do** keep every stored value in Courier Prime with the carbon shadow, and every piece of interface in Public Sans.
-- **Do** use ink (`ink`, hover `ink-deep`) for the single primary action on a surface, with the ink-lift shadow.
-- **Do** make surfaces you read or type into recessed (inset shadow) and surfaces you press raised, all in ink-tinted shadows.
-- **Do** show the vault state as a pill with an icon and a word; never rely on colour alone.
-- **Do** keep 44px minimum targets, 16px input text and 11px minimum for any text.
-- **Do** re-hide anything revealed: a visible secret carries the red outline, reseals itself after 20 seconds, and offers a reseal control.
-- **Do** build edit and add screens from form sheets: a step title, ruled fields with icon labels, tick-box choices.
-- **Do** let the system Back gesture close sheets, and replace history between sign-in steps.
-- **Do** pick font sizes, radii and colours from the tokens above; a new value is a design-system change, not a local fix.
+- **Do** put every list in an inset grouped group (10px radius, cell colour) on the grouped background, with hairline separators inset past the leading icon.
+- **Do** use the text-safe system colours for anything that carries text (#0071e3, #d70015, #248a3d, #c93400, secondary label #6c6c70), and the iOS dark values under `prefers-color-scheme: dark`.
+- **Do** set type from the iOS text-style ladder in the system font; reserve SF Mono for revealed secrets, one-time codes, Wallet card numbers and record IDs.
+- **Do** keep every target at 44px or more, extending 36px circles with an invisible halo.
+- **Do** show secrets as dots with an eye glyph; tap reveals for 20s with a red "Visible · hides in Ns" line, hold reveals only while held.
+- **Do** keep a filled password clue always visible.
+- **Do** present a selected category or tag as a blue search token inside the search field, keeping the typed term.
+- **Do** render cards, documents and bank accounts as Wallet card faces from the fixed gradient palette, showing the holder name.
+- **Do** push items in from the right on phones and raise New item as a modal card; show both in the detail pane from 768px.
+- **Do** animate with `cubic-bezier(0.32, 0.72, 0, 1)` and honour reduced motion.
 
 ### Don't:
-- **Don't** use the security tint anywhere nothing is sealed; plain rows get the ruled seal.
-- **Don't** use red for anything but revealed, delete, error and offline, and don't introduce a second hue.
-- **Don't** use a blue primary button, a shield motif or a plain white favicon list; that is the category default this world refuses.
-- **Don't** use black or hard-offset shadows.
-- **Don't** set labels in uppercase or add eyebrow text above headings.
-- **Don't** show a secret value in a toast.
-- **Don't** recolour or redraw the Jisme logo to fit the ink palette; it keeps its own colours.
-- **Don't** use `mute` for text; the lowest text ink is `ink-3`.
-- **Don't** design a dark theme piecemeal; the world is light only until one is designed whole.
+- **Don't** introduce a second tint; blue is the only interactive colour.
+- **Don't** use red for anything but revealed, destructive, error or offline.
+- **Don't** cast shadows from cells, tiles, fields or buttons; only floating layers (menus, sheets, banner, Wallet card, pushed view) cast.
+- **Don't** draw borders around text fields or cells; fields are fills, groups are tone plus hairlines.
+- **Don't** make chrome opaque; bars and menus are blurred material with a hairline edge.
+- **Don't** use the quaternary label for text; it is for chevrons and disclosure glyphs only.
+- **Don't** set stored values (usernames, URLs, notes) in mono.

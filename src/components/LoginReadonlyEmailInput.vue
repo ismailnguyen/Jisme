@@ -1,8 +1,8 @@
 <template>
-    <div class="login-window win" v-show="user">
+    <div class="login-window" v-show="user">
         <span class="login-window-text">
             <small>Signing in as</small>
-            <b class="carbon" :title="user.email">{{ user.email }}</b>
+            <b :title="user.email">{{ user.email }}</b>
         </span>
         <input type="hidden" name="username" autocomplete="username" :value="user.email">
         <button type="button" class="login-window-change" @click="onChangeUsername">
@@ -33,9 +33,11 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    min-height: 64px;
-    padding: 8px 6px 8px 14px;
-    margin: 4px 0 16px;
+    min-height: 60px;
+    padding: 8px 8px 8px 16px;
+    margin: 0 0 16px;
+    border-radius: var(--r-md);
+    background: var(--bg-2);
 }
 
 .login-window-text {
@@ -46,14 +48,13 @@
 }
 
 .login-window-text small {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ink-2);
+    font-size: 13px;
+    color: var(--label-2);
 }
 
 .login-window-text b {
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 400;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -61,14 +62,12 @@
 
 .login-window-change {
     min-height: 44px;
-    padding: 0 12px;
+    padding: 0 10px;
     border: 0;
-    border-radius: var(--r-md);
+    border-radius: 22px;
     background: none;
-    color: var(--ink);
-    font-weight: 700;
-    text-decoration: underline;
-    text-underline-offset: 3px;
+    color: var(--accent);
+    font-size: 17px;
     cursor: pointer;
 }
 </style>

@@ -4,10 +4,10 @@
             <h2 id="recent-title">Recently opened</h2>
             <span v-if="recentAccounts.length && accounts.length">{{ recentAccounts.length }} of {{ accounts.length }}</span>
         </div>
-        <div class="env-stack is-grid" v-if="isLoading">
+        <div class="ios-list" v-if="isLoading">
             <LoadingAccountItem v-for="index in 4" v-bind:key="index" />
         </div>
-        <div class="env-stack is-grid" v-else-if="recentAccounts.length">
+        <div class="ios-list" v-else-if="recentAccounts.length">
             <AccountItem
                 v-for="(account, index) in recentAccounts"
                 v-bind:key="index"

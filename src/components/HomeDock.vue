@@ -1,20 +1,11 @@
 <template>
     <nav class="home-dock" aria-label="Vault actions">
-        <button
-            type="button"
-            class="dock-side"
-            :aria-expanded="isSidebarOpen(SIDEBAR.MENU) ? 'true' : 'false'"
-            @click="toggleSidebar(SIDEBAR.MENU)">
-            <i class="fa-solid fa-bars" aria-hidden="true"></i>
-            Menu
-        </button>
-        <button type="button" class="dock-primary" @click="onNewItem">
-            <i class="fa-solid fa-plus" aria-hidden="true"></i>
-            New item
-        </button>
-        <button type="button" class="dock-side" @click="onLock">
+        <button type="button" class="dock-btn" aria-label="Lock vault" title="Lock" @click="onLock">
             <i class="fa-solid fa-lock" aria-hidden="true"></i>
-            Lock
+        </button>
+        <VaultStatus class="dock-status" />
+        <button type="button" class="dock-btn" aria-label="New item" title="New item" @click="onNewItem">
+            <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
         </button>
     </nav>
 </template>
@@ -22,8 +13,12 @@
 <script>
 import { mapActions, mapState } from 'pinia';
 import { useUiStore, useUserStore } from '@/store';
+import VaultStatus from './VaultStatus.vue';
 
 export default {
+    components: {
+        VaultStatus,
+    },
     computed: {
         ...mapState(useUiStore, ['SIDEBAR', 'isSidebarOpen']),
     },
@@ -44,81 +39,53 @@ export default {
 </script>
 
 <style scoped>
+/* The iOS toolbar: translucent, full width, Lock left, the vault's state centred, New right */
 .home-dock {
     position: fixed;
-    left: 50%;
-    bottom: calc(14px + env(safe-area-inset-bottom));
-    transform: translateX(-50%);
-    width: min(420px, calc(100% - 32px));
-    height: 68px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 40;
+    height: calc(var(--toolbar-h) + env(safe-area-inset-bottom));
+    padding: 0 6px env(safe-area-inset-bottom);
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding: 0 8px;
-    border-radius: var(--r-xl);
-    background: var(--sheet);
-    box-shadow: var(--shadow-3);
+    justify-content: space-between;
+    gap: 8px;
+    background: var(--material);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+    border-top: var(--hair) solid var(--sep);
 }
 
 @media (min-width: 768px) {
     .home-dock {
-        left: max(24px, calc((100vw - 1760px) / 2 + 24px));
-        width: 332px;
-        transform: none;
+        right: auto;
+        width: var(--sidebar-w);
     }
 }
 
-.dock-side {
-    width: 64px;
-    height: 56px;
+.dock-btn {
+    width: 44px;
+    height: 44px;
+    flex: none;
     border: 0;
-    border-radius: var(--r-lg);
+    border-radius: 22px;
     background: none;
-    color: var(--ink);
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
+    color: var(--accent);
+    font-size: 21px;
+    display: grid;
+    place-items: center;
     cursor: pointer;
+    transition: opacity 0.2s;
 }
 
-.dock-side i {
-    font-size: 17px;
+.dock-btn:active {
+    opacity: 0.4;
 }
 
-.dock-side:hover,
-.dock-side[aria-expanded="true"] {
-    background: var(--field);
-}
-
-.dock-primary {
-    flex: 1;
-    height: 52px;
-    border: 0;
-    border-radius: var(--r-lg);
-    background: var(--ink);
-    color: #fff;
-    font-size: 16px;
-    font-weight: 700;
-    letter-spacing: -0.005em;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 9px;
-    cursor: pointer;
-    box-shadow: var(--shadow-ink);
-    transition: transform 0.15s var(--ease-out);
-}
-
-.dock-primary:hover {
-    background: #243044;
-}
-
-.dock-primary:active {
-    transform: translateY(1px);
+.dock-status {
+    min-width: 0;
+    overflow: hidden;
 }
 </style>

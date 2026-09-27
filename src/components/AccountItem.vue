@@ -1,42 +1,42 @@
 <template>
-    <article class="env" :id="account._id" :aria-label="title">
+    <article class="cell" :class="{ 'is-selected': isSelected }" :id="account._id" :aria-label="title">
         <button
             type="button"
-            class="env-window win"
+            class="cell-main"
             :aria-label="'Open ' + title"
+            :aria-current="isSelected ? 'true' : null"
             @click="onCardClick()">
             <span class="logo-sq" aria-hidden="true">
                 <img v-if="hasIcon" :src="displayIcon(account.icon)" loading="lazy" alt="" @error="isIconBroken = true">
                 <span v-else class="initial">{{ initial }}</span>
             </span>
-            <span class="env-text">
-                <b>
-                    <span class="env-title">{{ title }}</span>
+            <span class="cell-text">
+                <span class="cell-title">
+                    <span class="cell-title-text">{{ title }}</span>
                     <span v-if="account.totp_secret" class="code-tag"><i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>Code</span>
-                </b>
-                <small class="carbon" v-if="subtitle">{{ subtitle }}</small>
+                </span>
+                <span class="cell-sub" v-if="subtitle">{{ subtitle }}</span>
             </span>
+            <i v-if="!quickCopy && !hasBarcode" class="fa-solid fa-chevron-right cell-chevron" aria-hidden="true"></i>
         </button>
 
-        <div class="env-seal" :class="quickCopy ? 'tint' : 'is-plain'">
-            <button
-                v-if="quickCopy"
-                type="button"
-                class="ibtn"
-                :class="{ 'is-done': justCopied }"
-                :aria-label="`Copy ${ quickCopy.name.toLowerCase() } for ${ title }`"
-                @click="copySecret()">
-                <i class="fa-solid" :class="justCopied ? 'fa-check' : 'fa-copy'" aria-hidden="true"></i>
-            </button>
-            <button
-                v-else
-                type="button"
-                class="ibtn is-quiet"
-                :aria-label="hasBarcode ? 'Show barcode for ' + title : 'Open ' + title"
-                @click="onCardClick()">
-                <i class="fa-solid" :class="hasBarcode ? 'fa-barcode' : 'fa-chevron-right'" aria-hidden="true"></i>
-            </button>
-        </div>
+        <button
+            v-if="quickCopy"
+            type="button"
+            class="ibtn cell-accessory"
+            :class="{ 'is-done': justCopied }"
+            :aria-label="`Copy ${ quickCopy.name.toLowerCase() } for ${ title }`"
+            @click="copySecret()">
+            <i :class="justCopied ? 'fa-solid fa-check' : 'fa-regular fa-copy'" aria-hidden="true"></i>
+        </button>
+        <button
+            v-else-if="hasBarcode"
+            type="button"
+            class="ibtn cell-accessory"
+            :aria-label="'Show barcode for ' + title"
+            @click="onCardClick()">
+            <i class="fa-solid fa-barcode" aria-hidden="true"></i>
+        </button>
     </article>
 </template>
 
@@ -72,8 +72,17 @@
         },
         computed: {
             ...mapState(useUiStore, [
-                'SIDEBAR'
+                'SIDEBAR',
+                'currentEditingAccount',
+                'isSidebarOpen'
             ]),
+
+            // In the split view the open item stays highlighted in the list
+            isSelected: function () {
+                return this.isSidebarOpen(this.SIDEBAR.EDIT_ACCOUNT)
+                    && !!this.currentEditingAccount
+                    && this.currentEditingAccount._id === this.account._id;
+            },
 
             title: function () {
                 return this.account.label || this.account.displayPlatform || 'Untitled';

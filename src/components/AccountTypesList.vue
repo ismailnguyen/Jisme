@@ -2,8 +2,8 @@
     <nav class="type-counters" aria-label="Filter by type">
         <template v-if="isLoading">
             <div v-for="index in 4" :key="index" class="type-counter is-loading placeholder-glow" aria-hidden="true">
-                <span class="placeholder col-4"></span>
-                <span class="placeholder col-8"></span>
+                <span class="placeholder type-dot"></span>
+                <span class="placeholder col-6"></span>
             </div>
         </template>
         <template v-else>
@@ -12,11 +12,13 @@
                 :key="type.key"
                 type="button"
                 class="type-counter"
+                :style="{ '--cat': `var(--cat-${ type.key })` }"
                 :aria-pressed="isSelected(type.key) ? 'true' : 'false'"
                 :aria-label="`${ type.label }, ${ counts[type.key] || 0 } items`"
                 @click="openAccountType(type.key)">
-                <b><i :class="type.icon" aria-hidden="true"></i>{{ counts[type.key] || 0 }}</b>
-                <span>{{ type.label }}</span>
+                <span class="type-dot" aria-hidden="true"><i :class="type.icon"></i></span>
+                <b aria-hidden="true">{{ counts[type.key] || 0 }}</b>
+                <span class="type-name" aria-hidden="true">{{ type.label }}</span>
             </button>
         </template>
     </nav>
@@ -38,7 +40,7 @@
                 types: [
                     { key: 'account', label: 'Credentials', icon: 'fa-solid fa-key' },
                     { key: 'card', label: 'Cards', icon: 'fa-solid fa-credit-card' },
-                    { key: 'document', label: 'Documents', icon: 'fa-solid fa-file-lines' },
+                    { key: 'document', label: 'Documents', icon: 'fa-solid fa-id-card' },
                     { key: 'bank', label: 'Banks', icon: 'fa-solid fa-building-columns' }
                 ]
             };
@@ -75,90 +77,95 @@
 </script>
 
 <style scoped>
+/* Category tiles, as in Reminders and Passwords: a colour circle, a count, a name */
 .type-counters {
-    margin-top: 12px;
+    margin-top: 16px;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 6px;
-}
-
-@media (min-width: 768px) {
-    .type-counters {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
 }
 
 .type-counter {
-    min-height: 56px;
-    padding: 8px 8px;
-    border-radius: var(--r-md);
-    background: var(--sheet);
-    border: 1px solid var(--rule);
-    color: var(--ink);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 2px;
+    position: relative;
+    min-height: 80px;
+    padding: 10px 12px 9px;
+    border: 0;
+    border-radius: var(--r-lg);
+    background: var(--bg-2);
+    color: var(--label);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto 1fr;
+    align-items: start;
     text-align: left;
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(46, 58, 79, 0.06);
-    transition: border-color 0.15s, background-color 0.15s;
+    transition: transform 0.2s var(--ease-out), background-color 0.2s;
 }
 
-.type-counter:hover {
-    border-color: var(--tint);
-    background: #fff;
+.type-counter:active {
+    transform: scale(0.97);
+}
+
+.type-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--cat);
+    color: #fff;
+    font-size: 14px;
 }
 
 .type-counter b {
-    font-size: 18px;
+    font-family: var(--font-display);
+    font-size: 26px;
     font-weight: 700;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    line-height: 30px;
+    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
 }
 
-.type-counter b i {
-    font-size: 11px;
-    color: var(--ink-3);
-}
-
-.type-counter span {
-    font-size: 11.5px;
-    letter-spacing: -0.01em;
-    font-weight: 500;
-    color: var(--ink-2);
+.type-name {
+    grid-column: 1 / -1;
+    align-self: end;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--label-2);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
 }
 
+/* the chosen category fills with its colour */
 .type-counter[aria-pressed="true"] {
-    background: var(--ink);
-    border-color: var(--ink);
+    background: var(--cat);
     color: #fff;
 }
 
-.type-counter[aria-pressed="true"] span,
-.type-counter[aria-pressed="true"] b i {
-    color: rgba(255, 255, 255, 0.82);
+.type-counter[aria-pressed="true"] .type-dot {
+    background: #fff;
+    color: var(--cat);
+}
+
+.type-counter[aria-pressed="true"] .type-name {
+    color: #fff;
 }
 
 .type-counter.is-loading {
     cursor: default;
-    gap: 6px;
+    grid-template-columns: 1fr;
+    gap: 16px;
 }
 
-@media (max-width: 380px) {
-    .type-counters {
-        gap: 5px;
-    }
+.type-counter.is-loading .placeholder {
+    display: block;
+    height: 12px;
+}
 
-    .type-counter span {
-        font-size: 11px;
-    }
+.type-counter.is-loading .type-dot {
+    height: 30px;
+    background: var(--fill);
 }
 </style>

@@ -1,50 +1,37 @@
-/* The stack: envelopes overlap by 6px, like a pile on a desk */
-.env-stack {
-  display: flex;
-  flex-direction: column;
-}
-
-.env-stack > * + * {
-  margin-top: -6px;
-}
-
-/* On the desk the envelopes are laid side by side, as many columns as fit */
-@media (min-width: 768px) {
-  .env-stack.is-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    column-gap: 14px;
-    row-gap: 10px;
-  }
-
-  .env-stack.is-grid > * + * {
-    margin-top: 0;
-  }
-}
+/* The list column: sections of inset grouped lists */
 
 .list-empty {
-  margin: 4px 4px 12px;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--ink-2);
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: var(--r-md);
+  background: var(--bg-2);
+  font-size: 15px;
+  letter-spacing: -0.015em;
+  line-height: 1.4;
+  color: var(--label-2);
 }
 
-.all-accounts-list {
-  margin-top: 10px;
+.list-empty b {
+  font-weight: 600;
+  color: var(--label);
+}
+
+.list-empty + .ios-list {
+  margin-top: 12px;
 }
 
 .list-more {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  min-height: 48px;
-  margin-top: 14px;
+  min-height: 44px;
+  margin-top: 12px;
 }
 
 .list-more-count {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink-2);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--label-2);
 }

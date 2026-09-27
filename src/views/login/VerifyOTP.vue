@@ -233,8 +233,8 @@
         place-items: center;
         height: 52px;
         border-radius: 10px;
-        border: 1px solid var(--tint);
-        background-color: var(--color-background);
+        border: 0;
+        background-color: var(--bg-2);
         color: var(--color-text);
         font-size: 22px;
         font-weight: 600;
@@ -242,7 +242,7 @@
     }
 
     .otp-input:focus-visible + .otp-slots .otp-slot.is-active {
-        outline: 2px solid var(--ink);
+        outline: 2px solid var(--accent);
         outline-offset: 2px;
     }
 </style>

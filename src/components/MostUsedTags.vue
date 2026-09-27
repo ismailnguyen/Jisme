@@ -1,7 +1,7 @@
 <template>
     <section class="tag-shelf" aria-labelledby="tag-shelf-title" v-if="isLoading || mostUsedTags.length">
         <div class="section-hd">
-            <h2 id="tag-shelf-title"><i class="fa-solid fa-tags" aria-hidden="true"></i>Tags</h2>
+            <h2 id="tag-shelf-title">Tags</h2>
         </div>
         <div class="tag-row" v-if="isLoading" aria-hidden="true">
             <span v-for="index in 4" :key="index" class="tag-pill placeholder-glow"><span class="placeholder col-12"></span></span>
@@ -17,8 +17,7 @@
                 {{ tag.name || 'Untagged' }}
             </button>
             <button type="button" class="tag-pill is-more" @click="showMore()" v-show="canShowMore">
-                More
-                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+                Show all
             </button>
         </div>
     </section>
@@ -84,7 +83,7 @@
 .tag-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
 }
 
 @media (max-width: 767.98px) {
@@ -102,49 +101,43 @@
 }
 
 .tag-pill {
+    position: relative;
     flex: none;
-    min-height: 36px;
+    min-height: 34px;
     min-width: 44px;
-    padding: 0 12px;
+    padding: 0 14px;
+    border: 0;
     border-radius: 999px;
-    border: 1px solid var(--rule);
-    background: var(--sheet);
-    color: var(--ink);
-    font-size: 13.5px;
-    font-weight: 600;
+    background: var(--bg-2);
+    color: var(--label);
+    font-size: 15px;
+    letter-spacing: -0.015em;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(46, 58, 79, 0.06);
+    transition: transform 0.2s var(--ease-out);
 }
 
-.tag-pill:hover {
-    border-color: var(--tint);
-    background: #fff;
+.tag-pill:active {
+    transform: scale(0.95);
 }
 
 .tag-pill.is-more {
-    color: var(--ink-2);
-    border-style: dashed;
-}
-
-.tag-pill.is-more i {
-    font-size: 10px;
+    background: none;
+    color: var(--accent);
+    padding: 0 8px;
 }
 
 .tag-pill .placeholder {
     width: 48px;
 }
 
-/* 36px pill + the row's own padding keeps the hit area at 44px */
+/* 34px capsule + the row's own gap keeps the hit area at 44px */
 .tag-pill::after {
     content: "";
     position: absolute;
-    inset: -4px 0;
-}
-
-.tag-pill {
-    position: relative;
+    inset: -5px 0;
 }
 </style>

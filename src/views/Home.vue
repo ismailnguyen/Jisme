@@ -18,6 +18,12 @@
     />
   </div>
 
+  <!-- Split view: what the detail column shows before an item is opened -->
+  <div class="detail-empty" aria-hidden="true">
+    <img src="../assets/logo_medium.png" alt="" width="56" height="56">
+    <p>Select an item to see its details.</p>
+  </div>
+
   <HomeDock />
 </template>
 
