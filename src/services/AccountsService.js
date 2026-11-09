@@ -26,6 +26,11 @@ class AccountsService {
         this.headers = getHeadersWithAuth(user.token);
     }
 
+    dispose() {
+        this.user = null;
+        this.headers = null;
+    }
+
     async get(account) {
         try {
             const response = await fetch(`${ ACCOUNTS_API_URL }/${account._id}`,
@@ -63,12 +68,7 @@ class AccountsService {
     }
 
     async getRecentsCached () {
-        const cachedAccounts = await localforage.getItem(LOCAL_STORAGE_RECENT_ACCOUNTS_KEY)
-
-        if (cachedAccounts) {
-            return cachedAccounts.map(account => parseAccount(getDecryptedAccount(account, this.user.public_encryption_key)))
-        }
-
+        // Legacy cache has no authenticated owner. Leave it intact for recovery only.
         return []
     }
 
@@ -111,12 +111,6 @@ class AccountsService {
     }
 
     async getAllCached () {
-        const cachedAccounts = await localforage.getItem(LOCAL_STORAGE_ACCOUNTS_KEY)
-
-        if (cachedAccounts) {
-            return cachedAccounts.map(account => parseAccount(getDecryptedAccount(account, this.user.public_encryption_key)))
-        }
-
         return []
     }
 
@@ -133,6 +127,7 @@ class AccountsService {
                 // Destructure data here because in this payload accounts are
                 // store inside the 'data' key unlike other endpoints, because of pagination
                 const { data, totalAccounts, next } = await response.json();
+                if (!this.user) return;
 
                 // Each time we get a page, we add the accounts to the list
                 fetchCallback(
@@ -141,7 +136,7 @@ class AccountsService {
                 );
 
                 if (next && next.pageNumber && next.limit) {
-                    this.getAll(
+                    return await this.getAll(
                         fetchCallback,
                         endCallback,
                         next.pageNumber,
@@ -202,7 +197,7 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
-            error.message = 'You are offline. The account cannot be created right now. Please retry when back online.';
+            if (isNetworkError(error)) throw new NetworkException();
             this.throwError(error)
         }
     }
@@ -230,7 +225,7 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
-            error.message = 'You are offline. Changes were not saved. Please retry when back online.';
+            if (isNetworkError(error)) throw new NetworkException();
             this.throwError(error)
         }
     }
@@ -253,7 +248,7 @@ class AccountsService {
             this.throwError(error)
         }
         catch (error) {
-            error.message = 'You are offline. The account could not be deleted. Please retry when online.';
+            if (isNetworkError(error)) throw new NetworkException();
             this.throwError(error)
         }
     }
@@ -292,15 +287,11 @@ class AccountsService {
     }
 
     async updateLocalRecentAccounts (accounts) {
-        await localforage.setItem(LOCAL_STORAGE_RECENT_ACCOUNTS_KEY,
-            accounts.map(account => parseAccount(getEncryptedAccount(account, this.user.public_encryption_key)))
-        )
+        // No new persistent vault payloads until the wrapped local vault is available.
     }
 
     async updateLocalAccounts (accounts) {
-        await localforage.setItem(LOCAL_STORAGE_ACCOUNTS_KEY,
-            accounts.map(account => parseAccount(getEncryptedAccount(account, this.user.public_encryption_key)))
-        );
+        // In-memory only; do not overwrite recoverable legacy data.
     }
 
     throwError(error) {

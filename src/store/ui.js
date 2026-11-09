@@ -1,6 +1,6 @@
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { defineStore } from 'pinia';
-import { useAccountsStore, useNetworkStore } from '@/store';
+import { useAccountsStore, useNetworkStore, useUserStore } from '@/store';
 
 import Account from '../models/Account';
 
@@ -13,6 +13,19 @@ const store = defineStore('ui', () => {
 
     const isSummaryPaneExpanded = ref(false);
     const isAdvancedSearchMode = ref(false);
+
+    const userStore = useUserStore();
+    watch([() => userStore.user?.uuid, () => userStore.isDemo], () => {
+        // Clear referenced objects too, not only the store's top-level pointers.
+        for (const record of [currentAddingAccount.value, currentEditingAccount.value]) {
+            for (const key of Object.keys(record || {})) record[key] = null;
+        }
+        currentAddingAccount.value = new Account();
+        currentEditingAccount.value = new Account();
+        openedSidebarList.value = [];
+        isSummaryPaneExpanded.value = false;
+        isAdvancedSearchMode.value = false;
+    }, { flush: 'sync' });
 
     const SIDEBAR = {
         MENU: 'menu',
@@ -87,6 +100,7 @@ const store = defineStore('ui', () => {
 
         // Do not await for this task because it can run on background
         const networkStore = useNetworkStore();
+        if (networkStore.isOffline) return; // Viewing is not an unsaved edit.
         accountsStore.updateAccount(account).catch((error) => {
             if (networkStore.isOffline) {
                 return; // silently ignore background updates while offline
@@ -259,6 +273,16 @@ const store = defineStore('ui', () => {
         }
     }
 
+    const restorePendingEdit = (index) => {
+        const item = accountsStore.getPendingEdit(index);
+        if (!item) return;
+        const record = item.account;
+        if (item.type === 'create') currentAddingAccount.value = record;
+        else currentEditingAccount.value = record;
+        // Do not invoke the normal editor setter: it has a background save side effect.
+        openSidebar(item.type === 'create' ? SIDEBAR.ADD_ACCOUNT : SIDEBAR.EDIT_ACCOUNT);
+    };
+
     const isMobile = () => {
         return window.innerWidth <= 768; // Adjust the width as per your design breakpoints
     }
@@ -293,6 +317,7 @@ const store = defineStore('ui', () => {
     }
 
     return {
+        restorePendingEdit,
         currentAddingAccount,
         setCurrentAddingAccount,
         resetCurrentAddingAccount,
