@@ -23,3 +23,7 @@ export const REVEAL_DURATION_MS = 20000;
 // Lock the vault after this long in the background or without interaction.
 export const AUTO_LOCK_BACKGROUND_MS = 5 * 60 * 1000;
 export const AUTO_LOCK_IDLE_MS = 10 * 60 * 1000;
+
+// Client-controlled vault unlock phrase (option A, docs/vault-key-design.md).
+// OFF until the API vault endpoints land: production behaviour is unchanged.
+export const VAULT_UNLOCK_KEY_ENABLED = false;
