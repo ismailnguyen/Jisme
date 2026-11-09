@@ -7,7 +7,9 @@ import { VAULT_KDF_LIMITS, VaultEnvelopeError, VaultLockedError, assertApiSafe }
 vi.mock('../src/utils/secrets', async (original) => ({ ...await original(), VAULT_UNLOCK_KEY_ENABLED: true }));
 
 const PHRASE = 'correct horse battery staple';
-const fast = { iterations: VAULT_KDF_LIMITS.minIterations };
+const OTHER_PHRASE = 'another sufficiently long phrase';
+// setup() requires the login password (M2); a synthetic one keeps the policy check active.
+const fast = { iterations: VAULT_KDF_LIMITS.minIterations, loginPassword: 'synthetic login password' };
 const alice = () => ({ uuid: 'alice', token: 'synthetic-token', public_encryption_key: 'synthetic-key' });
 const keysOf = (value) => value && typeof value === 'object'
     ? Object.entries(value).flatMap(([k, v]) => [k, ...keysOf(v)]) : [];
@@ -116,4 +118,81 @@ test('exported vault is API-safe: envelopes only, no PRF fields, phrase or key',
     expect(keysOf(exported).filter(k => /prf/i.test(k))).toEqual([]);
     expect(JSON.stringify(exported)).not.toContain(PHRASE);
     expect(exported).toMatchObject({ owner: 'alice', verifier: { version: 1 }, records: { one: { version: 1 } } });
+});
+
+// --- review fixes ---
+
+test('M1: two parallel setups cannot both succeed; the surviving phrase unlocks', async () => {
+    const results = await Promise.allSettled([vault.setup(PHRASE, fast), vault.setup(OTHER_PHRASE, fast)]);
+    expect(results.map(r => r.status)).toEqual(['fulfilled', 'rejected']);
+    vault.lock();
+    await expect(vault.unlock(OTHER_PHRASE)).rejects.toThrow(VaultEnvelopeError);
+    await vault.unlock(PHRASE);
+    expect(vault.isUnlocked).toBe(true);
+});
+
+test('M1: a put between racing setups is never sealed under an orphaned key', async () => {
+    const first = vault.setup(PHRASE, fast);
+    const second = vault.setup(OTHER_PHRASE, fast).catch(err => err);
+    await first;
+    await vault.put('one', { a: 1 });
+    await second;
+    vault.lock();
+    await vault.unlock(PHRASE);
+    expect(await vault.get('one')).toEqual({ a: 1 });
+});
+
+test('M1: a setup may run again after a failed one (guard is released)', async () => {
+    await expect(vault.setup('short', fast)).rejects.toThrow(/12/);
+    await vault.setup(PHRASE, fast);
+    expect(vault.isUnlocked).toBe(true);
+});
+
+test('M1: a vault imported during an in-flight setup is never overwritten', async () => {
+    await vault.setup(PHRASE, fast);
+    await vault.put('one', { a: 1 });
+    const exported = vault.exportVault();
+    vault.forget();
+    const setting = vault.setup(OTHER_PHRASE, fast);
+    vault.importVault(exported);
+    await expect(setting).rejects.toThrow(VaultLockedError);
+    await vault.unlock(PHRASE);
+    expect(await vault.get('one')).toEqual({ a: 1 });
+});
+
+test('M2: setup requires the login password and compares it normalised', async () => {
+    const { iterations } = fast;
+    await expect(vault.setup(PHRASE, { iterations })).rejects.toThrow(/login password/i);
+    await expect(vault.setup(PHRASE, { iterations, loginPassword: '' })).rejects.toThrow(/login password/i);
+    await expect(vault.setup(PHRASE, { iterations, loginPassword: ' CORRECT Horse Battery Staple\n' })).rejects.toThrow(/login password/i);
+    expect(vault.hasVault).toBe(false);
+});
+
+test('M3: unlock against a malformed verifier always fails with the uniform error', async () => {
+    await vault.setup(PHRASE, fast);
+    const exported = vault.exportVault();
+    for (const params of [
+        { ...exported.verifier.params, salt: 'not base64!!' },
+        { ...exported.verifier.params, iterations: 10 },
+        { ...exported.verifier.params, salt: 42 },
+    ]) {
+        vault.importVault({ ...exported, verifier: { ...exported.verifier, params } });
+        const error = await vault.unlock(PHRASE).catch(err => err);
+        expect(error).toBeInstanceOf(VaultEnvelopeError);
+        expect(vault.isUnlocked).toBe(false);
+    }
+});
+
+test('L1: record ids that shadow Object.prototype are just ordinary ids', async () => {
+    await vault.setup(PHRASE, fast);
+    for (const id of ['toString', 'constructor', 'hasOwnProperty', '__proto__', 'valueOf']) {
+        expect(await vault.get(id)).toBeUndefined();
+    }
+    await vault.put('constructor', { a: 1 });
+    await vault.put('__proto__', { b: 2 });
+    expect(await vault.get('constructor')).toEqual({ a: 1 });
+    expect(await vault.get('__proto__')).toEqual({ b: 2 });
+    expect(await vault.get('toString')).toBeUndefined();
+    vault.importVault(vault.exportVault());
+    expect(await vault.get('__proto__')).toEqual({ b: 2 });
 });

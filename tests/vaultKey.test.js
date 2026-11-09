@@ -1,10 +1,10 @@
 // Real WebCrypto (Node 22 globalThis.crypto); nothing in the crypto path is mocked.
-import { test, expect, describe } from 'vitest';
+import { test, expect, describe, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import {
     VAULT_ENVELOPE_VERSION, VAULT_ALG, VAULT_KDF_LIMITS,
     createVaultParams, deriveVaultKey, sealEnvelope, openEnvelope,
-    validatePhrase, assertApiSafe, VaultEnvelopeError, VaultDisabledError,
+    validatePhrase, assertApiSafe, vaultUsage, VaultEnvelopeError, VaultDisabledError,
 } from '../src/utils/vaultKey';
 import { VAULT_UNLOCK_KEY_ENABLED } from '../src/utils/secrets';
 import { useUserStore } from '../src/store';
@@ -125,6 +125,47 @@ describe('envelope v1', () => {
         expect(() => assertApiSafe({ PRFOutput: 'x' })).toThrow(/prf/i);
         expect(() => assertApiSafe({ key })).toThrow();
         expect(() => assertApiSafe({ raw: new Uint8Array(4) })).toThrow();
+    });
+});
+
+describe('review fixes', () => {
+    test('M2: login-password check folds case, width and surrounding whitespace', () => {
+        for (const login of [' Correct Horse Battery Staple ', 'CORRECT HORSE BATTERY STAPLE\t', 'ｃｏｒｒｅｃｔ horse battery staple']) {
+            expect(() => validatePhrase(PHRASE, { loginPassword: login })).toThrow(/login password/i);
+        }
+        expect(() => validatePhrase('Straße und mehr text', { loginPassword: 'STRASSE UND MEHR TEXT' })).toThrow(/login password/i);
+    });
+
+    test('M3: every derive failure is the same VaultEnvelopeError (bad base64, KDF errors)', async () => {
+        const params = fast();
+        const bad = [
+            () => deriveVaultKey(PHRASE, { ...params, salt: 'not base64!!' }),
+            () => deriveVaultKey(PHRASE, { ...params, salt: '%%%%' }),
+            () => deriveVaultKey(PHRASE, { get kdf () { throw new TypeError('boom'); } }),
+        ];
+        for (const run of bad) {
+            const error = await run().catch(err => err);
+            expect(error).toBeInstanceOf(VaultEnvelopeError);
+            expect(error.message).toBe(new VaultEnvelopeError().message);
+        }
+        const spy = vi.spyOn(globalThis.crypto.subtle, 'deriveKey').mockRejectedValueOnce(new DOMException('x', 'OperationError'));
+        try {
+            await expect(deriveVaultKey(PHRASE, params)).rejects.toThrow(VaultEnvelopeError);
+        } finally {
+            spy.mockRestore();
+        }
+    });
+
+    test('M3: sealEnvelope with a non-base64 salt fails as VaultEnvelopeError, not DOMException', async () => {
+        const params = fast();
+        const key = await deriveVaultKey(PHRASE, params);
+        await expect(sealEnvelope(key, { ...params, salt: 'not base64!!' }, 'v', 'u')).rejects.toThrow(VaultEnvelopeError);
+    });
+
+    test('L2: usage strings are unambiguous JSON arrays (no separator collisions)', () => {
+        expect(vaultUsage('record', 'a', 'b:c')).not.toBe(vaultUsage('record', 'a:b', 'c'));
+        expect(vaultUsage('record', 'alice', '1')).toBe(JSON.stringify(['record', 'alice', '1']));
+        expect(vaultUsage('vault-check', 'alice')).not.toBe(vaultUsage('record', 'alice'));
     });
 });
 

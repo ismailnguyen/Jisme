@@ -7,19 +7,20 @@ import { useUserStore } from '@/store';
 import { VAULT_UNLOCK_KEY_ENABLED } from '../utils/secrets';
 import {
     createVaultParams, deriveVaultKey, sealEnvelope, openEnvelope, validatePhrase,
-    assertApiSafe, VaultDisabledError, VaultLockedError, VaultEnvelopeError,
+    assertApiSafe, vaultUsage, VaultDisabledError, VaultLockedError, VaultEnvelopeError,
 } from '../utils/vaultKey';
 
 const VERIFIER_PLAINTEXT = 'jisme-vault-ok';
-const checkUsage = owner => `vault-check:${ owner }`;
-const recordUsage = (owner, id) => `record:${ owner }:${ id }`;
+const checkUsage = owner => vaultUsage('vault-check', owner);
+const recordUsage = (owner, id) => vaultUsage('record', owner, String(id));
 
 const useVaultStore = defineStore('vault', () => {
     const userStore = useUserStore();
     const isEnabled = VAULT_UNLOCK_KEY_ENABLED;
 
     let key = null;
-    let epoch = 0; // bumped on every lock: in-flight derivations/opens are discarded
+    let epoch = 0; // bumped on every lock and key install: in-flight derivations/seals/opens are discarded
+    let setupInFlight = false; // only one setup may race to install a key
     const owner = ref(null);
     const verifier = ref(null);
     const records = ref({});
@@ -61,17 +62,29 @@ const useVaultStore = defineStore('vault', () => {
         const who = signedInOwner();
         if (!who) throw new VaultLockedError();
         if (verifier.value && owner.value === who) throw new Error('A vault unlock phrase is already set up.');
+        if (setupInFlight) throw new Error('A vault unlock phrase setup is already in progress.');
+        // Mandatory: the phrase must provably differ from the login password.
+        if (typeof loginPassword !== 'string' || !loginPassword.trim()) {
+            throw new Error('Vault setup requires your login password to check the phrase differs from it.');
+        }
         const normalized = validatePhrase(phrase, { loginPassword });
         const params = createVaultParams({ iterations });
-        const started = epoch;
-        const derived = await deriveVaultKey(normalized, params);
-        const check = await sealEnvelope(derived, params, VERIFIER_PLAINTEXT, checkUsage(who));
-        if (started !== epoch || signedInOwner() !== who) throw new VaultLockedError();
-        owner.value = who;
-        verifier.value = check;
-        records.value = {};
-        key = derived;
-        isUnlocked.value = true;
+        setupInFlight = true;
+        try {
+            const started = epoch;
+            const derived = await deriveVaultKey(normalized, params);
+            const check = await sealEnvelope(derived, params, VERIFIER_PLAINTEXT, checkUsage(who));
+            // Locked, signed out/switched, or a vault was imported meanwhile: never overwrite it.
+            if (started !== epoch || signedInOwner() !== who || verifier.value) throw new VaultLockedError();
+            epoch++; // any put/get holding a previous key is discarded
+            owner.value = who;
+            verifier.value = check;
+            records.value = {};
+            key = derived;
+            isUnlocked.value = true;
+        } finally {
+            setupInFlight = false;
+        }
     }
 
     async function unlock (phrase) {
@@ -98,7 +111,8 @@ const useVaultStore = defineStore('vault', () => {
     async function get (id) {
         requireEnabled();
         const { who, activeKey, started } = requireUnlocked();
-        const envelope = records.value[id];
+        // Own keys only: ids like 'toString' / 'constructor' must not hit Object.prototype.
+        const envelope = Object.hasOwn(records.value, id) ? records.value[id] : undefined;
         if (!envelope) return undefined;
         const plaintext = await openEnvelope(activeKey, envelope, recordUsage(who, String(id)));
         if (started !== epoch) throw new VaultLockedError(); // locked meanwhile: never hand out plaintext

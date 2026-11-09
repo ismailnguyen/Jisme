@@ -51,7 +51,8 @@ function toBase64 (bytes) {
 
 function fromBase64 (value) {
     if (typeof value !== 'string') throw new VaultEnvelopeError();
-    const binary = atob(value);
+    let binary;
+    try { binary = atob(value); } catch (_) { throw new VaultEnvelopeError(); } // never leak a DOMException
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
     return bytes;
@@ -84,28 +85,41 @@ export function createVaultParams ({ iterations = VAULT_KDF_LIMITS.defaultIterat
 
 const normalizePhrase = (phrase) => typeof phrase === 'string' ? phrase.normalize('NFKC') : '';
 
+// Comparison-only form (never used as key material): NFKC + case fold + trim, so
+// "Password", "password " or full-width variants all count as the same secret.
+// toUpperCase().toLowerCase() approximates full case folding (ß → ss).
+const foldForComparison = (value) => normalizePhrase(value).toUpperCase().toLowerCase().normalize('NFKC').trim();
+
+// Usage labels are JSON arrays so no owner/id content can collide across fields
+// (owner "a" + id "b:c" ≠ owner "a:b" + id "c").
+export const vaultUsage = (...parts) => JSON.stringify(parts);
+
 // Policy applied when a phrase is chosen (not on unlock, so a policy change never locks users out).
 export function validatePhrase (phrase, { loginPassword } = {}) {
     const normalized = normalizePhrase(phrase);
     if ([...normalized].length < VAULT_KDF_LIMITS.minPhraseLength) {
         throw new Error(`Vault unlock phrase must be at least ${ VAULT_KDF_LIMITS.minPhraseLength } characters.`);
     }
-    if (loginPassword && normalized === normalizePhrase(loginPassword)) {
+    if (typeof loginPassword === 'string' && loginPassword
+        && foldForComparison(normalized) === foldForComparison(loginPassword)) {
         throw new Error('Vault unlock phrase must be different from your login password.');
     }
     return normalized;
 }
 
+// Every failure (bounds, base64, empty phrase, WebCrypto errors) surfaces as the same
+// VaultEnvelopeError, exactly like openEnvelope: no oracle on which check rejected.
 export async function deriveVaultKey (phrase, params) {
-    const salt = checkParams(params);
-    const normalized = normalizePhrase(phrase);
-    if (!normalized) throw new VaultEnvelopeError();
-
-    const phraseBytes = encoder.encode(normalized);
-    const domain = encoder.encode(KDF_DOMAIN);
-    const saltBytes = new Uint8Array(domain.length + salt.length);
-    saltBytes.set(domain); saltBytes.set(salt, domain.length);
+    let phraseBytes = null;
     try {
+        const salt = checkParams(params);
+        const normalized = normalizePhrase(phrase);
+        if (!normalized) throw new VaultEnvelopeError();
+
+        phraseBytes = encoder.encode(normalized);
+        const domain = encoder.encode(KDF_DOMAIN);
+        const saltBytes = new Uint8Array(domain.length + salt.length);
+        saltBytes.set(domain); saltBytes.set(salt, domain.length);
         const material = await subtle().importKey('raw', phraseBytes, 'PBKDF2', false, ['deriveKey']);
         return await subtle().deriveKey(
             { name: 'PBKDF2', hash: 'SHA-256', salt: saltBytes, iterations: params.iterations },
@@ -114,8 +128,10 @@ export async function deriveVaultKey (phrase, params) {
             false,
             ['encrypt', 'decrypt'],
         );
+    } catch (_) {
+        throw new VaultEnvelopeError();
     } finally {
-        phraseBytes.fill(0);
+        if (phraseBytes) phraseBytes.fill(0);
     }
 }
 
