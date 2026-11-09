@@ -11,7 +11,7 @@ import {
 
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { useAlertStore } from '@/store';
+import { useAlertStore, useAccountsStore } from '@/store';
 import { APP_USER_STORE } from '../utils/store'
 import UserService from '../services/UserService'
 import DemoUserService from '../services/demo/DemoUserService'
@@ -52,7 +52,13 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     })
 
     async function requestLogin({ username, extendSession }) {
-        user.value = await userService.requestLogin({ username });
+        if (!isDemo.value && useAccountsStore().outbox.length && !await signOut(true)) {
+            throw new Error('Account switch cancelled; pending edits are still in memory.');
+        }
+        const session = user.value;
+        const result = await userService.requestLogin({ username });
+        if (user.value !== session) return;
+        user.value = result;
 
         // Temporarily store this value to reuse it once user logged in,
         // And store it in browser storage for next logins
@@ -64,10 +70,13 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function verifyPassword({ password }) {
-        user.value = await userService.verifyPassword({ 
+        const session = user.value;
+        const result = await userService.verifyPassword({ 
             accessToken: user.value.token,
             password: password
         });
+        if (user.value !== session) return;
+        user.value = result;
 
         // If there is an extra step for login, return the next step
         if (user.value && user.value.next) {
@@ -83,10 +92,13 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function verifyMFA({ totpToken }) {
-        user.value = await userService.verifyMFA({
+        const session = user.value;
+        const result = await userService.verifyMFA({
             accessToken: user.value.token,
             totpToken: totpToken
         });
+        if (user.value !== session) return;
+        user.value = result;
 
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
@@ -94,6 +106,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function verifyPasskey() {
+        const session = user.value;
         var options = parseRequestOptionsFromJSON({
             publicKey: { 
                 challenge: btoa(user.value.token),
@@ -103,38 +116,47 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         });
 
         const passkey = await getWebAuthn(options);
+        if (user.value !== session) return;
 
-        user.value = await userService.verifyPasskey({
+        const result = await userService.verifyPasskey({
             accessToken: user.value.token,
             passkey: passkey,
         });
+        if (user.value !== session) return;
+        user.value = result;
 
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
         await createSession(user);
     }
 
-    async function getLastUpdatedTime() { 
+    async function getLastUpdatedTime() {
+        const session = user.value;
         try {
             return await userService.getAccountInformation(user.value.token);
         }
         catch(error) {
+            if (user.value !== session) return;
             if (error instanceof SessionExpiredException) {
-                await signOut(true); // preserve local cache on session expiry
+                await signOut(true, { force: true }); // preserve local cache on session expiry
             }
 
             throw error;
         }
     }
 
-    async function getAccountInformation() { 
+    async function getAccountInformation() {
+        const session = user.value;
         try {
-            user.value = await userService.getAccountInformation(user.value.token);
+            const result = await userService.getAccountInformation(session.token);
+            if (user.value !== session) return;
+            user.value = result;
             await userService.setLastActivity();
         }
         catch(error) {
+            if (user.value !== session) return;
             if (error instanceof SessionExpiredException) {
-                await signOut(true); // preserve local cache on session expiry
+                await signOut(true, { force: true }); // preserve local cache on session expiry
             }
 
             throw error;
@@ -142,7 +164,10 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     }
 
     async function update() {
-        user.value = await userService.update(user.value);
+        const session = user.value;
+        const result = await userService.update(session);
+        if (user.value !== session) return;
+        user.value = result;
 
         await createSession(user);
     }
@@ -272,6 +297,9 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
     // Demo: sign in to an in-memory vault. Any real vault cached on this device is left untouched
     async function startDemo() {
+        if (isLoggedIn.value && !isDemo.value && !await signOut(true)) {
+            throw new Error('Demo switch cancelled; pending edits are still in memory.');
+        }
         demoVault.reset();
         setDemoSession(true);
 
@@ -290,31 +318,47 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         isDemo.value = false;
     }
 
-    async function signOut(preserveCache = false, { title = 'Signed out', message = 'Your vault is locked on this device.' } = {}) {
-        if (isDemo.value) {
-            await endDemo();
-
-            title = 'Demo ended';
-            message = 'Your demo changes were discarded.';
-        } else {
-            await userService.signOut(preserveCache);
+    async function signOut(preserveCache = false, { title = 'Signed out', message = 'Your vault is locked on this device.', force = false } = {}) {
+        const pending = !isDemo.value && useAccountsStore().outbox.length > 0;
+        if (pending) {
+            const warning = 'Unsaved edits exist in memory only. Locking or signing out will discard them. Cancel to retry saving online first.';
+            if (!force && !window.confirm(warning)) return false;
+            // Forced expiry/auto-lock must still revoke keys; show the loss explicitly.
+            // Persistent notice already warned that automatic lock discards drafts.
+            // Do not block key revocation behind a native modal.
+            message += ' Unsaved memory-only edits were discarded; they were not synced.';
         }
-
-        alertStore.openAlert(title, message, 'info');
-
+        // Revoke application capabilities before any storage/network await.
+        const wasDemo = isDemo.value;
+        if (user.value) {
+            user.value.public_encryption_key = null;
+            user.value.token = null;
+        }
         isLoggedIn.value = false;
         user.value = null;
-
-        //location.reload();
+        if (pending && force) window.alert('Unsaved memory-only edits were discarded by automatic lock or session expiry. They were not synced.');
+        try {
+            if (wasDemo) {
+                await endDemo();
+                title = 'Demo ended';
+                message = 'Your demo changes were discarded.';
+            } else {
+                await userService.signOut(preserveCache);
+            }
+        } catch (_) {
+            message += ' Device storage cleanup failed. Close other Jisme tabs and clear the old session when storage is available; keep legacy pending data for recovery.';
+        }
+        alertStore.openAlert(title, message, 'info');
+        return true;
     }
 
     // Lock the vault without wiping the offline cache: the user signs back in to decrypt
-    async function lock(reason = 'Locked after a period of inactivity.') {
+    async function lock(reason = 'Locked after a period of inactivity.', { force = false } = {}) {
         if (!isLoggedIn.value) {
             return;
         }
 
-        await signOut(true, { title: 'Vault locked', message: reason });
+        return await signOut(true, { title: 'Vault locked', message: reason, force });
     }
 
     async function maybeRefreshSession() {
@@ -341,7 +385,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         let sessionEnded = false;
 
         if (expiryTime <= now) {
-            await signOut(true);
+            await signOut(true, { force: true });
             sessionEnded = true;
         } else {
             const timeUntilExpiry = expiryTime - now;
@@ -356,7 +400,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
                     await userService.updateCachedUser(refreshedUser);
                 } catch (error) {
                     if (error instanceof SessionExpiredException) {
-                        await signOut(true);
+                        await signOut(true, { force: true });
                         sessionEnded = true;
                     } else {
                         console.error('Failed to refresh session', error);

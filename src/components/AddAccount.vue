@@ -860,9 +860,9 @@ export default {
         // If offline, message should reflect queued sync
         const isOffline = this.isOffline;
         this.openAlert(
-          isOffline ? 'Saved locally — will sync when back online.' : 'Saved to vault',
+          'Saved to vault',
           this.account.label || 'Account',
-          isOffline ? 'info' : 'success',
+          'success',
           this.account.icon
         );
 

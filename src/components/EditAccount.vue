@@ -1806,9 +1806,9 @@ export default {
 
         const isOffline = this.isOffline;
         this.openAlert(
-          isOffline ? 'Saved locally — will sync when back online.' : 'Saved',
+          'Saved',
           this.account.label,
-          isOffline ? 'info' : 'success',
+          'success',
           this.account.icon
         );
 
