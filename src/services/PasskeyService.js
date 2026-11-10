@@ -25,8 +25,8 @@ export class PasskeyService {
     }
 
     // 2. Verified registration: 201 { credential }.
-    async register (token, { name, response }) {
-        const body = await call('POST', 'users/passkeys', token, { name, response });
+    async register (token, { challenge, response }) {
+        const body = await call('POST', 'users/passkeys', token, { challenge, response });
         return body?.credential ?? body;
     }
 

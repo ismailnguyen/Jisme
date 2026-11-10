@@ -1,5 +1,5 @@
 <template>
-    <section v-if="isVisible && hasContent" class="vault-unlock-panel" aria-label="Vault">
+    <section v-if="isVisible && hasContent" class="security-controls vault-unlock-panel" aria-label="Vault">
         <p v-if="vaultStore.isSyncing && !vaultStore.isUnlocked" class="text-muted small mb-2" role="status">Loading vault…</p>
 
         <!-- First-run setup: no vault exists yet (docs/vault-recovery-design.md). -->
@@ -14,7 +14,7 @@
                 id="vault-setup-phrase"
                 v-model="setupPhrase"
                 type="password"
-                class="form-control form-control-sm mb-2"
+                class="form-control mb-2"
                 autocomplete="new-password"
                 :spellcheck="false"
                 :disabled="isBusy"
@@ -24,7 +24,7 @@
                 id="vault-setup-confirm"
                 v-model="setupConfirm"
                 type="password"
-                class="form-control form-control-sm mb-2"
+                class="form-control mb-2"
                 autocomplete="new-password"
                 :spellcheck="false"
                 :disabled="isBusy"
@@ -34,12 +34,12 @@
                 id="vault-setup-password"
                 v-model="setupPassword"
                 type="password"
-                class="form-control form-control-sm mb-2"
+                class="form-control mb-2"
                 autocomplete="current-password"
                 :disabled="isBusy"
                 required>
-            <p v-if="setupError" class="text-danger small mt-1 mb-1" role="alert">{{ setupError }}</p>
-            <button type="submit" class="btn btn-primary btn-sm" :disabled="isBusy || !setupPhrase || !setupConfirm || !setupPassword">Create vault</button>
+            <p v-if="setupError" class="security-error small mt-1 mb-1" role="alert">{{ setupError }}</p>
+            <button type="submit" class="btn btn-primary" :disabled="isBusy || !setupPhrase || !setupConfirm || !setupPassword">Create vault</button>
         </form>
 
         <!-- The recovery code is shown exactly ONCE, with an acknowledgement before dismissal. -->
@@ -54,17 +54,17 @@
 
         <!-- Passkey unlock (WebAuthn PRF): the key is derived locally; phrase unlock stays the fallback. -->
         <div v-if="vaultStore.hasVault && !vaultStore.isUnlocked && vaultStore.hasPasskeyUnlock" class="mb-2">
-            <button type="button" class="btn btn-primary btn-sm" :disabled="isBusy" @click="onPasskeyUnlock">
+            <button type="button" class="btn btn-primary" :disabled="isBusy" @click="onPasskeyUnlock">
                 <i class="fa fa-fingerprint" aria-hidden="true"></i>
                 {{ passkeyBusy ? 'Waiting for your passkey…' : 'Unlock with passkey' }}
             </button>
-            <p v-if="passkeyError" class="text-danger small mt-1 mb-0" role="alert">{{ passkeyError }}</p>
+            <p v-if="passkeyError" class="security-error small mt-1 mb-0" role="alert">{{ passkeyError }}</p>
         </div>
 
         <form v-if="vaultStore.hasVault && !vaultStore.isUnlocked" class="mb-2" @submit.prevent="onUnlock">
             <h2 class="h6 mb-2">Vault locked</h2>
             <label for="vault-unlock-phrase" class="form-label small">{{ vaultStore.hasPasskeyUnlock ? 'Or use your vault unlock phrase' : 'Vault unlock phrase' }}</label>
-            <div class="input-group input-group-sm">
+            <div class="security-fields">
                 <input
                     id="vault-unlock-phrase"
                     v-model="phrase"
@@ -76,11 +76,11 @@
                     required>
                 <button type="submit" class="btn btn-primary" :disabled="isBusy || !phrase">Unlock</button>
             </div>
-            <p v-if="unlockError" class="text-danger small mt-1 mb-0" role="alert">{{ unlockError }}</p>
+            <p v-if="unlockError" class="security-error small mt-1 mb-0" role="alert">{{ unlockError }}</p>
             <button
                 v-if="vaultStore.hasRecovery && mode !== 'recovery'"
                 type="button"
-                class="btn btn-link btn-sm p-0 mt-1"
+                class="btn btn-link  p-0 mt-1"
                 :disabled="isBusy"
                 @click="mode = 'recovery'">Forgot the phrase? Use the recovery code</button>
         </form>
@@ -89,7 +89,7 @@
         <form v-if="mode === 'recovery' && vaultStore.hasVault && !vaultStore.isUnlocked" class="mb-2" @submit.prevent="onRecoveryUnlock">
             <h2 class="h6 mb-2">Unlock with the recovery code</h2>
             <label for="vault-recovery-code" class="form-label small">Recovery code</label>
-            <div class="input-group input-group-sm">
+            <div class="security-fields">
                 <input
                     id="vault-recovery-code"
                     v-model="recoveryInput"
@@ -101,12 +101,12 @@
                     required>
                 <button type="submit" class="btn btn-primary" :disabled="isBusy || !recoveryInput">Unlock</button>
             </div>
-            <p v-if="recoveryError" class="text-danger small mt-1 mb-0" role="alert">{{ recoveryError }}</p>
+            <p v-if="recoveryError" class="security-error small mt-1 mb-0" role="alert">{{ recoveryError }}</p>
             <p class="small text-muted mt-1 mb-0">You will have to set a new phrase before using the vault.</p>
         </form>
 
         <!-- Needs re-seal: the vault's key params are weaker than this client seals with. -->
-        <div v-if="vaultStore.needsReseal && !vaultStore.isUnlocked" class="text-warning-emphasis small mb-2" role="alert">
+        <div v-if="vaultStore.needsReseal && !vaultStore.isUnlocked" class="security-warning small mb-2" role="alert">
             This vault uses outdated security parameters. Unlock it, then set a new phrase to re-seal it.
         </div>
 
@@ -122,7 +122,7 @@
                 id="vault-reset-phrase"
                 v-model="resetPhraseValue"
                 type="password"
-                class="form-control form-control-sm mb-2"
+                class="form-control mb-2"
                 autocomplete="new-password"
                 :spellcheck="false"
                 :disabled="isBusy"
@@ -132,7 +132,7 @@
                 id="vault-reset-confirm"
                 v-model="resetConfirm"
                 type="password"
-                class="form-control form-control-sm mb-2"
+                class="form-control mb-2"
                 autocomplete="new-password"
                 :spellcheck="false"
                 :disabled="isBusy"
@@ -142,21 +142,21 @@
                 id="vault-reset-password"
                 v-model="resetPassword"
                 type="password"
-                class="form-control form-control-sm mb-2"
+                class="form-control mb-2"
                 autocomplete="current-password"
                 :disabled="isBusy"
                 required>
-            <p v-if="resetError" class="text-danger small mt-1 mb-1" role="alert">{{ resetError }}</p>
-            <button type="submit" class="btn btn-primary btn-sm" :disabled="isBusy || !resetPhraseValue || !resetConfirm || !resetPassword">Re-seal vault</button>
+            <p v-if="resetError" class="security-error small mt-1 mb-1" role="alert">{{ resetError }}</p>
+            <button type="submit" class="btn btn-primary" :disabled="isBusy || !resetPhraseValue || !resetConfirm || !resetPassword">Re-seal vault</button>
         </form>
 
-        <p v-if="!vaultStore.hasVault && !vaultStore.hasServerVault && vaultStore.syncError" class="text-warning-emphasis small mb-0" role="alert">
+        <p v-if="!vaultStore.hasVault && !vaultStore.hasServerVault && vaultStore.syncError" class="security-warning small mb-0" role="alert">
             {{ vaultStore.syncError }}
         </p>
 
         <form v-if="vaultStore.isUnlocked && vaultStore.needsFreshSignIn" class="mb-2" @submit.prevent="onFreshSignIn">
             <label for="vault-fresh-password" class="form-label small">Re-enter your account password to save the vault</label>
-            <div class="input-group input-group-sm">
+            <div class="security-fields">
                 <input
                     id="vault-fresh-password"
                     v-model="password"
@@ -167,14 +167,14 @@
                     required>
                 <button type="submit" class="btn btn-outline-primary" :disabled="isBusy || !password">Save vault</button>
             </div>
-            <p v-if="freshSignInError || vaultStore.syncError" class="text-warning-emphasis small mt-1 mb-0" role="alert">
+            <p v-if="freshSignInError || vaultStore.syncError" class="security-warning small mt-1 mb-0" role="alert">
                 {{ freshSignInError || vaultStore.syncError }}
             </p>
         </form>
 
         <div v-else-if="vaultStore.isUnlocked && vaultStore.syncError" class="d-flex align-items-center gap-2" role="alert">
-            <span class="text-warning-emphasis small">{{ vaultStore.syncError }}</span>
-            <button type="button" class="btn btn-sm btn-outline-secondary" :disabled="isBusy" @click="onRetrySync">Retry sync</button>
+            <span class="security-warning small">{{ vaultStore.syncError }}</span>
+            <button type="button" class="btn btn-outline-secondary" :disabled="isBusy" @click="onRetrySync">Retry sync</button>
         </div>
     </section>
 </template>
@@ -355,6 +355,8 @@ export default {
     },
 };
 </script>
+
+<style scoped src="./securityControls.css"></style>
 
 <style scoped>
 .vault-unlock-panel { padding: .5rem 1rem; }

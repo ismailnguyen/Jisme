@@ -55,8 +55,9 @@ const usePasskeysStore = defineStore('passkeys', () => {
         const session = userStore.user;
         try {
             const options = await service.registrationOptions(token());
+            const challenge = options.challenge;
             const response = await registerPasskey(options);
-            const credential = await service.register(token(), { name: label, response });
+            const credential = await service.register(token(), { challenge, response });
             if (userStore.user !== session) return;
             const added = credential && typeof credential === 'object'
                 ? { verified: true, createdAt: new Date().toISOString(), name: label, ...credential }

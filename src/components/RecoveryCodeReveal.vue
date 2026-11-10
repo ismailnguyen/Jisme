@@ -1,19 +1,19 @@
 <template>
     <!-- A one-time code: shown once, with a copy button, a warning and an acknowledgement before dismissal. -->
-    <div class="recovery-code-reveal mb-2" role="alertdialog" :aria-label="title">
+    <div class="security-controls recovery-code-reveal mb-2" role="alertdialog" :aria-label="title">
         <h2 class="h6 mb-2">{{ title }}</h2>
-        <p class="small text-danger-emphasis mb-2">{{ warning }}</p>
-        <code class="d-block p-2 mb-2 border rounded user-select-all">{{ code }}</code>
-        <div class="d-flex align-items-center gap-2 mb-2">
-            <button type="button" class="btn btn-sm btn-outline-secondary" @click="copy">Copy</button>
+        <p class="small security-warning mb-2">{{ warning }}</p>
+        <code class="recovery-code mb-2">{{ code }}</code>
+        <div class="security-actions mb-2">
+            <button type="button" class="btn btn-outline-secondary" @click="copy">Copy</button>
             <span v-if="copied" class="small text-muted" role="status">Copied!</span>
-            <span v-if="copyFailed" class="small text-warning-emphasis" role="status">Copy failed: select the code and copy it manually.</span>
+            <span v-if="copyFailed" class="small security-warning" role="status">Copy failed: select the code and copy it manually.</span>
         </div>
         <div class="form-check mb-2">
             <input :id="checkboxId" v-model="saved" class="form-check-input" type="checkbox">
             <label class="form-check-label small" :for="checkboxId">{{ confirmLabel }}</label>
         </div>
-        <button type="button" class="btn btn-primary btn-sm" :disabled="!saved" @click="done">Done</button>
+        <button type="button" class="btn btn-primary" :disabled="!saved" @click="done">Done</button>
     </div>
 </template>
 
@@ -47,3 +47,5 @@ export default {
     },
 };
 </script>
+
+<style scoped src="./securityControls.css"></style>
