@@ -26,5 +26,5 @@ test('cache cannot persist partial plaintext or read an unowned legacy cache', a
 });
 test('logout leaves unowned legacy outbox and caches intact for explicit recovery', async () => {
     await new UserService().signOut();
-    expect(localforage.removeItem.mock.calls.map(([key]) => key)).toEqual(['test-USER', 'test-LAST_ACTIVITY']);
+    expect(localforage.removeItem.mock.calls.map(([key]) => key)).toEqual(['JISME_SESSION_ENVELOPE_V1', 'test-USER', 'test-LAST_ACTIVITY']);
 });

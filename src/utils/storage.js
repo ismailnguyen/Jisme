@@ -8,3 +8,5 @@ export const LOCAL_STORAGE_RECENT_ACCOUNTS_KEY = import.meta.env.VITE_LOCAL_STOR
 export const LOCAL_STORAGE_LAST_ACTIVITY_KEY = import.meta.env.VITE_LOCAL_STORAGE_LAST_ACTIVITY_KEY || 'JISME_LAST_ACTIVITY';
 // Queue for offline operations (create/update/delete)
 export const LOCAL_STORAGE_OUTBOX_KEY = import.meta.env.VITE_LOCAL_STORAGE_OUTBOX_KEY || 'JISME_OUTBOX_QUEUE';
+
+export const LOCAL_STORAGE_SESSION_ENVELOPE_KEY = 'JISME_SESSION_ENVELOPE_V1';

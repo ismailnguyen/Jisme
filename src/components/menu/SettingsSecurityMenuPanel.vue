@@ -12,7 +12,7 @@
             <div>
               <div class="fw-medium">
                 <i class="fa fa-right-to-bracket" aria-hidden="true"></i>
-                Auto login
+                Stay signed in on this device (biometric unlock)
               </div>
               <span class="fw-lighter" v-show="!fieldAttrs.autoLogin.isExpanded">
                 {{ isAutoLoginEnabled ? 'Enabled' : 'Disabled' }}
@@ -206,7 +206,6 @@ export default {
 
       try {
         await this.setAutoLogin(this.isAutoLoginEnabled);
-        await this.update();
 
         this.isLoading = false;
         this.openAlert("Saved!", "", "success");

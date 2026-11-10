@@ -1,4 +1,7 @@
-import { authenticatePasskey } from '../utils/webauthn'
+import { sealSessionEnvelope, openSessionEnvelope, SessionEnvelopeError, SESSION_ENVELOPE_MAX_AGE_DAYS } from '../utils/sessionEnvelope'
+import { createPrfSalt } from '../utils/vaultPasskey'
+import { toBase64url } from '../utils/vaultBlob'
+import { authenticateWithPrf, isSessionPrfSupported, authenticatePasskey } from '../utils/webauthn'
 import { isPasskeyReenrollmentRequired, errorText } from '../utils/apiError'
 
 import { ref, computed } from 'vue'
@@ -17,6 +20,9 @@ const MIN_REFRESH_INTERVAL_MS = 5 * 60 * 1000; // Avoid refreshing more than onc
 const useUserStore = defineStore(APP_USER_STORE, () => {
     const user = ref({});
     const isLoggedIn = ref(false);
+    const canResumeSession = ref(false);
+    let sessionEpoch = 0;
+    let restoring = false;
     const isDemo = ref(false);
     const realUserService = new UserService();
     let userService = realUserService;
@@ -50,6 +56,8 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
     async function setAutoLogin (enabled) {
         await userService.setAutoLogin(enabled);
+        if (!enabled) await clearSessionEnvelope();
+        else if (isLoggedIn.value) { isExtendedSession.value = true; await persistSession(); }
     }
 
     const hasAccounts = computed(() => {
@@ -192,15 +200,82 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
             return;
         }
 
-        user.value = await userService.getCachedUser();
-        // User's uuid is only filled when logged in successfully
-        isLoggedIn.value = user.value && user.value.uuid ? true : false;
+        await userService.getCachedUser();
+        await restoreSession();
+        if (!isLoggedIn.value) await userService.clearLastActivity();
+    }
 
-        if (isLoggedIn.value) {
-            await maybeRefreshSession();
-        } else {
-            await userService.clearLastActivity();
+    async function clearSessionEnvelope (credentialId) {
+        const envelope = await realUserService.getSessionEnvelope();
+        if (!credentialId || envelope?.credentialId === credentialId) {
+            sessionEpoch++;
+            canResumeSession.value = false;
+            await realUserService.clearSessionEnvelope();
         }
+    }
+
+    const localOptions = ids => ({
+        challenge: toBase64url(globalThis.crypto.getRandomValues(new Uint8Array(32))),
+        allowCredentials: ids.map(id => ({ id, type: 'public-key' })),
+        userVerification: 'required', timeout: 60000,
+    });
+
+    async function persistSession () {
+        if (isDemo.value || !isExtendedSession.value || !await realUserService.isAutoLoginEnabled()) return;
+        const session = user.value;
+        const started = sessionEpoch;
+        await realUserService.clearSessionEnvelope();
+        const ids = (session?.passkeys || []).filter(p => p?.verified === true).map(p => p.id || p.credentialId).filter(Boolean);
+        if (!ids.length || !session?.email || !session.token || !await isSessionPrfSupported()) return;
+        let prfOutput;
+        try {
+            const salt = createPrfSalt();
+            const result = await authenticateWithPrf(localOptions(ids), { salt });
+            prfOutput = result.prfOutput;
+            if (!ids.includes(result.credentialId)) throw new SessionEnvelopeError();
+            const envelope = await sealSessionEnvelope(session, prfOutput, { owner: session.email, credentialId: result.credentialId, salt });
+            if (started !== sessionEpoch || user.value !== session || !isLoggedIn.value) return;
+            await realUserService.setLastRememberedUsername(session.email);
+            await realUserService.saveSessionEnvelope(envelope);
+            if (started !== sessionEpoch) await realUserService.clearSessionEnvelope();
+        } catch (_) { /* Persistence is optional; unsupported PRF never prevents login. */ }
+        finally { prfOutput?.fill(0); }
+    }
+
+    async function restoreSession () {
+        if (restoring || isLoggedIn.value) return false;
+        restoring = true;
+        const started = sessionEpoch;
+        let prfOutput;
+        try {
+            if (!await realUserService.isAutoLoginEnabled()) return false;
+            const envelope = await realUserService.getSessionEnvelope();
+            if (!envelope) return false;
+            const now = Date.now();
+            if (!(new Date(envelope.tokenExpiry).getTime() > now) || !Number.isFinite(envelope.sealedAt)
+                || envelope.sealedAt > now || now - envelope.sealedAt > SESSION_ENVELOPE_MAX_AGE_DAYS * 86400000) {
+                await clearSessionEnvelope(); return false;
+            }
+            canResumeSession.value = true;
+            const owner = await realUserService.lastRememberedUsername();
+            const result = await authenticateWithPrf(localOptions([envelope.credentialId]), { salt: envelope.salt });
+            prfOutput = result.prfOutput;
+            if (result.credentialId !== envelope.credentialId) throw new SessionEnvelopeError();
+            const restored = await openSessionEnvelope(prfOutput, envelope, owner);
+            if (!restored.passkeys?.some(p => p.verified === true && (p.id || p.credentialId) === envelope.credentialId)
+                || !(new Date(restored.tokenExpiry).getTime() > Date.now())) throw new SessionEnvelopeError();
+            if (started !== sessionEpoch) return false;
+            useVaultStore().lock();
+            user.value = restored;
+            isLoggedIn.value = true;
+            canResumeSession.value = false;
+            await realUserService.setLastActivity();
+            await maybeRefreshSession();
+            return isLoggedIn.value;
+        } catch (error) {
+            if (!['NotAllowedError', 'AbortError', 'PrfUnsupportedError'].includes(error?.name)) await clearSessionEnvelope();
+            return false;
+        } finally { prfOutput?.fill(0); restoring = false; }
     }
 
     async function createSession({ value: user }) {
@@ -209,6 +284,8 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         }
 
         await userService.updateCachedUser(user);
+        if (!isDemo.value) await realUserService.clearSessionEnvelope();
+        await persistSession();
         await userService.setLastActivity();
 
         if (isExtendedSession.value) {
@@ -293,6 +370,8 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
             // Do not block key revocation behind a native modal.
             message += ' Unsaved memory-only edits were discarded; they were not synced.';
         }
+        sessionEpoch++;
+        canResumeSession.value = false;
         // Revoke application capabilities before any storage/network await.
         const wasDemo = isDemo.value;
         // Vault unlock key: lock keeps ciphertext for phrase unlock; full sign-out forgets it.
@@ -305,6 +384,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         user.value = null;
         if (pending && force) window.alert('Unsaved memory-only edits were discarded by automatic lock or session expiry. They were not synced.');
         try {
+            await realUserService.clearSessionEnvelope();
             if (wasDemo) {
                 await endDemo();
                 title = 'Demo ended';
@@ -396,6 +476,9 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         hasAccounts,
 
         init,
+        restoreSession,
+        canResumeSession,
+        clearSessionEnvelope,
         requestLogin,
         verifyPassword,
         verifyMFA,

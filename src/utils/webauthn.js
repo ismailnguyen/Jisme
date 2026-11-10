@@ -48,3 +48,10 @@ export async function authenticateWithPrf (optionsJSON, { salt, wraps } = {}) {
         prfOutput,
     };
 }
+
+// Probe platform UV availability; the activation ceremony verifies actual PRF support.
+export async function isSessionPrfSupported () {
+    try {
+        return isWebAuthnSupported() && !!await globalThis.PublicKeyCredential?.isUserVerifyingPlatformAuthenticatorAvailable?.();
+    } catch (_) { return false; }
+}
