@@ -71,6 +71,7 @@
             <p v-if="isEnrolling" class="small text-muted mt-1 mb-0" role="status">Waiting for your passkey… follow your browser's prompt.</p>
             <p v-else-if="passkeysStore.enrollStatus === 'success'" class="small security-success mt-1 mb-0" role="status">Passkey added.</p>
             <p v-else-if="passkeysStore.enrollStatus === 'error'" class="security-error small mt-1 mb-0" role="alert">{{ passkeysStore.enrollError }}</p>
+            <p v-if="passkeysStore.enrollStatus === 'success' && enrolledWithoutPrf" class="small text-muted mt-1 mb-0" role="status">This passkey can sign you in, but can't keep this device silently signed in. A device-keychain passkey (iCloud Keychain / Windows Hello) can.</p>
         </form>
         <p v-else class="small text-muted mb-0">
             <i class="fa fa-ban" aria-hidden="true"></i> Passkeys are not supported in this browser.
@@ -107,11 +108,14 @@ import { mapStores } from 'pinia';
 import { useUserStore, useVaultStore } from '@/store';
 import usePasskeysStore from '../store/passkeys';
 import { errorText } from '../utils/apiError';
+import { authenticateWithPrf, isSessionPrfSupported } from '../utils/webauthn';
+import { createPrfSalt } from '../utils/vaultPasskey';
+import { toBase64url } from '../utils/vaultBlob';
 import { VaultEnvelopeError } from '../utils/vaultKey';
 
 export default {
     data () {
-        return { newName: '', deletePassword: '', vaultPhrase: '', vaultStatus: 'idle', vaultError: '' };
+        return { enrolledWithoutPrf: false, newName: '', deletePassword: '', vaultPhrase: '', vaultStatus: 'idle', vaultError: '' };
     },
     computed: {
         ...mapStores(usePasskeysStore, useVaultStore, useUserStore),
@@ -133,8 +137,29 @@ export default {
             return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString(undefined, { dateStyle: 'medium' });
         },
         async onEnroll () {
-            await this.passkeysStore.enroll(this.newName);
-            if (this.passkeysStore.enrollStatus === 'success') this.newName = '';
+            this.enrolledWithoutPrf = false;
+            const added = await this.passkeysStore.enroll(this.newName);
+            if (this.passkeysStore.enrollStatus !== 'success') return;
+            this.newName = '';
+            if (!added?.id) return;
+            let prfOutput;
+            try {
+                if (!await isSessionPrfSupported()) {
+                    this.enrolledWithoutPrf = true;
+                    return;
+                }
+                const result = await authenticateWithPrf({
+                    challenge: toBase64url(globalThis.crypto.getRandomValues(new Uint8Array(32))),
+                    allowCredentials: [{ id: added.id, type: 'public-key' }],
+                    userVerification: 'required', timeout: 60000,
+                }, { salt: createPrfSalt() });
+                prfOutput = result.prfOutput;
+            } catch (error) {
+                // An optional probe must not turn successful enrollment into an error.
+                if (error?.name === 'PrfUnsupportedError') this.enrolledWithoutPrf = true;
+            } finally {
+                prfOutput?.fill(0);
+            }
         },
         onRequestDelete (id) {
             this.deletePassword = '';

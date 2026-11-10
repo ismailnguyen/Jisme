@@ -1,16 +1,16 @@
 import { beforeEach, test, expect, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import localforage from 'localforage';
-import { useUserStore, useVaultStore } from '../src/store';
+import { useUserStore, useVaultStore, useAlertStore } from '../src/store';
 import UserService from '../src/services/UserService';
 import { sealSessionEnvelope } from '../src/utils/sessionEnvelope';
-import { authenticateWithPrf } from '../src/utils/webauthn';
-vi.mock('../src/utils/webauthn', () => ({ authenticatePasskey: vi.fn(), authenticateWithPrf: vi.fn(), isWebAuthnSupported: () => true, isSessionPrfSupported: async () => true }));
+import { authenticateWithPrf, isSessionPrfSupported } from '../src/utils/webauthn';
+vi.mock('../src/utils/webauthn', () => ({ authenticatePasskey: vi.fn(), authenticateWithPrf: vi.fn(), isWebAuthnSupported: () => true, isSessionPrfSupported: vi.fn(async () => true) }));
 let data, users;
 const owner = 'alice@example.invalid';
 const fixture = () => ({ uuid: 'alice', email: owner, token: 'secret', tokenExpiry: new Date(Date.now() + 86400000).toISOString(), passkeys: [{ id: 'Y3JlZA', verified: true }] });
 beforeEach(() => {
-    vi.clearAllMocks(); setActivePinia(createPinia()); users = useUserStore(); data = new Map();
+    vi.clearAllMocks(); isSessionPrfSupported.mockResolvedValue(true); setActivePinia(createPinia()); users = useUserStore(); data = new Map();
     localforage.getItem.mockImplementation(async k => data.get(k));
     localforage.setItem.mockImplementation(async (k,v) => { data.set(k,v); });
     localforage.removeItem.mockImplementation(async k => { data.delete(k); });
@@ -87,4 +87,34 @@ test('refresh 401 preserves the server reason after ending the session', async (
     const { useAlertStore } = await import('../src/store');
     expect(users.isLoggedIn).toBe(false);
     expect(useAlertStore().currentAlert.message).toContain('Please wait a few minutes');
+});
+
+test.each(['PrfUnsupportedError', 'capability'])('unsupported persistence (%s) warns once and leaves sign-in intact', async mode => {
+    const alert = vi.spyOn(useAlertStore(), 'openAlert');
+    if (mode === 'capability') isSessionPrfSupported.mockResolvedValue(false);
+    else authenticateWithPrf.mockRejectedValue(Object.assign(new Error(), { name: mode }));
+    users.user = fixture(); users.isLoggedIn = true;
+    await users.setAutoLogin(true);
+    await users.setAutoLogin(true);
+    expect(alert).toHaveBeenCalledTimes(1);
+    expect(alert).toHaveBeenCalledWith('Passive sign-in unavailable', "Your passkeys don't support keeping this device signed in silently (missing PRF support). Sign-in still works normally. To stay signed in across reloads, enroll a passkey stored in your device keychain (iCloud Keychain, Windows Hello).", 'warning');
+    expect(await new UserService().getSessionEnvelope()).toBeFalsy();
+    expect(users.isLoggedIn).toBe(true);
+    expect(users.user.token).toBe('secret');
+    const verify = vi.spyOn(UserService.prototype, 'verifyPassword').mockResolvedValue(fixture());
+    try { await expect(users.verifyPassword({ password: 'password' })).resolves.toBeUndefined(); }
+    finally { verify.mockRestore(); }
+    expect(users.isLoggedIn).toBe(true);
+    expect(alert).toHaveBeenCalledTimes(1);
+    expect(await new UserService().getSessionEnvelope()).toBeFalsy();
+});
+
+test('cancelling persistence stays silent and leaves sign-in intact', async () => {
+    const alert = vi.spyOn(useAlertStore(), 'openAlert');
+    authenticateWithPrf.mockRejectedValue(Object.assign(new Error(), { name: 'NotAllowedError' }));
+    users.user = fixture(); users.isLoggedIn = true;
+    await users.setAutoLogin(true);
+    expect(alert).not.toHaveBeenCalled();
+    expect(await new UserService().getSessionEnvelope()).toBeFalsy();
+    expect(users.isLoggedIn).toBe(true);
 });

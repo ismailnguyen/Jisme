@@ -65,6 +65,7 @@ const usePasskeysStore = defineStore('passkeys', () => {
             await userStore.clearSessionEnvelope(added.id);
             setPasskeys([...(userStore.user.passkeys || []).filter(p => normalizePasskey(p)?.id !== added.id), added]);
             enrollStatus.value = 'success';
+            return added;
         } catch (error) {
             if (userStore.user !== session) return;
             enrollStatus.value = 'error';

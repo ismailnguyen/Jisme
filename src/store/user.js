@@ -27,6 +27,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     const realUserService = new UserService();
     let userService = realUserService;
     const isExtendedSession = ref(false);
+    const passiveSignInNoticeShown = ref(false);
     // Explanatory notice for the password form after a passkey sign-in was refused
     // (403 "Passkey re-enrollment required"). Cleared on the next login attempt.
     const loginNotice = ref('');
@@ -220,13 +221,23 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         userVerification: 'required', timeout: 60000,
     });
 
+    function showPassiveSignInNotice () {
+        if (passiveSignInNoticeShown.value) return;
+        passiveSignInNoticeShown.value = true;
+        alertStore.openAlert('Passive sign-in unavailable', "Your passkeys don't support keeping this device signed in silently (missing PRF support). Sign-in still works normally. To stay signed in across reloads, enroll a passkey stored in your device keychain (iCloud Keychain, Windows Hello).", 'warning');
+    }
+
     async function persistSession () {
         if (isDemo.value || !isExtendedSession.value || !await realUserService.isAutoLoginEnabled()) return;
         const session = user.value;
         const started = sessionEpoch;
         await realUserService.clearSessionEnvelope();
         const ids = (session?.passkeys || []).filter(p => p?.verified === true).map(p => p.id || p.credentialId).filter(Boolean);
-        if (!ids.length || !session?.email || !session.token || !await isSessionPrfSupported()) return;
+        if (!ids.length || !session?.email || !session.token) return;
+        if (!await isSessionPrfSupported()) {
+            showPassiveSignInNotice();
+            return;
+        }
         let prfOutput;
         try {
             const salt = createPrfSalt();
@@ -238,7 +249,10 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
             await realUserService.setLastRememberedUsername(session.email);
             await realUserService.saveSessionEnvelope(envelope);
             if (started !== sessionEpoch) await realUserService.clearSessionEnvelope();
-        } catch (_) { /* Persistence is optional; unsupported PRF never prevents login. */ }
+        } catch (error) {
+            // Persistence is optional; cancellation and other failures never prevent login.
+            if (error?.name === 'PrfUnsupportedError') showPassiveSignInNotice();
+        }
         finally { prfOutput?.fill(0); }
     }
 
