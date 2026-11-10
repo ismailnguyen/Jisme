@@ -2,9 +2,10 @@
 import { test, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 const source = path => readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8');
-test('storage safety notice and page-exit warning stay wired into the application', () => {
+test('persistent storage banner is removed while page-exit warning stays wired', () => {
     const app = source('App.vue');
-    expect(app).toContain('<LocalSafetyNotice />');
+    expect(app).not.toContain('LocalSafetyNotice');
+    expect(source('components/menu/MainMenuPanel.vue')).not.toContain('Device storage: online sign-in required');
     expect(app).toContain("window.addEventListener('beforeunload', this.onBeforeUnload)");
     expect(app).toContain("window.removeEventListener('beforeunload', this.onBeforeUnload)");
 });

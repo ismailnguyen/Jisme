@@ -1,5 +1,4 @@
 <template>
-    <LocalSafetyNotice />
     <RouterView />
 
     <AlertBox v-if="hasAlert" />
@@ -24,7 +23,6 @@
         mapStores
     } from 'pinia'
     import AlertBox from './components/AlertBox.vue';
-    import LocalSafetyNotice from './components/LocalSafetyNotice.vue';
     import Footer from './components/Footer.vue';
     import { AUTO_LOCK_BACKGROUND_MS, AUTO_LOCK_IDLE_MS } from './utils/secrets';
 
@@ -32,7 +30,6 @@
 
     export default {
         components: {
-            LocalSafetyNotice,
             AlertBox,
             Footer
         },

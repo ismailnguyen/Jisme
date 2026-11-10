@@ -209,6 +209,7 @@ export default {
 
         this.isLoading = false;
         this.openAlert("Saved!", "", "success");
+        this.closeSidebar(this.SIDEBAR.MENU);
       } catch (error) {
         this.isLoading = false;
       }

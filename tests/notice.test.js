@@ -3,17 +3,37 @@ import { createPinia, setActivePinia } from 'pinia';
 import { createSSRApp } from 'vue';
 import { renderToString } from '@vue/server-renderer';
 import App from '../src/App.vue';
+import MainMenuPanel from '../src/components/menu/MainMenuPanel.vue';
 import { useAccountsStore, useUserStore, useNetworkStore, useUiStore } from '../src/store';
-test('persistent notice explains offline limits and quarantined legacy data without revealing payloads', async () => {
+async function renderMenu(pinia) {
+    const app = createSSRApp(MainMenuPanel); app.use(pinia);
+    return renderToString(app);
+}
+test('main menu shows legacy warning only when quarantined changes exist', async () => {
     const pinia = createPinia(); setActivePinia(pinia);
+    expect(await renderMenu(pinia)).not.toContain('role="alert"');
     useAccountsStore().hasLegacyPending = true;
-    const module = await import('../src/components/LocalSafetyNotice.vue').catch(() => null);
-    expect(module, 'a persistent storage safety notice must exist').not.toBeNull();
-    const app = createSSRApp(module.default); app.use(pinia);
-    const html = await renderToString(app);
-    expect(html).toMatch(/sign in again/i);
-    expect(html).toMatch(/not.*automatically/i);
+    const html = await renderMenu(pinia);
+    expect(html).toContain('role="alert"');
     expect(html).toMatch(/do not clear.*storage/i);
+    expect(html).toMatch(/not.*automatically/i);
+    expect(html).not.toContain('Device storage:');
+    useUserStore().isDemo = true;
+    expect(await renderMenu(pinia)).not.toContain('role="alert"');
+});
+test('main menu warns about memory-only edits and disables reopening in-flight edits without revealing payloads', async () => {
+    const pinia = createPinia(); setActivePinia(pinia);
+    useAccountsStore().outbox = [
+        { type: 'create', account: { password: 'synthetic secret' }, inFlight: false },
+        { type: 'update', account: {}, inFlight: true },
+    ];
+    const html = await renderMenu(pinia);
+    expect(html).toContain('role="alert"');
+    expect(html).toContain('Unsaved edits are in memory only');
+    expect(html).toContain('Automatic lock also discards these edits');
+    expect(html).toMatch(/<button[^>]*>Reopen unsaved create #1/);
+    expect(html).toMatch(/<button[^>]*disabled[^>]*>Reopen unsaved update #2/);
+    expect(html).not.toContain('synthetic secret');
 });
 test('pending edit can be reopened from memory without sending it and is owner checked', async () => {
     setActivePinia(createPinia());
