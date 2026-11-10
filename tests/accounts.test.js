@@ -5,7 +5,7 @@ import { useAccountsStore, useUserStore, useNetworkStore, useUiStore } from '../
 import AccountsService from '../src/services/AccountsService';
 import UserService from '../src/services/UserService';
 import { SessionExpiredException } from '../src/utils/errors';
-vi.mock('@github/webauthn-json/browser-ponyfill', async (original) => ({ ...await original(), get: vi.fn(async () => ({ synthetic: true })) }));
+vi.mock('../src/utils/webauthn', async (original) => ({ ...await original(), authenticatePasskey: vi.fn(async () => ({ synthetic: true })) }));
 const alice = () => ({ uuid: 'alice', token: 'synthetic-token', public_encryption_key: 'synthetic-key' });
 let users, accounts, network;
 beforeEach(() => {
@@ -155,6 +155,7 @@ test.each(['addAccount', 'updateAccount', 'removeAccount'])('%s detects network 
 });
 test.each(['requestLogin', 'verifyPassword', 'verifyMFA', 'verifyPasskey'])('late %s cannot restore a session after signout', async (method) => {
     let finish;
+    vi.spyOn(UserService.prototype, 'passkeyLoginOptions').mockResolvedValue({ challenge: 'c3ludGhldGlj' }); // server-issued challenge
     const spy = vi.spyOn(UserService.prototype, method).mockImplementation(() => new Promise(resolve => { finish = resolve; }));
     const job = users[method]({ username: 'alice@example.invalid', password: 'synthetic', totpToken: 'synthetic' });
     await vi.waitFor(() => expect(finish).toBeTypeOf('function'));

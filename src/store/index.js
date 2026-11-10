@@ -4,6 +4,7 @@ import useAccountsStore from './accounts';
 import useNetworkStore from './network';
 import useUserStore from './user';
 import useVaultStore from './vault';
+import usePasskeysStore from './passkeys';
 
 export {
     useUiStore,
@@ -12,4 +13,5 @@ export {
     useUserStore,
     useNetworkStore,
     useVaultStore,
+    usePasskeysStore,
 }

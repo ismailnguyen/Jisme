@@ -1,5 +1,5 @@
 <template>
-    <div class="container py-5" v-if="user && user.email && this.user.token">
+    <div class="container py-5" v-if="user && user.email && user.token">
         <div class="row align-items-center g-lg-5 py-5">
             <LoginHero :isLoading="isLoading" />
 
@@ -52,6 +52,7 @@
     } from '@/store'
     import LoginHero from '../../components/LoginHero.vue'
     import LoginReadonlyEmailInput from '../../components/LoginReadonlyEmailInput.vue'
+    import { errorText, isPasskeyReenrollmentRequired } from '../../utils/apiError'
 
     export default {
         data() {
@@ -119,11 +120,18 @@
                 }
                 catch (error) {
                     this.isLoading = false;
-                    
+
+                    // Legacy passkey (registered before verified enrollment): the server answers 403 with
+                    // a reason. The store keeps it as loginNotice; the password form explains it.
+                    if (isPasskeyReenrollmentRequired(error)) {
+                        this.$router.replace({ name: 'VerifyPassword' });
+                        return;
+                    }
+
                     // NotAllowedError is thrown when user's request to cancel the passkey authentication
                     // So do not display any error message in that case
                     if (error.name !== 'NotAllowedError') {
-                        this.openAlert(error.reason ? error.reason : 'Error', error.message || error.reason, 'danger');
+                        this.openAlert("Couldn't sign in with passkey", errorText(error, 'Please try again or sign in another way.'), 'danger');
                     }
                 }
             }
