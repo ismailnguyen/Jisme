@@ -12,12 +12,14 @@ import localforage from 'localforage'
 import { BASE_API_URL } from '../utils/api'
 import { getHeaders, getHeadersWithAuth } from '../utils/requestHeader'
 import { Exception, LoginException, SessionExpiredException } from '../utils/errors'
+import { PasskeyService } from './PasskeyService'
 
 localforage.config({
     name: LOCAL_STORAGE_DB_NAME
 });
 
 const USERS_API_URL = `${ BASE_API_URL }users`;
+const passkeyService = new PasskeyService();
 
 class UserService {
     constructor() {}
@@ -194,45 +196,15 @@ class UserService {
         }
     }
 
+    // Server-issued challenge for passkey sign-in (docs/passkey-ux-design.md).
+    async passkeyLoginOptions (accessToken) {
+        return await passkeyService.loginOptions(accessToken);
+    }
+
+    // Passkey sign-in. Errors keep the server reason (ApiError): a 403 "Passkey re-enrollment
+    // required" must reach the login screen intact so it can fall back to the password form.
     async verifyPasskey ({ accessToken, passkey }) {
-        try {
-            const response = await fetch(`${USERS_API_URL}/login/passkey`, {
-                method: 'POST',
-                headers: getHeadersWithAuth(accessToken),
-                body: JSON.stringify({
-                    passkey: passkey
-                })
-            });
-
-            const body = await response.json();
-
-            if (!response.ok) {
-                const { error} = body;
-
-                if (response.status === 400) {
-                    throw new LoginException('A valid passkey is mandatory!', error.reason || error.message);
-                }
-
-                if (response.status === 401) {
-                    throw new LoginException('Not authorized!', error.reason || error.message || 'Pease try later.');
-                }
-
-                if (response.status === 404) {
-                    throw new LoginException(error.message || 'Invalid passkey !', error.reason || error.message);
-                }
-
-                throw new LoginException(error.reason || error.message || body.message);
-            }
-
-            return body;
-        }
-        catch (error) {
-            if (error instanceof LoginException) {
-                throw error;
-            }
-
-            this.throwError(error);
-        }
+        return await passkeyService.login(accessToken, passkey);
     }
 
     async verifyMFA ({ accessToken, totpToken }) {

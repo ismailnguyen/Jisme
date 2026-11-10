@@ -1,5 +1,5 @@
 <template>
-    <div class="container py-5" v-if="user && user.email && this.user.token">
+    <div class="container py-5" v-if="user && user.email && user.token">
         <div class="row align-items-center g-lg-5 py-5">
             <LoginHero :isLoading="isLoading" />
 
@@ -10,6 +10,12 @@
                     <LoginReadonlyEmailInput
                         :user="user"
                         @usernameChanged="onChangeUsername" />
+
+                    <!-- Passkey refused (403 re-enrollment): explain, then the password form takes over. -->
+                    <div v-if="loginNotice" class="alert alert-warning small" role="status">
+                        <strong>{{ loginNotice }}</strong>
+                        <div>Please sign in with your password this time, then delete and re-add your passkey in Settings → Security.</div>
+                    </div>
 
                     <div class="input-group mb-3">
                         <input
@@ -44,6 +50,16 @@
                         :class="isLoading ? 'btn-outline-secondary' : 'btn-primary'"
                         :disabled="!password || isLoading">
                         {{ isLoading ? 'Unlocking…' : 'Unlock' }}
+                    </button>
+
+                    <button
+                        v-if="canUsePasskeyLogin"
+                        type="button"
+                        class="btn btn-lg btn-outline-primary ms-2"
+                        :disabled="isLoading"
+                        @click="onUsePasskey()">
+                        <i class="fa fa-fingerprint" aria-hidden="true"></i>
+                        Sign in with passkey
                     </button>
 
                     <hr class="my-4 mt-5 mb-3">
@@ -89,7 +105,9 @@
         },
         computed: {
             ...mapState(useUserStore, [
-                'user'
+                'user',
+                'loginNotice',
+                'canUsePasskeyLogin'
             ]),
         },
         mounted () {
@@ -110,6 +128,10 @@
                 'verifyPassword',
                 'setAutoLogin'
             ]),
+
+            onUsePasskey: function () {
+                this.$router.replace({ name: 'VerifyPasskey' });
+            },
 
             goBack: function () {
                 this.$router.push({ name: 'Login' });

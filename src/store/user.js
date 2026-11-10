@@ -1,13 +1,5 @@
-import { 
-    PASSKEY_RP_NAME,
-    PASSKEY_CHALLENGE
-} from '../utils/auth'
-import {
-    create as createWebAuthn,
-    get as getWebAuthn,
-    parseCreationOptionsFromJSON,
-    parseRequestOptionsFromJSON
-  } from '@github/webauthn-json/browser-ponyfill';
+import { authenticatePasskey } from '../utils/webauthn'
+import { isPasskeyReenrollmentRequired, errorText } from '../utils/apiError'
 
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
@@ -29,6 +21,19 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
     const realUserService = new UserService();
     let userService = realUserService;
     const isExtendedSession = ref(false);
+    // Explanatory notice for the password form after a passkey sign-in was refused
+    // (403 "Passkey re-enrollment required"). Cleared on the next login attempt.
+    const loginNotice = ref('');
+
+    // Offer "Sign in with passkey" when the server says the account has a verified passkey,
+    // unless the server just refused it for re-enrollment.
+    const canUsePasskeyLogin = computed(() => {
+        if (loginNotice.value) return false;
+        const u = user.value;
+        if (!u) return false;
+        if (u.next && (u.next.step === 'verify_passkey' || u.next.passkey === true)) return true;
+        return Array.isArray(u.passkeys) && u.passkeys.some(p => p && p.verified === true);
+    });
     const alertStore = useAlertStore();
 
     const lastRememberedUsername = computed(async () => {
@@ -59,6 +64,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         const result = await userService.requestLogin({ username });
         if (user.value !== session) return;
         user.value = result;
+        loginNotice.value = '';
 
         // Temporarily store this value to reuse it once user logged in,
         // And store it in browser storage for next logins
@@ -105,25 +111,33 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         await createSession(user);
     }
 
+    // Passkey sign-in against a server-issued challenge (requestLogin's next.passkeyOptions,
+    // else POST users/login/passkey/options). A 403 re-enrollment refusal keeps the pre-auth
+    // session so the password form can take over, and sets loginNotice with the server reason.
     async function verifyPasskey() {
         const session = user.value;
-        var options = parseRequestOptionsFromJSON({
-            publicKey: { 
-                challenge: btoa(user.value.token),
-                allowCredentials: [],
-                userVerification: 'preferred'
-            }
-        });
-
-        const passkey = await getWebAuthn(options);
+        const options = session?.next?.passkeyOptions
+            || await userService.passkeyLoginOptions(session.token);
         if (user.value !== session) return;
 
-        const result = await userService.verifyPasskey({
-            accessToken: user.value.token,
-            passkey: passkey,
-        });
+        const passkey = await authenticatePasskey(options);
+        if (user.value !== session) return;
+
+        let result;
+        try {
+            result = await userService.verifyPasskey({
+                accessToken: session.token,
+                passkey: passkey,
+            });
+        } catch (error) {
+            if (user.value === session && isPasskeyReenrollmentRequired(error)) {
+                loginNotice.value = errorText(error, 'Passkey re-enrollment required.');
+            }
+            throw error;
+        }
         if (user.value !== session) return;
         user.value = result;
+        loginNotice.value = '';
 
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
@@ -244,55 +258,6 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         } else {
             failure();
         }
-    }
-
-    async function generatePasskey(deviceName) {
-        const options = parseCreationOptionsFromJSON({
-            publicKey: {
-                challenge: PASSKEY_CHALLENGE, // No need challenge for registration
-                rp: {  
-                    name: PASSKEY_RP_NAME
-                },
-                user: {  
-                    id: user.value.uuid,
-                    name: user.value.email,
-                    displayName: user.value.email
-                }, 
-                pubKeyCredParams: [{
-                    type: 'public-key',
-                    alg: -7, // ES256
-                },
-                {
-                    type: 'public-key',
-                    alg: -256, // RS256
-                },
-                {
-                    type: 'public-key',
-                    alg: -37, // PS256
-                }],
-                excludeCredentials: [],
-                authenticatorSelection: {
-                    userVerification: 'preferred', // Do you want to use biometrics or a pin?
-                    residentKey: 'required' // Create a resident key e.g. passkey
-                },
-                attestation: 'indirect',
-                extensions: {
-                    credProps: true
-                }
-            }
-        });
-
-        const passkey = await createWebAuthn(options);
-        
-        user.value.passkeys = user.value.passkeys || [];
-        user.value.passkeys.push({
-            deviceName: deviceName,
-            passkey: passkey
-        });
-    }
-
-    function removePasskey (passkeyToDelete) {
-        user.value.passkeys = user.value.passkeys.filter(passkey => passkey.passkey.id !== passkeyToDelete.passkey.id);
     }
 
     // Demo: sign in to an in-memory vault. Any real vault cached on this device is left untouched
@@ -421,6 +386,8 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         isLoggedIn,
         isDemo,
+        loginNotice,
+        canUsePasskeyLogin,
         lastRememberedUsername,
 
         isAutoLoginEnabled,
@@ -440,8 +407,6 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         getAccountInformation,
         getLastUpdatedTime,
         update,
-        generatePasskey,
-        removePasskey,
         signOut,
         lock,
         startDemo,

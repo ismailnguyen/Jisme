@@ -3,6 +3,7 @@
 // blob v2: { version: 2, check, recovery?, records } — recovery is optional (legacy vaults).
 // v1 blobs ({ version: 1, check, records }) still decode; a v1 blob must not carry recovery.
 import { assertApiSafe, VaultEnvelopeError } from './vaultKey';
+import { isPasskeyWrap } from './vaultPasskey';
 
 export const VAULT_BLOB_VERSION = 2;
 const API_ENVELOPE_VERSION = 1;
@@ -41,6 +42,12 @@ export function encodeVaultBlob (exported) {
         if (!looksLikeEnvelope(exported.recovery)) throw new VaultEnvelopeError();
         blob.recovery = exported.recovery;
     }
+    // Passkey (PRF) wraps ride as an ARRAY: credential ids are never object keys (assertApiSafe
+    // rejects /prf/i keys, and a random base64url id could contain "prf").
+    if (exported.passkeys !== undefined && exported.passkeys !== null) {
+        if (!Array.isArray(exported.passkeys) || !exported.passkeys.every(isPasskeyWrap)) throw new VaultEnvelopeError();
+        if (exported.passkeys.length) blob.passkeys = exported.passkeys;
+    }
     assertApiSafe(blob, 'vaultBlob');
     return { v: API_ENVELOPE_VERSION, ct: toBase64url(JSON.stringify(blob)) };
 }
@@ -61,8 +68,11 @@ export function decodeVaultBlob (envelope) {
     if (blob.recovery !== undefined && !looksLikeEnvelope(blob.recovery)) throw new VaultEnvelopeError();
     if (!looksLikeEnvelope(blob.check) || !isPlainObject(blob.records)) throw new VaultEnvelopeError();
     if (!Object.values(blob.records).every(looksLikeEnvelope)) throw new VaultEnvelopeError();
-    // v1 (legacy) decodes with recovery undefined.
-    return { check: blob.check, recovery: blob.recovery, records: blob.records };
+    if (blob.passkeys !== undefined) {
+        if (blob.version === 1 || !Array.isArray(blob.passkeys) || !blob.passkeys.every(isPasskeyWrap)) throw new VaultEnvelopeError();
+    }
+    // v1 (legacy) decodes with recovery undefined; passkeys is undefined when the blob has none.
+    return { check: blob.check, recovery: blob.recovery, records: blob.records, passkeys: blob.passkeys };
 }
 
 // Key-order-independent comparison of two JSON envelopes (e.g. local verifier vs server check).

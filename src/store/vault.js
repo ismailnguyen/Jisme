@@ -12,8 +12,11 @@ import {
     sealEnvelope, openEnvelope, validatePhrase,
     assertApiSafe, vaultUsage, VaultDisabledError, VaultLockedError, VaultEnvelopeError,
 } from '../utils/vaultKey';
-import { encodeVaultBlob, decodeVaultBlob, sameEnvelope } from '../utils/vaultBlob';
+import { encodeVaultBlob, decodeVaultBlob, sameEnvelope, toBase64url } from '../utils/vaultBlob';
 import { VaultService, VaultApiError, isFreshSignInRequired } from '../services/VaultService';
+import { PasskeyService } from '../services/PasskeyService';
+import { sealPasskeyWrap, openPasskeyWrap, createPrfSalt } from '../utils/vaultPasskey';
+import { authenticateWithPrf } from '../utils/webauthn';
 
 const VERIFIER_PLAINTEXT = 'jisme-vault-ok';
 const checkUsage = owner => vaultUsage('vault-check', owner);
@@ -33,6 +36,7 @@ const useVaultStore = defineStore('vault', () => {
     const userStore = useUserStore();
     const isEnabled = VAULT_UNLOCK_KEY_ENABLED;
     const vaultService = new VaultService();
+    const passkeyService = new PasskeyService();
 
     let key = null;
     let epoch = 0; // bumped on every lock and key install: in-flight derivations/seals/opens are discarded
@@ -41,6 +45,11 @@ const useVaultStore = defineStore('vault', () => {
     const verifier = ref(null);
     const recovery = ref(null); // recovery envelope (seals the vault key under the recovery code)
     const records = ref({});
+    // Passkey (PRF) wraps of the vault key, one per credential (docs/passkey-ux-design.md).
+    const passkeyWraps = ref([]);
+    const hasPasskeyUnlock = computed(() => passkeyWraps.value.length > 0);
+    // Short-TTL vault token from POST vaults/unlock/passkey (closure only, like the key).
+    let vaultSession = null;
     const isUnlocked = ref(false);
     const hasVault = computed(() => !!verifier.value);
     const hasRecovery = computed(() => !!recovery.value);
@@ -65,6 +74,9 @@ const useVaultStore = defineStore('vault', () => {
 
     const requireEnabled = () => { if (!isEnabled) throw new VaultDisabledError(); };
     const signedInOwner = () => (userStore.isLoggedIn && userStore.user?.uuid) || null;
+    // Vault API calls prefer a live passkey vault token, else the session token.
+    const apiToken = () => (vaultSession && Date.now() < vaultSession.expiresAt
+        ? vaultSession.token : userStore.user.token);
 
     function requireUnlocked () {
         const who = signedInOwner();
@@ -76,6 +88,7 @@ const useVaultStore = defineStore('vault', () => {
     function lock () {
         epoch++;
         key = null;
+        vaultSession = null;
         isUnlocked.value = false;
     }
 
@@ -87,6 +100,7 @@ const useVaultStore = defineStore('vault', () => {
         verifier.value = null;
         recovery.value = null;
         records.value = {};
+        passkeyWraps.value = [];
         loadGeneration++;
         serverRevision.value = null;
         hasServerVault.value = false;
@@ -241,6 +255,7 @@ const useVaultStore = defineStore('vault', () => {
             verifier.value = newCheck;
             recovery.value = recoveryEnvelope;
             records.value = reopened;
+            passkeyWraps.value = []; // they wrapped the previous key: re-enable passkey unlock
             pinnedIterations = newParams.iterations;
             needsReseal.value = false;
             needsPhraseReset.value = false;
@@ -284,6 +299,7 @@ const useVaultStore = defineStore('vault', () => {
         if (!verifier.value) return null;
         const snapshot = { owner: owner.value, verifier: verifier.value, records: records.value };
         if (recovery.value) snapshot.recovery = recovery.value;
+        if (passkeyWraps.value.length) snapshot.passkeys = passkeyWraps.value;
         return assertApiSafe(JSON.parse(JSON.stringify(snapshot)));
     }
 
@@ -298,6 +314,7 @@ const useVaultStore = defineStore('vault', () => {
         verifier.value = JSON.parse(JSON.stringify(data.verifier));
         recovery.value = data.recovery ? JSON.parse(JSON.stringify(data.recovery)) : null;
         records.value = JSON.parse(JSON.stringify(data.records || {}));
+        passkeyWraps.value = Array.isArray(data.passkeys) ? JSON.parse(JSON.stringify(data.passkeys)) : [];
         // Anti-downgrade (advisory): accept the vault read-only, but flag weak params so the
         // UI can demand a re-seal; put() refuses to seal below the floor independently.
         if (data.verifier.params.iterations < sealFloor()) needsReseal.value = true;
@@ -312,7 +329,7 @@ const useVaultStore = defineStore('vault', () => {
         const current = () => generation === loadGeneration && signedInOwner() === who;
         beginSync();
         try {
-            const res = await vaultService.getVault(userStore.user.token, VAULT_ID);
+            const res = await vaultService.getVault(apiToken(), VAULT_ID);
             if (!current()) return; // signed out / switched / forgotten meanwhile: discard silently
             if (!res.found) {
                 hasServerVault.value = false;
@@ -320,7 +337,7 @@ const useVaultStore = defineStore('vault', () => {
                 syncError.value = null;
                 return;
             }
-            const { check, recovery: serverRecovery, records: serverRecords } = decodeVaultBlob(res.envelope);
+            const { check, recovery: serverRecovery, records: serverRecords, passkeys: serverPasskeys } = decodeVaultBlob(res.envelope);
             // Anti-downgrade (pinned): a server vault sealed weaker than this client's own
             // params is refused outright — nothing is imported, the user keeps the local vault.
             if (pinnedIterations && check.params.iterations < pinnedIterations) {
@@ -330,8 +347,9 @@ const useVaultStore = defineStore('vault', () => {
             }
             if (verifier.value && owner.value === who && sameEnvelope(verifier.value, check)) {
                 records.value = { ...serverRecords, ...records.value }; // same key: keep local edits (local wins)
+                passkeyWraps.value = mergeWraps(serverPasskeys, passkeyWraps.value);
             } else {
-                importVault({ owner: who, verifier: check, recovery: serverRecovery ?? null, records: serverRecords }); // locks on a new verifier
+                importVault({ owner: who, verifier: check, recovery: serverRecovery ?? null, records: serverRecords, passkeys: serverPasskeys ?? [] }); // locks on a new verifier
             }
             hasServerVault.value = true;
             serverRevision.value = res.revision;
@@ -356,7 +374,7 @@ const useVaultStore = defineStore('vault', () => {
         if (!verifier.value) throw new VaultLockedError();
         const live = () => started === epoch && signedInOwner() === who;
         // Re-exported on every attempt so a merge is included; the token is read late (fresh sign-in).
-        const putCurrent = (expectedRevision) => vaultService.putVault(userStore.user.token, VAULT_ID, {
+        const putCurrent = (expectedRevision) => vaultService.putVault(apiToken(), VAULT_ID, {
             expectedRevision, envelope: encodeVaultBlob(exportVault()),
         });
         needsFreshSignIn.value = false;
@@ -369,16 +387,17 @@ const useVaultStore = defineStore('vault', () => {
             } catch (error) {
                 if (!(error instanceof VaultApiError && error.status === 409)) throw error;
                 if (!live()) return;
-                const server = await vaultService.getVault(userStore.user.token, VAULT_ID);
+                const server = await vaultService.getVault(apiToken(), VAULT_ID);
                 if (!live()) return;
                 let expected = 0;
                 if (server.found) {
-                    const { check, records: serverRecords } = decodeVaultBlob(server.envelope);
+                    const { check, records: serverRecords, passkeys: serverPasskeys } = decodeVaultBlob(server.envelope);
                     if (!sameEnvelope(check, verifier.value)) {
                         syncError.value = SYNC_MESSAGES.differentPhrase; // never overwrite another key's vault
                         return;
                     }
                     records.value = { ...serverRecords, ...records.value }; // server-only ids kept, local wins
+                    passkeyWraps.value = mergeWraps(serverPasskeys, passkeyWraps.value);
                     expected = server.revision ?? error.body?.currentRevision ?? 0;
                 }
                 try {
@@ -412,6 +431,97 @@ const useVaultStore = defineStore('vault', () => {
         }
     }
 
+    // Union by credential id; local wins (same verifier, so both sides wrap the same key).
+    function mergeWraps (server = [], local = []) {
+        const byId = new Map((server || []).map(w => [w.credentialId, w]));
+        for (const w of local) byId.set(w.credentialId, w);
+        return [...byId.values()];
+    }
+
+    // Enable passkey unlock: the phrase re-derives the raw vault key (checked against the
+    // verifier), a PRF ceremony yields a per-credential secret, and the raw key is sealed under
+    // HKDF(PRF) — all locally. The local challenge is fine: the assertion is discarded, only the
+    // PRF output matters. The caller pushes the vault so the wrap reaches the server blob.
+    async function enablePasskeyUnlock (phrase) {
+        requireEnabled();
+        const who = signedInOwner();
+        const check = verifier.value;
+        if (!who || !check || owner.value !== who) throw new VaultLockedError();
+        const started = epoch;
+        let raw = null;
+        let prfOutput = null;
+        try {
+            raw = await deriveVaultKeyRaw(phrase, check.params);
+            const derived = await importVaultKey(raw);
+            if (await openEnvelope(derived, check, checkUsage(who)) !== VERIFIER_PLAINTEXT) throw new VaultEnvelopeError();
+            const verified = (userStore.user?.passkeys || [])
+                .filter(p => p && p.verified === true && typeof p.id === 'string')
+                .map(p => ({ id: p.id, type: 'public-key' }));
+            const challenge = toBase64url(globalThis.crypto.getRandomValues(new Uint8Array(32)));
+            const result = await authenticateWithPrf(
+                { challenge, allowCredentials: verified, userVerification: 'required', timeout: 60000 },
+                { salt: createPrfSalt() },
+            );
+            prfOutput = result.prfOutput;
+            const wrap = await sealPasskeyWrap(raw, check.params, prfOutput, { owner: who, credentialId: result.credentialId });
+            if (started !== epoch || signedInOwner() !== who || verifier.value !== check) throw new VaultLockedError();
+            passkeyWraps.value = [...passkeyWraps.value.filter(w => w.credentialId !== wrap.credentialId), wrap];
+            return wrap.credentialId;
+        } finally {
+            if (raw) raw.fill(0);
+            if (prfOutput) prfOutput.fill(0);
+        }
+    }
+
+    function disablePasskeyUnlock (credentialId) {
+        passkeyWraps.value = passkeyWraps.value.filter(w => w.credentialId !== credentialId);
+    }
+
+    // Unlock with a passkey: server challenge -> PRF ceremony (evalByCredential over the wraps)
+    // -> local unwrap + verifier check -> assertion (only) to POST vaults/unlock/passkey for a
+    // short-TTL vault token -> install key. The PRF output never leaves this function.
+    async function unlockWithPasskey () {
+        requireEnabled();
+        const who = signedInOwner();
+        const check = verifier.value;
+        const wraps = passkeyWraps.value;
+        if (!who || !check || owner.value !== who || !wraps.length) throw new VaultLockedError();
+        const started = epoch;
+        const options = await passkeyService.vaultUnlockOptions(userStore.user.token);
+        const { assertion, credentialId, prfOutput } = await authenticateWithPrf(options || {}, { wraps });
+        let raw = null;
+        try {
+            const wrap = wraps.find(w => w.credentialId === credentialId);
+            if (!wrap) throw new VaultEnvelopeError();
+            const opened = await openPasskeyWrap(prfOutput, wrap, who);
+            raw = opened.raw;
+            if (!sameEnvelope(opened.params, check.params)) throw new VaultEnvelopeError();
+            const unwrapped = await importVaultKey(raw);
+            if (await openEnvelope(unwrapped, check, checkUsage(who)) !== VERIFIER_PLAINTEXT) throw new VaultEnvelopeError();
+            if (started !== epoch || signedInOwner() !== who || verifier.value !== check) throw new VaultLockedError();
+            const session = await passkeyService.vaultUnlock(userStore.user.token, assertion);
+            if (started !== epoch || signedInOwner() !== who || verifier.value !== check) throw new VaultLockedError();
+            key = unwrapped;
+            vaultSession = vaultSessionFrom(session);
+            isUnlocked.value = true;
+        } finally {
+            prfOutput.fill(0);
+            if (raw) raw.fill(0);
+        }
+    }
+
+    // { token, expiresIn (s) | expiresAt (ISO/ms) } -> closure session; null when unusable.
+    function vaultSessionFrom (body) {
+        if (!body || typeof body.token !== 'string' || !body.token) return null;
+        let expiresAt = Date.now() + 5 * 60 * 1000;
+        if (Number.isFinite(body.expiresIn)) expiresAt = Date.now() + body.expiresIn * 1000;
+        else if (body.expiresAt) {
+            const at = new Date(body.expiresAt).getTime();
+            if (!Number.isNaN(at)) expiresAt = at;
+        }
+        return { token: body.token, expiresAt };
+    }
+
     // Re-authenticate (refreshes the session's auth_time), then retry the push.
     async function retryPushAfterFreshSignIn (password) {
         requireEnabled();
@@ -425,6 +535,7 @@ const useVaultStore = defineStore('vault', () => {
         isUnlocked,
         hasVault,
         hasRecovery,
+        hasPasskeyUnlock,
         needsPhraseReset,
         needsReseal,
         records,
@@ -439,6 +550,9 @@ const useVaultStore = defineStore('vault', () => {
         setup,
         unlock,
         unlockWithRecovery,
+        enablePasskeyUnlock,
+        disablePasskeyUnlock,
+        unlockWithPasskey,
         resetPhrase,
         lock,
         forget,

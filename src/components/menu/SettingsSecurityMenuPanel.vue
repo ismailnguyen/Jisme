@@ -86,55 +86,38 @@
                 Passkeys
               </div>
               <span class="fw-lighter" v-show="!fieldAttrs.passkeys.isExpanded">
-                {{ user.passkeys && user.passkeys.length ? user.passkeys.length + ' active passkeys' : 'Click to setup' }}
+                {{ user && user.passkeys && user.passkeys.length ? user.passkeys.length + ' passkeys' : 'Click to setup' }}
               </span>
             </div>
           </button>
         </h2>
         <div class="accordion-collapse" :class="fieldAttrs.passkeys.isExpanded ? 'show' : 'collapse'">
           <div class="accordion-body">
-                <div class="input-group-list">
-                  <div
-                    class="input-group"
-                    v-for="passkey in user.passkeys"
-                    :key="passkey.passkey.id"
-                  >
-                    <input
-                      :id="'passkey_' + passkey.passkey.id"
-                      name="passkey_device"
-                      class="form-control"
-                      type="text"
-                      placeholder="Loading"
-                      v-model="passkey.deviceName"
-                      disabled
-                    />
-                    <button
-                      class="btn btn-light hover-danger"
-                      type="button"
-                      @click="onRemovePasskey(passkey)"
-                    >
-                      <i class="fa fa-trash"></i>
-                      <span class="d-none d-lg-inline">&nbsp; Remove</span>
-                    </button>
-                  </div>
-                  <button
-                    id="passwordlesslogin_btn"
-                    class="btn btn-danger btn-block"
-                    @click.prevent="onGeneratePasskey()"
-                    v-if="isGeneratePasskeyBtnVisible"
-                  >
-                    <i class="fa fa-plus"></i> Allow a new device to connect
-                  </button>
+            <PasskeyManager />
+          </div>
+        </div>
+      </div>
 
-                  <button
-                    id="passwordlesslogin_unsupported_btn"
-                    class="btn btn-danger btn-block"
-                    v-if="!isGeneratePasskeyBtnVisible"
-                    disabled
-                  >
-                    <i class="fa fa-ban"></i> Passkey not supported in this device
-                  </button>
-                </div>
+      <div class="accordion-item">
+        <h2 class="accordion-header ">
+          <button
+            class="accordion-button" :class="fieldAttrs.recovery.isExpanded ? '' : 'collapsed'"
+            type="button"
+            @click="fieldAttrs.recovery.isExpanded = !fieldAttrs.recovery.isExpanded">
+            <div>
+              <div class="fw-medium">
+                <i class="fa fa-life-ring" aria-hidden="true"></i>
+                Recovery code
+              </div>
+              <span class="fw-lighter" v-show="!fieldAttrs.recovery.isExpanded">
+                One-time code to recover your account
+              </span>
+            </div>
+          </button>
+        </h2>
+        <div class="accordion-collapse" :class="fieldAttrs.recovery.isExpanded ? 'show' : 'collapse'">
+          <div class="accordion-body">
+            <RecoveryCodeSettings />
           </div>
         </div>
       </div>
@@ -165,17 +148,20 @@ import {
   useAccountsStore,
 } from "@/store";
 import Loader from "../Loader.vue";
+import PasskeyManager from "../PasskeyManager.vue";
+import RecoveryCodeSettings from "../RecoveryCodeSettings.vue";
 
 export default {
   components: {
     Loader,
+    PasskeyManager,
+    RecoveryCodeSettings,
   },
   data() {
     return {
       isLoading: false,
       totpToken: "",
       isAutoLoginEnabled: false,
-      isGeneratePasskeyBtnVisible: false,
       fieldAttrs: {
         autoLogin: {
           isExpanded: false,
@@ -186,15 +172,13 @@ export default {
         passkeys: {
           isExpanded: false,
         },
+        recovery: {
+          isExpanded: false,
+        },
       },
     };
   },
   async mounted() {
-    this.isPasskeyCreationSupported(
-      this.onPasskeySupported,
-      this.onPasskeyUnsupported
-    );
-
     this.isAutoLoginEnabled = await this.storeIsAutoLoginEnabled;
   },
   computed: {
@@ -208,10 +192,7 @@ export default {
   methods: {
     ...mapActions(useUserStore, [
       "update",
-      "generatePasskey",
-      "removePasskey",
       "setAutoLogin",
-      "isPasskeyCreationSupported",
     ]),
 
     ...mapActions(useAlertStore, ["openAlert"]),
@@ -219,44 +200,6 @@ export default {
     ...mapActions(useUiStore, ["closeSidebar"]),
 
     ...mapActions(useAccountsStore, ["enableServerEncryption"]),
-
-    onPasskeySupported: function () {
-      // Display button
-      this.isGeneratePasskeyBtnVisible = true;
-    },
-
-    onPasskeyUnsupported: function () {
-      this.isGeneratePasskeyBtnVisible = false;
-    },
-
-    onGeneratePasskey: async function () {
-      const deviceName = prompt("Enter a device name", "Device #1");
-      if (deviceName) {
-        try {
-          await this.generatePasskey(deviceName);
-
-          this.openAlert("Passkey added!", "Save to confirm.");
-        } catch (error) {
-          console.log(error);
-          this.openAlert("Error!", error, "danger");
-        }
-      }
-    },
-
-    onRemovePasskey: function (passkeyToDelete) {
-      //need to stringify and parse because Vuejs gives an observer instead of the object
-      passkeyToDelete = JSON.parse(JSON.stringify(passkeyToDelete));
-      if (
-        confirm(
-          "Do you want to delete passkey for " +
-            passkeyToDelete.deviceName +
-            "?"
-        )
-      ) {
-        this.removePasskey(passkeyToDelete);
-        this.openAlert("Passkey deleted!", "Save to confirm.");
-      }
-    },
 
     onSave: async function () {
       this.isLoading = true;
@@ -276,7 +219,4 @@ export default {
 </script>
 
 <style scoped>
-  .input-group-list > .btn:last-of-type {
-    margin-top: 1rem;
-  }
 </style>

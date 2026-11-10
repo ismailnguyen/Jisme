@@ -43,27 +43,27 @@
         </form>
 
         <!-- The recovery code is shown exactly ONCE, with an acknowledgement before dismissal. -->
-        <div v-if="showRecoveryCode" class="mb-2" role="alertdialog" aria-label="Recovery code">
-            <h2 class="h6 mb-2">Save your recovery code</h2>
-            <p class="small text-danger-emphasis mb-2">
-                If you lose both the unlock phrase and this code, the vault is unrecoverable.
-                No one can restore it — write the code down and keep it somewhere safe.
-            </p>
-            <code class="d-block p-2 mb-2 border rounded user-select-all">{{ recoveryCode }}</code>
-            <div class="d-flex align-items-center gap-2 mb-2">
-                <button type="button" class="btn btn-sm btn-outline-secondary" @click="copyRecoveryCode">Copy</button>
-                <span v-if="copied" class="small text-muted">Copied!</span>
-            </div>
-            <div class="form-check mb-2">
-                <input id="vault-recovery-ack" v-model="recoverySaved" class="form-check-input" type="checkbox">
-                <label class="form-check-label small" for="vault-recovery-ack">I saved this code somewhere safe</label>
-            </div>
-            <button type="button" class="btn btn-primary btn-sm" :disabled="!recoverySaved" @click="dismissRecoveryCode">Done</button>
+        <RecoveryCodeReveal
+            v-if="showRecoveryCode"
+            :code="recoveryCode"
+            title="Save your recovery code"
+            warning="This code is shown only once. If you lose both the unlock phrase and this code, the vault is unrecoverable. No one can restore it — write the code down and keep it somewhere safe."
+            confirm-label="I saved this code somewhere safe"
+            checkbox-id="vault-recovery-ack"
+            @done="dismissRecoveryCode" />
+
+        <!-- Passkey unlock (WebAuthn PRF): the key is derived locally; phrase unlock stays the fallback. -->
+        <div v-if="vaultStore.hasVault && !vaultStore.isUnlocked && vaultStore.hasPasskeyUnlock" class="mb-2">
+            <button type="button" class="btn btn-primary btn-sm" :disabled="isBusy" @click="onPasskeyUnlock">
+                <i class="fa fa-fingerprint" aria-hidden="true"></i>
+                {{ passkeyBusy ? 'Waiting for your passkey…' : 'Unlock with passkey' }}
+            </button>
+            <p v-if="passkeyError" class="text-danger small mt-1 mb-0" role="alert">{{ passkeyError }}</p>
         </div>
 
         <form v-if="vaultStore.hasVault && !vaultStore.isUnlocked" class="mb-2" @submit.prevent="onUnlock">
             <h2 class="h6 mb-2">Vault locked</h2>
-            <label for="vault-unlock-phrase" class="form-label small">Vault unlock phrase</label>
+            <label for="vault-unlock-phrase" class="form-label small">{{ vaultStore.hasPasskeyUnlock ? 'Or use your vault unlock phrase' : 'Vault unlock phrase' }}</label>
             <div class="input-group input-group-sm">
                 <input
                     id="vault-unlock-phrase"
@@ -183,17 +183,23 @@
 import { mapStores } from 'pinia';
 import { useUserStore, useVaultStore } from '@/store';
 import { VaultEnvelopeError } from '../utils/vaultKey';
+import { PrfUnsupportedError } from '../utils/vaultPasskey';
+import { errorText } from '../utils/apiError';
+import RecoveryCodeReveal from './RecoveryCodeReveal.vue';
 
 // The phrase, recovery code and passwords live only in this component's local state
 // and are cleared after use. The recovery code is never sent to the store to keep.
 export default {
+    components: { RecoveryCodeReveal },
     data () {
         return {
             // unlock / sync (unchanged)
             phrase: '', password: '', unlockError: '', freshSignInError: '', isBusy: false,
             // setup + recovery code reveal (shown exactly once, dismissed on acknowledgement)
             setupPhrase: '', setupConfirm: '', setupPassword: '', setupError: '',
-            recoveryCode: '', recoverySaved: false, copied: false, pushAfterDismiss: false,
+            recoveryCode: '', pushAfterDismiss: false,
+            // passkey (PRF) unlock
+            passkeyBusy: false, passkeyError: '',
             // recovery unlock ("Forgot the phrase?")
             mode: 'vault', recoveryInput: '', recoveryError: '',
             // phrase reset / re-seal
@@ -241,7 +247,6 @@ export default {
             try {
                 // Returned exactly once; kept only in this component until dismissed.
                 this.recoveryCode = await this.vaultStore.setup(this.setupPhrase, { loginPassword: this.setupPassword });
-                this.recoverySaved = false;
             } catch (error) {
                 this.setupError = error?.message || 'Could not create the vault.';
             } finally {
@@ -249,16 +254,9 @@ export default {
                 this.isBusy = false;
             }
         },
-        copyRecoveryCode () {
-            this.copied = false;
-            const clip = globalThis.navigator?.clipboard;
-            if (clip?.writeText) clip.writeText(this.recoveryCode).then(() => { this.copied = true; });
-        },
         dismissRecoveryCode () {
             const push = this.pushAfterDismiss;
             this.recoveryCode = '';
-            this.recoverySaved = false;
-            this.copied = false;
             this.pushAfterDismiss = false;
             this.mode = 'vault';
             // After a phrase reset, sync the re-sealed vault to the server.
@@ -289,7 +287,6 @@ export default {
             try {
                 // New recovery code, shown exactly once like at setup.
                 this.recoveryCode = await this.vaultStore.resetPhrase(this.resetPhraseValue, { loginPassword: this.resetPassword });
-                this.recoverySaved = false;
                 this.pushAfterDismiss = true;
                 this.mode = 'vault';
             } catch (error) {
@@ -309,6 +306,27 @@ export default {
                 this.unlockError = error instanceof VaultEnvelopeError ? 'Wrong vault phrase.' : 'Could not unlock the vault.';
             } finally {
                 this.phrase = '';
+                this.isBusy = false;
+            }
+        },
+        async onPasskeyUnlock () {
+            this.passkeyError = '';
+            this.unlockError = '';
+            this.isBusy = true;
+            this.passkeyBusy = true;
+            try {
+                await this.vaultStore.unlockWithPasskey();
+                this.mode = 'vault';
+            } catch (error) {
+                if (error instanceof VaultEnvelopeError) {
+                    this.passkeyError = 'This passkey cannot unlock the vault. Use your vault phrase.';
+                } else if (error instanceof PrfUnsupportedError) {
+                    this.passkeyError = error.message + ' Use your vault phrase.';
+                } else {
+                    this.passkeyError = errorText(error, 'Could not unlock the vault with a passkey.');
+                }
+            } finally {
+                this.passkeyBusy = false;
                 this.isBusy = false;
             }
         },
