@@ -253,6 +253,21 @@ describe('vault store server wiring', () => {
         expect(await vault.get('server-only')).toEqual({ password: 'server side' });
     });
 
+    test('g2. a fresh-sign-in 401 on the 409 retry asks for re-auth, not a conflict', async () => {
+        const { serverEnvelope } = await conflictFixture();
+        vi.stubGlobal('fetch', guarded(({ method }) => {
+            if (method === 'GET') return json(200, { vaultId: 'primary', revision: 7, envelope: serverEnvelope });
+            return puts().length === 1
+                ? json(409, { currentRevision: 7 })
+                : json(401, { message: 'Fresh sign-in required to update the vault.' });
+        }));
+        await vault.pushToServer();
+        expect(vault.needsFreshSignIn).toBe(true);
+        expect(vault.syncError).toMatch(/fresh sign-in/i);
+        expect(puts()).toHaveLength(2);
+        expect(gets()).toHaveLength(1);
+    });
+
     test('g. a second 409 stops with a conflict error (no loop)', async () => {
         const { serverEnvelope } = await conflictFixture();
         vi.stubGlobal('fetch', guarded(({ method }) => method === 'GET'

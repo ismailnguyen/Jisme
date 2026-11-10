@@ -245,8 +245,16 @@ const useVaultStore = defineStore('vault', () => {
                 }
                 try {
                     result = await putCurrent(expected);
-                } catch (_) {
-                    if (live()) syncError.value = SYNC_MESSAGES.conflict; // single retry: no loops
+                } catch (retryError) {
+                    if (live()) {
+                        if (isFreshSignInRequired(retryError)) {
+                            // The retry itself can meet the 300s rule: surface the re-auth prompt, not a conflict.
+                            needsFreshSignIn.value = true;
+                            syncError.value = SYNC_MESSAGES.freshSignIn;
+                        } else {
+                            syncError.value = SYNC_MESSAGES.conflict; // single retry: no loops
+                        }
+                    }
                     return;
                 }
             }
