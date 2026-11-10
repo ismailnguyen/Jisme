@@ -1,4 +1,5 @@
 import { 
+    LOCAL_STORAGE_SESSION_ENVELOPE_KEY,
     LOCAL_STORAGE_DB_NAME,
     LOCAL_STORAGE_USER_KEY,
     LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY,
@@ -23,6 +24,10 @@ const passkeyService = new PasskeyService();
 
 class UserService {
     constructor() {}
+
+    async saveSessionEnvelope (envelope) { await localforage.setItem(LOCAL_STORAGE_SESSION_ENVELOPE_KEY, envelope); }
+    async getSessionEnvelope () { return await localforage.getItem(LOCAL_STORAGE_SESSION_ENVELOPE_KEY); }
+    async clearSessionEnvelope () { await localforage.removeItem(LOCAL_STORAGE_SESSION_ENVELOPE_KEY); }
 
     async getCachedUser () {
         // Legacy sessions included a raw data key. Never restore that capability.
@@ -108,6 +113,7 @@ class UserService {
     }
 
     async signOut (preserveCache = false) {
+        await this.clearSessionEnvelope();
         // Always remove user session/token info
         await localforage.removeItem(LOCAL_STORAGE_USER_KEY);
         await this.clearLastActivity();

@@ -7,6 +7,8 @@
                 <form class="p-4 p-md-5 form-signin" @submit.prevent="onRequestLogin()">
                     <h1 class="h3 mb-3 font-weight-normal">Sign in</h1>
 
+                    <button v-if="canResumeSession" type="button" class="btn btn-link mb-3" :disabled="isLoading" @click="onResumeSession">Resume session</button>
+
                     <LoginReadonlyEmailInput
                         v-if="rememberedUser"
                         :user="rememberedUser"
@@ -89,7 +91,8 @@
         computed: {
             ...mapState(useUserStore, [
                 'lastRememberedUsername',
-                'isAutoLoginEnabled'
+                'isAutoLoginEnabled',
+                'canResumeSession'
             ]),
         },
         async mounted() {
@@ -105,9 +108,7 @@
             }
 
             this.isAutoLogin = await this.isAutoLoginEnabled && this.username;
-            if (this.isAutoLogin) {
-                this.onRequestLogin();
-            }
+
         },
         methods: {
             ...mapActions(useAlertStore, [
@@ -117,8 +118,15 @@
             ...mapActions(useUserStore, [
                 'requestLogin',
                 'setAutoLogin',
-                'startDemo'
+                'startDemo',
+                'restoreSession'
             ]),
+
+            onResumeSession: async function () {
+                this.isLoading = true;
+                try { if (await this.restoreSession()) this.$router.replace({ name: 'Home' }); }
+                finally { this.isLoading = false; }
+            },
 
             onStartDemo: async function () {
                 await this.startDemo();

@@ -62,6 +62,7 @@ const usePasskeysStore = defineStore('passkeys', () => {
             const added = credential && typeof credential === 'object'
                 ? { verified: true, createdAt: new Date().toISOString(), name: label, ...credential }
                 : { id: response.id, name: label, createdAt: new Date().toISOString(), verified: true };
+            await userStore.clearSessionEnvelope(added.id);
             setPasskeys([...(userStore.user.passkeys || []).filter(p => normalizePasskey(p)?.id !== added.id), added]);
             enrollStatus.value = 'success';
         } catch (error) {
@@ -95,6 +96,7 @@ const usePasskeysStore = defineStore('passkeys', () => {
         deleteStatus.value = 'loading';
         try {
             await service.remove(token(), id, password);
+            await userStore.clearSessionEnvelope(id);
             setPasskeys((userStore.user?.passkeys || []).filter(p => normalizePasskey(p)?.id !== id));
             pendingDeleteId.value = null;
             deleteStatus.value = 'success';
