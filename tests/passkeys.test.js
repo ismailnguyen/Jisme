@@ -79,7 +79,7 @@ describe('PasskeyService', () => {
         api(({ url }) => url.endsWith('users/passkeys') ? json(201, { credential: { id: 'c1' } }) : json(200, { ok: true }));
         const service = new PasskeyService();
         await service.registrationOptions('tok');
-        await service.register('tok', { name: 'Laptop', response: { id: 'c1' } });
+        await service.register('tok', { challenge: 'Y2g', response: { id: 'c1' } });
         await service.remove('tok', 'c/1', 'pw');
         await service.login('tok', { id: 'c1' });
         await service.vaultUnlock('tok', { id: 'c1' });
@@ -92,7 +92,7 @@ describe('PasskeyService', () => {
             ['POST', 'vaults/unlock/passkey'],
             ['POST', 'users/recovery'],
         ]);
-        expect(requests[1].body).toEqual({ name: 'Laptop', response: { id: 'c1' } });
+        expect(requests[1].body).toEqual({ challenge: 'Y2g', response: { id: 'c1' } });
         expect(requests[2].body).toEqual({ password: 'pw' });
         expect(requests[3].body).toEqual({ passkey: { id: 'c1' } });
         expect(requests[4].body).toEqual({ assertion: { id: 'c1' } });
@@ -101,7 +101,7 @@ describe('PasskeyService', () => {
 
     test('4xx responses throw ApiError carrying the server reason', async () => {
         api(() => json(400, { error: { message: 'Bad request', reason: 'Attestation origin mismatch' } }));
-        const error = await new PasskeyService().register('tok', { name: 'x', response: {} }).catch(e => e);
+        const error = await new PasskeyService().register('tok', { challenge: 'Y2g', response: {} }).catch(e => e);
         expect(error).toBeInstanceOf(ApiError);
         expect(error.reason).toBe('Attestation origin mismatch');
     });
@@ -133,7 +133,7 @@ describe('passkeys store', () => {
         expect(statusDuringCeremony).toBe('loading');
         expect(passkeys.enrollStatus).toBe('success');
         expect(passkeys.enrollError).toBe('');
-        expect(requests[1].body).toEqual({ name: 'Laptop', response: { id: 'c9', response: { attestationObject: 'AA' } } });
+        expect(requests[1].body).toEqual({ challenge: 'Y2g', response: { id: 'c9', response: { attestationObject: 'AA' } } });
         expect(passkeys.list.map(p => p.id)).toEqual(['c9']);
     });
 

@@ -1,0 +1,60 @@
+/* Shared by the security settings and vault sheet; colours follow the system theme. */
+.security-controls {
+    color: var(--label);
+    background: var(--bg-2);
+    border-radius: var(--r-lg);
+    min-width: 0;
+}
+.security-controls .security-warning,
+.security-controls .security-error {
+    color: var(--label);
+    padding: 12px;
+    background: var(--fill-3);
+    border-inline-start: 3px solid var(--orange);
+    border-radius: var(--r-sm);
+}
+.security-controls .security-error { border-inline-start-color: var(--red); }
+.security-controls .security-success { color: var(--label); }
+.security-controls .security-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+.security-controls .security-fields > .form-control {
+    flex: 1 0 100%;
+    width: 100%;
+    min-width: 0;
+}
+.security-controls .form-control {
+    min-height: 44px;
+    font-size: 17px;
+    background: var(--fill-3);
+    color: var(--label);
+}
+.security-controls .btn { min-height: 44px; white-space: normal; }
+.security-controls .btn:focus-visible,
+.security-controls .form-check-input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+.security-controls .security-destructive,
+.security-controls .passkey-remove { color: var(--label); }
+.security-controls .security-destructive { border: 1px solid var(--red); }
+.security-controls .security-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.passkey-list { list-style: none; padding: 0; }
+.passkey-cell { padding: 16px; background: var(--bg-2); border: 1px solid var(--sep); border-radius: var(--r-lg); }
+.passkey-cell + .passkey-cell { margin-top: 10px; }
+.passkey-heading { display: flex; align-items: start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.passkey-details { flex: 1 1 160px; min-width: 0; overflow-wrap: anywhere; }
+.passkey-notice { display: table; margin-top: 8px; padding: 5px 10px; border-radius: var(--r-md); background: var(--fill-3); color: var(--label); font-size: 13px; }
+.passkey-confirm { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--sep); }
+.recovery-code { display: block; padding: 16px; background: var(--fill-3); color: var(--label); border-radius: var(--r-md); font-family: var(--font-mono); font-size: 17px; overflow-wrap: anywhere; user-select: all; }
+/* The dark theme's bright blue tint needs a dark label to reach AA. */
+@media (prefers-color-scheme: dark) {
+    .security-controls .btn-primary:not(:disabled),
+    .security-controls .btn-primary:not(:disabled):hover,
+    .security-controls .btn-primary:not(:disabled):active {
+        color: var(--bg) !important;
+    }
+}

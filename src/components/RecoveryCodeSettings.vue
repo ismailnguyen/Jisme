@@ -1,5 +1,5 @@
 <template>
-    <div class="recovery-code-settings">
+    <div class="security-controls recovery-code-settings">
         <RecoveryCodeReveal
             v-if="passkeysStore.recoveryCode"
             :code="passkeysStore.recoveryCode"
@@ -15,13 +15,13 @@
             </p>
             <button
                 type="button"
-                class="btn btn-outline-primary btn-sm"
+                class="btn btn-outline-primary"
                 :disabled="passkeysStore.recoveryStatus === 'loading'"
                 @click="passkeysStore.generateRecoveryCode()">
                 <i class="fa fa-key" aria-hidden="true"></i>
                 {{ passkeysStore.recoveryStatus === 'loading' ? 'Generating…' : 'Generate recovery code' }}
             </button>
-            <p v-if="passkeysStore.recoveryStatus === 'error'" class="text-danger small mt-2 mb-0" role="alert">{{ passkeysStore.recoveryError }}</p>
+            <p v-if="passkeysStore.recoveryStatus === 'error'" class="security-error small mt-2 mb-0" role="alert">{{ passkeysStore.recoveryError }}</p>
         </template>
     </div>
 </template>
@@ -38,3 +38,5 @@ export default {
     },
 };
 </script>
+
+<style scoped src="./securityControls.css"></style>
