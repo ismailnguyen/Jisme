@@ -59,6 +59,7 @@
 
 <script>
     import '../../assets/auth.css'
+    import { errorText } from '../../utils/apiError'
 
     import {
         mapState,
@@ -179,7 +180,7 @@
 
                     this.totpToken = '';
                     this.focusOtpInput();
-                    this.openAlert("That code didn't work", error.message || 'Check the code in your authenticator app and try again.', 'danger');
+                    this.openAlert("That code didn't work", errorText(error, 'Check the code in your authenticator app and try again.'), 'danger');
                 }
             }
         }

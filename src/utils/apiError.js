@@ -32,6 +32,10 @@ export function errorText (error, fallback) {
     if (error.name === 'NotAllowedError' || error.name === 'AbortError') {
         return 'The passkey prompt was cancelled or timed out.';
     }
+    if ((error.status === 401 || error.code === 401)
+        && [error.reason, error.serverMessage, error.message].some(text => typeof text === 'string' && /too many/i.test(text))) {
+        return "You're signing in again too soon. Please wait a few minutes before retrying.";
+    }
     if (typeof error.reason === 'string' && error.reason) return error.reason;
     if (error instanceof ApiError) return error.serverMessage || fallback;
     if (typeof error.message === 'string' && error.message) return error.message;

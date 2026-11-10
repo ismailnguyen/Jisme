@@ -61,6 +61,7 @@
 
 <script>
     import '../../assets/auth.css'
+    import { errorText } from '../../utils/apiError'
 
     import { 
         mapState,
@@ -129,8 +130,12 @@
             },
 
             onStartDemo: async function () {
-                await this.startDemo();
-                this.$router.replace({ name: 'Home' });
+                try {
+                    await this.startDemo();
+                    this.$router.replace({ name: 'Home' });
+                } catch (error) {
+                    this.openAlert("Couldn't start demo", errorText(error, 'Please try again.'), 'danger');
+                }
             },
 
             onChangeUsername: async function () {
@@ -176,7 +181,7 @@
                 }
                 catch (error) {
                     this.isLoading = false;
-                    this.openAlert(error.reason ? error.reason : "Couldn't sign in", error.message || error.reason || 'Check your connection and try again.', 'danger');
+                    this.openAlert("Couldn't sign in", errorText(error, 'Check your connection and try again.'), 'danger');
                 }
             }
         }

@@ -142,7 +142,7 @@ class UserService {
                 }
 
                 if (response.status === 401) {
-                    throw new LoginException('Not authorized!', 'Pease try later.');
+                    throw Object.assign(new LoginException(body.error?.reason || body.error?.message || body.message || 'Not authorized!', body.error?.message || body.message || ''), { code: 401 });
                 }
 
                 if (response.status === 404) {
@@ -182,7 +182,7 @@ class UserService {
                 }
 
                 if (response.status === 401) {
-                    throw new LoginException('Not authorized!', 'Pease try later.');
+                    throw Object.assign(new LoginException(body.error?.reason || body.error?.message || body.message || 'Not authorized!', body.error?.message || body.message || ''), { code: 401 });
                 }
 
                 if (response.status === 404) {
@@ -229,7 +229,7 @@ class UserService {
 
             if (!response.ok) {
                 if (response.status === 401) {
-                    throw new LoginException('Invalid TOTP code!');
+                    throw Object.assign(new LoginException(body.error?.reason || body.error?.message || body.message || 'Invalid TOTP code!', body.error?.message || body.message || ''), { code: 401 });
                 }
 
                 throw new LoginException(body.message);
@@ -247,8 +247,9 @@ class UserService {
     }
 
     throwError(error) {
+        if (error instanceof SessionExpiredException) throw error;
         if (error.code > 400 && error.code < 500) {
-            throw new SessionExpiredException()
+            throw Object.assign(new SessionExpiredException(), { reason: error.reason, message: error.message || 'Please login again' })
         }
 
         throw new Exception(

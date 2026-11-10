@@ -65,6 +65,8 @@ describe('apiError helpers', () => {
         expect(errorText(new ApiError(401, { message: 'Bad signature' }), 'x')).toBe('Bad signature');
         expect(errorText({ name: 'NotAllowedError', message: 'cancelled' }, 'x')).toMatch(/cancel/i);
         expect(errorText(null, 'fallback')).toBe('fallback');
+        expect(errorText(new ApiError(401, { message: 'Not authorized!', reason: 'Retry this specific step' }), 'x')).toBe('Retry this specific step');
+        expect(errorText(new ApiError(401, { message: 'TOO MANY login attempt', reason: 'Not authorized!' }), 'x')).toContain('Please wait a few minutes');
     });
 
     test('isPasskeyReenrollmentRequired matches 403 + re-enrollment reason only', () => {

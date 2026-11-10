@@ -3,7 +3,7 @@ import { beforeEach, describe, test, expect, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import { createSSRApp } from 'vue';
 import { renderToString } from '@vue/server-renderer';
-import { useUserStore } from '../src/store';
+import { useAlertStore, useUserStore } from '../src/store';
 import usePasskeysStore from '../src/store/passkeys';
 import useVaultStore from '../src/store/vault';
 import * as webauthn from '../src/utils/webauthn';
@@ -118,6 +118,35 @@ describe('Login screen', () => {
     beforeEach(() => {
         users.user = { email: 'alice@example.test', token: 'pre-auth', next: { step: 'verify_password', passkey: true } };
         users.isLoggedIn = false;
+    });
+
+    test.each([
+        ['RequestLogin', 'onRequestLogin'],
+        ['VerifyPassword', 'onVerifyPassword'],
+        ['VerifyOTP', 'onVerifyOtp'],
+        ['VerifyPasskey', 'onVerifyPasskey'],
+    ])('%s renders a wait message for a rate-limit 401', async (screen, action) => {
+        vi.useFakeTimers();
+        try {
+            fetch.mockResolvedValue(new Response(JSON.stringify({ error: {
+                message: 'Too many login attempt. Please retry later.',
+                reason: 'Too many login attempt. Please retry later.',
+            } }), { status: 401 }));
+            const component = (await import(`../src/views/login/${screen}.vue`)).default;
+            // Exercise the screen handler with its real store action, then SSR-render its alert.
+            const context = {
+                username: 'alice@example.test', password: 'test', totpToken: '123456',
+                requestLogin: users.requestLogin, verifyPassword: users.verifyPassword,
+                verifyMFA: users.verifyMFA, verifyPasskey: users.verifyPasskey,
+                openAlert: useAlertStore().openAlert, focusOtpInput: vi.fn(),
+                $router: { replace: vi.fn() },
+            };
+            await component.methods[action].call(context);
+            const html = await render('components/AlertBox.vue');
+            expect(html).toContain('Please wait a few minutes before retrying.');
+            expect(html).not.toContain('Not authorized!');
+            expect(context.$router.replace).not.toHaveBeenCalled();
+        } finally { vi.useRealTimers(); }
     });
 
     test('accounts with a verified passkey are offered "Sign in with passkey"', async () => {
