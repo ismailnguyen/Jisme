@@ -3,7 +3,7 @@ import { test, expect, describe, vi } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 import {
     VAULT_ENVELOPE_VERSION, VAULT_ALG, VAULT_KDF_LIMITS,
-    createVaultParams, deriveVaultKey, sealEnvelope, openEnvelope,
+    createVaultParams, deriveVaultKey, deriveVaultKeyRaw, importVaultKey, sealEnvelope, openEnvelope,
     validatePhrase, assertApiSafe, vaultUsage, VaultEnvelopeError, VaultDisabledError,
 } from '../src/utils/vaultKey';
 import { VAULT_UNLOCK_KEY_ENABLED } from '../src/utils/secrets';
@@ -148,11 +148,16 @@ describe('review fixes', () => {
             expect(error).toBeInstanceOf(VaultEnvelopeError);
             expect(error.message).toBe(new VaultEnvelopeError().message);
         }
-        const spy = vi.spyOn(globalThis.crypto.subtle, 'deriveKey').mockRejectedValueOnce(new DOMException('x', 'OperationError'));
-        try {
-            await expect(deriveVaultKey(PHRASE, params)).rejects.toThrow(VaultEnvelopeError);
-        } finally {
-            spy.mockRestore();
+        // deriveVaultKey now goes through deriveBits (recovery wrapping needs the raw bytes);
+        // a WebCrypto failure in either wrapper surfaces as the uniform VaultEnvelopeError.
+        for (const op of ['deriveBits']) {
+            const spy = vi.spyOn(globalThis.crypto.subtle, op).mockRejectedValue(new DOMException('x', 'OperationError'));
+            try {
+                await expect(deriveVaultKey(PHRASE, params)).rejects.toThrow(VaultEnvelopeError);
+                await expect(deriveVaultKeyRaw(PHRASE, params)).rejects.toThrow(VaultEnvelopeError);
+            } finally {
+                spy.mockRestore();
+            }
         }
     });
 
