@@ -78,6 +78,7 @@
 
 <script>
     import '../../assets/auth.css'
+    import { errorText } from '../../utils/apiError'
 
     import { 
         mapState,
@@ -182,7 +183,7 @@
                     }
                     , 500);
 
-                    this.openAlert(error.reason ? error.reason : 'Error', error.message || error.reason, 'danger');
+                    this.openAlert("Couldn't sign in", errorText(error, 'Please try again.'), 'danger');
                 }
             }
         }

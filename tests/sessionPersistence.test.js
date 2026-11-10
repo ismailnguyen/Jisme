@@ -17,10 +17,10 @@ beforeEach(() => {
     vi.stubGlobal('fetch', vi.fn(() => { throw new Error('unexpected network'); }));
     authenticateWithPrf.mockImplementation(async () => ({ credentialId: 'Y3JlZA', prfOutput: new Uint8Array(32).fill(7) }));
 });
-async function prepare() {
+async function prepare(user = fixture()) {
     const service = new UserService();
     await service.setAutoLogin(true); await service.setLastRememberedUsername(owner);
-    const envelope = await sealSessionEnvelope(fixture(), new Uint8Array(32).fill(7), { owner, credentialId: 'Y3JlZA' });
+    const envelope = await sealSessionEnvelope(user, new Uint8Array(32).fill(7), { owner, credentialId: 'Y3JlZA' });
     await service.saveSessionEnvelope(envelope); return { service, envelope };
 }
 test('restores locally once, authenticated with vault locked', async () => {
@@ -65,4 +65,26 @@ test('credential invalidation and disabling auto-login erase persistence', async
     await users.clearSessionEnvelope('another'); expect(await service.getSessionEnvelope()).toBeTruthy();
     await users.clearSessionEnvelope('Y3JlZA'); expect(await service.getSessionEnvelope()).toBeFalsy();
     await prepare(); await users.setAutoLogin(false); expect(await service.getSessionEnvelope()).toBeFalsy();
+});
+
+test('resume failures display the server reason with an explicit wait message', async () => {
+    await prepare();
+    authenticateWithPrf.mockRejectedValue(Object.assign(new Error('Not authorized!'), {
+        status: 401, reason: 'TOO MANY login attempt. Please retry later.',
+    }));
+    await users.restoreSession();
+    const { useAlertStore } = await import('../src/store');
+    expect(useAlertStore().currentAlert.message).toContain('Please wait a few minutes');
+});
+
+test('refresh 401 preserves the server reason after ending the session', async () => {
+    await prepare({ ...fixture(), tokenExpiry: new Date(Date.now() + 60000).toISOString() });
+    const activity = vi.spyOn(UserService.prototype, 'setLastActivity').mockResolvedValue();
+    fetch.mockResolvedValue(new Response(JSON.stringify({ error: {
+        message: 'Not authorized!', reason: 'Too many login attempt. Please retry later.',
+    } }), { status: 401 }));
+    try { await users.restoreSession(); } finally { activity.mockRestore(); }
+    const { useAlertStore } = await import('../src/store');
+    expect(users.isLoggedIn).toBe(false);
+    expect(useAlertStore().currentAlert.message).toContain('Please wait a few minutes');
 });

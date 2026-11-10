@@ -273,6 +273,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
             await maybeRefreshSession();
             return isLoggedIn.value;
         } catch (error) {
+            alertStore.openAlert("Couldn't resume session", errorText(error, 'Please sign in again.'), 'danger');
             if (!['NotAllowedError', 'AbortError', 'PrfUnsupportedError'].includes(error?.name)) await clearSessionEnvelope();
             return false;
         } finally { prfOutput?.fill(0); restoring = false; }
@@ -449,6 +450,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
                     if (error instanceof SessionExpiredException) {
                         await signOut(true, { force: true });
                         sessionEnded = true;
+                        alertStore.openAlert('Session ended', errorText(error, 'Please sign in again.'), 'danger');
                     } else {
                         console.error('Failed to refresh session', error);
                     }
