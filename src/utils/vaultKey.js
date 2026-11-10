@@ -12,6 +12,8 @@ export const VAULT_KDF_LIMITS = Object.freeze({
     nonceBytes: 12,
     minPhraseLength: 12,
 });
+// Recovery code entropy (docs/vault-recovery-design.md): >= 20 random bytes, base64url.
+export const RECOVERY_CODE_BYTES = 24;
 
 const KDF_DOMAIN = 'jisme/vault-key/v1';
 const AAD_DOMAIN = 'jisme/vault';
@@ -107,9 +109,18 @@ export function validatePhrase (phrase, { loginPassword } = {}) {
     return normalized;
 }
 
-// Every failure (bounds, base64, empty phrase, WebCrypto errors) surfaces as the same
-// VaultEnvelopeError, exactly like openEnvelope: no oracle on which check rejected.
-export async function deriveVaultKey (phrase, params) {
+// Shared domain-separated salt (KDF_DOMAIN binds derivations to this exact scheme).
+function domainSalt (salt) {
+    const domain = encoder.encode(KDF_DOMAIN);
+    const saltBytes = new Uint8Array(domain.length + salt.length);
+    saltBytes.set(domain); saltBytes.set(salt, domain.length);
+    return saltBytes;
+}
+
+// Raw AES-256 key material (32 bytes) from the same derivation deriveVaultKey uses.
+// The caller MUST zeroize the returned bytes once the key is imported or sealed.
+// Every failure surfaces as the same VaultEnvelopeError: no oracle on which check rejected.
+export async function deriveVaultKeyRaw (phrase, params) {
     let phraseBytes = null;
     try {
         const salt = checkParams(params);
@@ -117,22 +128,59 @@ export async function deriveVaultKey (phrase, params) {
         if (!normalized) throw new VaultEnvelopeError();
 
         phraseBytes = encoder.encode(normalized);
-        const domain = encoder.encode(KDF_DOMAIN);
-        const saltBytes = new Uint8Array(domain.length + salt.length);
-        saltBytes.set(domain); saltBytes.set(salt, domain.length);
-        const material = await subtle().importKey('raw', phraseBytes, 'PBKDF2', false, ['deriveKey']);
-        return await subtle().deriveKey(
-            { name: 'PBKDF2', hash: 'SHA-256', salt: saltBytes, iterations: params.iterations },
+        const material = await subtle().importKey('raw', phraseBytes, 'PBKDF2', false, ['deriveBits']);
+        const bits = await subtle().deriveBits(
+            { name: 'PBKDF2', hash: 'SHA-256', salt: domainSalt(salt), iterations: params.iterations },
             material,
-            { name: 'AES-GCM', length: 256 },
-            false,
-            ['encrypt', 'decrypt'],
+            256,
         );
+        return new Uint8Array(bits);
     } catch (_) {
         throw new VaultEnvelopeError();
     } finally {
         if (phraseBytes) phraseBytes.fill(0);
     }
+}
+
+// Import raw 32-byte key material as the non-extractable AES-GCM vault key.
+export async function importVaultKey (raw) {
+    try {
+        if (!(raw instanceof Uint8Array) || raw.length !== 32) throw new VaultEnvelopeError();
+        return await subtle().importKey('raw', raw, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    } catch (_) {
+        throw new VaultEnvelopeError();
+    }
+}
+
+// The vault AES key from a phrase. Identical by construction to
+// importVaultKey(await deriveVaultKeyRaw(phrase, params)); the raw bytes never escape.
+export async function deriveVaultKey (phrase, params) {
+    const raw = await deriveVaultKeyRaw(phrase, params);
+    try {
+        return await importVaultKey(raw);
+    } finally {
+        raw.fill(0);
+    }
+}
+
+// One-time recovery code: RECOVERY_CODE_BYTES random bytes, base64url (never sent to the API).
+export function generateRecoveryCode () {
+    return toBase64(randomBytes(RECOVERY_CODE_BYTES))
+        .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+// Base64 codec for raw key material sealed inside the recovery envelope (never exported raw).
+export function encodeKeyMaterial (raw) {
+    if (!(raw instanceof Uint8Array) || raw.length !== 32) throw new VaultEnvelopeError();
+    return toBase64(raw);
+}
+export function decodeKeyMaterial (value) {
+    const raw = fromBase64(value); // uniform VaultEnvelopeError on junk
+    if (raw.length !== 32) {
+        raw.fill(0);
+        throw new VaultEnvelopeError();
+    }
+    return raw;
 }
 
 // Usage binding / domain separation: the caller-supplied usage and every public

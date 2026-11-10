@@ -85,23 +85,29 @@ describe('vaultBlob codec', () => {
         for (const bad of ['a+b/', 'abc$', 'a', 42, null]) expect(() => fromBase64url(bad)).toThrow(VaultEnvelopeError);
     });
 
-    test('encode drops the owner and decode validates shape', async () => {
+    test('encode drops the owner and decode validates shape (v2 blob, v1 back-compat)', async () => {
         const { exported, envelope } = await serverVault();
         expect(Object.keys(envelope).sort()).toEqual(['ct', 'v']);
-        expect(envelope.v).toBe(1);
+        expect(envelope.v).toBe(1); // API envelope unchanged: no contract change
         const blob = ctBlob(envelope);
-        expect(blob.version).toBe(VAULT_BLOB_VERSION);
+        expect(blob.version).toBe(VAULT_BLOB_VERSION); // 2: recovery rides inside the same ct
         expect(blob).not.toHaveProperty('owner');
-        expect(decodeVaultBlob(envelope)).toEqual({ check: exported.verifier, records: exported.records });
+        expect(decodeVaultBlob(envelope)).toEqual({
+            check: exported.verifier, recovery: exported.recovery, records: exported.records,
+        });
         const enc = (o) => ({ v: 1, ct: Buffer.from(JSON.stringify(o)).toString('base64url') });
+        // v1 (legacy) blobs without a recovery envelope still decode.
+        expect(decodeVaultBlob(enc({ version: 1, check: exported.verifier, records: {} })).recovery).toBeUndefined();
         for (const bad of [
             null, [], { v: 2, ct: envelope.ct }, { v: 1 }, { v: 1, ct: 'not json' },
-            enc({ version: 2, check: exported.verifier, records: {} }),
-            enc({ version: 1, records: {} }),
-            enc({ version: 1, check: { version: 1 }, records: {} }),
-            enc({ version: 1, check: exported.verifier, records: [] }),
-            enc({ version: 1, check: exported.verifier, records: { a: 'x' } }),
-            enc({ version: 1, check: exported.verifier, records: {}, prfOutput: 'x' }),
+            enc({ version: 3, check: exported.verifier, records: {} }),
+            enc({ version: 2, records: {} }),
+            enc({ version: 2, check: { version: 1 }, records: {} }),
+            enc({ version: 2, check: exported.verifier, records: [] }),
+            enc({ version: 2, check: exported.verifier, records: { a: 'x' } }),
+            enc({ version: 2, check: exported.verifier, records: {}, recovery: 'x' }),
+            enc({ version: 2, check: exported.verifier, records: {}, prfOutput: 'x' }),
+            enc({ version: 1, check: exported.verifier, records: {}, recovery: exported.recovery }),
         ]) expect(() => decodeVaultBlob(bad)).toThrow(VaultEnvelopeError);
     });
 });
@@ -200,8 +206,9 @@ describe('vault store server wiring', () => {
             expect(body.expectedRevision).toBe(0);
             expect(Object.keys(body.envelope).sort()).toEqual(['ct', 'v']);
             const blob = ctBlob(body.envelope);
-            expect(blob.version).toBe(1);
+            expect(blob.version).toBe(2);
             expect(blob.check.params.iterations).toBe(VAULT_KDF_LIMITS.minIterations);
+            expect(blob.recovery.version).toBe(1); // recovery envelope rides in the same ct
             expect(blob.records.one.version).toBe(1);
             return json(201, { vaultId: 'primary', revision: 1, updatedAt: 'now' });
         }));

@@ -1,9 +1,10 @@
-// Server-side vault blob codec (docs/vault-ux-design.md). Pure: no network, no key material.
-// API envelope: { v: 1, ct: base64url(JSON blob) }, blob: { version, check, records }.
-// The blob carries ciphertext envelopes only; the owner is implied by the authenticated API user.
+// Server-side vault blob codec (docs/vault-ux-design.md, docs/vault-recovery-design.md).
+// Pure: no network, no key material. API envelope: { v: 1, ct: base64url(JSON blob) } (unchanged);
+// blob v2: { version: 2, check, recovery?, records } — recovery is optional (legacy vaults).
+// v1 blobs ({ version: 1, check, records }) still decode; a v1 blob must not carry recovery.
 import { assertApiSafe, VaultEnvelopeError } from './vaultKey';
 
-export const VAULT_BLOB_VERSION = 1;
+export const VAULT_BLOB_VERSION = 2;
 const API_ENVELOPE_VERSION = 1;
 const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', { fatal: true });
@@ -32,10 +33,14 @@ export function fromBase64url (value) {
     return bytes;
 }
 
-// exported: exportVault() output { owner, verifier, records }. Returns the API envelope.
+// exported: exportVault() output { owner, verifier, recovery?, records }. Returns the API envelope.
 export function encodeVaultBlob (exported) {
     if (!exported || !looksLikeEnvelope(exported.verifier)) throw new VaultEnvelopeError();
     const blob = { version: VAULT_BLOB_VERSION, check: exported.verifier, records: exported.records || {} };
+    if (exported.recovery !== undefined && exported.recovery !== null) {
+        if (!looksLikeEnvelope(exported.recovery)) throw new VaultEnvelopeError();
+        blob.recovery = exported.recovery;
+    }
     assertApiSafe(blob, 'vaultBlob');
     return { v: API_ENVELOPE_VERSION, ct: toBase64url(JSON.stringify(blob)) };
 }
@@ -48,13 +53,16 @@ export function decodeVaultBlob (envelope) {
     try {
         blob = JSON.parse(decoder.decode(fromBase64url(envelope.ct)));
         assertApiSafe(blob, 'vaultBlob'); // never surface /prf/i fields or non-JSON values
-    } catch (_) {
+    } catch {
         throw new VaultEnvelopeError();
     }
-    if (!isPlainObject(blob) || blob.version !== VAULT_BLOB_VERSION) throw new VaultEnvelopeError();
+    if (!isPlainObject(blob) || ![1, 2].includes(blob.version)) throw new VaultEnvelopeError();
+    if (blob.version === 1 && 'recovery' in blob) throw new VaultEnvelopeError();
+    if (blob.recovery !== undefined && !looksLikeEnvelope(blob.recovery)) throw new VaultEnvelopeError();
     if (!looksLikeEnvelope(blob.check) || !isPlainObject(blob.records)) throw new VaultEnvelopeError();
     if (!Object.values(blob.records).every(looksLikeEnvelope)) throw new VaultEnvelopeError();
-    return { check: blob.check, records: blob.records };
+    // v1 (legacy) decodes with recovery undefined.
+    return { check: blob.check, recovery: blob.recovery, records: blob.records };
 }
 
 // Key-order-independent comparison of two JSON envelopes (e.g. local verifier vs server check).
