@@ -11,7 +11,7 @@ import {
 
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import { useAlertStore, useAccountsStore } from '@/store';
+import { useAlertStore, useAccountsStore, useVaultStore } from '@/store';
 import { APP_USER_STORE } from '../utils/store'
 import UserService from '../services/UserService'
 import DemoUserService from '../services/demo/DemoUserService'
@@ -330,6 +330,8 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         }
         // Revoke application capabilities before any storage/network await.
         const wasDemo = isDemo.value;
+        // Vault unlock key: lock keeps ciphertext for phrase unlock; full sign-out forgets it.
+        if (preserveCache) useVaultStore().lock(); else useVaultStore().forget();
         if (user.value) {
             user.value.public_encryption_key = null;
             user.value.token = null;
