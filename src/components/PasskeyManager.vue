@@ -50,6 +50,8 @@
         </ul>
         <p v-else class="small text-muted">No passkeys yet.</p>
 
+        <p v-if="passkeysStore.fetchError" class="security-error small" role="alert">{{ passkeysStore.fetchError }}</p>
+
         <p v-if="hasLegacy" class="small security-warning">
             Passkeys marked “Re-enrollment required” were added before verified enrollment and can no longer sign you in.
             Delete them and add them again.
@@ -129,6 +131,12 @@ export default {
             const v = this.vaultStore;
             return v.isEnabled && v.hasVault && !this.userStore.isDemo && this.passkeysStore.isSupported
                 && this.passkeysStore.list.some(p => p.verified);
+        },
+    },
+    mounted () { this.passkeysStore.fetchPasskeys(); },
+    watch: {
+        'userStore.user.token': {
+            handler () { this.passkeysStore.fetchPasskeys(); },
         },
     },
     methods: {

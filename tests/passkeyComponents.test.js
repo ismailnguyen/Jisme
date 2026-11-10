@@ -38,6 +38,21 @@ async function render (path, props = {}) {
 }
 
 describe('Settings > Security: passkeys', () => {
+    test('mounting after login loads and renders the server list once per session', async () => {
+        users.user.passkeys = [];
+        fetch.mockResolvedValue(new Response(JSON.stringify({ passkeys: [
+            { id: 'server-key', name: 'Server laptop', verified: true },
+        ] }), { status: 200 }));
+        const component = (await import('../src/components/PasskeyManager.vue')).default;
+        component.mounted.call({ passkeysStore: passkeys });
+        await passkeys.fetchPasskeys();
+        component.mounted.call({ passkeysStore: passkeys });
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(fetch.mock.calls[0][0]).toContain('users/passkeys');
+        expect(fetch.mock.calls[0][1].method).toBe('GET');
+        expect(await render('components/PasskeyManager.vue')).toContain('Server laptop');
+    });
+
     test('lists passkeys with name and created date; legacy ones are flagged for re-enrollment', async () => {
         const html = await render('components/PasskeyManager.vue');
         expect(html).toContain('Work laptop');

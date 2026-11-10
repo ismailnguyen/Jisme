@@ -1,7 +1,7 @@
 // Settings > Security: passkey management and the one-time account recovery code
 // (docs/passkey-ux-design.md). UI state lives here so every state is renderable and testable.
 // Errors always surface the server reason (errorText), never a generic "Not authorized!".
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { useUserStore } from '@/store';
 import { PasskeyService } from '../services/PasskeyService';
@@ -26,7 +26,40 @@ const usePasskeysStore = defineStore('passkeys', () => {
     const userStore = useUserStore();
     const service = new PasskeyService();
 
-    const list = computed(() => (userStore.user?.passkeys || []).map(normalizePasskey).filter(Boolean));
+    // null means not loaded; an empty server response is authoritative too.
+    const serverList = ref(null);
+    const fetchError = ref('');
+    let pendingFetch;
+    let generation = 0;
+    watch(() => userStore.user?.token, () => {
+        generation++;
+        serverList.value = null;
+        pendingFetch = undefined;
+        fetchError.value = '';
+    }, { flush: 'sync' });
+    const list = computed(() => serverList.value ?? (userStore.user?.passkeys || []).map(normalizePasskey).filter(Boolean));
+
+    function fetchPasskeys ({ force = false } = {}) {
+        const accessToken = userStore.user?.token;
+        if (!accessToken || userStore.isDemo) return Promise.resolve();
+        if (pendingFetch) return pendingFetch;
+        if (!force && serverList.value !== null) return Promise.resolve();
+        const started = generation;
+        fetchError.value = '';
+        const request = (async () => {
+            try {
+                const body = await service.listPasskeys(accessToken);
+                if (!Array.isArray(body?.passkeys)) throw new Error('The server did not return a passkey list.');
+                if (generation === started) serverList.value = body.passkeys.map(normalizePasskey).filter(Boolean);
+            } catch (error) {
+                if (generation === started) fetchError.value = errorText(error, 'Could not load passkeys.');
+            } finally {
+                if (generation === started) pendingFetch = undefined;
+            }
+        })();
+        pendingFetch = request;
+        return request;
+    }
     const isSupported = computed(() => isWebAuthnSupported());
 
     // 'idle' | 'loading' | 'success' | 'error'
@@ -59,10 +92,16 @@ const usePasskeysStore = defineStore('passkeys', () => {
             const response = await registerPasskey(options);
             const credential = await service.register(token(), { challenge, response });
             if (userStore.user !== session) return;
-            const added = credential && typeof credential === 'object'
-                ? { verified: true, createdAt: new Date().toISOString(), name: label, ...credential }
-                : { id: response.id, name: label, createdAt: new Date().toISOString(), verified: true };
+            const added = normalizePasskey({
+                id: response.id, createdAt: new Date().toISOString(), name: label,
+                ...(credential && typeof credential === 'object' ? credential : {}),
+                verified: true,
+            });
             await userStore.clearSessionEnvelope(added.id);
+            if (userStore.user !== session) return;
+            generation++;
+            pendingFetch = undefined;
+            serverList.value = [...list.value.filter(p => p.id !== added.id), added].filter(Boolean);
             setPasskeys([...(userStore.user.passkeys || []).filter(p => normalizePasskey(p)?.id !== added.id), added]);
             enrollStatus.value = 'success';
             return added;
@@ -95,13 +134,21 @@ const usePasskeysStore = defineStore('passkeys', () => {
             return;
         }
         deleteStatus.value = 'loading';
+        const session = userStore.user;
         try {
             await service.remove(token(), id, password);
+            if (userStore.user !== session) return;
             await userStore.clearSessionEnvelope(id);
+            if (userStore.user !== session) return;
+            generation++;
+            pendingFetch = undefined;
+            serverList.value = list.value.filter(p => p.id !== id);
             setPasskeys((userStore.user?.passkeys || []).filter(p => normalizePasskey(p)?.id !== id));
             pendingDeleteId.value = null;
             deleteStatus.value = 'success';
+            await fetchPasskeys({ force: true });
         } catch (error) {
+            if (userStore.user !== session) return;
             deleteStatus.value = 'error';
             deleteError.value = errorText(error, 'Could not delete the passkey.');
         }
@@ -130,6 +177,8 @@ const usePasskeysStore = defineStore('passkeys', () => {
 
     return {
         list,
+        fetchPasskeys,
+        fetchError,
         isSupported,
         enrollStatus,
         enrollError,

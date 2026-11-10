@@ -86,6 +86,7 @@ describe('PasskeyService', () => {
         await service.login('tok', { id: 'c1' });
         await service.vaultUnlock('tok', { id: 'c1' });
         await service.createRecoveryCode('tok');
+        await service.listPasskeys('tok');
         expect(requests.map(r => [r.method, r.url.slice(API.length)])).toEqual([
             ['POST', 'users/passkeys/options'],
             ['POST', 'users/passkeys'],
@@ -93,6 +94,7 @@ describe('PasskeyService', () => {
             ['POST', 'users/login/passkey'],
             ['POST', 'vaults/unlock/passkey'],
             ['POST', 'users/recovery'],
+            ['GET', 'users/passkeys'],
         ]);
         expect(requests[1].body).toEqual({ challenge: 'Y2g', response: { id: 'c1' } });
         expect(requests[2].body).toEqual({ password: 'pw' });
@@ -110,6 +112,38 @@ describe('PasskeyService', () => {
 });
 
 describe('passkeys store', () => {
+    test('loads once per session, deduplicates requests and treats an empty server list as authoritative', async () => {
+        users.user.passkeys = [{ id: 'legacy' }];
+        api(() => json(200, { passkeys: [] }));
+        await Promise.all([passkeys.fetchPasskeys(), passkeys.fetchPasskeys()]);
+        await passkeys.fetchPasskeys();
+        expect(requests).toHaveLength(1);
+        expect(requests[0]).toMatchObject({ method: 'GET', url: API + 'users/passkeys', body: undefined });
+        expect(passkeys.list).toEqual([]);
+        users.user = null;
+        users.user = { token: 'new-session', passkeys: [] };
+        api(() => json(200, { passkeys: [{ credentialId: 'verified', name: 'Phone', verified: true }] }));
+        await passkeys.fetchPasskeys();
+        expect(requests).toHaveLength(1);
+        expect(passkeys.list).toEqual([{ id: 'verified', name: 'Phone', createdAt: null, verified: true }]);
+    });
+
+    test('ignores a list response from a previous session and retries failures', async () => {
+        let finish;
+        api(() => new Promise(resolve => { finish = resolve; }));
+        const pending = passkeys.fetchPasskeys();
+        users.user = { token: 'bob', passkeys: [] };
+        finish(json(200, { passkeys: [{ id: 'alice-private' }] }));
+        await pending;
+        expect(passkeys.list).toEqual([]);
+        api(() => json(500, { error: { reason: 'Try again' } }));
+        await passkeys.fetchPasskeys();
+        expect(passkeys.fetchError).toBe('Try again');
+        api(() => json(200, { passkeys: [{ id: 'bob-key' }] }));
+        await passkeys.fetchPasskeys();
+        expect(passkeys.list[0].id).toBe('bob-key');
+    });
+
     test('list normalizes server and legacy shapes (name, created date, verified)', () => {
         users.user.passkeys = [
             { id: 'c1', name: 'Laptop', createdAt: '2026-11-01T10:00:00Z', verified: true },
@@ -132,6 +166,7 @@ describe('passkeys store', () => {
             return { id: 'c9', response: { attestationObject: 'AA' } };
         });
         await passkeys.enroll('Laptop');
+        expect(passkeys.list[0].verified).toBe(true);
         expect(statusDuringCeremony).toBe('loading');
         expect(passkeys.enrollStatus).toBe('success');
         expect(passkeys.enrollError).toBe('');
@@ -167,7 +202,7 @@ describe('passkeys store', () => {
 
     test('delete requires the current password, sends it, and removes the passkey', async () => {
         users.user.passkeys = [{ id: 'c1', name: 'Laptop', verified: true }, { id: 'c2', name: 'Phone', verified: true }];
-        api(() => json(204));
+        api(({ method }) => method === 'GET' ? json(200, { passkeys: [{ id: 'c2', name: 'Phone', verified: true }] }) : json(204));
         passkeys.requestDelete('c1');
         expect(passkeys.pendingDeleteId).toBe('c1');
         await passkeys.confirmDelete('');
@@ -177,6 +212,7 @@ describe('passkeys store', () => {
         expect(requests[0]).toMatchObject({ method: 'DELETE', body: { password: 'current pw' } });
         expect(passkeys.list.map(p => p.id)).toEqual(['c2']);
         expect(passkeys.pendingDeleteId).toBeNull();
+        expect(requests[1]).toMatchObject({ method: 'GET', url: API + 'users/passkeys' });
     });
 
     test('delete failure keeps the passkey and surfaces the reason', async () => {
