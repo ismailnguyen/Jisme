@@ -20,8 +20,16 @@ export async function registerPasskey (optionsJSON) {
     return { ...response, clientExtensionResults };
 }
 
+// Transports hint so platforms keep the ceremony on-device (no hybrid/QR sheet on iOS).
+// Server-declared transports are preserved; caller-built entries default to ['internal'].
+export const internalOnly = (entry) => ({ ...entry, transports: entry.transports ?? ['internal'] });
+
+const withInternalTransports = (optionsJSON) => (optionsJSON.allowCredentials
+    ? { ...optionsJSON, allowCredentials: optionsJSON.allowCredentials.map(internalOnly) }
+    : optionsJSON);
+
 export async function authenticatePasskey (optionsJSON) {
-    const response = await startAuthentication({ optionsJSON });
+    const response = await startAuthentication({ optionsJSON: withInternalTransports(optionsJSON) });
     return { ...response, clientExtensionResults: {} };
 }
 
@@ -37,10 +45,10 @@ export async function authenticateWithPrf (optionsJSON, { salt, wraps } = {}) {
         : { eval: { first: toBytes(salt) } };
     const request = {
         ...optionsJSON,
-        allowCredentials: wraps ? wraps.map(w => ({ id: w.credentialId, type: 'public-key' })) : optionsJSON.allowCredentials,
+        ...(wraps && { allowCredentials: wraps.map(w => ({ id: w.credentialId, type: 'public-key' })) }),
         extensions: { ...(optionsJSON.extensions || {}), prf },
     };
-    const response = await startAuthentication({ optionsJSON: request });
+    const response = await startAuthentication({ optionsJSON: withInternalTransports(request) });
     const prfOutput = extractPrfOutput(response.clientExtensionResults);
     return {
         assertion: { ...response, clientExtensionResults: {} },

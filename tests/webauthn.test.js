@@ -45,8 +45,46 @@ test('authenticateWithPrf({ wraps }) restricts to wrapped credentials with evalB
     });
     await authenticateWithPrf({ challenge: 'Yw' }, { wraps: [{ credentialId: 'c1', salt: SALT }, { credentialId: 'c2', salt: SALT }] });
     const sent = browser.startAuthentication.mock.calls[0][0].optionsJSON;
-    expect(sent.allowCredentials).toEqual([{ id: 'c1', type: 'public-key' }, { id: 'c2', type: 'public-key' }]);
+    expect(sent.allowCredentials).toEqual([
+        { id: 'c1', type: 'public-key', transports: ['internal'] },
+        { id: 'c2', type: 'public-key', transports: ['internal'] },
+    ]);
     expect(Object.keys(sent.extensions.prf.evalByCredential)).toEqual(['c1', 'c2']);
+});
+
+// Local ceremonies must stay on-device: without transports iOS offers the hybrid/QR sheet.
+test('authenticateWithPrf injects transports internal on caller-built allowCredentials, keeps server ones', async () => {
+    browser.startAuthentication.mockResolvedValue({
+        id: 'c1', response: {}, clientExtensionResults: { prf: { results: { first: new Uint8Array(32).buffer } } },
+    });
+    await authenticateWithPrf({
+        challenge: 'Yw',
+        allowCredentials: [{ id: 'c1', type: 'public-key' }, { id: 'c2', type: 'public-key', transports: ['usb', 'nfc'] }],
+    }, { salt: SALT });
+    const sent = browser.startAuthentication.mock.calls[0][0].optionsJSON;
+    expect(sent.allowCredentials).toEqual([
+        { id: 'c1', type: 'public-key', transports: ['internal'] },
+        { id: 'c2', type: 'public-key', transports: ['usb', 'nfc'] },
+    ]);
+});
+
+test('authenticatePasskey injects transports internal when allowCredentials lack them', async () => {
+    browser.startAuthentication.mockResolvedValue({ id: 'c1', response: {}, clientExtensionResults: {} });
+    await authenticatePasskey({ challenge: 'Yw', allowCredentials: [{ id: 'c1', type: 'public-key' }] });
+    expect(browser.startAuthentication.mock.calls[0][0].optionsJSON.allowCredentials)
+        .toEqual([{ id: 'c1', type: 'public-key', transports: ['internal'] }]);
+});
+
+test('options without allowCredentials are passed through unchanged', async () => {
+    browser.startAuthentication.mockResolvedValue({ id: 'c1', response: {}, clientExtensionResults: {} });
+    await authenticatePasskey({ challenge: 'Yw', userVerification: 'required' });
+    expect(browser.startAuthentication.mock.calls[0][0].optionsJSON).toEqual({ challenge: 'Yw', userVerification: 'required' });
+
+    browser.startAuthentication.mockResolvedValue({
+        id: 'c1', response: {}, clientExtensionResults: { prf: { results: { first: new Uint8Array(32).buffer } } },
+    });
+    await authenticateWithPrf({ challenge: 'Yw' }, { salt: SALT });
+    expect(browser.startAuthentication.mock.calls[1][0].optionsJSON).not.toHaveProperty('allowCredentials');
 });
 
 test('no PRF result (unsupported authenticator) throws PrfUnsupportedError', async () => {
