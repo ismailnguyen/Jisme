@@ -11,6 +11,7 @@ import { VAULT_KDF_LIMITS } from '../src/utils/vaultKey';
 vi.mock('../src/utils/secrets', async (original) => ({ ...await original(), VAULT_UNLOCK_KEY_ENABLED: true }));
 vi.mock('../src/utils/webauthn', () => ({
     isWebAuthnSupported: vi.fn(() => true),
+    isSessionPrfSupported: vi.fn(async () => true),
     registerPasskey: vi.fn(),
     authenticatePasskey: vi.fn(),
     authenticateWithPrf: vi.fn(),
@@ -37,6 +38,21 @@ async function render (path, props = {}) {
 }
 
 describe('Settings > Security: passkeys', () => {
+    test('mounting after login loads and renders the server list once per session', async () => {
+        users.user.passkeys = [];
+        fetch.mockResolvedValue(new Response(JSON.stringify({ passkeys: [
+            { id: 'server-key', name: 'Server laptop', verified: true },
+        ] }), { status: 200 }));
+        const component = (await import('../src/components/PasskeyManager.vue')).default;
+        component.mounted.call({ passkeysStore: passkeys });
+        await passkeys.fetchPasskeys();
+        component.mounted.call({ passkeysStore: passkeys });
+        expect(fetch).toHaveBeenCalledTimes(1);
+        expect(fetch.mock.calls[0][0]).toContain('users/passkeys');
+        expect(fetch.mock.calls[0][1].method).toBe('GET');
+        expect(await render('components/PasskeyManager.vue')).toContain('Server laptop');
+    });
+
     test('lists passkeys with name and created date; legacy ones are flagged for re-enrollment', async () => {
         const html = await render('components/PasskeyManager.vue');
         expect(html).toContain('Work laptop');
@@ -185,4 +201,27 @@ describe('Vault unlock panel', () => {
         expect(html).not.toMatch(/Unlock with passkey/);
         expect(html).toMatch(/id="vault-unlock-phrase"/);
     });
+});
+
+
+test.each(['PrfUnsupportedError', 'NotAllowedError', 'supported', 'capability'])('enrollment PRF probe: %s', async mode => {
+    const component = (await import('../src/components/PasskeyManager.vue')).default;
+    const output = new Uint8Array(32).fill(7);
+    webauthn.isSessionPrfSupported.mockResolvedValue(mode !== 'capability');
+    if (mode === 'supported') webauthn.authenticateWithPrf.mockResolvedValue({ credentialId: 'new-id', prfOutput: output });
+    else webauthn.authenticateWithPrf.mockRejectedValue(Object.assign(new Error(), { name: mode }));
+    const context = {
+        ...component.data(), newName: 'Phone',
+        passkeysStore: { enrollStatus: 'success', enroll: vi.fn(async () => ({ id: 'new-id' })) },
+    };
+    await component.methods.onEnroll.call(context);
+    expect(context.enrolledWithoutPrf).toBe(['PrfUnsupportedError', 'capability'].includes(mode));
+    expect(context.newName).toBe('');
+    expect(context.passkeysStore.enrollStatus).toBe('success');
+    if (mode !== 'capability') expect(webauthn.authenticateWithPrf.mock.calls.at(-1)[0].allowCredentials).toEqual([{ id: 'new-id', type: 'public-key' }]);
+    if (mode === 'supported') expect(output.every(b => b === 0)).toBe(true);
+    const app = createSSRApp({ ...component, data: () => ({ ...component.data(), enrolledWithoutPrf: context.enrolledWithoutPrf }) });
+    passkeys.enrollStatus = 'success'; app.use(pinia);
+    const html = await renderToString(app);
+    expect(html.includes("This passkey can sign you in, but")).toBe(context.enrolledWithoutPrf);
 });

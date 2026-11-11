@@ -19,6 +19,10 @@ async function call (method, path, token, body) {
 }
 
 export class PasskeyService {
+    listPasskeys (token) {
+        return call('GET', 'users/passkeys', token, undefined);
+    }
+
     // 1. Registration options (challenge, user, rp) for the signed-in account.
     registrationOptions (token) {
         return call('POST', 'users/passkeys/options', token, {});
