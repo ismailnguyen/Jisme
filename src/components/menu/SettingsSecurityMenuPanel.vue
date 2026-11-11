@@ -1,6 +1,5 @@
 <template>
   <div class="row">
-    <Loader v-show="isLoading" />
 
     <div class="accordion">
       <div class="accordion-item">
@@ -128,12 +127,15 @@
     <div class="mb-3 col-xs-12 col-md-12 col-lg-12">
       <button
         type="button"
-        class="btn btn-action"
-        :class="isLoading ? 'btn-dark' : 'btn-cta'"
+        class="btn btn-action btn-cta"
+        :class="isLoading ? 'is-busy' : ''"
+        :disabled="isLoading"
+        :aria-busy="isLoading ? 'true' : 'false'"
         @click="onSave()"
       >
-        <i class="fa fa-floppy-disk"></i>
-        Confirm changes
+        <span v-if="isLoading" class="btn-spinner" aria-hidden="true"></span>
+        <i v-else class="fa fa-floppy-disk" aria-hidden="true"></i>
+        {{ isLoading ? 'Saving…' : 'Confirm changes' }}
       </button>
     </div>
   </div>
@@ -147,13 +149,11 @@ import {
   useUserStore,
   useAccountsStore,
 } from "@/store";
-import Loader from "../Loader.vue";
 import PasskeyManager from "../PasskeyManager.vue";
 import RecoveryCodeSettings from "../RecoveryCodeSettings.vue";
 
 export default {
   components: {
-    Loader,
     PasskeyManager,
     RecoveryCodeSettings,
   },
@@ -201,6 +201,8 @@ export default {
 
     ...mapActions(useAccountsStore, ["enableServerEncryption"]),
 
+    // Saved: the menu closes and the "Saved!" banner confirms. On failure the
+    // panel stays open with its values so the user can retry.
     onSave: async function () {
       this.isLoading = true;
 
@@ -208,9 +210,11 @@ export default {
         await this.setAutoLogin(this.isAutoLoginEnabled);
         await this.update();
 
-        this.isLoading = false;
         this.openAlert("Saved!", "", "success");
+        this.closeSidebar(this.SIDEBAR.MENU);
       } catch (error) {
+        this.openAlert("Couldn't save", error?.reason || error?.message || 'Please try again.', "danger");
+      } finally {
         this.isLoading = false;
       }
     },

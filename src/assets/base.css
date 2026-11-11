@@ -613,6 +613,32 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
 }
 
+/* Busy filled button: the action stays where the eye is, no page-level loader.
+   Keeps the tint (not the disabled gray: the request is in flight, not blocked). */
+.btn.btn-action.btn-cta.is-busy,
+.btn.btn-action.btn-cta.is-busy:hover {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  opacity: 0.85;
+  cursor: progress;
+}
+
+.btn-spinner {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: btn-spinner-rotate 0.8s linear infinite;
+}
+
+@keyframes btn-spinner-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .btn.btn-action.btn-red,
 .btn.btn-action.btn-red i {
   color: var(--red);

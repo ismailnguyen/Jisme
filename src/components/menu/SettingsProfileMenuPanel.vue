@@ -1,6 +1,5 @@
 <template>
   <div class="row">
-    <Loader v-show="isLoading" />
 
     <div class="accordion">
       <div class="accordion-item">
@@ -68,11 +67,14 @@
       <button
         type="button"
         class="btn btn-action btn-cta"
-        :class="isLoading ? 'btn-dark' : 'btn-light'"
+        :class="isLoading ? 'is-busy' : ''"
+        :disabled="isLoading"
+        :aria-busy="isLoading ? 'true' : 'false'"
         @click="onSave()"
       >
-        <i class="fa fa-floppy-disk"></i>
-        Update my information
+        <span v-if="isLoading" class="btn-spinner" aria-hidden="true"></span>
+        <i v-else class="fa fa-floppy-disk" aria-hidden="true"></i>
+        {{ isLoading ? 'Saving…' : 'Update my information' }}
       </button>
     </div>
   </div>
@@ -81,12 +83,7 @@
 <script>
 import { mapState, mapActions } from "pinia";
 import { useUiStore, useAlertStore, useUserStore } from "@/store";
-import Loader from "../Loader.vue";
-
 export default {
-  components: {
-    Loader,
-  },
   data() {
     return {
       isLoading: false,
@@ -117,9 +114,10 @@ export default {
       try {
         await this.update();
 
-        this.isLoading = false;
         this.openAlert("Saved!", "", "success");
       } catch (error) {
+        this.openAlert("Couldn't save", error?.reason || error?.message || 'Please try again.', "danger");
+      } finally {
         this.isLoading = false;
       }
     },
