@@ -103,7 +103,13 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         // Otherwise login the user
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
+        await rememberDevice();
         await createSession(user);
+    }
+
+    // "Remember me" at sign-in is the opt-in for staying signed in: no second toggle in Settings.
+    async function rememberDevice() {
+        if (isExtendedSession.value && isLoggedIn.value && !isDemo.value) await realUserService.setAutoLogin(true);
     }
 
     async function verifyMFA({ totpToken }) {
@@ -117,6 +123,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
+        await rememberDevice();
         await createSession(user);
     }
 
@@ -129,14 +136,16 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
             || await userService.passkeyLoginOptions(session.token);
         if (user.value !== session) return;
 
-        const passkey = await authenticatePasskey(options);
+        const assertion = await authenticatePasskey(options);
         if (user.value !== session) return;
 
         let result;
         try {
+            // The API verifies the assertion against the challenge it issued in the options.
             result = await userService.verifyPasskey({
                 accessToken: session.token,
-                passkey: passkey,
+                challenge: options.challenge,
+                response: assertion,
             });
         } catch (error) {
             if (user.value === session && isPasskeyReenrollmentRequired(error)) {
@@ -150,6 +159,7 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         isLoggedIn.value = user.value && user.value.uuid ? true : false;
 
+        await rememberDevice();
         await createSession(user);
     }
 
@@ -221,10 +231,10 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         userVerification: 'required', timeout: 60000,
     });
 
-    function showPassiveSignInNotice () {
+    function showPassiveSignInNotice (message = "Your passkeys don't support keeping this device signed in silently (missing PRF support). Sign-in still works normally. To stay signed in across reloads, enroll a passkey stored in your device keychain (iCloud Keychain, Windows Hello).") {
         if (passiveSignInNoticeShown.value) return;
         passiveSignInNoticeShown.value = true;
-        alertStore.openAlert('Passive sign-in unavailable', "Your passkeys don't support keeping this device signed in silently (missing PRF support). Sign-in still works normally. To stay signed in across reloads, enroll a passkey stored in your device keychain (iCloud Keychain, Windows Hello).", 'warning');
+        alertStore.openAlert('Passive sign-in unavailable', message, 'warning');
     }
 
     async function persistSession () {
@@ -233,7 +243,12 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
         const started = sessionEpoch;
         await realUserService.clearSessionEnvelope();
         const ids = (session?.passkeys || []).filter(p => p?.verified === true).map(p => p.id || p.credentialId).filter(Boolean);
-        if (!ids.length || !session?.email || !session.token) return;
+        if (!session?.email || !session.token) return;
+        if (!ids.length) {
+            // "Remember me" needs a verified passkey to seal the session on this device.
+            showPassiveSignInNotice('You will need to sign in again after a reload: staying signed in requires a verified passkey. Add one in Settings → Security.');
+            return;
+        }
         if (!await isSessionPrfSupported()) {
             showPassiveSignInNotice();
             return;
@@ -493,6 +508,8 @@ const useUserStore = defineStore(APP_USER_STORE, () => {
 
         init,
         restoreSession,
+        persistSession,
+        isExtendedSession,
         canResumeSession,
         clearSessionEnvelope,
         requestLogin,

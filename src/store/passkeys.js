@@ -104,6 +104,11 @@ const usePasskeysStore = defineStore('passkeys', () => {
             serverList.value = [...list.value.filter(p => p.id !== added.id), added].filter(Boolean);
             setPasskeys([...(userStore.user.passkeys || []).filter(p => normalizePasskey(p)?.id !== added.id), added]);
             enrollStatus.value = 'success';
+            // "Remember me" session: seal it now with the new verified passkey (after the
+            // stale envelope was cleared above), so the next reload doesn't sign out.
+            if (userStore.isLoggedIn && userStore.isExtendedSession) {
+                try { await userStore.persistSession(); } catch (_) { /* optional; enrollment succeeded */ }
+            }
             return added;
         } catch (error) {
             if (userStore.user !== session) return;

@@ -12,9 +12,13 @@
                         @usernameChanged="onChangeUsername" />
 
                     <!-- Passkey refused (403 re-enrollment): explain, then the password form takes over. -->
-                    <div v-if="loginNotice" class="alert alert-warning small" role="status">
+                    <div v-if="loginNotice" class="alert alert-warning" role="status">
+                        <i class="fa fa-triangle-exclamation me-1" aria-hidden="true"></i>
                         <strong>{{ loginNotice }}</strong>
-                        <div>Please sign in with your password this time, then delete and re-add your passkey in Settings → Security.</div>
+                        <div class="mt-1">
+                            Please sign in with your password this time, then delete and re-add your passkey in
+                            <router-link to="/settings/security" class="alert-link">Settings → Security</router-link>.
+                        </div>
                     </div>
 
                     <div class="input-group mb-3">
@@ -55,7 +59,7 @@
                     <button
                         v-if="canUsePasskeyLogin"
                         type="button"
-                        class="btn btn-lg btn-outline-primary ms-2"
+                        class="w-100 mt-2 btn btn-lg btn-outline-primary"
                         :disabled="isLoading"
                         @click="onUsePasskey()">
                         <i class="fa fa-fingerprint" aria-hidden="true"></i>
@@ -78,7 +82,8 @@
 
 <script>
     import '../../assets/auth.css'
-    import { errorText } from '../../utils/apiError'
+    import { errorText, isPasskeyReenrollmentRequired } from '../../utils/apiError'
+    import { isWebAuthnSupported } from '../../utils/webauthn'
 
     import { 
         mapState,
@@ -119,6 +124,14 @@
             }
         
             this.$refs.inputPassword.focus();
+
+            // A verified passkey signs in without typing: start its ceremony right away. Not after a
+            // refusal (loginNotice), nor when the passkey screen already tried ("Sign in another way"):
+            // the user chose the password.
+            if (this.canUsePasskeyLogin && !this.loginNotice && this.user.next?.step !== 'verify_passkey'
+                && isWebAuthnSupported()) {
+                this.onUsePasskey();
+            }
         },
         methods: {
             ...mapActions(useAlertStore, [
@@ -127,11 +140,28 @@
 
             ...mapActions(useUserStore, [
                 'verifyPassword',
+                'verifyPasskey',
                 'setAutoLogin'
             ]),
 
-            onUsePasskey: function () {
-                this.$router.replace({ name: 'VerifyPasskey' });
+            // Passkey ceremony in place: the password form stays as the fallback.
+            onUsePasskey: async function () {
+                this.isLoading = true;
+
+                try {
+                    await this.verifyPasskey();
+
+                    this.$router.replace({ name: 'Home' });
+                }
+                catch (error) {
+                    this.isLoading = false;
+
+                    // 403 re-enrollment: the store set loginNotice, shown above the form.
+                    // NotAllowedError: the user cancelled; stay silently on the password form.
+                    if (isPasskeyReenrollmentRequired(error) || error?.name === 'NotAllowedError') return;
+
+                    this.openAlert("Couldn't sign in with passkey", errorText(error, 'Please try again or use your password.'), 'danger');
+                }
             },
 
             goBack: function () {
@@ -160,6 +190,8 @@
 
             onVerifyPassword: async function () {
                 this.isLoading = true;
+                // After a passkey refusal, land where the passkey can be re-added.
+                const reenroll = !!this.loginNotice;
 
                 try {
                     const passwordVerification = await this.verifyPassword({
@@ -172,7 +204,7 @@
                         this.$router.replace({ name: 'VerifyOTP' });
                     }
                     else {
-                        this.$router.replace({ name: 'Home' });
+                        this.$router.replace({ name: reenroll ? 'SettingsSecurity' : 'Home' });
                     }
                 }
                 catch (error) {
