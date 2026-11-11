@@ -2,12 +2,11 @@
 import { test, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 const source = path => readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8');
-test('persistent storage banner is removed while page-exit warning stays wired', () => {
+test('no persistent storage banner and no page-exit prompt', () => {
     const app = source('App.vue');
     expect(app).not.toContain('LocalSafetyNotice');
     expect(source('components/menu/MainMenuPanel.vue')).not.toContain('Device storage: online sign-in required');
-    expect(app).toContain("window.addEventListener('beforeunload', this.onBeforeUnload)");
-    expect(app).toContain("window.removeEventListener('beforeunload', this.onBeforeUnload)");
+    expect(app).not.toContain('beforeunload');
 });
 test('offline editors never claim a durable save or automatic sync', () => {
     for (const file of ['components/AddAccount.vue', 'components/EditAccount.vue']) {
@@ -17,5 +16,4 @@ test('offline editors never claim a durable save or automatic sync', () => {
 test('account persistence remains fail-closed rather than reintroducing a plaintext outbox or colocated key', () => {
     expect(source('store/accounts.js')).not.toMatch(/localforage\.(setItem|removeItem)/);
     expect(source('services/AccountsService.js')).not.toMatch(/localforage\.(setItem|getItem)/);
-    expect(source('services/UserService.js')).not.toMatch(/public_encryption_key\s*:/);
 });

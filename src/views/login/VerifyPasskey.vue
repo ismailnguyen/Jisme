@@ -121,10 +121,10 @@
                 catch (error) {
                     this.isLoading = false;
 
-                    // Legacy passkey (registered before verified enrollment): the server answers 403 with
-                    // a reason. The store keeps it as loginNotice; the password form explains it.
+                    // Passkey the server cannot verify: explain and stay here, "Sign in another way"
+                    // leads to the password form (where the notice is repeated).
                     if (isPasskeyReenrollmentRequired(error)) {
-                        this.$router.replace({ name: 'VerifyPassword' });
+                        this.openAlert('Passkey refused', errorText(error, 'Please sign in another way.'), 'warning');
                         return;
                     }
 

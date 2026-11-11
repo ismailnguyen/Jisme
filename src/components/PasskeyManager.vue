@@ -9,9 +9,8 @@
                             <template v-if="passkey.createdAt">
                                 Added <time :datetime="passkey.createdAt">{{ formatDate(passkey.createdAt) }}</time>
                             </template>
-                            <template v-else>Added before verified enrollment</template>
+                            <template v-else>Added with a previous version</template>
                         </small>
-                        <span v-if="!passkey.verified" class="passkey-notice">Re-enrollment required</span>
                     </div>
                     <button
                         type="button"
@@ -52,32 +51,26 @@
 
         <p v-if="passkeysStore.fetchError" class="security-error small" role="alert">{{ passkeysStore.fetchError }}</p>
 
-        <p v-if="hasLegacy" class="small security-warning">
-            Passkeys marked “Re-enrollment required” were added before verified enrollment and can no longer sign you in.
-            Delete them and add them again.
-        </p>
-
-        <form v-if="passkeysStore.isSupported" @submit.prevent="onEnroll">
-            <label for="passkey-new-name" class="form-label small">Passkey name</label>
-            <div class="security-fields">
-                <input
-                    id="passkey-new-name"
-                    v-model="newName"
-                    type="text"
-                    class="form-control"
-                    placeholder="e.g. Work laptop"
-                    maxlength="64"
-                    :disabled="isEnrolling">
-                <button type="submit" class="btn btn-primary" :disabled="isEnrolling || !newName.trim()"><i class="fa fa-plus" aria-hidden="true"></i> Add passkey</button>
-            </div>
+        <div v-if="passkeysStore.isSupported">
+            <button
+                id="passwordlesslogin_btn"
+                type="button"
+                class="btn btn-danger btn-block"
+                :disabled="isEnrolling"
+                @click="onEnroll">
+                <i class="fa fa-plus" aria-hidden="true"></i> Allow a new device to connect
+            </button>
             <p v-if="isEnrolling" class="small text-muted mt-1 mb-0" role="status">Waiting for your passkey… follow your browser's prompt.</p>
             <p v-else-if="passkeysStore.enrollStatus === 'success'" class="small security-success mt-1 mb-0" role="status">Passkey added.</p>
             <p v-else-if="passkeysStore.enrollStatus === 'error'" class="security-error small mt-1 mb-0" role="alert">{{ passkeysStore.enrollError }}</p>
-            <p v-if="passkeysStore.enrollStatus === 'success' && enrolledWithoutPrf" class="small text-muted mt-1 mb-0" role="status">This passkey can sign you in, but can't keep this device silently signed in. A device-keychain passkey (iCloud Keychain / Windows Hello) can.</p>
-        </form>
-        <p v-else class="small text-muted mb-0">
-            <i class="fa fa-ban" aria-hidden="true"></i> Passkeys are not supported in this browser.
-        </p>
+        </div>
+        <button
+            v-else
+            id="passwordlesslogin_unsupported_btn"
+            class="btn btn-danger btn-block"
+            disabled>
+            <i class="fa fa-ban"></i> Passkey not supported in this device
+        </button>
 
         <!-- Vault passkey unlock (PRF): the phrase re-derives the key once to wrap it for a passkey. -->
         <form v-if="canEnableVaultUnlock" class="mt-3" @submit.prevent="onEnableVaultUnlock">
@@ -110,22 +103,16 @@ import { mapStores } from 'pinia';
 import { useUserStore, useVaultStore } from '@/store';
 import usePasskeysStore from '../store/passkeys';
 import { errorText } from '../utils/apiError';
-import { authenticateWithPrf, isSessionPrfSupported } from '../utils/webauthn';
-import { createPrfSalt } from '../utils/vaultPasskey';
-import { toBase64url } from '../utils/vaultBlob';
 import { VaultEnvelopeError } from '../utils/vaultKey';
 
 export default {
     data () {
-        return { enrolledWithoutPrf: false, newName: '', deletePassword: '', vaultPhrase: '', vaultStatus: 'idle', vaultError: '' };
+        return { deletePassword: '', vaultPhrase: '', vaultStatus: 'idle', vaultError: '' };
     },
     computed: {
         ...mapStores(usePasskeysStore, useVaultStore, useUserStore),
         isEnrolling () {
             return this.passkeysStore.enrollStatus === 'loading';
-        },
-        hasLegacy () {
-            return this.passkeysStore.list.some(p => !p.verified);
         },
         canEnableVaultUnlock () {
             const v = this.vaultStore;
@@ -144,32 +131,15 @@ export default {
             const date = new Date(value);
             return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString(undefined, { dateStyle: 'medium' });
         },
+        // One ceremony only: the name prompt, then the browser's passkey prompt.
         async onEnroll () {
-            this.enrolledWithoutPrf = false;
-            const added = await this.passkeysStore.enroll(this.newName);
-            if (this.passkeysStore.enrollStatus !== 'success') return;
-            this.newName = '';
-            if (!added?.id) return;
-            let prfOutput;
-            try {
-                if (!await isSessionPrfSupported()) {
-                    this.enrolledWithoutPrf = true;
-                    return;
-                }
-                const result = await authenticateWithPrf({
-                    challenge: toBase64url(globalThis.crypto.getRandomValues(new Uint8Array(32))),
-                    allowCredentials: [{ id: added.id, type: 'public-key' }],
-                    userVerification: 'required', timeout: 60000,
-                }, { salt: createPrfSalt() });
-                prfOutput = result.prfOutput;
-            } catch (error) {
-                // An optional probe must not turn successful enrollment into an error.
-                if (error?.name === 'PrfUnsupportedError') this.enrolledWithoutPrf = true;
-            } finally {
-                prfOutput?.fill(0);
-            }
+            const deviceName = window.prompt('Enter a device name', 'Device #1');
+            if (!deviceName) return;
+            await this.passkeysStore.enroll(deviceName);
         },
         onRequestDelete (id) {
+            const passkey = this.passkeysStore.list.find(p => p.id === id);
+            if (!window.confirm('Do you want to delete passkey for ' + (passkey ? passkey.name : id) + '?')) return;
             this.deletePassword = '';
             this.passkeysStore.requestDelete(id);
         },

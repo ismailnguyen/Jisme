@@ -1,5 +1,4 @@
-import { 
-    LOCAL_STORAGE_SESSION_ENVELOPE_KEY,
+import {
     LOCAL_STORAGE_DB_NAME,
     LOCAL_STORAGE_USER_KEY,
     LOCAL_STORAGE_LAST_REMEMBERED_USERNAME_KEY,
@@ -25,20 +24,20 @@ const passkeyService = new PasskeyService();
 class UserService {
     constructor() {}
 
-    async saveSessionEnvelope (envelope) { await localforage.setItem(LOCAL_STORAGE_SESSION_ENVELOPE_KEY, envelope); }
-    async getSessionEnvelope () { return await localforage.getItem(LOCAL_STORAGE_SESSION_ENVELOPE_KEY); }
-    async clearSessionEnvelope () { await localforage.removeItem(LOCAL_STORAGE_SESSION_ENVELOPE_KEY); }
-
     async getCachedUser () {
-        // Legacy sessions included a raw data key. Never restore that capability.
-        // Account caches and the unowned legacy outbox remain untouched for recovery.
-        await localforage.removeItem(LOCAL_STORAGE_USER_KEY);
-        return null;
+        return await localforage.getItem(LOCAL_STORAGE_USER_KEY);
     }
 
-    async updateCachedUser () {
-        // Until wrapped local vault unlock exists, sessions/keys are memory-only.
-        await localforage.removeItem(LOCAL_STORAGE_USER_KEY);
+    async updateCachedUser (user) {
+        await localforage.setItem(LOCAL_STORAGE_USER_KEY, {
+            uuid: user.uuid,
+            avatarUrl: user.avatarUrl,
+            email: user.email,
+            token: user.token,
+            tokenExpiry: user.tokenExpiry,
+            public_encryption_key: user.public_encryption_key,
+            hasAccounts: user.hasAccounts
+        });
     }
 
     async getLastActivity () {
@@ -113,13 +112,15 @@ class UserService {
     }
 
     async signOut (preserveCache = false) {
-        await this.clearSessionEnvelope();
         // Always remove user session/token info
         await localforage.removeItem(LOCAL_STORAGE_USER_KEY);
         await this.clearLastActivity();
 
-        // Legacy caches can include unsynced local changes. They are quarantined,
-        // not read by this client, and must not be silently deleted on logout.
+        // Optionally preserve cached accounts for faster re-login (e.g., session expired)
+        if (!preserveCache) {
+            await localforage.removeItem(LOCAL_STORAGE_RECENT_ACCOUNTS_KEY);
+            await localforage.removeItem(LOCAL_STORAGE_ACCOUNTS_KEY);
+        }
     }
 
     async requestLogin ({ username }) {

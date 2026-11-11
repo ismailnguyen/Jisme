@@ -9,7 +9,7 @@ import { registerPasskey, isWebAuthnSupported } from '../utils/webauthn';
 import { errorText } from '../utils/apiError';
 
 // Server shape { id, name, createdAt, verified } and the legacy client shape
-// { deviceName, passkey: { id } } (never verified: those need re-enrollment).
+// { deviceName, passkey: { id } } (verified: false until its first verified sign-in).
 export function normalizePasskey (p) {
     if (!p || typeof p !== 'object') return null;
     const id = p.id ?? p.credentialId ?? p.passkey?.id;
@@ -98,18 +98,11 @@ const usePasskeysStore = defineStore('passkeys', () => {
                 ...(credential && typeof credential === 'object' ? credential : {}),
                 verified: true,
             });
-            await userStore.clearSessionEnvelope(added.id);
-            if (userStore.user !== session) return;
             generation++;
             pendingFetch = undefined;
             serverList.value = [...list.value.filter(p => p.id !== added.id), added].filter(Boolean);
             setPasskeys([...(userStore.user.passkeys || []).filter(p => normalizePasskey(p)?.id !== added.id), added]);
             enrollStatus.value = 'success';
-            // "Remember me" session: seal it now with the new verified passkey (after the
-            // stale envelope was cleared above), so the next reload doesn't sign out.
-            if (userStore.isLoggedIn && userStore.isExtendedSession) {
-                try { await userStore.persistSession(); } catch (_) { /* optional; enrollment succeeded */ }
-            }
             return added;
         } catch (error) {
             if (userStore.user !== session) return;
@@ -143,8 +136,6 @@ const usePasskeysStore = defineStore('passkeys', () => {
         const session = userStore.user;
         try {
             await service.remove(token(), id, password);
-            if (userStore.user !== session) return;
-            await userStore.clearSessionEnvelope(id);
             if (userStore.user !== session) return;
             generation++;
             pendingFetch = undefined;

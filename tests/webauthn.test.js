@@ -46,33 +46,17 @@ test('authenticateWithPrf({ wraps }) restricts to wrapped credentials with evalB
     await authenticateWithPrf({ challenge: 'Yw' }, { wraps: [{ credentialId: 'c1', salt: SALT }, { credentialId: 'c2', salt: SALT }] });
     const sent = browser.startAuthentication.mock.calls[0][0].optionsJSON;
     expect(sent.allowCredentials).toEqual([
-        { id: 'c1', type: 'public-key', transports: ['internal'] },
-        { id: 'c2', type: 'public-key', transports: ['internal'] },
+        { id: 'c1', type: 'public-key' },
+        { id: 'c2', type: 'public-key' },
     ]);
     expect(Object.keys(sent.extensions.prf.evalByCredential)).toEqual(['c1', 'c2']);
 });
 
-// Local ceremonies must stay on-device: without transports iOS offers the hybrid/QR sheet.
-test('authenticateWithPrf injects transports internal on caller-built allowCredentials, keeps server ones', async () => {
-    browser.startAuthentication.mockResolvedValue({
-        id: 'c1', response: {}, clientExtensionResults: { prf: { results: { first: new Uint8Array(32).buffer } } },
-    });
-    await authenticateWithPrf({
-        challenge: 'Yw',
-        allowCredentials: [{ id: 'c1', type: 'public-key' }, { id: 'c2', type: 'public-key', transports: ['usb', 'nfc'] }],
-    }, { salt: SALT });
-    const sent = browser.startAuthentication.mock.calls[0][0].optionsJSON;
-    expect(sent.allowCredentials).toEqual([
-        { id: 'c1', type: 'public-key', transports: ['internal'] },
-        { id: 'c2', type: 'public-key', transports: ['usb', 'nfc'] },
-    ]);
-});
-
-test('authenticatePasskey injects transports internal when allowCredentials lack them', async () => {
+test('allowCredentials are passed through as the server issued them (no transports hint injected)', async () => {
     browser.startAuthentication.mockResolvedValue({ id: 'c1', response: {}, clientExtensionResults: {} });
-    await authenticatePasskey({ challenge: 'Yw', allowCredentials: [{ id: 'c1', type: 'public-key' }] });
-    expect(browser.startAuthentication.mock.calls[0][0].optionsJSON.allowCredentials)
-        .toEqual([{ id: 'c1', type: 'public-key', transports: ['internal'] }]);
+    const allowCredentials = [{ id: 'c1', type: 'public-key' }, { id: 'c2', type: 'public-key', transports: ['usb', 'nfc'] }];
+    await authenticatePasskey({ challenge: 'Yw', allowCredentials });
+    expect(browser.startAuthentication.mock.calls[0][0].optionsJSON.allowCredentials).toEqual(allowCredentials);
 });
 
 test('options without allowCredentials are passed through unchanged', async () => {

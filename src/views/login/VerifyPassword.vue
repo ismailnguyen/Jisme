@@ -16,7 +16,7 @@
                         <i class="fa fa-triangle-exclamation me-1" aria-hidden="true"></i>
                         <strong>{{ loginNotice }}</strong>
                         <div class="mt-1">
-                            Please sign in with your password this time, then delete and re-add your passkey in
+                            Please sign in with your password this time. You can then delete and re-add your passkey in
                             <router-link to="/settings/security" class="alert-link">Settings → Security</router-link>.
                         </div>
                     </div>
@@ -83,7 +83,6 @@
 <script>
     import '../../assets/auth.css'
     import { errorText, isPasskeyReenrollmentRequired } from '../../utils/apiError'
-    import { isWebAuthnSupported } from '../../utils/webauthn'
 
     import { 
         mapState,
@@ -124,14 +123,6 @@
             }
         
             this.$refs.inputPassword.focus();
-
-            // A verified passkey signs in without typing: start its ceremony right away. Not after a
-            // refusal (loginNotice), nor when the passkey screen already tried ("Sign in another way"):
-            // the user chose the password.
-            if (this.canUsePasskeyLogin && !this.loginNotice && this.user.next?.step !== 'verify_passkey'
-                && isWebAuthnSupported()) {
-                this.onUsePasskey();
-            }
         },
         methods: {
             ...mapActions(useAlertStore, [
@@ -144,7 +135,7 @@
                 'setAutoLogin'
             ]),
 
-            // Passkey ceremony in place: the password form stays as the fallback.
+            // Explicit choice only: the passkey ceremony never starts on its own here.
             onUsePasskey: async function () {
                 this.isLoading = true;
 
@@ -190,8 +181,6 @@
 
             onVerifyPassword: async function () {
                 this.isLoading = true;
-                // After a passkey refusal, land where the passkey can be re-added.
-                const reenroll = !!this.loginNotice;
 
                 try {
                     const passwordVerification = await this.verifyPassword({
@@ -204,7 +193,7 @@
                         this.$router.replace({ name: 'VerifyOTP' });
                     }
                     else {
-                        this.$router.replace({ name: reenroll ? 'SettingsSecurity' : 'Home' });
+                        this.$router.replace({ name: 'Home' });
                     }
                 }
                 catch (error) {

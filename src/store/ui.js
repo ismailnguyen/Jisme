@@ -273,15 +273,6 @@ const store = defineStore('ui', () => {
         }
     }
 
-    const restorePendingEdit = (index) => {
-        const item = accountsStore.getPendingEdit(index);
-        if (!item) return;
-        const record = item.account;
-        if (item.type === 'create') currentAddingAccount.value = record;
-        else currentEditingAccount.value = record;
-        // Do not invoke the normal editor setter: it has a background save side effect.
-        openSidebar(item.type === 'create' ? SIDEBAR.ADD_ACCOUNT : SIDEBAR.EDIT_ACCOUNT);
-    };
 
     const isMobile = () => {
         return window.innerWidth <= 768; // Adjust the width as per your design breakpoints
@@ -317,7 +308,6 @@ const store = defineStore('ui', () => {
     }
 
     return {
-        restorePendingEdit,
         currentAddingAccount,
         setCurrentAddingAccount,
         resetCurrentAddingAccount,

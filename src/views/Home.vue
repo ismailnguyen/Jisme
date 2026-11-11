@@ -9,7 +9,6 @@
   />
 
   <div class="home-layout">
-    <VaultUnlockPanel />
     <SummaryPane
         @menuOpened="onMenuOpened"
     />
@@ -43,7 +42,6 @@ import Menu from "../components/Menu.vue";
 import AddAccountModal from "../components/AddAccount.vue";
 import EditAccountModal from "../components/EditAccount.vue";
 import SummaryPane from "../components/SummaryPane.vue";
-import VaultUnlockPanel from "../components/VaultUnlockPanel.vue";
 
 import AccountList from "../components/AccountList.vue";
 import HomeDock from "../components/HomeDock.vue";
@@ -53,7 +51,6 @@ export default {
     Menu,
     AddAccountModal,
     EditAccountModal,
-    VaultUnlockPanel,
     SummaryPane,
     AccountList,
     HomeDock

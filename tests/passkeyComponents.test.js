@@ -53,20 +53,45 @@ describe('Settings > Security: passkeys', () => {
         expect(await render('components/PasskeyManager.vue')).toContain('Server laptop');
     });
 
-    test('lists passkeys with name and created date; legacy ones are flagged for re-enrollment', async () => {
+    test('lists passkeys with name and created date; legacy ones are listed without a scary label', async () => {
         const html = await render('components/PasskeyManager.vue');
         expect(html).toContain('Work laptop');
         expect(html).toContain('datetime="2026-11-01T10:00:00Z"');
         expect(html).toContain('Old phone');
-        expect(html).toMatch(/re-enrol/i);
-        expect(html).toMatch(/Add passkey/);
+        expect(html).toMatch(/Added with a previous version/);
+        expect(html).not.toMatch(/re-enrol/i);
+        expect(html).toMatch(/Allow a new device to connect/);
     });
 
     test('loading state while the WebAuthn ceremony runs', async () => {
         passkeys.enrollStatus = 'loading';
         const html = await render('components/PasskeyManager.vue');
         expect(html).toMatch(/Waiting for your passkey/i);
-        expect(html).toMatch(/<button[^>]*disabled[^>]*>[^<]*(<[^>]*>[^<]*)*Add passkey/);
+        expect(html).toMatch(/<button[^>]*disabled[^>]*>[^<]*(<[^>]*>[^<]*)*Allow a new device to connect/);
+    });
+
+    test('adding a passkey asks for a device name with prompt(), then runs one ceremony only', async () => {
+        const component = (await import('../src/components/PasskeyManager.vue')).default;
+        const store = { enroll: vi.fn(async () => ({ id: 'new-id' })), list: [] };
+        window.prompt = vi.fn(() => 'Phone');
+        await component.methods.onEnroll.call({ passkeysStore: store });
+        expect(store.enroll).toHaveBeenCalledWith('Phone');
+        expect(webauthn.authenticateWithPrf).not.toHaveBeenCalled();
+        window.prompt = vi.fn(() => null);
+        await component.methods.onEnroll.call({ passkeysStore: store });
+        expect(store.enroll).toHaveBeenCalledTimes(1);
+    });
+
+    test('deleting a passkey asks for confirmation before the password step', async () => {
+        const component = (await import('../src/components/PasskeyManager.vue')).default;
+        const store = { requestDelete: vi.fn(), list: [{ id: 'c1', name: 'Work laptop' }] };
+        window.confirm = vi.fn(() => false);
+        component.methods.onRequestDelete.call({ passkeysStore: store, deletePassword: 'x' }, 'c1');
+        expect(window.confirm).toHaveBeenCalledWith(expect.stringContaining('Work laptop'));
+        expect(store.requestDelete).not.toHaveBeenCalled();
+        window.confirm = vi.fn(() => true);
+        component.methods.onRequestDelete.call({ passkeysStore: store, deletePassword: 'x' }, 'c1');
+        expect(store.requestDelete).toHaveBeenCalledWith('c1');
     });
 
     test('success state', async () => {
@@ -96,7 +121,7 @@ describe('Settings > Security: passkeys', () => {
         webauthn.isWebAuthnSupported.mockReturnValue(false);
         const html = await render('components/PasskeyManager.vue');
         expect(html).toMatch(/not supported/i);
-        expect(html).not.toMatch(/Add passkey<\/button>/);
+        expect(html).not.toMatch(/Allow a new device to connect/);
     });
 
     test('the security panel hosts passkeys and the recovery code', async () => {
@@ -204,7 +229,7 @@ describe('Login screen', () => {
         expect(html).toMatch(/sign in with your password/i);
     });
 
-    describe('VerifyPassword starts the passkey ceremony on its own', () => {
+    describe('VerifyPassword never starts the passkey ceremony on its own', () => {
         async function mountVerifyPassword (overrides = {}) {
             const component = (await import('../src/views/login/VerifyPassword.vue')).default;
             const context = {
@@ -222,36 +247,26 @@ describe('Login screen', () => {
             return context;
         }
 
-        test('verified passkey and no notice: the ceremony runs, then Home', async () => {
-            const context = await mountVerifyPassword();
-            expect(context.verifyPasskey).toHaveBeenCalledTimes(1);
-            expect(context.$router.replace).toHaveBeenCalledWith({ name: 'Home' });
-        });
-
-        test('with a loginNotice (passkey just refused): no automatic ceremony', async () => {
-            users.loginNotice = 'Passkey re-enrollment required.';
-            const context = await mountVerifyPassword();
-            expect(context.verifyPasskey).not.toHaveBeenCalled();
-            expect(context.$router.replace).not.toHaveBeenCalled();
-        });
-
-        test('coming from the passkey screen ("Sign in another way"): no second automatic ceremony', async () => {
-            users.user = { email: 'alice@example.test', token: 'pre-auth', next: { step: 'verify_passkey' } };
+        test('verified passkey and no notice: mounting only focuses the password field', async () => {
             const context = await mountVerifyPassword();
             expect(context.canUsePasskeyLogin).toBe(true);
             expect(context.verifyPasskey).not.toHaveBeenCalled();
+            expect(context.$router.replace).not.toHaveBeenCalled();
+            expect(context.$refs.inputPassword.focus).toHaveBeenCalled();
         });
 
-        test('no passkey on the account: no automatic ceremony', async () => {
-            users.user = { email: 'alice@example.test', token: 'pre-auth', next: { step: 'verify_password' } };
+        test('the "Sign in with passkey" button runs the ceremony, then Home', async () => {
             const context = await mountVerifyPassword();
-            expect(context.verifyPasskey).not.toHaveBeenCalled();
+            await context.onUsePasskey();
+            expect(context.verifyPasskey).toHaveBeenCalledTimes(1);
+            expect(context.$router.replace).toHaveBeenCalledWith({ name: 'Home' });
         });
 
         test('cancelling (NotAllowedError) stays silently on the password form', async () => {
             const context = await mountVerifyPassword({
                 verifyPasskey: vi.fn(async () => { throw Object.assign(new Error('cancelled'), { name: 'NotAllowedError' }); }),
             });
+            await context.onUsePasskey();
             expect(context.verifyPasskey).toHaveBeenCalledTimes(1);
             expect(context.$router.replace).not.toHaveBeenCalled();
             expect(context.$router.push).not.toHaveBeenCalled();
@@ -265,7 +280,8 @@ describe('Login screen', () => {
                 : new Response(JSON.stringify({ error: { message: 'Forbidden', reason: 'Passkey re-enrollment required' } }), { status: 403 }));
             webauthn.authenticatePasskey.mockResolvedValue({ id: 'legacy', response: {} });
             const context = await mountVerifyPassword({ verifyPasskey: users.verifyPasskey });
-            await vi.waitFor(() => expect(users.loginNotice).toMatch(/re-enrollment required/i));
+            await context.onUsePasskey();
+            expect(users.loginNotice).toMatch(/re-enrollment required/i);
             expect(context.$router.replace).not.toHaveBeenCalled();
             expect(context.openAlert).not.toHaveBeenCalled();
         });
@@ -274,15 +290,16 @@ describe('Login screen', () => {
             const context = await mountVerifyPassword({
                 verifyPasskey: vi.fn(async () => { throw Object.assign(new Error('Not authorized!'), { status: 401, reason: 'Passkey verification failed.' }); }),
             });
+            await context.onUsePasskey();
             expect(context.openAlert).toHaveBeenCalledWith("Couldn't sign in with passkey", expect.stringContaining('Passkey verification failed.'), 'danger');
             expect(context.$router.replace).not.toHaveBeenCalled();
         });
 
-        test('password sign-in after a 403 refusal goes straight to Settings → Security', async () => {
+        test('password sign-in after a 403 refusal lands on Home like any sign-in', async () => {
             users.loginNotice = 'Passkey re-enrollment required.';
             const context = await mountVerifyPassword({ password: 'pw', verifyPassword: vi.fn(async () => undefined) });
             await context.onVerifyPassword();
-            expect(context.$router.replace).toHaveBeenCalledWith({ name: 'SettingsSecurity' });
+            expect(context.$router.replace).toHaveBeenCalledWith({ name: 'Home' });
         });
     });
 });
@@ -309,25 +326,3 @@ describe('Vault unlock panel', () => {
     });
 });
 
-
-test.each(['PrfUnsupportedError', 'NotAllowedError', 'supported', 'capability'])('enrollment PRF probe: %s', async mode => {
-    const component = (await import('../src/components/PasskeyManager.vue')).default;
-    const output = new Uint8Array(32).fill(7);
-    webauthn.isSessionPrfSupported.mockResolvedValue(mode !== 'capability');
-    if (mode === 'supported') webauthn.authenticateWithPrf.mockResolvedValue({ credentialId: 'new-id', prfOutput: output });
-    else webauthn.authenticateWithPrf.mockRejectedValue(Object.assign(new Error(), { name: mode }));
-    const context = {
-        ...component.data(), newName: 'Phone',
-        passkeysStore: { enrollStatus: 'success', enroll: vi.fn(async () => ({ id: 'new-id' })) },
-    };
-    await component.methods.onEnroll.call(context);
-    expect(context.enrolledWithoutPrf).toBe(['PrfUnsupportedError', 'capability'].includes(mode));
-    expect(context.newName).toBe('');
-    expect(context.passkeysStore.enrollStatus).toBe('success');
-    if (mode !== 'capability') expect(webauthn.authenticateWithPrf.mock.calls.at(-1)[0].allowCredentials).toEqual([{ id: 'new-id', type: 'public-key' }]);
-    if (mode === 'supported') expect(output.every(b => b === 0)).toBe(true);
-    const app = createSSRApp({ ...component, data: () => ({ ...component.data(), enrolledWithoutPrf: context.enrolledWithoutPrf }) });
-    passkeys.enrollStatus = 'success'; app.use(pinia);
-    const html = await renderToString(app);
-    expect(html.includes("This passkey can sign you in, but")).toBe(context.enrolledWithoutPrf);
-});

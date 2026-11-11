@@ -62,19 +62,17 @@
             if (this.accountsStore && this.accountsStore.initSyncListeners) {
                 this.accountsStore.initSyncListeners();
             }
-            // Inspect quarantined legacy data even offline; this never replays it.
-            if (this.accountsStore && this.accountsStore.processOutbox) {
+            // Try processing any pending outbox on startup if online
+            if (this.accountsStore && this.accountsStore.processOutbox && this.networkStore.isOnline) {
                 this.accountsStore.processOutbox();
             }
         },
         mounted() {
-            window.addEventListener('beforeunload', this.onBeforeUnload);
             document.addEventListener('visibilitychange', this.onVisibilityChange);
             ACTIVITY_EVENTS.forEach(name => window.addEventListener(name, this.onActivity, { passive: true }));
             this.resetIdleTimer();
         },
         beforeUnmount() {
-            window.removeEventListener('beforeunload', this.onBeforeUnload);
             document.removeEventListener('visibilitychange', this.onVisibilityChange);
             ACTIVITY_EVENTS.forEach(name => window.removeEventListener(name, this.onActivity));
             clearTimeout(this.idleTimer);
@@ -101,13 +99,6 @@
                 }, duration);
             },
 
-            onBeforeUnload: function (event) {
-                if (!this.userStore.isDemo && this.accountsStore.outbox.length) {
-                    event.preventDefault();
-                    event.returnValue = '';
-                }
-            },
-
             // Auto-lock: a phone left unlocked must not leave the vault unlocked
             onVisibilityChange: function () {
                 if (document.visibilityState === 'hidden') {
@@ -116,7 +107,7 @@
                 }
 
                 if (this.hiddenAt && Date.now() - this.hiddenAt >= AUTO_LOCK_BACKGROUND_MS) {
-                    this.userStore.lock('Locked while Jisme was in the background.', { force: true });
+                    this.userStore.lock('Locked while Jisme was in the background.');
                 }
 
                 this.hiddenAt = null;
@@ -130,7 +121,7 @@
             resetIdleTimer: function () {
                 clearTimeout(this.idleTimer);
                 this.idleTimer = setTimeout(() => {
-                    this.userStore.lock('Locked after 10 minutes without activity.', { force: true });
+                    this.userStore.lock('Locked after 10 minutes without activity.');
                 }, AUTO_LOCK_IDLE_MS);
             },
         }

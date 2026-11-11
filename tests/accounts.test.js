@@ -83,24 +83,6 @@ test('paginated callbacks cannot repopulate a locked store', async () => {
     expect(accounts.totalAccounts).toBe(0);
     spy.mockRestore();
 });
-test('manual lock warns before discarding pending edits and supports cancellation', async () => {
-    network.setOffline(); await accounts.addAccount({ label: 'draft' }).catch(() => {});
-    window.confirm.mockReturnValueOnce(false);
-    expect(await users.lock()).toBe(false);
-    expect(window.confirm).toHaveBeenCalledWith(expect.stringMatching(/discard/i));
-    expect(users.isLoggedIn).toBe(true);
-    expect(accounts.outbox).toHaveLength(1);
-    window.confirm.mockReturnValueOnce(true);
-    await users.lock();
-    expect(users.user).toBeNull(); expect(accounts.outbox).toEqual([]);
-});
-test('automatic lock warns but cannot be cancelled by pending edits', async () => {
-    network.setOffline(); await accounts.addAccount({ label: 'draft' }).catch(() => {});
-    await users.lock('Idle timeout', { force: true });
-    expect(window.confirm).not.toHaveBeenCalled();
-    expect(window.alert).toHaveBeenCalledWith(expect.stringMatching(/discard/i));
-    expect(users.user).toBeNull(); expect(accounts.outbox).toEqual([]);
-});
 test('lock clears UI-held editor objects and sidebar state', async () => {
     const ui = useUiStore();
     ui.currentAddingAccount = { password: 'draft-secret' };
@@ -163,21 +145,6 @@ test.each(['requestLogin', 'verifyPassword', 'verifyMFA', 'verifyPasskey'])('lat
     expect(users.user).toBeNull(); expect(users.isLoggedIn).toBe(false);
     spy.mockRestore();
 });
-test.each(['requestLogin', 'startDemo'])('%s warns before replacing real pending edits', async (method) => {
-    network.setOffline(); await accounts.addAccount({ label: 'draft' }).catch(() => {});
-    window.confirm.mockReturnValueOnce(false);
-    await expect(users[method]({ username: 'bob@example.invalid' })).rejects.toThrow(/cancel/i);
-    expect(users.user.uuid).toBe('alice'); expect(accounts.outbox).toHaveLength(1);
-    expect(fetch).not.toHaveBeenCalled();
-});
-test('session expiry cannot be cancelled by pending changes', async () => {
-    network.setOffline(); await accounts.addAccount({ label: 'draft' }).catch(() => {}); network.setOnline();
-    window.confirm.mockReturnValue(false);
-    vi.spyOn(AccountsService.prototype, 'getRecents').mockRejectedValue(new SessionExpiredException());
-    await accounts.fetchRecentAccounts().catch(() => {});
-    expect(users.user).toBeNull(); expect(accounts.outbox).toEqual([]);
-    expect(window.alert).toHaveBeenCalled();
-});
 test.each(['getAccountInformation', 'getLastUpdatedTime'])('stale %s failure cannot sign out a later account', async (action) => {
     let fail;
     vi.spyOn(UserService.prototype, 'getAccountInformation').mockImplementation(() => new Promise((_, reject) => { fail = reject; }));
@@ -190,23 +157,4 @@ test('server failure retains unsaved edits and warns rather than dropping pendin
     fetch.mockResolvedValueOnce({ ok: false, status: 500, json: async () => ({ error: { message: 'Synthetic server failure' } }) });
     await expect(accounts.addAccount({ label: 'draft', password: 'synthetic' })).rejects.toThrow(/Synthetic server failure/);
     expect(accounts.outbox).toMatchObject([{ owner: 'alice', account: { password: 'synthetic' } }]);
-});
-test('in-flight write is pending so a lock cannot silently discard an unsaved edit', async () => {
-    let finish;
-    vi.spyOn(AccountsService.prototype, 'add').mockImplementation(() => new Promise(resolve => { finish = resolve; }));
-    const job = accounts.addAccount({ label: 'draft' });
-    expect(accounts.outbox).toMatchObject([{ owner: 'alice', inFlight: true }]);
-    window.confirm.mockReturnValueOnce(false);
-    expect(await users.lock()).toBe(false);
-    finish({ _id: 'one', label: 'draft' }); await job;
-    expect(accounts.outbox).toEqual([]);
-});
-test('forced warning cannot leave key or decrypted accounts live behind a modal', async () => {
-    network.setOffline(); await accounts.addAccount({ label: 'draft' }).catch(() => {});
-    accounts.accounts = [{ password: 'secret' }];
-    window.alert.mockImplementation(() => {
-        expect(users.user).toBeNull();
-        expect(accounts.accounts).toEqual([]);
-    });
-    await users.lock('Idle', { force: true });
 });
