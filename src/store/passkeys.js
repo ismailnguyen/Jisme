@@ -4,7 +4,7 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
 import { useUserStore } from '@/store';
-import { PasskeyService } from '../services/PasskeyService';
+import { PasskeyService, sanitizePasskeyName } from '../services/PasskeyService';
 import { registerPasskey, isWebAuthnSupported } from '../utils/webauthn';
 import { errorText } from '../utils/apiError';
 
@@ -76,9 +76,10 @@ const usePasskeysStore = defineStore('passkeys', () => {
     const token = () => userStore.user?.token;
     const setPasskeys = (passkeys) => { if (userStore.user) userStore.user.passkeys = passkeys; };
 
+    // enroll('Laptop') or enroll({ name: 'Laptop' }).
     async function enroll (name) {
         enrollError.value = '';
-        const label = typeof name === 'string' ? name.trim() : '';
+        const label = sanitizePasskeyName(name && typeof name === 'object' ? name.name : name) || '';
         if (!label) {
             enrollStatus.value = 'error';
             enrollError.value = 'Give this passkey a name.';
@@ -90,7 +91,7 @@ const usePasskeysStore = defineStore('passkeys', () => {
             const options = await service.registrationOptions(token());
             const challenge = options.challenge;
             const response = await registerPasskey(options);
-            const credential = await service.register(token(), { challenge, response });
+            const credential = await service.register(token(), { challenge, response, name: label });
             if (userStore.user !== session) return;
             const added = normalizePasskey({
                 id: response.id, createdAt: new Date().toISOString(), name: label,

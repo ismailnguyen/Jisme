@@ -18,6 +18,12 @@ async function call (method, path, token, body) {
     try { return JSON.parse(text); } catch (_) { return null; }
 }
 
+// Optional user-chosen label, sanitized like the API: trimmed, max 64 chars; empty/non-string -> undefined.
+export function sanitizePasskeyName (name) {
+    if (typeof name !== 'string') return undefined;
+    return name.trim().slice(0, 64).trim() || undefined;
+}
+
 export class PasskeyService {
     listPasskeys (token) {
         return call('GET', 'users/passkeys', token, undefined);
@@ -28,9 +34,10 @@ export class PasskeyService {
         return call('POST', 'users/passkeys/options', token, {});
     }
 
-    // 2. Verified registration: 201 { credential }.
-    async register (token, { challenge, response }) {
-        const body = await call('POST', 'users/passkeys', token, { challenge, response });
+    // 2. Verified registration: 201 { credential }. `name` is optional; omitted from the body when empty.
+    async register (token, { challenge, response, name }) {
+        const label = sanitizePasskeyName(name);
+        const body = await call('POST', 'users/passkeys', token, { challenge, response, ...(label ? { name: label } : {}) });
         return body?.credential ?? body;
     }
 
