@@ -209,8 +209,8 @@ class UserService {
 
     // Passkey sign-in. Errors keep the server reason (ApiError): a 403 "Passkey re-enrollment
     // required" must reach the login screen intact so it can fall back to the password form.
-    async verifyPasskey ({ accessToken, passkey }) {
-        return await passkeyService.login(accessToken, passkey);
+    async verifyPasskey ({ accessToken, challenge, response }) {
+        return await passkeyService.login(accessToken, { challenge, response });
     }
 
     async verifyMFA ({ accessToken, totpToken }) {

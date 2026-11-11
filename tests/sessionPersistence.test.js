@@ -5,7 +5,7 @@ import { useUserStore, useVaultStore, useAlertStore } from '../src/store';
 import UserService from '../src/services/UserService';
 import { sealSessionEnvelope } from '../src/utils/sessionEnvelope';
 import { authenticateWithPrf, isSessionPrfSupported } from '../src/utils/webauthn';
-vi.mock('../src/utils/webauthn', () => ({ authenticatePasskey: vi.fn(), authenticateWithPrf: vi.fn(), isWebAuthnSupported: () => true, isSessionPrfSupported: vi.fn(async () => true) }));
+vi.mock('../src/utils/webauthn', () => ({ authenticatePasskey: vi.fn(), registerPasskey: vi.fn(), authenticateWithPrf: vi.fn(), isWebAuthnSupported: () => true, isSessionPrfSupported: vi.fn(async () => true) }));
 let data, users;
 const owner = 'alice@example.invalid';
 const fixture = () => ({ uuid: 'alice', email: owner, token: 'secret', tokenExpiry: new Date(Date.now() + 86400000).toISOString(), passkeys: [{ id: 'Y3JlZA', verified: true }] });
@@ -117,4 +117,100 @@ test('cancelling persistence stays silent and leaves sign-in intact', async () =
     expect(alert).not.toHaveBeenCalled();
     expect(await new UserService().getSessionEnvelope()).toBeFalsy();
     expect(users.isLoggedIn).toBe(true);
+});
+
+// --- Login UX: "Remember me" alone keeps the device signed in (no hidden second toggle). ---
+const preAuth = () => ({ email: owner, token: 'pre-auth', next: { step: 'verify_password' } });
+async function loginWithPassword (remember, signedIn = fixture()) {
+    vi.spyOn(UserService.prototype, 'requestLogin').mockResolvedValue(preAuth());
+    vi.spyOn(UserService.prototype, 'verifyPassword').mockResolvedValue(signedIn);
+    await users.requestLogin({ username: owner, extendSession: remember });
+    await users.verifyPassword({ password: 'password' });
+}
+const flows = {
+    password: () => loginWithPassword(true),
+    otp: async () => {
+        vi.spyOn(UserService.prototype, 'requestLogin').mockResolvedValue(preAuth());
+        vi.spyOn(UserService.prototype, 'verifyMFA').mockResolvedValue(fixture());
+        await users.requestLogin({ username: owner, extendSession: true });
+        await users.verifyMFA({ totpToken: '123456' });
+    },
+    passkey: async () => {
+        vi.spyOn(UserService.prototype, 'requestLogin').mockResolvedValue({ ...preAuth(), next: { step: 'verify_passkey', passkeyOptions: { challenge: 'Y2g' } } });
+        vi.spyOn(UserService.prototype, 'verifyPasskey').mockResolvedValue(fixture());
+        await users.requestLogin({ username: owner, extendSession: true });
+        await users.verifyPasskey();
+    },
+};
+test.each(Object.keys(flows))('Remember me on %s login enables auto-login without touching Settings', async flow => {
+    try {
+        expect(await new UserService().isAutoLoginEnabled()).toBeFalsy();
+        await flows[flow]();
+        expect(users.isLoggedIn).toBe(true);
+        expect(await users.isAutoLoginEnabled).toBe(true);
+        // ...and the envelope is sealed right away with the verified passkey.
+        expect((await new UserService().getSessionEnvelope())?.credentialId).toBe('Y3JlZA');
+    } finally { vi.restoreAllMocks(); }
+});
+
+test('without Remember me, auto-login is left untouched and nothing is sealed', async () => {
+    try {
+        await loginWithPassword(false);
+        expect(users.isLoggedIn).toBe(true);
+        expect(await new UserService().isAutoLoginEnabled()).toBeFalsy();
+        expect(await new UserService().getSessionEnvelope()).toBeFalsy();
+    } finally { vi.restoreAllMocks(); }
+});
+
+test('Remember me without a verified passkey: explanatory notice, then signed out after reload', async () => {
+    const alert = vi.spyOn(useAlertStore(), 'openAlert');
+    try {
+        await loginWithPassword(true, { ...fixture(), passkeys: [{ deviceName: 'Old phone', passkey: { id: 'legacy' } }] });
+        expect(users.isLoggedIn).toBe(true);
+        expect(await new UserService().getSessionEnvelope()).toBeFalsy();
+        expect(authenticateWithPrf).not.toHaveBeenCalled();
+        expect(alert).toHaveBeenCalledTimes(1);
+        expect(alert.mock.calls[0][0]).toBe('Passive sign-in unavailable');
+        expect(alert.mock.calls[0][1]).toMatch(/verified passkey/i);
+        expect(alert.mock.calls[0][1]).toMatch(/Settings → Security/);
+    } finally { vi.restoreAllMocks(); }
+    // Reload: fresh stores, same device storage.
+    setActivePinia(createPinia()); users = useUserStore();
+    await users.init();
+    expect(users.isLoggedIn).toBe(false);
+});
+
+test('enrolling a passkey in an extended session seals the envelope without a new login', async () => {
+    const { registerPasskey } = await import('../src/utils/webauthn');
+    try {
+        await loginWithPassword(true, { ...fixture(), passkeys: [] });
+        expect(await new UserService().getSessionEnvelope()).toBeFalsy();
+        fetch.mockImplementation(async url => String(url).endsWith('options')
+            ? new Response(JSON.stringify({ challenge: 'cmVn' }), { status: 200 })
+            : new Response(JSON.stringify({ credential: { id: 'Y3JlZA', name: 'Phone', verified: true } }), { status: 201 }));
+        registerPasskey.mockResolvedValue({ id: 'Y3JlZA', response: {} });
+        const { default: usePasskeysStore } = await import('../src/store/passkeys');
+        const added = await usePasskeysStore().enroll('Phone');
+        expect(added.id).toBe('Y3JlZA');
+        expect(usePasskeysStore().enrollStatus).toBe('success');
+        const envelope = await new UserService().getSessionEnvelope();
+        expect(envelope?.credentialId).toBe('Y3JlZA');
+        expect(users.isLoggedIn).toBe(true);
+    } finally { vi.restoreAllMocks(); }
+});
+
+test('enrolling outside an extended session does not prompt for PRF nor seal anything', async () => {
+    const { registerPasskey } = await import('../src/utils/webauthn');
+    try {
+        await loginWithPassword(false, { ...fixture(), passkeys: [] });
+        fetch.mockImplementation(async url => String(url).endsWith('options')
+            ? new Response(JSON.stringify({ challenge: 'cmVn' }), { status: 200 })
+            : new Response(JSON.stringify({ credential: { id: 'Y3JlZA', verified: true } }), { status: 201 }));
+        registerPasskey.mockResolvedValue({ id: 'Y3JlZA', response: {} });
+        const { default: usePasskeysStore } = await import('../src/store/passkeys');
+        await usePasskeysStore().enroll('Phone');
+        expect(usePasskeysStore().enrollStatus).toBe('success');
+        expect(authenticateWithPrf).not.toHaveBeenCalled();
+        expect(await new UserService().getSessionEnvelope()).toBeFalsy();
+    } finally { vi.restoreAllMocks(); }
 });

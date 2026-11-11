@@ -44,9 +44,10 @@ export class PasskeyService {
         return call('POST', 'users/login/passkey/options', token, {});
     }
 
-    // 3. Passkey login; 403 + reason "Passkey re-enrollment required" for legacy passkeys.
-    login (token, assertion) {
-        return call('POST', 'users/login/passkey', token, { passkey: assertion });
+    // 3. Passkey login: { challenge (from loginOptions), response (the full assertion) }, like register.
+    // 403 + reason "Passkey re-enrollment required" for legacy passkeys or any other body shape.
+    login (token, { challenge, response }) {
+        return call('POST', 'users/login/passkey', token, { challenge, response });
     }
 
     // Vault unlock challenge (assumed companion of 5; see the design doc).

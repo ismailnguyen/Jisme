@@ -83,7 +83,7 @@ describe('PasskeyService', () => {
         await service.registrationOptions('tok');
         await service.register('tok', { challenge: 'Y2g', response: { id: 'c1' } });
         await service.remove('tok', 'c/1', 'pw');
-        await service.login('tok', { id: 'c1' });
+        await service.login('tok', { challenge: 'c2VydmVy', response: { id: 'c1' } });
         await service.vaultUnlock('tok', { id: 'c1' });
         await service.createRecoveryCode('tok');
         await service.listPasskeys('tok');
@@ -98,7 +98,9 @@ describe('PasskeyService', () => {
         ]);
         expect(requests[1].body).toEqual({ challenge: 'Y2g', response: { id: 'c1' } });
         expect(requests[2].body).toEqual({ password: 'pw' });
-        expect(requests[3].body).toEqual({ passkey: { id: 'c1' } });
+        // API contract (Jisme-Api userService.verifyPasskey): { challenge: string, response: <full assertion> }.
+        expect(requests[3].body).toEqual({ challenge: 'c2VydmVy', response: { id: 'c1' } });
+        expect(requests[3].body).not.toHaveProperty('passkey');
         expect(requests[4].body).toEqual({ assertion: { id: 'c1' } });
         expect(requests.every(r => r.headers.get('Authorization') === 'Bearer tok')).toBe(true);
     });
@@ -264,9 +266,22 @@ describe('passkey login', () => {
         webauthn.authenticatePasskey.mockResolvedValue({ id: 'c1', response: { signature: 'sig' } });
         await users.verifyPasskey();
         expect(webauthn.authenticatePasskey).toHaveBeenCalledWith(expect.objectContaining({ challenge: 'c2VydmVy' }));
-        expect(requests[1].body).toEqual({ passkey: { id: 'c1', response: { signature: 'sig' } } });
+        // The server challenge from the options is echoed with the whole assertion as `response`.
+        expect(requests[1].url).toBe(`${ API }users/login/passkey`);
+        expect(requests[1].body).toEqual({ challenge: 'c2VydmVy', response: { id: 'c1', response: { signature: 'sig' } } });
+        expect(requests[1].body).not.toHaveProperty('passkey');
         expect(users.isLoggedIn).toBe(true);
         expect(users.loginNotice).toBe('');
+    });
+
+    test('requestLogin-provided passkeyOptions: their challenge is the one posted', async () => {
+        users.user = { email: 'alice@example.test', token: 'pre-auth', next: { step: 'verify_passkey', passkeyOptions: { challenge: 'aW5saW5l' } } };
+        api(() => json(200, { uuid: 'alice', email: 'alice@example.test', token: 'session' }));
+        webauthn.authenticatePasskey.mockResolvedValue({ id: 'c1', response: { signature: 'sig' } });
+        await users.verifyPasskey();
+        expect(requests).toHaveLength(1);
+        expect(requests[0].url).toBe(`${ API }users/login/passkey`);
+        expect(requests[0].body).toEqual({ challenge: 'aW5saW5l', response: { id: 'c1', response: { signature: 'sig' } } });
     });
 
     test('403 "Passkey re-enrollment required" falls back to the password form with an explanatory notice', async () => {

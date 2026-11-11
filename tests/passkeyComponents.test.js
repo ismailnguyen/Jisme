@@ -179,6 +179,112 @@ describe('Login screen', () => {
         expect(html).toMatch(/id="inputPassword"/);
         expect(html).not.toMatch(/Sign in with passkey/);
     });
+
+    test('the passkey button is full width under Unlock, never on the same line', async () => {
+        const html = await render('views/login/VerifyPassword.vue');
+        const passkeyButton = html.match(/<button[^>]*class="([^"]*)"[^>]*>(?:(?!<\/button>)[\s\S])*Sign in with passkey/);
+        expect(passkeyButton).not.toBeNull();
+        expect(passkeyButton[1].split(/\s+/)).toEqual(expect.arrayContaining(['w-100', 'mt-2']));
+        expect(passkeyButton[1]).not.toMatch(/\bms-\d/);
+        expect(html.indexOf('Unlock')).toBeLessThan(html.indexOf('Sign in with passkey'));
+    });
+
+    test('the 403 notice links to Settings → Security', async () => {
+        users.loginNotice = 'Passkey re-enrollment required.';
+        const { createRouter, createMemoryHistory } = await import('vue-router');
+        const router = createRouter({ history: createMemoryHistory('/'), routes: [
+            { path: '/', component: { render: () => null } },
+            { name: 'SettingsSecurity', path: '/settings/security', component: { render: () => null } },
+        ] });
+        const component = (await import('../src/views/login/VerifyPassword.vue')).default;
+        const app = createSSRApp(component); app.use(pinia); app.use(router);
+        await router.push('/'); await router.isReady();
+        const html = await renderToString(app);
+        expect(html).toMatch(/role="status"[^>]*>[\s\S]*<a[^>]*href="\/settings\/security"[^>]*>[\s\S]*Settings → Security[\s\S]*<\/a>/);
+        expect(html).toMatch(/sign in with your password/i);
+    });
+
+    describe('VerifyPassword starts the passkey ceremony on its own', () => {
+        async function mountVerifyPassword (overrides = {}) {
+            const component = (await import('../src/views/login/VerifyPassword.vue')).default;
+            const context = {
+                ...component.data(),
+                user: users.user, canUsePasskeyLogin: users.canUsePasskeyLogin, loginNotice: users.loginNotice,
+                verifyPasskey: vi.fn(async () => {}), openAlert: vi.fn(),
+                $refs: { inputPassword: { focus: vi.fn() } }, $router: { push: vi.fn(), replace: vi.fn() },
+                ...overrides,
+            };
+            for (const [name, method] of Object.entries(component.methods)) {
+                if (!(name in context)) context[name] = method.bind(context);
+            }
+            component.mounted.call(context);
+            await new Promise(resolve => setTimeout(resolve));
+            return context;
+        }
+
+        test('verified passkey and no notice: the ceremony runs, then Home', async () => {
+            const context = await mountVerifyPassword();
+            expect(context.verifyPasskey).toHaveBeenCalledTimes(1);
+            expect(context.$router.replace).toHaveBeenCalledWith({ name: 'Home' });
+        });
+
+        test('with a loginNotice (passkey just refused): no automatic ceremony', async () => {
+            users.loginNotice = 'Passkey re-enrollment required.';
+            const context = await mountVerifyPassword();
+            expect(context.verifyPasskey).not.toHaveBeenCalled();
+            expect(context.$router.replace).not.toHaveBeenCalled();
+        });
+
+        test('coming from the passkey screen ("Sign in another way"): no second automatic ceremony', async () => {
+            users.user = { email: 'alice@example.test', token: 'pre-auth', next: { step: 'verify_passkey' } };
+            const context = await mountVerifyPassword();
+            expect(context.canUsePasskeyLogin).toBe(true);
+            expect(context.verifyPasskey).not.toHaveBeenCalled();
+        });
+
+        test('no passkey on the account: no automatic ceremony', async () => {
+            users.user = { email: 'alice@example.test', token: 'pre-auth', next: { step: 'verify_password' } };
+            const context = await mountVerifyPassword();
+            expect(context.verifyPasskey).not.toHaveBeenCalled();
+        });
+
+        test('cancelling (NotAllowedError) stays silently on the password form', async () => {
+            const context = await mountVerifyPassword({
+                verifyPasskey: vi.fn(async () => { throw Object.assign(new Error('cancelled'), { name: 'NotAllowedError' }); }),
+            });
+            expect(context.verifyPasskey).toHaveBeenCalledTimes(1);
+            expect(context.$router.replace).not.toHaveBeenCalled();
+            expect(context.$router.push).not.toHaveBeenCalled();
+            expect(context.openAlert).not.toHaveBeenCalled();
+            expect(context.isLoading).toBe(false);
+        });
+
+        test('a 403 re-enrollment refusal stays on the form with the store notice, no error alert', async () => {
+            fetch.mockImplementation(async url => String(url).endsWith('options')
+                ? new Response(JSON.stringify({ challenge: 'c2VydmVy' }), { status: 200 })
+                : new Response(JSON.stringify({ error: { message: 'Forbidden', reason: 'Passkey re-enrollment required' } }), { status: 403 }));
+            webauthn.authenticatePasskey.mockResolvedValue({ id: 'legacy', response: {} });
+            const context = await mountVerifyPassword({ verifyPasskey: users.verifyPasskey });
+            await vi.waitFor(() => expect(users.loginNotice).toMatch(/re-enrollment required/i));
+            expect(context.$router.replace).not.toHaveBeenCalled();
+            expect(context.openAlert).not.toHaveBeenCalled();
+        });
+
+        test('other passkey failures show the server reason and keep the form', async () => {
+            const context = await mountVerifyPassword({
+                verifyPasskey: vi.fn(async () => { throw Object.assign(new Error('Not authorized!'), { status: 401, reason: 'Passkey verification failed.' }); }),
+            });
+            expect(context.openAlert).toHaveBeenCalledWith("Couldn't sign in with passkey", expect.stringContaining('Passkey verification failed.'), 'danger');
+            expect(context.$router.replace).not.toHaveBeenCalled();
+        });
+
+        test('password sign-in after a 403 refusal goes straight to Settings → Security', async () => {
+            users.loginNotice = 'Passkey re-enrollment required.';
+            const context = await mountVerifyPassword({ password: 'pw', verifyPassword: vi.fn(async () => undefined) });
+            await context.onVerifyPassword();
+            expect(context.$router.replace).toHaveBeenCalledWith({ name: 'SettingsSecurity' });
+        });
+    });
 });
 
 describe('Vault unlock panel', () => {
