@@ -105,6 +105,19 @@ describe('PasskeyService', () => {
         expect(requests.every(r => r.headers.get('Authorization') === 'Bearer tok')).toBe(true);
     });
 
+    test('register sends the optional name trimmed and capped at 64 chars, and omits it when absent', async () => {
+        api(() => json(201, { credential: { id: 'c1' } }));
+        const service = new PasskeyService();
+        await service.register('tok', { challenge: 'Y2g', response: { id: 'c1' }, name: '  Laptop  ' });
+        await service.register('tok', { challenge: 'Y2g', response: { id: 'c1' } });
+        await service.register('tok', { challenge: 'Y2g', response: { id: 'c1' }, name: '   ' });
+        await service.register('tok', { challenge: 'Y2g', response: { id: 'c1' }, name: 'x'.repeat(80) });
+        expect(requests[0].body).toEqual({ challenge: 'Y2g', response: { id: 'c1' }, name: 'Laptop' });
+        expect(requests[1].body).not.toHaveProperty('name');
+        expect(requests[2].body).not.toHaveProperty('name');
+        expect(requests[3].body.name).toBe('x'.repeat(64));
+    });
+
     test('4xx responses throw ApiError carrying the server reason', async () => {
         api(() => json(400, { error: { message: 'Bad request', reason: 'Attestation origin mismatch' } }));
         const error = await new PasskeyService().register('tok', { challenge: 'Y2g', response: {} }).catch(e => e);
@@ -172,8 +185,18 @@ describe('passkeys store', () => {
         expect(statusDuringCeremony).toBe('loading');
         expect(passkeys.enrollStatus).toBe('success');
         expect(passkeys.enrollError).toBe('');
-        expect(requests[1].body).toEqual({ challenge: 'Y2g', response: { id: 'c9', response: { attestationObject: 'AA' } } });
+        expect(requests[1].body).toEqual({ challenge: 'Y2g', response: { id: 'c9', response: { attestationObject: 'AA' } }, name: 'Laptop' });
         expect(passkeys.list.map(p => p.id)).toEqual(['c9']);
+    });
+
+    test('enroll({ name }) sends the chosen name (capped at 64) and keeps it on the new row', async () => {
+        const long = 'Work laptop ' + 'y'.repeat(70);
+        api(({ url }) => url.endsWith('options') ? json(200, { challenge: 'Y2g' }) : json(201, { credential: { id: 'c9' } }));
+        webauthn.registerPasskey.mockResolvedValue({ id: 'c9' });
+        await passkeys.enroll({ name: long });
+        expect(passkeys.enrollStatus).toBe('success');
+        expect(requests[1].body.name).toBe(long.slice(0, 64));
+        expect(passkeys.list[0].name).toBe(long.slice(0, 64));
     });
 
     test('enroll surfaces the server reason on 4xx, not a generic message', async () => {
